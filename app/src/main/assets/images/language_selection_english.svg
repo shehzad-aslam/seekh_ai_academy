@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="80" height="80">
+  <defs>
+    <path
+        d="M0 1.774c10.8-3.55 19.8-1.77 27 5.32v39.9c-7.2-7.1-16.2-8.87-27-5.32v-39.9z"
+        id="A" />
+    <filter x="-22.2%" y="-6.4%" width="137.0%" height="125.5%" id="B">
+      <feOffset dx="-1" dy="4" in="SourceAlpha" />
+      <feGaussianBlur stdDeviation="1" />
+      <feColorMatrix
+          values="0 0 0 0 0.235294118 0 0 0 0 0.250980392 0 0 0 0 0.262745098 0 0 0 0.08 0" />
+    </filter>
+    <path d="M3 4c10-1.958 16 .104 21 5v32c-6-4-13-5-21-3V4z" id="C" />
+    <path d="M3 4c.84 12.55 9.3 22.69 21 26V9C18.667 3.667 11.667 2 3 4z"
+        id="D" />
+  </defs>
+  <g fill="none" fill-rule="evenodd">
+    <path fill-opacity="0" fill="#fff" d="M0 80h80V0H0z" />
+    <g transform="translate(3 9)">
+      <path
+          d="M66 31c0 16.016-12.983 29-29 29S8 47.016 8 31 20.984 2 37 2s29 12.983 29 29z"
+          fill="#004757" />
+      <path
+          d="M58 19c0-6-3-9-8-9H17c-5 5-9 13-9 21.093C8 39 12 48 18 53h32c5 0 8-3 8-9V19z"
+          fill-opacity=".24" fill="#000" />
+      <path
+          d="M54 11c0-2-2-4-4-4H21C14 11 8 20 8 31c0 7 0 9 6 18h36c2 0 4-2 4-4V11z"
+          fill="#fff" />
+      <g opacity="0" fill="#000">
+        <path fill-opacity=".04" d="M28 16h24v24H28z" />
+        <path fill-opacity=".06" d="M32 16h16v24H32z" />
+        <path fill-opacity=".06" d="M30 18h20v20H30z" />
+        <path fill-opacity=".06" d="M28 20h24v16H28z" />
+      </g>
+      <path
+          d="M44.586 34.045c.12.272.228.47.324.6a.95.95 0 0 0 .326.263c.126.063.283.096.474.096.324 0 .594-.112.824-.342s.342-.474.342-.736c0-.277-.14-.762-.42-1.44l-3.742-9.243-.432-1.102c-.107-.26-.24-.504-.395-.73-.144-.21-.334-.38-.572-.515-.23-.13-.525-.197-.888-.197-.356 0-.648.067-.878.197-.237.134-.426.308-.57.522-.155.23-.303.526-.444.884l-.376.962-3.663 9.3-.315.85c-.058.185-.086.362-.086.53 0 .267.1.506.342.727a1.11 1.11 0 0 0 .794.331c.357 0 .59-.095.728-.276.17-.226.4-.692.65-1.387l.744-2h6.166l.744 1.955.324.758zm-6.298-4.64l2.12-5.908 2.158 5.908h-4.277z"
+          fill="#004757" fill-rule="nonzero" />
+      <path
+          d="M3 7.005c8.9-2.67 16.9-2.67 24 0v40c-6.67-2.67-14.67-2.67-24 0v-40z"
+          fill="#d6d6d6" />
+      <use fill="#000" filter="url(#B)" xlink:href="#A" />
+      <use fill="#fff" xlink:href="#A" />
+      <use fill="#004757" xlink:href="#C" />
+      <use fill-opacity=".48" fill="#fff" xlink:href="#C" />
+      <use fill="#004757" xlink:href="#D" />
+      <use fill-opacity=".64" fill="#fff" xlink:href="#D" />
+    </g>
+  </g>
+</svg>
