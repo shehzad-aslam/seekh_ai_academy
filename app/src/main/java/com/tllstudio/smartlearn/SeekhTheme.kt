@@ -137,6 +137,20 @@ fun SeekhAIAcademyTheme(content: @Composable () -> Unit) {
     )
 }
 
+// Senior UI/UX Designer Soft Diffused Color-Tinted Elevation Shadow (Replaces flat harsh black Android shadows with warm indigo/emerald ambient halo shadows!)
+fun Modifier.softCardShadow(
+    elevation: Dp = 12.dp,
+    shape: Shape = RoundedCornerShape(22.dp),
+    spotColor: Color = Color(0x423B28B0),
+    ambientColor: Color = Color(0x261E1B4B)
+): Modifier = this.shadow(
+    elevation = elevation,
+    shape = shape,
+    clip = false,
+    ambientColor = ambientColor,
+    spotColor = spotColor
+)
+
 // Senior Animator Tactile Press-Scale Micro-Interaction (Spring Bouncy Touch Feedback)
 fun Modifier.bouncyClick(
     enabled: Boolean = true,
@@ -1275,7 +1289,7 @@ fun SeekhMainTopBar(
     }
 }
 
-// Redesigned Soft Bento Story Book Card (Soft Floating Level Pill + Bouncy Press Micro-Interaction + Smooth Animated Progress Bar!)
+// Redesigned Soft Bento Story Book Card (3D Book-Spine Light Reflection + Color-Coded Level Jewel Pill + Diffused Indigo/Emerald Drop Shadow + Uniform Row Height!)
 @Composable
 fun StoryBookCard(
     book: StoryBook,
@@ -1293,16 +1307,45 @@ fun StoryBookCard(
         label = "book_prog"
     )
 
+    val cardShape = RoundedCornerShape(22.dp)
+    val levelAccentColor = when (book.level) {
+        1 -> Color(0xFF059669) // Emerald Mint
+        2 -> Color(0xFF0284C7) // Sky Ocean Blue
+        3 -> Color(0xFF5E4AE3) // Royal Indigo Violet
+        else -> Color(0xFFD97706) // Warm Golden Amber
+    }
+
     Surface(
-        modifier = modifier.bouncyClick(scaleDown = 0.95f, onClick = onClick),
-        shape = RoundedCornerShape(22.dp),
+        modifier = modifier
+            .softCardShadow(
+                elevation = 12.dp,
+                shape = cardShape,
+                spotColor = if (isCompleted) Color(0x4810B981) else Color(0x403B28B0),
+                ambientColor = Color(0x241E1B4B)
+            )
+            .bouncyClick(scaleDown = 0.95f, onClick = onClick),
+        shape = cardShape,
         color = Color.White,
-        shadowElevation = 4.dp,
-        border = BorderStroke(1.dp, if (isCompleted) SeekhGreenMint.copy(alpha = 0.45f) else SeekhBorderGray)
+        shadowElevation = 0.dp,
+        border = BorderStroke(
+            width = 1.2.dp,
+            brush = Brush.verticalGradient(
+                colors = if (isCompleted) {
+                    listOf(SeekhGreenMint.copy(alpha = 0.65f), SeekhGreenMint.copy(alpha = 0.25f))
+                } else {
+                    listOf(Color.White, Color(0xFFE0E5F6))
+                }
+            )
+        )
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(Color.White, Color(0xFFFAF9FF))
+                    )
+                )
                 .padding(8.dp),
             horizontalAlignment = Alignment.Start
         ) {
@@ -1310,7 +1353,12 @@ fun StoryBookCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(0.92f)
-                    .clip(RoundedCornerShape(15.dp))
+                    .softCardShadow(
+                        elevation = 5.dp,
+                        shape = RoundedCornerShape(16.dp),
+                        spotColor = Color(0x301E1B4B)
+                    )
+                    .clip(RoundedCornerShape(16.dp))
                     .background(SeekhSurfaceGray)
             ) {
                 AssetWebpImage(
@@ -1320,10 +1368,39 @@ fun StoryBookCard(
                     contentScale = ContentScale.Crop
                 )
 
-                // Soft Floating Glass Level Pill at bottom-left
+                // Subtle 3D Book-Spine Left Edge Light Reflection & Bottom Scrim
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(7.dp)
+                        .align(Alignment.CenterStart)
+                        .background(
+                            Brush.horizontalGradient(
+                                colors = listOf(
+                                    Color.White.copy(alpha = 0.42f),
+                                    Color(0x22000000),
+                                    Color.Transparent
+                                )
+                            )
+                        )
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(38.dp)
+                        .align(Alignment.BottomCenter)
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(Color.Transparent, Color(0x660F172A))
+                            )
+                        )
+                )
+
+                // Color-Coded Jewel Level Pill at bottom-left
                 Surface(
                     shape = RoundedCornerShape(50),
-                    color = Color(0xCC1E1B4B),
+                    color = levelAccentColor.copy(alpha = 0.94f),
+                    border = BorderStroke(1.dp, Color.White.copy(alpha = 0.45f)),
                     modifier = Modifier
                         .align(Alignment.BottomStart)
                         .padding(6.dp)
@@ -1331,10 +1408,28 @@ fun StoryBookCard(
                     Text(
                         text = "Lvl ${book.level}",
                         fontFamily = GoogleSansFamily,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.ExtraBold,
                         fontSize = 10.sp,
                         color = Color.White,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.5.dp)
+                    )
+                }
+
+                // Page Count Micro-Pill at bottom-right
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = Color(0xB31E1B4B),
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(6.dp)
+                ) {
+                    Text(
+                        text = "${book.pages.size}p",
+                        fontFamily = GoogleSansFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 9.5.sp,
+                        color = Color.White.copy(alpha = 0.95f),
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                     )
                 }
 
@@ -1344,10 +1439,10 @@ fun StoryBookCard(
                         modifier = Modifier
                             .padding(6.dp)
                             .size(28.dp)
-                            .align(Alignment.TopStart),
+                            .align(Alignment.TopStart)
+                            .softCardShadow(elevation = 4.dp, shape = CircleShape),
                         shape = CircleShape,
-                        color = Color.White.copy(alpha = 0.94f),
-                        shadowElevation = 2.dp
+                        color = Color.White.copy(alpha = 0.96f)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             if (isDownloading) {
@@ -1375,7 +1470,7 @@ fun StoryBookCard(
                             .padding(6.dp)
                             .size(24.dp)
                             .align(Alignment.TopEnd)
-                            .shadow(2.dp, CircleShape)
+                            .softCardShadow(elevation = 4.dp, shape = CircleShape, spotColor = SeekhGreenMint)
                             .clip(CircleShape)
                             .background(SeekhGreenMint)
                             .border(1.5.dp, Color.White, CircleShape),
@@ -1404,18 +1499,19 @@ fun StoryBookCard(
                 )
             }
 
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(7.dp))
 
             Text(
                 text = book.title,
                 fontFamily = GoogleSansFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 13.sp,
-                lineHeight = 17.sp,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 12.5.sp,
+                lineHeight = 16.sp,
                 color = SeekhTextPrimary,
+                minLines = 2,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 2.dp)
+                modifier = Modifier.padding(horizontal = 3.dp)
             )
 
             val nativeSub = when {
@@ -1424,16 +1520,17 @@ fun StoryBookCard(
                 else -> ""
             }
             if (nativeSub.isNotBlank()) {
+                Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = nativeSub,
                     fontFamily = GoogleSansFamily,
                     fontWeight = FontWeight.Medium,
                     fontSize = 11.sp,
-                    lineHeight = 15.sp,
+                    lineHeight = 14.sp,
                     color = SeekhGreen600,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(horizontal = 2.dp)
+                    modifier = Modifier.padding(horizontal = 3.dp)
                 )
             }
         }
@@ -1497,7 +1594,7 @@ fun FlyingStarsOverlay(
     }
 }
 
-// Featured Hero Story Card at the top of the Library (Clean cover + title + level badge + Bouncy Touch Micro-Interaction)
+// Featured Hero Story Card at the top of the Library (Soft Diffused Indigo Shadow + Glass Badges + "Read ▶" CTA + Bouncy Touch Micro-Interaction!)
 @Composable
 fun FeaturedStoryHeroCard(
     book: StoryBook,
@@ -1505,23 +1602,48 @@ fun FeaturedStoryHeroCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val heroShape = RoundedCornerShape(28.dp)
     Surface(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 18.dp)
+            .softCardShadow(
+                elevation = 18.dp,
+                shape = heroShape,
+                spotColor = Color(0x4D3B28B0),
+                ambientColor = Color(0x2B1E1B4B)
+            )
             .bouncyClick(scaleDown = 0.97f, onClick = onClick),
-        shape = RoundedCornerShape(26.dp),
+        shape = heroShape,
         color = Color.White,
-        shadowElevation = 7.dp,
-        border = BorderStroke(1.dp, SeekhGreen100)
+        shadowElevation = 0.dp,
+        border = BorderStroke(
+            width = 1.5.dp,
+            brush = Brush.verticalGradient(
+                listOf(Color.White, SeekhGreen100)
+            )
+        )
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Color.White, Color(0xFFF7F5FF))
+                    )
+                )
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(172.dp)
+                    .height(178.dp)
                     .padding(start = 10.dp, end = 10.dp, top = 10.dp)
-                    .clip(RoundedCornerShape(18.dp))
+                    .softCardShadow(
+                        elevation = 6.dp,
+                        shape = RoundedCornerShape(20.dp),
+                        spotColor = Color(0x331E1B4B)
+                    )
+                    .clip(RoundedCornerShape(20.dp))
             ) {
                 AssetWebpImage(
                     assetPath = book.coverAssetPath,
@@ -1530,12 +1652,69 @@ fun FeaturedStoryHeroCard(
                     contentScale = ContentScale.Crop
                 )
 
+                // Soft bottom scrim on Hero image
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .align(Alignment.BottomCenter)
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(Color.Transparent, Color(0x730F172A))
+                            )
+                        )
+                )
+
+                // Top-Left Floating Glass Featured Pill
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = Color(0xCC1E1B4B),
+                    border = BorderStroke(1.dp, Color.White.copy(alpha = 0.32f)),
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(10.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
+                        GoldenStarIcon(size = 13.dp)
+                        Text(
+                            text = "Featured Story • ${book.pages.size} Pages",
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 10.5.sp,
+                            color = Color.White
+                        )
+                    }
+                }
+
+                // Bottom-Left Level Pill inside cover
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = SeekhYellow500,
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(10.dp)
+                ) {
+                    Text(
+                        text = "Level ${book.level} • ${book.categoryTag}",
+                        fontFamily = GoogleSansFamily,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 11.sp,
+                        color = SeekhTextPrimary,
+                        modifier = Modifier.padding(horizontal = 11.dp, vertical = 4.dp)
+                    )
+                }
+
                 if (isCompleted) {
                     Box(
                         modifier = Modifier
                             .padding(10.dp)
-                            .size(28.dp)
+                            .size(30.dp)
                             .align(Alignment.TopEnd)
+                            .softCardShadow(elevation = 5.dp, shape = CircleShape, spotColor = SeekhGreenMint)
                             .clip(CircleShape)
                             .background(SeekhGreenMint)
                             .border(2.dp, Color.White, CircleShape),
@@ -1545,7 +1724,7 @@ fun FeaturedStoryHeroCard(
                             imageVector = Icons.Default.Check,
                             contentDescription = "Completed",
                             tint = Color.White,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(17.dp)
                         )
                     }
                 }
@@ -1558,29 +1737,59 @@ fun FeaturedStoryHeroCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    text = book.title,
-                    fontFamily = GoogleSansFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 19.sp,
-                    color = SeekhTextPrimary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
-                )
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = book.title,
+                        fontFamily = GoogleSansFamily,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 19.sp,
+                        color = SeekhTextPrimary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    if (book.nativeTitleUrdu.isNotBlank()) {
+                        Text(
+                            text = "${book.nativeTitleUrdu} • Written by ${book.author}",
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 12.sp,
+                            color = SeekhGreen600,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(10.dp))
 
                 Surface(
                     shape = RoundedCornerShape(50),
-                    color = SeekhYellow500
-                ) {
-                    Text(
-                        text = "Level ${book.level}",
-                        fontFamily = GoogleSansFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 12.sp,
-                        color = SeekhTextPrimary,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
+                    color = SeekhGreen500,
+                    modifier = Modifier.softCardShadow(
+                        elevation = 6.dp,
+                        shape = RoundedCornerShape(50),
+                        spotColor = SeekhGreen500.copy(alpha = 0.55f)
                     )
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = "Read",
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 13.sp,
+                            color = Color.White
+                        )
+                        Icon(
+                            imageVector = Icons.Default.PlayArrow,
+                            contentDescription = "Read story",
+                            tint = Color.White,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
                 }
             }
         }
@@ -1619,14 +1828,16 @@ fun FloatingReadingBuddy(
         horizontalArrangement = Arrangement.End
     ) {
         if (!speechBubbleText.isNullOrBlank()) {
+            val bubbleShape = RoundedCornerShape(18.dp, 18.dp, 4.dp, 18.dp)
             Surface(
-                shape = RoundedCornerShape(18.dp, 18.dp, 4.dp, 18.dp),
+                shape = bubbleShape,
                 color = Color.White,
-                shadowElevation = 6.dp,
+                shadowElevation = 0.dp,
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .widthIn(max = 215.dp)
-                    .border(1.dp, SeekhGreen100, RoundedCornerShape(18.dp, 18.dp, 4.dp, 18.dp))
+                    .softCardShadow(elevation = 10.dp, shape = bubbleShape)
+                    .border(1.dp, SeekhGreen100, bubbleShape)
                     .clickable { onClick() }
             ) {
                 Row(
@@ -1658,6 +1869,11 @@ fun FloatingReadingBuddy(
             modifier = Modifier
                 .size(actualSize)
                 .offset(y = bobOffset.dp)
+                .softCardShadow(
+                    elevation = 14.dp,
+                    shape = CircleShape,
+                    spotColor = Color(0x4D3B28B0)
+                )
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
@@ -1665,7 +1881,7 @@ fun FloatingReadingBuddy(
                 ),
             shape = CircleShape,
             color = Color.White,
-            shadowElevation = 8.dp,
+            shadowElevation = 0.dp,
             border = BorderStroke(
                 2.dp,
                 when (mood) {
@@ -1726,13 +1942,19 @@ fun SeekhBottomNavigationBar(
             .padding(horizontal = 18.dp, vertical = 10.dp),
         contentAlignment = Alignment.Center
     ) {
+        val navBarShape = RoundedCornerShape(30.dp)
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .shadow(16.dp, RoundedCornerShape(30.dp)),
-            shape = RoundedCornerShape(30.dp),
+                .softCardShadow(
+                    elevation = 20.dp,
+                    shape = navBarShape,
+                    spotColor = Color(0x4D3B28B0),
+                    ambientColor = Color(0x2E1E1B4B)
+                ),
+            shape = navBarShape,
             color = Color.White,
-            border = BorderStroke(1.dp, SeekhBorderGray)
+            border = BorderStroke(1.2.dp, Color(0xFFE2E6F7))
         ) {
             BoxWithConstraints(
                 modifier = Modifier

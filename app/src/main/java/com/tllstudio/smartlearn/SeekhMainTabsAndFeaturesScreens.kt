@@ -296,13 +296,22 @@ fun LibraryTabScreen(
                             )
                             Surface(
                                 modifier = Modifier
+                                    .softCardShadow(
+                                        elevation = if (isSelected) 9.dp else 5.dp,
+                                        shape = RoundedCornerShape(50),
+                                        spotColor = if (isSelected) Color(0x55FFB800) else Color(0x301E1B4B)
+                                    )
                                     .bouncyClick(scaleDown = 0.92f) {
                                         selectedCategoryFilter = if (isSelected && chip != "All") "All" else chip
                                         onSpeakText(chip)
                                     },
                                 shape = RoundedCornerShape(50),
                                 color = chipBg,
-                                shadowElevation = if (isSelected) 4.dp else 2.dp
+                                shadowElevation = 0.dp,
+                                border = BorderStroke(
+                                    1.dp,
+                                    if (isSelected) Color.White.copy(alpha = 0.6f) else Color(0xFFE2E6F7)
+                                )
                             ) {
                                 Text(
                                     text = chip,
@@ -974,19 +983,30 @@ fun LibraryTabScreen(
                     // 12. "Read stories in <Language>" / "More languages" Footer Card (read_stories_in_language, more_languages)
                     item {
                         Spacer(modifier = Modifier.height(6.dp))
+                        val footerShape = RoundedCornerShape(22.dp)
                         Surface(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 18.dp)
-                                .clickable { onOpenLanguageSettings() },
-                            shape = RoundedCornerShape(20.dp),
+                                .softCardShadow(
+                                    elevation = 12.dp,
+                                    shape = footerShape,
+                                    spotColor = Color(0x403B28B0)
+                                )
+                                .bouncyClick(scaleDown = 0.96f, onClick = onOpenLanguageSettings),
+                            shape = footerShape,
                             color = Color.White,
-                            shadowElevation = 3.dp,
-                            border = BorderStroke(1.dp, SeekhBorderGray)
+                            shadowElevation = 0.dp,
+                            border = BorderStroke(1.2.dp, Color(0xFFE0E5F6))
                         ) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
+                                    .background(
+                                        Brush.horizontalGradient(
+                                            listOf(Color.White, Color(0xFFF6F4FF))
+                                        )
+                                    )
                                     .padding(16.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.SpaceBetween
@@ -1079,23 +1099,36 @@ private fun ClassroomAssignmentBookCard(
     isTurnedIn: Boolean,
     onClick: () -> Unit
 ) {
+    val cardShape = RoundedCornerShape(22.dp)
     Surface(
         modifier = Modifier
-            .width(245.dp)
-            .clickable { onClick() },
-        shape = RoundedCornerShape(20.dp),
+            .width(252.dp)
+            .softCardShadow(
+                elevation = 12.dp,
+                shape = cardShape,
+                spotColor = if (isTurnedIn) Color(0x4510B981) else Color(0x423B28B0)
+            )
+            .bouncyClick(scaleDown = 0.96f, onClick = onClick),
+        shape = cardShape,
         color = Color.White,
-        shadowElevation = 4.dp,
-        border = BorderStroke(1.dp, if (isTurnedIn) SeekhGreenMint else SeekhGreen100)
+        shadowElevation = 0.dp,
+        border = BorderStroke(1.2.dp, if (isTurnedIn) SeekhGreenMint.copy(alpha = 0.6f) else SeekhGreen100)
     ) {
         Row(
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier
+                .background(
+                    Brush.horizontalGradient(
+                        listOf(Color.White, if (isTurnedIn) Color(0xFFF0FDF4) else Color(0xFFF7F5FF))
+                    )
+                )
+                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Box(
                 modifier = Modifier
-                    .size(64.dp)
+                    .size(66.dp)
+                    .softCardShadow(elevation = 4.dp, shape = RoundedCornerShape(14.dp))
                     .clip(RoundedCornerShape(14.dp))
             ) {
                 AssetWebpImage(
@@ -1113,7 +1146,7 @@ private fun ClassroomAssignmentBookCard(
                     Text(
                         text = if (isTurnedIn) "Turned in ✓" else "Assigned • Classroom",
                         fontFamily = GoogleSansFamily,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.ExtraBold,
                         fontSize = 10.sp,
                         color = if (isTurnedIn) SeekhGreen600 else SeekhBlue600,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
@@ -1123,7 +1156,7 @@ private fun ClassroomAssignmentBookCard(
                 Text(
                     text = book.title,
                     fontFamily = GoogleSansFamily,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.ExtraBold,
                     fontSize = 14.sp,
                     color = SeekhTextPrimary,
                     maxLines = 1,
@@ -1145,18 +1178,31 @@ private fun ClassroomAssignmentBookCard(
 private fun CreateYourOwnStoryBannerCard(
     onClick: () -> Unit
 ) {
+    val bannerShape = RoundedCornerShape(24.dp)
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 18.dp)
-            .clickable { onClick() },
-        shape = RoundedCornerShape(22.dp),
+            .softCardShadow(
+                elevation = 14.dp,
+                shape = bannerShape,
+                spotColor = SeekhGreen500.copy(alpha = 0.55f),
+                ambientColor = SeekhGreen900.copy(alpha = 0.35f)
+            )
+            .bouncyClick(scaleDown = 0.96f, onClick = onClick),
+        shape = bannerShape,
         color = SeekhGreen500,
-        shadowElevation = 5.dp
+        shadowElevation = 0.dp,
+        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.28f))
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(
+                    Brush.horizontalGradient(
+                        listOf(SeekhGreen500, SeekhGreen700)
+                    )
+                )
                 .padding(horizontal = 18.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -1232,7 +1278,7 @@ private fun LibrarySectionHeader(
             Text(
                 text = title,
                 fontFamily = GoogleSansFamily,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.ExtraBold,
                 fontSize = 19.sp,
                 color = SeekhTextPrimary
             )
@@ -1247,6 +1293,7 @@ private fun LibrarySectionHeader(
             Surface(
                 shape = RoundedCornerShape(50),
                 color = SeekhGreenSoft,
+                border = BorderStroke(1.dp, SeekhGreen100),
                 modifier = Modifier.bouncyClick(scaleDown = 0.92f, onClick = onActionClick)
             ) {
                 Text(
@@ -1325,71 +1372,125 @@ private fun GameShelfCard(
     rewardText: String = "+15 ⭐",
     onClick: () -> Unit
 ) {
+    val cardShape = RoundedCornerShape(24.dp)
     Surface(
         modifier = Modifier
-            .width(178.dp)
-            .height(124.dp)
+            .width(184.dp)
+            .height(132.dp)
+            .softCardShadow(
+                elevation = 14.dp,
+                shape = cardShape,
+                spotColor = containerColor.copy(alpha = 0.60f),
+                ambientColor = containerColor.copy(alpha = 0.35f)
+            )
             .bouncyClick(scaleDown = 0.94f, onClick = onClick),
-        shape = RoundedCornerShape(22.dp),
+        shape = cardShape,
         color = containerColor,
-        shadowElevation = 6.dp
+        shadowElevation = 0.dp,
+        border = BorderStroke(1.2.dp, Color.White.copy(alpha = 0.28f))
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(14.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+                .background(
+                    Brush.linearGradient(
+                        colors = listOf(
+                            containerColor,
+                            containerColor.copy(alpha = 0.85f),
+                            Color(0x33000000)
+                        )
+                    )
+                )
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            // Decorative Soft Glass Orb Accent in top-right corner
+            Box(
+                modifier = Modifier
+                    .size(72.dp)
+                    .align(Alignment.TopEnd)
+                    .offset(x = 18.dp, y = (-18).dp)
+                    .clip(CircleShape)
+                    .background(Color.White.copy(alpha = 0.12f))
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(14.dp),
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Surface(
-                    shape = RoundedCornerShape(50),
-                    color = Color.White.copy(alpha = 0.22f)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = badgeText,
-                        fontFamily = GoogleSansFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 10.sp,
-                        color = Color.White,
-                        maxLines = 1,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                    )
+                    Surface(
+                        shape = RoundedCornerShape(50),
+                        color = Color.White.copy(alpha = 0.24f),
+                        border = BorderStroke(0.8.dp, Color.White.copy(alpha = 0.3f))
+                    ) {
+                        Text(
+                            text = badgeText,
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 10.sp,
+                            color = Color.White,
+                            maxLines = 1,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
+                    Surface(
+                        shape = RoundedCornerShape(50),
+                        color = SeekhYellow500
+                    ) {
+                        Text(
+                            text = rewardText,
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 10.sp,
+                            color = SeekhTextPrimary,
+                            modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp)
+                        )
+                    }
                 }
-                Surface(
-                    shape = RoundedCornerShape(50),
-                    color = SeekhYellow500
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = rewardText,
-                        fontFamily = GoogleSansFamily,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 10.sp,
-                        color = SeekhTextPrimary,
-                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp)
-                    )
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = title,
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 15.5.sp,
+                            color = Color.White,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text(
+                            text = subtitle,
+                            fontFamily = GoogleSansFamily,
+                            fontSize = 11.5.sp,
+                            color = Color.White.copy(alpha = 0.90f),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                    Surface(
+                        shape = CircleShape,
+                        color = Color.White.copy(alpha = 0.25f),
+                        modifier = Modifier.size(28.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Default.PlayArrow,
+                                contentDescription = "Play game",
+                                tint = Color.White,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                    }
                 }
-            }
-            Column {
-                Text(
-                    text = title,
-                    fontFamily = GoogleSansFamily,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 16.sp,
-                    color = Color.White,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = subtitle,
-                    fontFamily = GoogleSansFamily,
-                    fontSize = 12.sp,
-                    color = Color.White.copy(alpha = 0.90f),
-                    maxLines = 1
-                )
             }
         }
     }
@@ -1447,12 +1548,19 @@ fun PrizesTabScreen(
             ) {
                 // Signed-In Interactive Mystery Gift Boxes Row (prize_gift_box_stars, prize_gift_box_daily_goal, prize_gift_box_book_en)
                 item {
+                    val giftCardShape = RoundedCornerShape(24.dp)
                     Surface(
-                        shape = RoundedCornerShape(22.dp),
+                        shape = giftCardShape,
                         color = Color.White,
-                        shadowElevation = 4.dp,
-                        border = BorderStroke(1.dp, SeekhGreen100),
-                        modifier = Modifier.fillMaxWidth()
+                        shadowElevation = 0.dp,
+                        border = BorderStroke(1.2.dp, SeekhGreen100),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .softCardShadow(
+                                elevation = 14.dp,
+                                shape = giftCardShape,
+                                spotColor = Color(0x453B28B0)
+                            )
                     ) {
                         Column(
                             modifier = Modifier.padding(14.dp),
@@ -1806,8 +1914,11 @@ fun ActivityTabScreen(
                     Surface(
                         shape = RoundedCornerShape(50),
                         color = Color.White,
-                        shadowElevation = 3.dp,
-                        modifier = Modifier.fillMaxWidth()
+                        shadowElevation = 0.dp,
+                        border = BorderStroke(1.dp, SeekhGreen100),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .softCardShadow(elevation = 10.dp, shape = RoundedCornerShape(50))
                     ) {
                         Row(
                             modifier = Modifier
@@ -1852,12 +1963,15 @@ fun ActivityTabScreen(
                         else -> "Read a story or play a word game to start today’s ${profile.dailyGoalMinutes} min goal!"
                     }
 
+                    val goalShape = RoundedCornerShape(24.dp)
                     Surface(
-                        shape = RoundedCornerShape(24.dp),
+                        shape = goalShape,
                         color = Color.White,
-                        shadowElevation = 5.dp,
+                        shadowElevation = 0.dp,
+                        border = BorderStroke(1.2.dp, SeekhGreen100),
                         modifier = Modifier
                             .fillMaxWidth()
+                            .softCardShadow(elevation = 14.dp, shape = goalShape)
                             .bouncyClick(scaleDown = 0.98f) {
                                 onSpeakText(goalStatusMessage)
                             }
