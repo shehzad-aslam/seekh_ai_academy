@@ -552,11 +552,11 @@ object SeekhCatalog {
             illustrator = "Ntembiso Velemane",
             publisher = "Book Dash • StoryWeaver",
             level = 3,
-            coverAssetPath = "books/sw_13916/image_5.webp",
+            coverAssetPath = "books/sw_44485/image_1.webp",
             isFeaturedHero = true,
             isDailyDrop = true,
             pages = listOf(
-                StoryPage(1, "books/sw_13916/image_5.webp", "Every morning, our neighborhood street wakes up with bright colors, happy music, and friendly faces.", "Cada mañana, la calle despierta con colores brillantes.", "ہر صبح ہماری گلی چمکدار رنگوں، خوشگوار موسیقی اور دوستانہ چہروں کے ساتھ جاگتی ہے۔", "हर सुबह हमारी गली चमकीले रंगों और खुशहाल संगीत के साथ जागती है।", setOf("morning", "bright", "friends")),
+                StoryPage(1, "books/sw_44485/image_1.webp", "Every morning, our neighborhood street wakes up with bright colors, happy music, and friendly faces.", "Cada mañana, la calle despierta con colores brillantes.", "ہر صبح ہماری گلی چمکدار رنگوں، خوشگوار موسیقی اور دوستانہ چہروں کے ساتھ جاگتی ہے۔", "हर सुबह हमारी गली चमकीले रंगों और खुशहाल संगीत के साथ जागती है।", setOf("morning", "bright", "friends")),
                 StoryPage(2, "books/sw_44485/image_2.webp", "Nicole steps outside holding her mother's hand as the golden sun rises above the rooftops.", "Nicole sale de la mano de su madre bajo el sol dorado.", "نکول اپنی امی کا ہاتھ پکڑ کر باہر نکلتی ہے جب سنہرا سورج چھتوں کے اوپر چمکتا ہے۔", "निकोल अपनी माँ का हाथ पकड़कर बाहर निकलती है जब सुनहरा सूरज चमकता है।", setOf("bright", "street")),
                 StoryPage(3, "books/sw_44485/image_3.webp", "At the busy corner crosswalk, neighbors in blue, green, and orange coats wave good morning to one another.", "En la esquina, los vecinos saludan con abrigos de colores.", "مصروف چوراہے پر نیلے، ہرے اور نارنجی کوٹ پہنے ہمسائے ایک دوسرے کو صبح بخیر کہتے ہیں۔", "चौराहे पर नीले, हरे और नारंगी कोट पहने पड़ोसी एक-दूसरे को नमस्ते कहते हैं।", setOf("colors", "friends")),
                 StoryPage(4, "books/sw_44485/image_4.webp", "The silver neighborhood tram glides past painted murals of flowers, birds, and rainbows.", "El tranvía plateado pasa junto a murales pintados.", "چاندی جیسی ٹرین دیواروں پر بنے پھولوں، پرندوں اور قوسِ قزح کے رنگین نقش و نگار کے پاس سے گزرتی ہے۔", "चमकीली ट्रेन दीवारों पर बने फूलों और इंद्रधनुष के चित्रों के पास से गुज़रती है।", setOf("painted", "train")),
@@ -806,7 +806,7 @@ object SeekhCatalog {
             level = 4,
             coverAssetPath = "books/sw_45764/cover_image.webp",
             pages = listOf(
-                StoryPage(1, "books/sw_45764/image_2.webp", "\"Oh, no!\"Look at the clock on the library wall.", "\"¡Oh, no!\"", "اوہ نہیں! لائبریری کی دیوار پر لگی گھڑی دیکھو۔", "\"ओह नहीं!\" लाइब्रेरी की घड़ी देखो।", setOf("books")),
+                StoryPage(1, "books/sw_45764/image_1.webp", "\"Oh, no!\" Look at the clock on the library wall.", "\"¡Oh, no!\"", "اوہ نہیں! لائبریری کی دیوار پر لگی گھڑی دیکھو۔", "\"ओह नहीं!\" लाइब्रेरी की घड़ी देखो।", setOf("books")),
                 StoryPage(2, "books/sw_45764/image_3.webp", "\"Lulu! It is time to go,\" calls Ma.", "\"¡Lulu! Es hora de partir\", le dice la mamá.", "لولو! اب گھر چلنے کا وقت ہو گیا ہے، امی پکارتی ہیں۔", "\"लुलु! अब घर चलने का समय हो गया है,\" माँ बुलाती हैं।", setOf("return")),
                 StoryPage(3, "books/sw_45764/image_4.webp", "Where is Lulu? Is she under the sofa? Is she behind the curtain?", "¿Dónde está Lulu? ¿Está debajo del sofá? ¿Está detrás de las cortinas?", "لولو کہاں ہے؟ کیا وہ صوفے کے نیچے ہے؟ کیا وہ پردے کے پیچھے ہے؟", "लुलु कहाँ है? क्या वह सोफ़े के नीचे है? क्या वह पर्दे के पीछे है?", setOf("curtain")),
                 StoryPage(4, "books/sw_45764/image_5.webp", "Where is Lulu? Is she next to the stove? Is she in the cupboard?", "¿Está cerca del horno? ¿Está en el armario?", "لولو کہاں ہے؟ کیا وہ چولہے کے پاس ہے یا الماری کے اندر؟", "क्या वह चूल्हे के पास है? क्या वह अलमारी में है?", setOf("cupboard")),
@@ -834,11 +834,11 @@ object SeekhCatalog {
             illustrator = "Martha Evans",
             publisher = "Book Dash • StoryWeaver",
             level = 4,
-            coverAssetPath = "books/sw_13916/image_16.webp",
+            coverAssetPath = "books/sw_13916/image_19.webp",
             categoryTag = "Bedtime & Folktales",
             pages = listOf(
-                StoryPage(1, "books/sw_13916/image_16.webp", "When the golden sun goes down, tiny silver stars twinkle above the quiet green hills.", "Cuando el sol dorado se oculta, pequeñas estrellas brillan.", "جب سنہرا سورج غروب ہوتا ہے تو خاموش پہاڑیوں کے اوپر ننھے ستارے جگمگاتے ہیں۔", "जब सुनहरा सूरज ढलता है, तो पहाड़ियों के ऊपर नन्हे तारे टिमटिमाते हैं।", setOf("bright", "gleamed")),
-                StoryPage(2, "books/sw_13916/image_17.webp", "The little ladybird folds her glowing yellow wings and whispers, \"Good night, little star!\"", "La pequeña mariquita cierra los ojos y susurra: \"¡Buenas noches, estrellita!\"", "ننھی لیڈی برڈ اپنے چمکتے پر سمیٹتی ہے اور سرگوشی کرتی ہے، شب بخیر ننھے ستارے!", "नन्ही लेडीबर्ड अपने पंख समेटती है और कहती है, \"शुभ रात्रि, नन्हे तारे!\"", setOf("ladybird", "whispers")),
+                StoryPage(1, "books/sw_13916/image_19.webp", "When the golden sun goes down, tiny silver stars twinkle above the quiet green hills.", "Cuando el sol dorado se oculta, pequeñas estrellas brillan.", "جب سنہرا سورج غروب ہوتا ہے تو خاموش پہاڑیوں کے اوپر ننھے ستارے جگمگاتے ہیں۔", "जब सुनहरा सूरज ढलता है, तो पहाड़ियों के ऊपर नन्हे तारे टिमटिमाते हैं।", setOf("bright", "gleamed")),
+                StoryPage(2, "books/sw_13916/image_20.webp", "The little ladybird folds her glowing yellow wings and whispers, \"Good night, little star!\"", "La pequeña mariquita cierra los ojos y susurra: \"¡Buenas noches, estrellita!\"", "ننھی لیڈی برڈ اپنے چمکتے پر سمیٹتی ہے اور سرگوشی کرتی ہے، شب بخیر ننھے ستارے!", "नन्ही लेडीबर्ड अपने पंख समेटती है और कहती है, \"शुभ रात्रि, नन्हे तारे!\"", setOf("ladybird", "whispers")),
                 StoryPage(3, "books/sw_13916/image_18.webp", "Tomorrow morning will bring new stories, new games, and new adventures with all our friends.", "Mañana traerá nuevas historias y aventuras.", "کل صبح ہمارے تمام دوستوں کے ساتھ نئی کہانیاں اور نئے کھیل لائے گی۔", "कल सुबह नए खेल और नई कहानियाँ लेकर आएगी।", setOf("friends", "special"),
                     StoryQuizQuestion("When do the tiny silver stars twinkle above the hills?", listOf("When the golden sun goes down at night", "At noon", "Inside the cupboard"), 0)
                 )
@@ -1093,7 +1093,7 @@ object SeekhCatalog {
             pages = listOf(
                 StoryPage(1, "books/sw_44485/image_6.webp", "The corner shop is filled with golden chocolates, peppermint swirls, and fruit candies.", "La tienda está llena de chocolates dorados.", "کونے کی دکان سنہری چاکلیٹ اور پھلوں کی ٹافیوں سے بھری ہوئی ہے۔", "कोने की दुकान सुनहरी चॉकलेट और मिठाइयों से भरी है।", setOf("chocolates", "street")),
                 StoryPage(2, "books/sw_44485/image_5.webp", "Mom smiles and says, \"Let's save room for cold mango ice cream by the ocean waves!\"", "Guardemos lugar para el helado en la playa.", "امی مسکرا کر کہتی ہیں، سمندر کی لہروں کے پاس ٹھنڈی آم کی آئس کریم کے لیے جگہ رکھو!", "माँ मुस्कुराकर कहती हैं, \"समुद्र तट पर आइसक्रीम खाएँगे!\"", setOf("beach", "chocolates")),
-                StoryPage(3, "books/sw_44485/image_14.webp", "At the beach boardwalk, they share two scoops of sunshine yellow ice cream together!", "En la playa comparten helado amarillo.", "ساحل پر وہ دونوں مل کر دھوپ جیسی پیلی آئس کریم مزے سے کھاتے ہیں!", "समुद्र तट पर वे मिलकर आइसक्रीम का आनंद लेते हैं!", setOf("beach", "yellow"),
+                StoryPage(3, "books/sw_44485/image_16.webp", "At the beach boardwalk, they share two scoops of sunshine yellow ice cream together!", "En la playa comparten helado amarillo.", "ساحل پر وہ دونوں مل کر دھوپ جیسی پیلی آئس کریم مزے سے کھاتے ہیں!", "समुद्र तट पर वे मिलकर आइसक्रीम का आनंद लेते हैं!", setOf("beach", "yellow"),
                     StoryQuizQuestion("What treat did Mom and Nicole share at the beach boardwalk?", listOf("Cold mango ice cream", "Hot soup", "Green leaves"), 0)
                 )
             )
@@ -1204,7 +1204,7 @@ object SeekhCatalog {
             seriesTag = "Coastline Train • Ep 3",
             pages = listOf(
                 StoryPage(1, "books/sw_44485/image_10.webp", "On the coastal train, Nicole meets Captain Zara, a proud navy sailor in a crisp white uniform.", "Nicole conoce a una marinera de la Marina.", "ساحلی ٹرین میں نکول کی ملاقات کیپٹن زارا سے ہوتی ہے جو سفید وردی میں بحریہ کی باہمت ملاح ہے۔", "ट्रेन में निकोल की मुलाक़ात नौसेना की नाविक ज़ारा से होती है।", setOf("sailor", "train")),
-                StoryPage(2, "books/sw_44485/image_13.webp", "Captain Zara shows Nicole a brass pocket compass that always points north across the wide blue ocean.", "La marinera le muestra una brújula dorada.", "کیپٹن زارا نکول کو ایک سنہری قطب نما دکھاتی ہے جو کھلے سمندر میں ہمیشہ شمال کی سمت بتاتا ہے۔", "नाविक ज़ारा निकोल को एक सुनहरा कंपास दिखाती है।", setOf("sailor", "bright")),
+                StoryPage(2, "books/sw_44485/image_15.webp", "Captain Zara shows Nicole a brass pocket compass that always points north across the wide blue ocean.", "La marinera le muestra una brújula dorada.", "کیپٹن زارا نکول کو ایک سنہری قطب نما دکھاتی ہے جو کھلے سمندر میں ہمیشہ شمال کی سمت بتاتا ہے۔", "नाविक ज़ारा निकोल को एक सुनहरा कंपास दिखाती है।", setOf("sailor", "bright")),
                 StoryPage(3, "books/sw_44485/image_14.webp", "\"With curiosity, courage, and good books, you can navigate anywhere in the world!\" says the sailor.", "Con curiosidad y buenos libros puedes navegar por el mundo.", "تجسس، ہمت اور اچھی کتابوں کے ساتھ تم دنیا میں کہیں بھی سفر کر سکتی ہو! ملاح مسکرا کر کہتی ہے۔", "\"जिज्ञासा, साहस और अच्छी किताबों से तुम कहीं भी पहुँच सकती हो!\"", setOf("books", "sailor"),
                     StoryQuizQuestion("What instrument did the navy sailor show Nicole on the train?", listOf("A brass pocket compass that points north", "A red raincoat", "A wooden drum"), 0)
                 )
@@ -1422,14 +1422,14 @@ object SeekhCatalog {
             illustrator = "Clyde Beech",
             publisher = "Book Dash • StoryWeaver",
             level = 4,
-            coverAssetPath = "books/sw_45764/image_14.webp",
+            coverAssetPath = "books/sw_45764/image_15.webp",
             categoryTag = "Bedtime & Folktales",
             bookType = "SERIES",
             seriesTag = "Lulu Library • Ep 3",
             pages = listOf(
                 StoryPage(1, "books/sw_45764/image_11.webp", "Back home with her borrowed library books, Lulu built a cozy reading tent out of blankets and pillows.", "En casa Lulu construyó una tienda de lectura con mantas.", "لائبریری سے لائی گئی نئی کتابوں کے ساتھ لولو نے گھر آ کر کمبل اور تکیوں سے پڑھنے کا ایک خیمہ بنایا۔", "घर आकर लुलु ने कंबल और तकियों से पढ़ने का एक सुंदर तंबू बनाया।", setOf("books", "borrow")),
                 StoryPage(2, "books/sw_45764/image_13.webp", "With a warm flashlight beam, she read chapters about deep-sea whales, mountain eagles, and ancient castles.", "Con una linterna leyó capítulos sobre ballenas y águilas.", "ٹارچ کی نرم روشنی میں اس نے سمندری وہیل، پہاڑی عقابوں اور قدیم قلعوں کے ابواب پڑھے۔", "टॉर्च की रोशनी में उसने समुद्री व्हेल और पहाड़ी गरुड़ की कहानियाँ पढ़ीं।", setOf("books", "bright")),
-                StoryPage(3, "books/sw_45764/image_14.webp", "Ma tucked her in and whispered, \"Every page you read opens a brand-new world tomorrow!\"", "Cada página que lees abre un mundo nuevo mañana.", "امی نے اسے کمبل اوڑھایا اور سرگوشی کی، تم جو بھی صفحہ پڑھتی ہو وہ کل ایک نئی دنیا کا دروازہ کھولتا ہے!", "माँ ने प्यार से कहा, \"हर पन्ना जो तुम पढ़ती हो, एक नई दुनिया खोलता है!\"", setOf("books", "whispers"),
+                StoryPage(3, "books/sw_45764/image_15.webp", "Ma tucked her in and whispered, \"Every page you read opens a brand-new world tomorrow!\"", "Cada página que lees abre un mundo nuevo mañana.", "امی نے اسے کمبل اوڑھایا اور سرگوشی کی، تم جو بھی صفحہ پڑھتی ہو وہ کل ایک نئی دنیا کا دروازہ کھولتا ہے!", "माँ ने प्यार से कहा, \"हर पन्ना जो तुम पढ़ती हो, एक नई दुनिया खोलता है!\"", setOf("books", "whispers"),
                     StoryQuizQuestion("What did Lulu use to build her cozy reading tent at home?", listOf("Blankets, pillows, and her stack of library books", "Tree branches and leaves", "Train seats"), 0)
                 )
             )
@@ -1451,7 +1451,7 @@ object SeekhCatalog {
             pages = listOf(
                 StoryPage(1, "books/sw_15195/image_16.webp", "Have you ever looked up at the silver full moon and wondered how far the universe reaches?", "¿Alguna vez miraste la luna llena y te preguntaste qué tan lejos llega el universo?", "کیا تم نے کبھی چاندنی رات میں پورے چاند کو دیکھ کر سوچا ہے کہ یہ کائنات کتنی وسیع ہے؟", "क्या तुमने कभी पूरे चाँद को देखकर सोचा है कि ब्रह्मांड कितना विशाल है?", setOf("clouds", "bright")),
                 StoryPage(2, "books/sw_15195/image_17.webp", "Astronomers use powerful telescopes to study distant planets, glowing nebulae, and galaxies millions of light-years away.", "Los astrónomos usan telescopios para estudiar planetas y galaxias.", "ماہرینِ فلکیات طاقتور دوربینوں سے دور دراز سیاروں اور کہکشاؤں کا مطالعہ کرتے ہیں۔", "खगोलशास्त्री दूरबीनों से दूर के ग्रहों और आकाशगंगाओं का अध्ययन करते हैं।", setOf("bright", "special")),
-                StoryPage(3, "books/sw_13916/image_16.webp", "One day, young readers like you will build new spacecraft and explore the stars above!", "Algún día jóvenes lectores como tú explorarán las estrellas.", "ایک دن تم جیسے ہونہار قارئین نئے خلائی جہاز بنائیں گے اور ستاروں سے آگے کی دنیا دریافت کریں گے!", "एक दिन तुम जैसे होनहार पाठक अंतरिक्ष और तारों की खोज करेंगे!", setOf("bright", "unique"),
+                StoryPage(3, "books/sw_13916/image_19.webp", "One day, young readers like you will build new spacecraft and explore the stars above!", "Algún día jóvenes lectores como tú explorarán las estrellas.", "ایک دن تم جیسے ہونہار قارئین نئے خلائی جہاز بنائیں گے اور ستاروں سے آگے کی دنیا دریافت کریں گے!", "एक दिन तुम जैसे होनहार पाठक अंतरिक्ष और तारों की खोज करेंगे!", setOf("bright", "unique"),
                     StoryQuizQuestion("What tool do astronomers use to study distant planets and galaxies?", listOf("Powerful telescopes", "Pocket umbrellas", "Kitchen spoons"), 0)
                 )
             )
@@ -1461,7 +1461,7 @@ object SeekhCatalog {
     // Thematic full-book illustration & bilingual page banks so EVERY story in the catalog has 11 to 17 complete illustrated pages!
     private val thematicContinuationPages: Map<String, List<StoryPage>> = mapOf(
         "sw_13916" to listOf(
-            StoryPage(1, "books/sw_13916/image_2.webp", "In the sunny botanical garden, Lara the ladybird fluttered across the dewy green leaves.", "En el jardín soleado, Lara voló sobre las hojas verdes.", "روشن باغ میں لارا لیڈی برڈ شبنم سے بھیگے ہرے پتوں پر اڑتی ہوئی آئی۔", "धूप भरे बग़ीचे में लारा लेडीबर्ड हरे पत्तों पर उड़ती हुई आई।", setOf("ladybird", "bright")),
+            StoryPage(1, "books/sw_13916/image_1.webp", "In the sunny botanical garden, Lara the ladybird fluttered across the dewy green leaves.", "En el jardín soleado, Lara voló sobre las hojas verdes.", "روشن باغ میں لارا لیڈی برڈ شبنم سے بھیگے ہرے پتوں پر اڑتی ہوئی آئی۔", "धूप भरे बग़ीचे में लारा लेडीबर्ड हरे पत्तों पर उड़ती हुई आई।", setOf("ladybird", "bright")),
             StoryPage(2, "books/sw_13916/image_3.webp", "Her bright golden-yellow wings sparkled like tiny sunbeams in the morning breeze.", "Sus alas amarillas brillaban como rayos de sol.", "اس کے چمکدار سنہری پیلے پر صبح کی ہوا میں سورج کی کرنوں کی طرح جگمگا رہے تھے۔", "उसके चमकीले पीले पंख सुबह की हवा में सूरज की किरणों की तरह चमक रहे थे।", setOf("yellow", "wings")),
             StoryPage(3, "books/sw_13916/image_4.webp", "All the garden insects gathered around the flowerbed to greet their cheerful friend.", "Todos los insectos del jardín se reunieron para saludarla.", "باغ کے تمام ننھے کیڑے پھولوں کی کیاری کے پاس اپنی خوش مزاج دوست کو سلام کرنے جمع ہو گئے۔", "बग़ीचे के सभी नन्हे जीव फूलों के पास अपनी दोस्त से मिलने इकट्ठा हो गए।", setOf("friends", "morning")),
             StoryPage(4, "books/sw_13916/image_5.webp", "Bibi Butterfly danced through the air while Manto Mantis tipped his green leaf hat.", "Bibi Mariposa bailó en el aire mientras Manto saludaba.", "بی بی تتلی ہوا میں لہرائی جبکہ مینٹو مینٹس نے اپنی ہری ٹوپی ہلا کر سلام کیا۔", "बीबी तितली हवा में लहराई और मैंटो ने हाथ हिलाकर अभिवादन किया।", setOf("butterfly", "friends")),
@@ -1474,7 +1474,7 @@ object SeekhCatalog {
             StoryPage(11, "books/sw_13916/image_18.webp", "With happy hearts, the garden friends promised to meet again tomorrow for another adventure!", "Con corazones felices prometieron reunirse mañana.", "خوشی سے سرشار باغ کے دوستوں نے کل ایک نئی مہم کے لیے دوبارہ ملنے کا وعدہ کیا!", "खुशी से भरे दोस्तों ने कल एक नए सफ़र के लिए फिर मिलने का वादा किया!", setOf("friends", "yellow"))
         ),
         "sw_37273" to listOf(
-            StoryPage(1, "books/sw_37273/image_2.webp", "Along the winding garden trail, little Caterpillar set out on a sunny morning walk.", "Por el sendero del jardín, la pequeña oruga salió a caminar.", "باغ کی بل کھاتی پگڈنڈی پر ننھی کیٹرپلر روشن صبح کی سیر کے لیے نکلی۔", "बग़ीचे की पगडंडी पर नन्ही कैटरपिलर सुबह की सैर के लिए निकली।", setOf("caterpillar", "morning")),
+            StoryPage(1, "books/sw_37273/image_1.webp", "Along the winding garden trail, little Caterpillar set out on a sunny morning walk.", "Por el sendero del jardín, la pequeña oruga salió a caminar.", "باغ کی بل کھاتی پگڈنڈی پر ننھی کیٹرپلر روشن صبح کی سیر کے لیے نکلی۔", "बग़ीचे की पगडंडी पर नन्ही कैटरपिलर सुबह की सैर के लिए निकली।", setOf("caterpillar", "morning")),
             StoryPage(2, "books/sw_37273/image_3.webp", "First she visited Spider, who was busy polishing her eight tiny shoes on a twig.", "Primero visitó a la araña que limpiaba sus ocho zapatitos.", "سب سے پہلے وہ مکڑی کے پاس گئی جو شاخ پر بیٹھی اپنے آٹھ ننھے جوتے چمکا رہی تھی۔", "सबसे पहले वह मकड़ी के पास गई जो टहनी पर अपने आठ नन्हे जूते साफ़ कर रही थी।", setOf("spider", "shoe")),
             StoryPage(3, "books/sw_37273/image_4.webp", "Next she strolled past tall golden daisies swaying gently in the warm breeze.", "Luego caminó junto a altas margaritas doradas.", "پھر وہ سنہری پھولوں کے پاس سے گزری جو گرم ہوا میں ہولے ہولے جھوم رہے تھے۔", "फिर वह सुनहरे फूलों के पास से गुज़री जो हवा में झूम रहे थे।", setOf("caterpillar", "bright")),
             StoryPage(4, "books/sw_37273/image_5.webp", "By the sparkling blue pond, green Frog was practicing his high diving jumps.", "Junto al estanque azul, la rana verde practicaba sus saltos.", "چمکتے نیلے تالاب کے کنارے ہرا مینڈک اپنی اونچی چھلانگوں کی مشق کر رہا تھا۔", "नीले तालाब के किनारे हरा मेंढक अपनी ऊँची छलांग का अभ्यास कर रहा था।", setOf("frog", "bright")),
@@ -1523,7 +1523,7 @@ object SeekhCatalog {
             StoryPage(8, "books/sw_15058/image_9.webp", "So I sit on my cozy mat and read out loud to myself—and when dinner is ready, the whole family listens too!", "Me siento en mi tapete y leo en voz alta con alegría.", "تو میں اپنی چٹائی پر بیٹھ کر خود ہی بلند آواز سے پڑھتا ہوں—اور شام کو پورا خاندان شوق سے سنتا ہے!", "तो मैं अपनी चटाई पर बैठकर खुद पढ़ता हूँ—और शाम को पूरा परिवार सुनता है!", setOf("books", "grandfather"))
         ),
         "sw_45764" to listOf(
-            StoryPage(1, "books/sw_45764/image_2.webp", "Inside the neighborhood library, rows of colorful shelves reach all the way to the ceiling.", "Dentro de la biblioteca, los estantes llegan hasta el techo.", "محلے کی لائبریری کے اندر رنگ برنگی کتابوں کی الماریاں چھت تک پہنچی ہوئی ہیں۔", "लाइब्रेरी के अंदर रंग-बिरंगी किताबों की अलमारियाँ छत तक भरी हैं।", setOf("books", "bright")),
+            StoryPage(1, "books/sw_45764/image_1.webp", "Inside the neighborhood library, rows of colorful shelves reach all the way to the ceiling.", "Dentro de la biblioteca, los estantes llegan hasta el techo.", "محلے کی لائبریری کے اندر رنگ برنگی کتابوں کی الماریاں چھت تک پہنچی ہوئی ہیں۔", "लाइब्रेरी के अंदर रंग-बिरंगी किताबों की अलमारियाँ छत तक भरी हैं।", setOf("books", "bright")),
             StoryPage(2, "books/sw_45764/image_3.webp", "When the wall clock chimes five o'clock, Ma calls softly, \"Lulu, it is time to head home!\"", "Cuando el reloj marca las cinco, mamá llama a Lulu.", "جب دیوار کی گھڑی پانچ بجاتی ہے تو امی پیار سے بلاتی ہیں، لولو، اب گھر چلنے کا وقت ہے!", "जब घड़ी में पाँच बजते हैं, तो माँ प्यार से बुलाती हैं, \"लुलु, अब घर चलने का समय है!\"", setOf("return", "whispers")),
             StoryPage(3, "books/sw_45764/image_4.webp", "Ma checks under the reading sofa and peeks behind the long blue window curtain.", "Mamá busca debajo del sofá y detrás de la cortina.", "امی پڑھنے والے صوفے کے نیچے دیکھتی ہیں اور کھڑکی کے لمبے نیلے پردے کے پیچھے جھانکتی ہیں۔", "माँ सोफ़े के नीचे देखती हैं और खिड़की के पर्दे के पीछे झाँकती हैं।", setOf("curtain", "books")),
             StoryPage(4, "books/sw_45764/image_5.webp", "She looks beside the wooden cupboard and around the storyteller's table.", "Busca junto al armario de madera y la mesa de cuentos.", "وہ لکڑی کی الماری کے پاس اور کہانیوں والی میز کے گرد تلاش کرتی ہیں۔", "वे लकड़ी की अलमारी के पास और कहानी की मेज़ کے चारों ओर देखती हैं।", setOf("cupboard", "books")),
