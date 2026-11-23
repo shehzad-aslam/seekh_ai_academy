@@ -39,6 +39,7 @@ class SeekhVoiceAndAudioEngine(
     var onTtsWordRangeListener: ((Int, Int) -> Unit)? = null
     var onTtsDoneListener: (() -> Unit)? = null
     var onRecognizedWordsListener: ((List<String>) -> Unit)? = null
+    var onSpeechSessionResetListener: (() -> Unit)? = null
     var onVoiceRmsPulseListener: ((Float) -> Unit)? = null
 
     init {
@@ -342,73 +343,75 @@ class SeekhVoiceAndAudioEngine(
         playTapSound()
         isListening = true
         onMoodChanged(BuddyMood.LISTENING)
-        try {
-            if (SpeechRecognizer.isRecognitionAvailable(context)) {
-                if (speechRecognizer == null) {
-                    speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
+        mainHandler.post {
+            try {
+                if (SpeechRecognizer.isRecognitionAvailable(context)) {
+                    if (speechRecognizer == null) {
+                        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context.applicationContext)
+                    }
+                    val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                        putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                        putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US")
+                        putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+                        putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
+                    }
+                    speechRecognizer?.setRecognitionListener(object : RecognitionListener {
+                        override fun onReadyForSpeech(params: Bundle?) {
+                            onMoodChanged(BuddyMood.LISTENING)
+                            onSpeechSessionResetListener?.invoke()
+                        }
+                        override fun onBeginningOfSpeech() {}
+                        override fun onRmsChanged(rmsdB: Float) {
+                            if (isListening && rmsdB > 2.0f) {
+                                onVoiceRmsPulseListener?.invoke(rmsdB)
+                            }
+                        }
+                        override fun onBufferReceived(buffer: ByteArray?) {}
+                        override fun onEndOfSpeech() {}
+                        override fun onError(error: Int) {
+                            if (isListening) {
+                                onSpeechSessionResetListener?.invoke()
+                                mainHandler.postDelayed({
+                                    if (isListening) {
+                                        try { speechRecognizer?.startListening(intent) } catch (_: Exception) {}
+                                    }
+                                }, 180L)
+                            }
+                        }
+                        override fun onResults(results: Bundle?) {
+                            val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                            if (!matches.isNullOrEmpty()) {
+                                val words = matches.first().lowercase().split(Regex("\\s+")).filter { it.isNotBlank() }
+                                onSpeechRecognizedWords(words)
+                                onRecognizedWordsListener?.invoke(words)
+                            }
+                            onSpeechSessionResetListener?.invoke()
+                            if (isListening) {
+                                mainHandler.postDelayed({
+                                    if (isListening) {
+                                        try { speechRecognizer?.startListening(intent) } catch (_: Exception) {}
+                                    }
+                                }, 140L)
+                            }
+                        }
+                        override fun onPartialResults(partialResults: Bundle?) {
+                            val matches = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                            if (!matches.isNullOrEmpty()) {
+                                val words = matches.first().lowercase().split(Regex("\\s+")).filter { it.isNotBlank() }
+                                onSpeechRecognizedWords(words)
+                                onRecognizedWordsListener?.invoke(words)
+                            }
+                        }
+                        override fun onEvent(eventType: Int, params: Bundle?) {}
+                    })
+                    onSpeechSessionResetListener?.invoke()
+                    speechRecognizer?.startListening(intent)
+                } else {
+                    onFallbackTick()
                 }
-                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-                    putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-                    putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US")
-                    putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
-                }
-                speechRecognizer?.setRecognitionListener(object : RecognitionListener {
-                    override fun onReadyForSpeech(params: Bundle?) {
-                        onMoodChanged(BuddyMood.LISTENING)
-                    }
-                    override fun onBeginningOfSpeech() {}
-                    override fun onRmsChanged(rmsdB: Float) {
-                        if (isListening && rmsdB > 2.0f) {
-                            mainHandler.post { onVoiceRmsPulseListener?.invoke(rmsdB) }
-                        }
-                    }
-                    override fun onBufferReceived(buffer: ByteArray?) {}
-                    override fun onEndOfSpeech() {}
-                    override fun onError(error: Int) {
-                        if (isListening) {
-                            onFallbackTick()
-                            mainHandler.postDelayed({
-                                if (isListening) {
-                                    try { speechRecognizer?.startListening(intent) } catch (_: Exception) {}
-                                }
-                            }, 220L)
-                        }
-                    }
-                    override fun onResults(results: Bundle?) {
-                        val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                        if (!matches.isNullOrEmpty()) {
-                            val words = matches.first().lowercase().split(Regex("\\s+")).filter { it.isNotBlank() }
-                            onSpeechRecognizedWords(words)
-                            mainHandler.post { onRecognizedWordsListener?.invoke(words) }
-                        } else if (isListening) {
-                            onFallbackTick()
-                        }
-                        if (isListening) {
-                            mainHandler.postDelayed({
-                                if (isListening) {
-                                    try { speechRecognizer?.startListening(intent) } catch (_: Exception) {}
-                                }
-                            }, 160L)
-                        }
-                    }
-                    override fun onPartialResults(partialResults: Bundle?) {
-                        val matches = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                        if (!matches.isNullOrEmpty()) {
-                            val words = matches.first().lowercase().split(Regex("\\s+")).filter { it.isNotBlank() }
-                            onSpeechRecognizedWords(words)
-                            mainHandler.post { onRecognizedWordsListener?.invoke(words) }
-                        }
-                    }
-                    override fun onEvent(eventType: Int, params: Bundle?) {}
-                })
-                speechRecognizer?.startListening(intent)
-            } else {
-                playSuccessChime()
+            } catch (_: Exception) {
                 onFallbackTick()
             }
-        } catch (_: Exception) {
-            playSuccessChime()
-            onFallbackTick()
         }
     }
 

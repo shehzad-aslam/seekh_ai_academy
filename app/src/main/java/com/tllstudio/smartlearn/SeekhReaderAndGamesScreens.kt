@@ -47,6 +47,79 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+// Accent- & Phonetics-Aware Spoken Word Matcher for Live Microphone Reading:
+// Matches the exact word spoken by the user (including common homophones, plural/tense stems, and 1-char phonetic variations) without ever advancing on noise or silence!
+private fun isSpokenStoryWordMatch(spokenRaw: String, targetRaw: String): Boolean {
+    val s = spokenRaw.lowercase().replace(Regex("[^a-z0-9]"), "")
+    val t = targetRaw.lowercase().replace(Regex("[^a-z0-9]"), "")
+    if (s.isEmpty() || t.isEmpty()) return false
+    if (s == t) return true
+
+    // Common sight-word & homophone equivalents in English speech recognition
+    val homophones = mapOf(
+        "a" to setOf("uh", "ah", "an", "the"),
+        "the" to setOf("da", "tha", "thee", "a", "de"),
+        "to" to setOf("too", "two", "2", "tu"),
+        "for" to setOf("four", "4", "fur"),
+        "our" to setOf("are", "hour"),
+        "in" to setOf("inn", "en", "on"),
+        "on" to setOf("in", "an"),
+        "one" to setOf("1", "won"),
+        "two" to setOf("2", "to", "too"),
+        "three" to setOf("3", "tree"),
+        "four" to setOf("4", "for"),
+        "five" to setOf("5"),
+        "eight" to setOf("8", "ate"),
+        "hundred" to setOf("100"),
+        "sun" to setOf("son"),
+        "see" to setOf("sea", "c"),
+        "red" to setOf("read"),
+        "read" to setOf("red", "reed"),
+        "here" to setOf("hear"),
+        "there" to setOf("their", "theyre"),
+        "right" to setOf("write"),
+        "know" to setOf("no"),
+        "by" to setOf("buy", "bye"),
+        "lara" to setOf("laura", "lira", "larah"),
+        "lulu" to setOf("lalu", "lou", "lolo"),
+        "manto" to setOf("mento", "minto", "mantis"),
+        "miya" to setOf("mia", "maya"),
+        "sipho" to setOf("sifo", "sepho"),
+        "sesa" to setOf("sisa", "ceca"),
+        "bibi" to setOf("bb", "beebee", "baby")
+    )
+    if (homophones[t]?.contains(s) == true) return true
+
+    // Singular/plural or common suffix stem match (e.g. "marigold" vs "marigolds", "walk" vs "walks")
+    val sStem = s.removeSuffix("s").removeSuffix("es").removeSuffix("ed").removeSuffix("ing")
+    val tStem = t.removeSuffix("s").removeSuffix("es").removeSuffix("ed").removeSuffix("ing")
+    if (sStem.length >= 3 && sStem == tStem) return true
+
+    // Prefix match for 4+ letter words as partial speech recognition streams in (e.g. "morn" -> "morning")
+    if (t.length >= 4 && s.length >= 3 && (t.startsWith(s) || s.startsWith(t))) return true
+
+    // Levenshtein edit distance <= 1 for 4-5 letter words, <= 2 for 6+ letter words
+    if (t.length >= 4 && s.length >= 3 && kotlin.math.abs(s.length - t.length) <= 2) {
+        val dp = Array(s.length + 1) { IntArray(t.length + 1) }
+        for (i in 0..s.length) dp[i][0] = i
+        for (j in 0..t.length) dp[0][j] = j
+        for (i in 1..s.length) {
+            for (j in 1..t.length) {
+                val cost = if (s[i - 1] == t[j - 1]) 0 else 1
+                dp[i][j] = minOf(
+                    dp[i - 1][j] + 1,
+                    dp[i][j - 1] + 1,
+                    dp[i - 1][j - 1] + cost
+                )
+            }
+        }
+        val maxAllowedDist = if (t.length >= 6) 2 else 1
+        if (dp[s.length][t.length] <= maxAllowedDist) return true
+    }
+
+    return false
+}
+
 // 1. Exact Reference Full-Screen Snapping Vertical Pager Story Book Reader Flow (matching Read Along by Google!):
 //    Every page occupies the full screen (no card borders around pages) inside a VerticalPager so as soon as you scroll vertically, the next full-screen illustrated page slides in and snaps cleanly into place!
 @OptIn(ExperimentalLayoutApi::class)
@@ -141,7 +214,7 @@ fun InteractiveStoryReaderScreen(
         }
     }
 
-    // Connect live Android TTS word-range boundaries & SpeechRecognizer callbacks to move the cursor word-by-word as words are spoken!
+    // Connect live Android TTS word-range boundaries & SpeechRecognizer callbacks to move the cursor word-by-word ONLY as words are actually spoken!
     DisposableEffect(voiceEngine, pageIndex, isMicActive, isAutoReadingActive) {
         val activePgIdx = pageIndex
         val activePg = book.pages.getOrElse(activePgIdx) { book.pages.first() }
@@ -171,43 +244,51 @@ fun InteractiveStoryReaderScreen(
             }
         }
 
+        // Tracks how many spoken tokens in the current SpeechRecognizer session have already been matched
+        var consumedUtteranceTokens = 0
+
+        voiceEngine?.onSpeechSessionResetListener = {
+            consumedUtteranceTokens = 0
+        }
+
         voiceEngine?.onRecognizedWordsListener = { spokenWords ->
             if (isMicActive && activeWords.isNotEmpty() && spokenWords.isNotEmpty()) {
                 var currentCursor = pageReadWordCounts[activePgIdx] ?: 0
-                val cleanSpoken = spokenWords.map { it.lowercase().replace(Regex("[^a-z]"), "") }.filter { it.isNotEmpty() }
-                for (sw in cleanSpoken) {
-                    if (currentCursor >= activeWords.size) break
-                    val targetClean = activeWords[currentCursor].lowercase().replace(Regex("[^a-z]"), "")
-                    val isMatch = targetClean.isEmpty() ||
-                        sw == targetClean ||
-                        (sw.length >= 2 && targetClean.startsWith(sw.take(2))) ||
-                        (targetClean.length >= 2 && sw.startsWith(targetClean.take(2)))
-                    if (isMatch) {
-                        currentCursor++
+                val cleanSpoken = spokenWords.map { it.lowercase().replace(Regex("[^a-z0-9]"), "") }.filter { it.isNotEmpty() }
+                if (cleanSpoken.isNotEmpty() && currentCursor < activeWords.size) {
+                    val startIdx = if (cleanSpoken.size > consumedUtteranceTokens) {
+                        consumedUtteranceTokens
+                    } else {
+                        (cleanSpoken.size - 1).coerceAtLeast(0)
+                    }
+                    for (tokenIdx in startIdx until cleanSpoken.size) {
+                        if (currentCursor >= activeWords.size) break
+                        val sw = cleanSpoken[tokenIdx]
+                        val targetClean = activeWords[currentCursor].lowercase().replace(Regex("[^a-z0-9]"), "")
+                        if (targetClean.isEmpty() || isSpokenStoryWordMatch(sw, targetClean)) {
+                            currentCursor++
+                            consumedUtteranceTokens = tokenIdx + 1
+                        } else if (currentCursor + 1 < activeWords.size) {
+                            // If a short sight word (like "a", "the", "in") was merged/skipped and the user spoke the next word:
+                            val nextTargetClean = activeWords[currentCursor + 1].lowercase().replace(Regex("[^a-z0-9]"), "")
+                            if (targetClean.length <= 3 && isSpokenStoryWordMatch(sw, nextTargetClean)) {
+                                currentCursor += 2
+                                consumedUtteranceTokens = tokenIdx + 1
+                            }
+                        }
+                    }
+                    if (currentCursor != (pageReadWordCounts[activePgIdx] ?: 0)) {
+                        setPageReadWordCount(activePgIdx, currentCursor.coerceAtMost(activeWords.size))
                     }
                 }
-                // Even if child's pronunciation differed, advance by at least 1 word when a spoken word burst arrives
-                val curr = pageReadWordCounts[activePgIdx] ?: 0
-                val nextCursor = maxOf(currentCursor, curr + 1).coerceAtMost(activeWords.size)
-                setPageReadWordCount(activePgIdx, nextCursor)
             }
         }
 
-        voiceEngine?.onVoiceRmsPulseListener = { rmsdB ->
-            if (isMicActive && activeWords.isNotEmpty() && rmsdB > 2.4f) {
-                val now = System.currentTimeMillis()
-                if (now - lastRmsAdvanceTimeMs >= 320L) {
-                    lastRmsAdvanceTimeMs = now
-                    val curr = pageReadWordCounts[activePgIdx] ?: 0
-                    if (curr < activeWords.size) {
-                        setPageReadWordCount(activePgIdx, curr + 1)
-                    }
-                }
-            }
-        }
+        voiceEngine?.onVoiceRmsPulseListener = null
 
         onDispose {
             voiceEngine?.onTtsWordRangeListener = null
+            voiceEngine?.onSpeechSessionResetListener = null
             voiceEngine?.onRecognizedWordsListener = null
             voiceEngine?.onVoiceRmsPulseListener = null
         }
@@ -306,7 +387,7 @@ fun InteractiveStoryReaderScreen(
     }
 
     // USER SPEAKING MODE ("🎤 Speak"):
-    // When WE are speaking into the microphone, the cursor moves word-by-word, and as soon as the page completes, the next page comes up AUTOMATICALLY ("agr hm bol rha ho tu next page auto aa jya")!
+    // Starts real microphone speech recognition — ZERO auto-timers! The pointer ONLY moves as you speak each word!
     LaunchedEffect(isMicActive, pageIndex) {
         val activePgIdx = pagerState.currentPage
         if (isMicActive && activePgIdx in 0 until book.pages.size) {
@@ -316,28 +397,26 @@ fun InteractiveStoryReaderScreen(
                 setPageReadWordCount(activePgIdx, 0)
             }
             onStartListening {}
+        }
+    }
 
-            while (isMicActive && pagerState.currentPage == activePgIdx) {
-                delay(330)
-                val currentRead = pageReadWordCounts[activePgIdx] ?: 0
-                if (currentRead < activeWords.size) {
-                    val nextRead = (currentRead + 1).coerceAtMost(activeWords.size)
-                    setPageReadWordCount(activePgIdx, nextRead)
-                }
-                val updatedRead = pageReadWordCounts[activePgIdx] ?: 0
-                if (updatedRead >= activeWords.size) {
-                    awardPageStarsOnce(activePgIdx, 15)
-                    delay(360)
-                    if (pagerState.currentPage == activePgIdx) {
-                        if (activePgIdx < book.pages.size - 1) {
-                            pagerState.animateScrollToPage(activePgIdx + 1)
-                        } else {
-                            isMicActive = false
-                            onStopListening()
-                            pagerState.animateScrollToPage(book.pages.size)
-                        }
+    // Auto-Next-Page Snapping when USER finishes speaking all words on the current page in "🎤 Speak" mode!
+    val currentPageReadCount = pageReadWordCounts[pageIndex] ?: 0
+    LaunchedEffect(isMicActive, pageIndex, currentPageReadCount) {
+        val activePgIdx = pagerState.currentPage
+        if (isMicActive && activePgIdx in 0 until book.pages.size && activePgIdx == pageIndex) {
+            val activeWords = book.pages[activePgIdx].text.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
+            if (activeWords.isNotEmpty() && currentPageReadCount >= activeWords.size) {
+                awardPageStarsOnce(activePgIdx, 15)
+                delay(360)
+                if (isMicActive && pagerState.currentPage == activePgIdx) {
+                    if (activePgIdx < book.pages.size - 1) {
+                        pagerState.animateScrollToPage(activePgIdx + 1)
+                    } else {
+                        isMicActive = false
+                        onStopListening()
+                        pagerState.animateScrollToPage(book.pages.size)
                     }
-                    break
                 }
             }
         }
