@@ -1455,6 +1455,1524 @@ object SeekhCatalog {
                     StoryQuizQuestion("What tool do astronomers use to study distant planets and galaxies?", listOf("Powerful telescopes", "Pocket umbrellas", "Kitchen spoons"), 0)
                 )
             )
+        ),
+
+        // 37. Level 1 • Animals & Nature: "Sunny Garden Walk"
+        StoryBook(
+            id = "book_sunny_garden_walk",
+            title = "Sunny Garden Walk",
+            nativeTitleUrdu = "روشن باغ کی صبح کی سیر",
+            nativeTitleHindi = "धूप भरे बग़ीचे की सैर",
+            author = "Catherine Holtzhausen",
+            illustrator = "Catherine Holtzhausen",
+            publisher = "Book Dash • StoryWeaver",
+            level = 1,
+            coverAssetPath = "books/sw_13916/image_1.webp",
+            categoryTag = "Animals & Nature",
+            isDailyDrop = true,
+            pages = listOf(
+                StoryPage(1, "books/sw_13916/image_1.webp", "The morning sun shines on the green garden leaves and bright wildflowers.", "El sol de la mañana brilla sobre las hojas verdes.", "صبح کا سورج باغ کے ہرے پتوں اور رنگین پھولوں پر چمکتا ہے۔", "सुबह का सूरज बग़ीचे के हरे पत्तों और फूलों पर चमकता है।", setOf("morning", "garden", "leaves")),
+                StoryPage(2, "books/sw_13916/image_2.webp", "Lara the little yellow ladybird wakes up on a soft leaf and smiles at the sky.", "Lara la mariquita amarilla despierta en una hoja suave.", "ننھی پیلی لیڈی برڈ لارا ایک نرم پتے پر جاگتی ہے اور آسمان کو دیکھ کر مسکراتی ہے۔", "नन्ही पीली लेडीबर्ड लारा एक नरम पत्ते पर जागती है और मुस्कुराती है।", setOf("ladybird", "yellow", "sky")),
+                StoryPage(3, "books/sw_13916/image_4.webp", "All the garden bugs come out to enjoy the warm morning sunlight together!", "Todos los bichitos salen a disfrutar del sol.", "باغ کے تمام ننھے کیڑے مل کر صبح کی میٹھی دھوپ کا مزہ لینے باہر آتے ہیں!", "बग़ीचे के सभी नन्हे दोस्त सुबह की धूप का आनंद लेने बाहर आते हैं!", setOf("friends", "sunlight"),
+                    StoryQuizQuestion("Where does Lara wake up in the morning?", listOf("On a soft green garden leaf", "Inside a train", "Under the ocean"), 0)
+                )
+            )
+        ),
+
+        // 38. Level 1 • Animals & Nature: "Two Little Ladybirds"
+        StoryBook(
+            id = "book_two_ladybirds",
+            title = "Two Little Ladybirds",
+            nativeTitleUrdu = "دو ننھی لیڈی برڈز کی دوستی",
+            nativeTitleHindi = "दो नन्ही लेडीबर्ड्स की दोस्ती",
+            author = "Nadene Kriel",
+            illustrator = "Catherine Holtzhausen",
+            publisher = "Book Dash • StoryWeaver",
+            level = 1,
+            coverAssetPath = "books/sw_13916/image_3.webp",
+            categoryTag = "Animals & Nature",
+            bookType = "DECODABLE",
+            phonicsSkillTag = "Phonics: y • r • w",
+            pages = listOf(
+                StoryPage(1, "books/sw_13916/image_3.webp", "One ladybird has bright yellow wings, and her friend has bright red wings.", "Una mariquita tiene alas amarillas y su amiga alas rojas.", "ایک لیڈی برڈ کے چمکدار پیلے پر ہیں اور اس کی سہیلی کے چمکدار سرخ پر ہیں۔", "एक लेडीबर्ड के पीले पंख हैं और उसकी सहेली के लाल पंख हैं।", setOf("ladybird", "yellow", "red", "wings")),
+                StoryPage(2, "books/sw_13916/image_4.webp", "They hop from flower to flower counting golden petals in the breeze.", "Saltan de flor en flor contando pétalos.", "وہ ہوا میں ایک پھول سے دوسرے پھول پر کودتی ہیں اور سنہری پتیاں گنتی ہیں۔", "वे एक फूल से दूसरे फूल पर जाकर सुनहरी पंखुड़ियाँ गिनती हैं।", setOf("flowers", "golden")),
+                StoryPage(3, "books/sw_13916/image_5.webp", "Yellow and red look so cheerful together in the green meadow!", "El amarillo y el rojo se ven alegres juntos.", "ہرے باغ میں پیلا اور سرخ رنگ ایک ساتھ بے حد خوبصورت لگتے ہیں!", "हरे बग़ीचे में पीला और लाल रंग एक साथ बहुत सुंदर लगते हैं!", setOf("yellow", "red", "green"),
+                    StoryQuizQuestion("What two wing colors do the ladybird friends have?", listOf("Bright yellow and bright red", "Black and grey", "Blue and brown"), 0)
+                )
+            )
+        ),
+
+        // 39. Level 1 • School & Kindness: "Hello Miss Miya!"
+        StoryBook(
+            id = "book_hello_miss_miya",
+            title = "Hello Miss Miya!",
+            nativeTitleUrdu = "مس میا کی پیاری کلاس",
+            nativeTitleHindi = "मिस मिया की प्यारी कक्षा",
+            author = "Catherine Holtzhausen",
+            illustrator = "Catherine Holtzhausen",
+            publisher = "Book Dash • StoryWeaver",
+            level = 1,
+            coverAssetPath = "books/sw_13916/image_13.webp",
+            categoryTag = "School & Kindness",
+            bookSource = "CLASSROOM",
+            assignedByTeacher = "Miss Miya • Grade 1",
+            pages = listOf(
+                StoryPage(1, "books/sw_13916/image_7.webp", "The school bell rings in the garden and all the little bugs take their seats.", "La campana suena y todos toman asiento.", "باغ میں اسکول کی گھنٹی بجتی ہے اور تمام ننھے طالب علم اپنی نشستوں پر بیٹھ جاتے ہیں۔", "बग़ीचे में स्कूल की घंटी बजती है और सभी बच्चे अपनी जगह पर बैठते हैं।", setOf("school", "friends")),
+                StoryPage(2, "books/sw_13916/image_13.webp", "\"Good morning, class!\" says Miss Miya with a warm and gentle smile.", "Buenos días clase, dice la maestra con una sonrisa.", "صبح بخیر بچو! مس میا بڑی شفقت اور پیاری مسکراہٹ کے ساتھ کہتی ہیں۔", "\"सुप्रभात बच्चों!\" मिस मिया प्यारी मुस्कान के साथ कहती हैं।", setOf("morning", "teacher", "smile")),
+                StoryPage(3, "books/sw_13916/image_15.webp", "Miss Miya teaches everyone to share books, help friends, and be kind every day!", "La maestra enseña a compartir libros y ser amables.", "مس میا سب کو کتابیں بانٹنا، دوستوں کی مدد کرنا اور ہر روز مہربان رہنا سکھاتی ہیں!", "मिस मिया सबको किताबें बाँटना और दोस्तों की मदद करना सिखाती हैं!", setOf("books", "friends", "teacher"),
+                    StoryQuizQuestion("Who is the kind teacher at the garden bug school?", listOf("Miss Miya", "Captain Zara", "Grandpa Farouk"), 0)
+                )
+            )
+        ),
+
+        // 40. Level 1 • Family & Friends: "Mama Ladybird's Hug"
+        StoryBook(
+            id = "book_mama_ladybird_hug",
+            title = "Mama Ladybird's Hug",
+            nativeTitleUrdu = "امی لیڈی برڈ کا پیار",
+            nativeTitleHindi = "माँ लेडीबर्ड का प्यार",
+            author = "Nadene Kriel",
+            illustrator = "Catherine Holtzhausen",
+            publisher = "Book Dash • StoryWeaver",
+            level = 1,
+            coverAssetPath = "books/sw_13916/image_8.webp",
+            categoryTag = "Family & Friends",
+            pages = listOf(
+                StoryPage(1, "books/sw_13916/image_8.webp", "Whenever little Lara feels sad, she talks to her loving Mama.", "Cuando Lara se siente triste, habla con su mamá.", "جب بھی ننھی لارا اداس ہوتی ہے تو وہ اپنی پیاری امی سے بات کرتی ہے۔", "जब भी नन्ही लारा उदास होती है, वह अपनी प्यारी माँ से बात करती है।", setOf("mother", "ladybird")),
+                StoryPage(2, "books/sw_13916/image_9.webp", "Mama listens carefully and cheers Lara up with a fun art project.", "Mamá la escucha y la alegra con pintura.", "امی غور سے اس کی بات سنتی ہیں اور مزیدار رنگوں سے اس کا دل بہلاتی ہیں۔", "माँ ध्यान से उसकी बात सुनती हैं और उसे खुश करती हैं।", setOf("painted", "happy")),
+                StoryPage(3, "books/sw_13916/image_17.webp", "A warm hug from Mama always makes Lara smile again!", "Un abrazo de mamá siempre la hace sonreír.", "امی کے پیار بھرے گلے لگانے سے لارا کے چہرے پر ہمیشہ مسکراہٹ لوٹ آتی ہے!", "माँ के प्यार से गले लगाने पर लारा फिर से मुस्कुरा उठती है!", setOf("mother", "smile"),
+                    StoryQuizQuestion("What always makes little Lara smile again?", listOf("A warm hug from her Mama", "A cold rainstorm", "Losing her shoe"), 0)
+                )
+            )
+        ),
+
+        // 41. Level 1 • Numbers & Rhymes: "One Round Red Ball"
+        StoryBook(
+            id = "book_one_round_ball",
+            title = "One Round Red Ball",
+            nativeTitleUrdu = "ایک گول سرخ گیند",
+            nativeTitleHindi = "एक गोल लाल गेंद",
+            author = "Marion Drew",
+            illustrator = "Marion Drew",
+            publisher = "Pratham Books • StoryWeaver",
+            level = 1,
+            coverAssetPath = "books/sw_15195/image_2.webp",
+            categoryTag = "Numbers & Rhymes",
+            bookType = "DECODABLE",
+            phonicsSkillTag = "Phonics: b • r • d",
+            isDailyDrop = true,
+            pages = listOf(
+                StoryPage(1, "books/sw_15195/image_2.webp", "One round red ball rests on the soft green grass in the morning sun.", "Una pelota roja descansa en la hierba verde.", "ایک گول سرخ گیند صبح کی دھوپ میں نرم ہری گھاس پر رکھی ہے۔", "एक गोल लाल गेंद सुबह की धूप में हरी घास पर रखी है।", setOf("red", "ball", "green")),
+                StoryPage(2, "books/sw_15195/image_3.webp", "Two happy hands pick up the red ball and toss it gently into the air.", "Dos manos felices toman la pelota roja.", "دو خوش ہاتھ سرخ گیند کو اٹھاتے ہیں اور ہلکے سے ہوا میں اچھالتے ہیں۔", "दो हाथ लाल गेंद को उठाते हैं और हवा में उछालते हैं।", setOf("red", "ball", "play")),
+                StoryPage(3, "books/sw_15195/image_6.webp", "One, two, three—kick the ball and watch it roll across the lawn!", "Uno, dos, tres: patea la pelota.", "ایک، دو، تین—گیند کو کک مارو اور اسے لان میں لڑھکتے ہوئے دیکھو!", "एक, दो, तीन—गेंद को किक मारो और उसे घास पर लुढ़कते देखो!", setOf("ball", "play"),
+                    StoryQuizQuestion("What shape and color is the ball on the grass?", listOf("Round and red", "Square and blue", "Triangle and grey"), 0)
+                )
+            )
+        ),
+
+        // 42. Level 1 • Science & Weather: "My Bright Red Raincoat"
+        StoryBook(
+            id = "book_bright_red_raincoat",
+            title = "My Bright Red Raincoat",
+            nativeTitleUrdu = "میرا چمکدار سرخ برساتی کوٹ",
+            nativeTitleHindi = "मेरा चमकीला लाल रेनकोट",
+            author = "Khothatso Ranoosi",
+            illustrator = "Marion Drew",
+            publisher = "Pratham Books • StoryWeaver",
+            level = 1,
+            coverAssetPath = "books/sw_15195/image_1.webp",
+            categoryTag = "Science & Weather",
+            pages = listOf(
+                StoryPage(1, "books/sw_15195/image_1.webp", "When grey clouds gather in the sky, I put on my bright red raincoat.", "Cuando llegan las nubes, me pongo mi impermeable rojo.", "جب آسمان میں سرمئی بادل آتے ہیں تو میں اپنا چمکدار سرخ برساتی کوٹ پہن لیتا ہوں۔", "जब आसमान में बादल आते हैं, तो मैं अपना लाल रेनकोट पहन लेता हूँ।", setOf("clouds", "raincoat", "red")),
+                StoryPage(2, "books/sw_15195/image_4.webp", "My red raincoat has a warm hood that keeps my head dry in the rain.", "Tiene una capucha que me mantiene seco.", "میرے سرخ برساتی کوٹ کی ٹوپی بارش میں میرے سر کو بالکل خشک رکھتی ہے۔", "मेरे लाल रेनकोट की टोपी बारिश में मुझे सूखा रखती है।", setOf("raincoat", "rain")),
+                StoryPage(3, "books/sw_15195/image_5.webp", "I splash in the garden puddles and play with my big red ball!", "Juego con mi gran pelota roja.", "میں باغ کے پانی میں چھپاکے مارتا ہوں اور اپنی بڑی سرخ گیند سے کھیلتا ہوں!", "मैं बग़ीचे में अपनी बड़ी लाल गेंद के साथ खेलता हूँ!", setOf("ball", "play", "garden"),
+                    StoryQuizQuestion("What keeps the child dry when rain falls from the clouds?", listOf("A bright red raincoat", "A paper hat", "A glass teacup"), 0)
+                )
+            )
+        ),
+
+        // 43. Level 1 • Adventure & Travel: "Where Did My Ball Go?"
+        StoryBook(
+            id = "book_where_did_ball_go",
+            title = "Where Did My Ball Go?",
+            nativeTitleUrdu = "میری گیند کہاں چلی گئی؟",
+            nativeTitleHindi = "मेरी गेंद कहाँ चली गई?",
+            author = "Marion Drew",
+            illustrator = "Marion Drew",
+            publisher = "Pratham Books • StoryWeaver",
+            level = 1,
+            coverAssetPath = "books/sw_15195/image_11.webp",
+            categoryTag = "Adventure & Travel",
+            bookType = "SERIES",
+            seriesTag = "Red Ball Adventures • Ep 1",
+            pages = listOf(
+                StoryPage(1, "books/sw_15195/image_10.webp", "I kicked my bouncy red ball so hard that it zoomed over the garden wall!", "Pateé mi pelota tan fuerte que voló sobre el muro.", "میں نے اپنی سرخ گیند کو اتنی زور سے کک ماری کہ وہ باغ کی دیوار کے اوپر سے نکل گئی!", "मैंने अपनी लाल गेंद को इतनी ज़ोर से किक मारी कि वह दीवार के पार चली गई!", setOf("ball", "garden")),
+                StoryPage(2, "books/sw_15195/image_11.webp", "I look behind the green bushes and under the wooden bench. Where is it?", "Busco detrás de los arbustos verdes.", "میں ہری جھاڑیوں کے پیچھے اور لکڑی کے بینچ کے نیچے دیکھتا ہوں۔ وہ کہاں ہے؟", "मैं हरी झाड़ियों के पीछे और बेंच के नीचे ढूँढता हूँ।", setOf("green", "trees")),
+                StoryPage(3, "books/sw_15195/image_14.webp", "There it is! My red ball is bouncing high above the treetops!", "Allí está, volando sobre los árboles.", "وہ رہی! میری سرخ گیند درختوں کی چوٹیوں کے اوپر اچھل رہی ہے!", "वह रही! मेरी लाल गेंद पेड़ों के ऊपर उछल रही है!", setOf("ball", "trees"),
+                    StoryQuizQuestion("Where did the child finally spot the red ball?", listOf("High above the treetops", "Inside the kitchen pot", "Under the pillow"), 0)
+                )
+            )
+        ),
+
+        // 44. Level 1 • Family & Friends: "My Favorite Picture Book"
+        StoryBook(
+            id = "book_favorite_picture_book",
+            title = "My Favorite Picture Book",
+            nativeTitleUrdu = "میری پسندیدہ تصویروں والی کتاب",
+            nativeTitleHindi = "मेरी पसंदीदा चित्रों वाली किताब",
+            author = "Letta Machoga",
+            illustrator = "Wiehan de Jager",
+            publisher = "African Storybook • StoryWeaver",
+            level = 1,
+            coverAssetPath = "books/sw_15058/image_1.webp",
+            categoryTag = "Family & Friends",
+            isDailyDrop = true,
+            pages = listOf(
+                StoryPage(1, "books/sw_15058/image_1.webp", "I hold my favorite picture book in the sunny courtyard.", "Sostengo mi libro favorito en el patio soleado.", "میں دھوپ والے صحن میں اپنی پسندیدہ تصویروں والی کتاب ہاتھ میں پکڑتا ہوں۔", "मैं धूप वाले आँगन में अपनी पसंदीदा किताब हाथ में पकड़ता हूँ।", setOf("books", "sunlight")),
+                StoryPage(2, "books/sw_15058/image_2.webp", "Every page has bright drawings of animals, trees, and smiling children.", "Cada página tiene dibujos brillantes.", "ہر صفحے پر جانوروں، درختوں اور مسکراتے بچوں کی روشن تصاویر بنی ہیں۔", "हर पन्ने पर जानवरों, पेड़ों और मुस्कुराते बच्चों के सुंदर चित्र हैं।", setOf("bright", "trees")),
+                StoryPage(3, "books/sw_15058/image_9.webp", "Reading my storybook makes every single day an exciting adventure!", "Leer mi libro hace que cada día sea una aventura.", "اپنی کہانی کی کتاب پڑھنا ہر دن کو ایک دلچسپ مہم بنا دیتا ہے!", "कहानी की किताब पढ़ना हर दिन को मज़ेदार बना देता है!", setOf("read", "story", "books"),
+                    StoryQuizQuestion("What is inside the boy's favorite picture book?", listOf("Bright drawings of animals, trees, and children", "Only blank white pages", "Muddy shoes"), 0)
+                )
+            )
+        ),
+
+        // 45. Level 1 • Family & Friends: "Grandpa Farouk's Garden"
+        StoryBook(
+            id = "book_grandpa_garden",
+            title = "Grandpa Farouk's Garden",
+            nativeTitleUrdu = "دادا فاروق کا ہرا بھرا باغ",
+            nativeTitleHindi = "दादा फ़ारूक़ का हरा-भरा बग़ीचा",
+            author = "Letta Machoga",
+            illustrator = "Wiehan de Jager",
+            publisher = "African Storybook • StoryWeaver",
+            level = 1,
+            coverAssetPath = "books/sw_15058/image_7.webp",
+            categoryTag = "Family & Friends",
+            pages = listOf(
+                StoryPage(1, "books/sw_15058/image_7.webp", "Outside our home, Grandfather Farouk grows tall trees and golden marigolds.", "Afuera el abuelo cultiva árboles altos y flores.", "ہمارے گھر کے باہر دادا فاروق اونچے درخت اور گیندے کے سنہری پھول اگاتے ہیں۔", "हमारे घर के बाहर दादा फ़ारूक़ ऊँचे पेड़ और गेंदे के फूल उगाते हैं।", setOf("grandfather", "trees", "marigolds")),
+                StoryPage(2, "books/sw_15058/image_8.webp", "Father helps Grandfather water the green plants every morning.", "Papá ayuda al abuelo a regar las plantas.", "ابو ہر صبح پودوں کو پانی دینے میں دادا جان کی مدد کرتے ہیں۔", "पिताजी हर सुबह पौधों को पानी देने में दादाजी की मदद करते हैं।", setOf("father", "grandfather", "water")),
+                StoryPage(3, "books/sw_15058/image_1.webp", "After watering the garden, we sit in the shade and read a story together!", "Después nos sentamos a la sombra a leer.", "باغ کو پانی دینے کے بعد ہم سائے میں بیٹھ کر مل کر کہانی پڑھتے ہیں!", "बग़ीचे में पानी देने के बाद हम छाँव में बैठकर कहानी पढ़ते हैं!", setOf("garden", "read", "story"),
+                    StoryQuizQuestion("Who helps Grandfather Farouk water the green plants?", listOf("Father", "A navy sailor", "A red crab"), 0)
+                )
+            )
+        ),
+
+        // 46. Level 1 • Animals & Nature: "Caterpillar's Morning Trail"
+        StoryBook(
+            id = "book_caterpillar_morning_trail",
+            title = "Caterpillar's Morning Trail",
+            nativeTitleUrdu = "کیٹرپلر کی صبح کی پگڈنڈی",
+            nativeTitleHindi = "कैटरपिलर की सुबह की पगडंडी",
+            author = "Somsanouk Bouttavong",
+            illustrator = "Ounla Santi",
+            publisher = "Room to Read • StoryWeaver",
+            level = 1,
+            coverAssetPath = "books/sw_37273/image_1.webp",
+            categoryTag = "Animals & Nature",
+            bookType = "DECODABLE",
+            phonicsSkillTag = "Phonics: c • t • p",
+            pages = listOf(
+                StoryPage(1, "books/sw_37273/image_1.webp", "Little green Caterpillar steps out onto the winding garden trail at sunrise.", "La pequeña oruga verde sale a caminar al amanecer.", "ننھی ہری کیٹرپلر سورج نکلتے ہی باغ کی پگڈنڈی پر سیر کے لیے نکلتی ہے۔", "नन्ही हरी कैटरपिलर सुबह बग़ीचे की पगडंडी पर सैर के लिए निकलती है।", setOf("caterpillar", "green", "garden")),
+                StoryPage(2, "books/sw_37273/image_4.webp", "Yellow daisies and soft clover leaves wave hello along the path.", "Las margaritas amarillas saludan en el camino.", "راستے میں پیلے پھول اور نرم ہری پتیاں ہوا میں جھوم کر سلام کرتی ہیں۔", "रास्ते में पीले फूल और हरी पत्तियाँ हवा में झूमकर नमस्ते कहती हैं।", setOf("yellow", "flowers", "leaves")),
+                StoryPage(3, "books/sw_37273/image_5.webp", "She walks all the way to the blue pond to say good morning to Frog!", "Camina hasta el estanque azul para saludar a la rana.", "وہ نیلے تالاب تک چل کر جاتی ہے تاکہ مینڈک کو صبح بخیر کہہ سکے!", "वह नीले तालाब तक जाकर मेंढक को सुप्रभात कहती है!", setOf("frog", "morning"),
+                    StoryQuizQuestion("Where does Caterpillar walk to say good morning to Frog?", listOf("To the blue pond", "To the train station", "To the sweet shop"), 0)
+                )
+            )
+        ),
+
+        // 47. Level 1 • Animals & Nature: "Frog's Big Green Boot"
+        StoryBook(
+            id = "book_frog_big_boot",
+            title = "Frog's Big Green Boot",
+            nativeTitleUrdu = "مینڈک کا بڑا ہرا جوتا",
+            nativeTitleHindi = "मेंढक का बड़ा हरा जूता",
+            author = "Ounla Santi",
+            illustrator = "Ounla Santi",
+            publisher = "Room to Read • StoryWeaver",
+            level = 1,
+            coverAssetPath = "books/sw_37273/image_6.webp",
+            categoryTag = "Animals & Nature",
+            pages = listOf(
+                StoryPage(1, "books/sw_37273/image_5.webp", "Friendly green Frog wears big green sneakers when he hops by the pond.", "La rana verde usa zapatillas grandes junto al estanque.", "دوستانہ ہرا مینڈک تالاب کے کنارے کودتے وقت بڑے ہرے جوتے پہنتا ہے۔", "दोस्ताना हरा मेंढक तालाब के पास बड़े हरे जूते पहनता है।", setOf("frog", "green", "shoe")),
+                StoryPage(2, "books/sw_37273/image_6.webp", "When little Caterpillar tries on Frog's shoe, she fits right inside it like a boat!", "Cuando la oruga prueba el zapato, cabe entera adentro.", "جب ننھی کیٹرپلر مینڈک کا جوتا پہنتی ہے تو وہ کشتی کی طرح پورا اس کے اندر سما جاتی ہے!", "जब नन्ही कैटरपिलर मेंढक का जूता पहनती है, तो वह नाव की तरह उसके अंदर बैठ जाती है!", setOf("caterpillar", "shoe", "frog")),
+                StoryPage(3, "books/sw_37273/image_7.webp", "Frog and Caterpillar laugh together in the warm morning sun!", "La rana y la oruga ríen juntas bajo el sol.", "مینڈک اور کیٹرپلر صبح کی گرم دھوپ میں مل کر خوشی سے ہنستے ہیں!", "मेंढक और कैटरपिलर सुबह की धूप में मिलकर हँसते हैं!", setOf("frog", "caterpillar", "happy"),
+                    StoryQuizQuestion("What happens when little Caterpillar tries on Frog's big shoe?", listOf("She fits right inside it like a little boat", "It is too tight", "It turns into a bird"), 0)
+                )
+            )
+        ),
+
+        // 48. Level 1 • Adventure & Travel: "Morning on Our Colorful Street"
+        StoryBook(
+            id = "book_morning_colorful_street",
+            title = "Morning on Our Colorful Street",
+            nativeTitleUrdu = "ہماری رنگین گلی کی خوبصورت صبح",
+            nativeTitleHindi = "हमारी रंगीन गली की सुंदर सुबह",
+            author = "Mabel Mnensa",
+            illustrator = "Ntembiso Velemane",
+            publisher = "Book Dash • StoryWeaver",
+            level = 1,
+            coverAssetPath = "books/sw_44485/image_1.webp",
+            categoryTag = "Adventure & Travel",
+            pages = listOf(
+                StoryPage(1, "books/sw_44485/image_1.webp", "Our street has bright yellow, blue, and coral houses lined with flower stalls.", "Nuestra calle tiene casas de colores brillantes.", "ہماری گلی میں پیلے، نیلے اور سرخ رنگوں کے گھر ہیں جن کے باہر پھولوں کے اسٹال لگے ہیں۔", "हमारी गली में पीले, नीले और लाल रंगों के सुंदर घर और फूलों की दुकानें हैं।", setOf("street", "colors", "flowers")),
+                StoryPage(2, "books/sw_44485/image_2.webp", "Nicole and Mom walk past the garden gate waving to their neighbors.", "Nicole y mamá saludan a sus vecinos.", "نکول اور امی باغ کے دروازے کے پاس سے گزرتے ہوئے اپنے ہمسایوں کو ہاتھ ہلاتی ہیں۔", "निकोल और माँ बग़ीचे के दरवाज़े के पास पड़ोसियों को हाथ हिलाती हैं।", setOf("garden", "gate", "friends")),
+                StoryPage(3, "books/sw_44485/image_3.webp", "Everyone shares a warm smile as a brand-new day begins in town!", "Todos comparten una sonrisa cálida.", "شہر میں نئے دن کے آغاز پر ہر کوئی ایک دوسرے کو دیکھ کر مسکراتا ہے!", "नए दिन की शुरुआत पर सब एक-दूसरे को देखकर मुस्कुराते हैं!", setOf("smile", "morning", "street"),
+                    StoryQuizQuestion("What lines the colorful street outside the bright houses?", listOf("Cheerful flower stalls and friendly neighbors", "Snowy mountains", "Deep ocean waves"), 0)
+                )
+            )
+        ),
+
+        // 49. Level 1 • Family & Friends: "A High-Five for Nicole"
+        StoryBook(
+            id = "book_high_five_nicole",
+            title = "A High-Five for Nicole",
+            nativeTitleUrdu = "نکول کی نئی سہیلی",
+            nativeTitleHindi = "निकोल की नई सहेली",
+            author = "Mabel Mnensa",
+            illustrator = "Ntembiso Velemane",
+            publisher = "Book Dash • StoryWeaver",
+            level = 1,
+            coverAssetPath = "books/sw_44485/image_5.webp",
+            categoryTag = "Family & Friends",
+            bookType = "DECODABLE",
+            phonicsSkillTag = "Phonics: h • f • n",
+            pages = listOf(
+                StoryPage(1, "books/sw_44485/image_4.webp", "Nicole steps onto the shiny silver train with her mother.", "Nicole sube al tren plateado con su mamá.", "نکول اپنی امی کے ساتھ چمکدار چاندی جیسی ٹرین میں سوار ہوتی ہے۔", "निकोल अपनी माँ के साथ चमकीली ट्रेन में चढ़ती है।", setOf("train", "mother")),
+                StoryPage(2, "books/sw_44485/image_5.webp", "A smiling little girl in a pink dress waves her hand to say hello!", "Una niña con vestido rosa saluda con la mano.", "گلابی لباس میں ایک مسکراتی ہوئی ننھی بچی ہاتھ ہلا کر ہیلو کہتی ہے!", "गुलाबी ड्रेस पहने एक नन्ही बच्ची मुस्कुराकर हेलो कहती है!", setOf("smile", "friends")),
+                StoryPage(3, "books/sw_44485/image_14.webp", "Mom nods kindly, and Nicole gives her new friend a cheerful high-five!", "Nicole choca los cinco con su nueva amiga.", "امی پیار سے سر ہلاتی ہیں اور نکول اپنی نئی سہیلی کو خوشی سے ہائی فائیو دیتی ہے!", "माँ मुस्कुराती हैं और निकोल अपनी नई सहेली से हाथ मिलाती है!", setOf("friends", "happy"),
+                    StoryQuizQuestion("What color dress is Nicole's new friend on the train wearing?", listOf("A bright pink dress", "A black raincoat", "A green uniform"), 0)
+                )
+            )
+        ),
+
+        // 50. Level 1 • School & Kindness: "Five O'Clock at the Library"
+        StoryBook(
+            id = "book_five_oclock_library",
+            title = "Five O'Clock at the Library",
+            nativeTitleUrdu = "لائبریری کی گھڑی میں پانچ بجے",
+            nativeTitleHindi = "लाइब्रेरी की घड़ी में पाँच बजे",
+            author = "Clyde Beech",
+            illustrator = "Clyde Beech",
+            publisher = "Book Dash • StoryWeaver",
+            level = 1,
+            coverAssetPath = "books/sw_45764/image_1.webp",
+            categoryTag = "School & Kindness",
+            isDailyDrop = true,
+            pages = listOf(
+                StoryPage(1, "books/sw_45764/image_1.webp", "Tick-tock! The big round clock on the library wall points to five o'clock.", "El reloj redondo de la biblioteca marca las cinco.", "ٹک ٹک! لائبریری کی دیوار پر لگی بڑی گول گھڑی پانچ بجا رہی ہے۔", "टिक-टिक! लाइब्रेरी की दीवार पर लगी गोल घड़ी में पाँच बज रहे हैं।", setOf("library", "books")),
+                StoryPage(2, "books/sw_45764/image_7.webp", "Lulu is sitting on a soft cushion reading a colorful animal book.", "Lulu lee un libro colorido de animales.", "لولو ایک نرم گدی پر بیٹھی جانوروں کی رنگین کتاب پڑھ رہی ہے۔", "लुलु एक नरम गद्दी पर बैठकर जानवरों की रंगीन किताब पढ़ रही है।", setOf("read", "books")),
+                StoryPage(3, "books/sw_45764/image_12.webp", "She borrows the book with her library card so she can keep reading at home!", "Toma prestado el libro para seguir leyendo en casa.", "وہ اپنے لائبریری کارڈ پر کتاب ادھار لے لیتی ہے تاکہ گھر جا کر بھی پڑھ سکے!", "वह अपने कार्ड से किताब घर ले जाती है ताकि घर पर भी पढ़ सके!", setOf("borrow", "library", "books"),
+                    StoryQuizQuestion("What time does the round clock on the library wall show?", listOf("Five o'clock", "Midnight", "Noon"), 0)
+                )
+            )
+        ),
+
+        // 51. Level 1 • Numbers & Rhymes: "Count the Golden Stars"
+        StoryBook(
+            id = "book_count_golden_stars",
+            title = "Count the Golden Stars",
+            nativeTitleUrdu = "آسمان کے سنہری ستارے گنو",
+            nativeTitleHindi = "आसमान के सुनहरे तारे गिनो",
+            author = "Martha Evans",
+            illustrator = "Catherine Holtzhausen",
+            publisher = "Book Dash • StoryWeaver",
+            level = 1,
+            coverAssetPath = "books/sw_13916/image_20.webp",
+            categoryTag = "Numbers & Rhymes",
+            pages = listOf(
+                StoryPage(1, "books/sw_13916/image_19.webp", "One, two, three silver stars begin to twinkle above the green hills at sunset.", "Una, dos, tres estrellas brillan sobre las colinas.", "غروبِ آفتاب کے وقت ہری پہاڑیوں کے اوپر ایک، دو، تین چمکدار ستارے ٹمٹمانے لگتے ہیں۔", "शाम ढलते ही हरी पहाड़ियों के ऊपर एक, दो, तीन तारे टिमटिमाने लगते हैं।", setOf("stars", "green")),
+                StoryPage(2, "books/sw_13916/image_20.webp", "Four, five, six glowing stars shine down on little Lara's flower bed.", "Cuatro, cinco, seis estrellas iluminan la flor de Lara.", "چار، پانچ، چھ جگمگاتے ستارے ننھی لارا کے پھولوں والے بستر پر روشنی بکھیرتے ہیں۔", "चार, पाँच, छह चमकते तारे नन्ही लारा के फूल पर रोशनी बिखेरते हैं।", setOf("stars", "flowers", "ladybird")),
+                StoryPage(3, "books/sw_15195/image_17.webp", "And one big round silver moon watches over the sleeping garden all night long!", "Y una gran luna plateada cuida el jardín.", "اور ایک بڑا گول چاند پوری رات سوتے ہوئے باغ کی رکھوالی کرتا ہے!", "और एक बड़ा गोल चाँद पूरी रात सोते हुए बग़ीचे पर चमकता है!", setOf("moon", "garden"),
+                    StoryQuizQuestion("What watches over the sleeping garden along with the twinkling stars?", listOf("One big round silver moon", "A red tram", "A kitchen stove"), 0)
+                )
+            )
+        ),
+
+        // 52. Level 1 • Family & Friends: "Helping in the Courtyard"
+        StoryBook(
+            id = "book_helping_courtyard",
+            title = "Helping in the Courtyard",
+            nativeTitleUrdu = "گھر کے صحن میں ہاتھ بٹانا",
+            nativeTitleHindi = "घर के आँगन में हाथ बँटाना",
+            author = "Letta Machoga",
+            illustrator = "Wiehan de Jager",
+            publisher = "African Storybook • StoryWeaver",
+            level = 1,
+            coverAssetPath = "books/sw_15058/image_3.webp",
+            categoryTag = "Family & Friends",
+            pages = listOf(
+                StoryPage(1, "books/sw_15058/image_3.webp", "In our family, everyone helps each other with a cheerful heart.", "En nuestra familia todos se ayudan con alegría.", "ہمارے خاندان میں ہر کوئی خوش دلی سے ایک دوسرے کا ہاتھ بٹاتا ہے۔", "हमारे परिवार में सब खुशी से एक-दूसरे की मदद करते हैं।", setOf("friends", "happy")),
+                StoryPage(2, "books/sw_15058/image_6.webp", "Mother and Grandmother prepare delicious food in the clean kitchen.", "Mamá y la abuela preparan comida deliciosa.", "امی اور دادی جان صاف ستھرے باورچی خانے میں مزیدار کھانا تیار کرتی ہیں۔", "माँ और दादीजी रसोई में स्वादिष्ट भोजन बनाती हैं।", setOf("mother", "grandmother")),
+                StoryPage(3, "books/sw_15058/image_8.webp", "And when the chores are done, I read a happy story to the whole family!", "Cuando terminan las tareas, leo un cuento a todos.", "اور جب سارے کام مکمل ہو جاتے ہیں تو میں پورے خاندان کو ایک پیاری کہانی پڑھ کر سناتا ہوں!", "और जब काम पूरा हो जाता है, तो मैं पूरे परिवार को कहानी सुनाता हूँ!", setOf("read", "story"),
+                    StoryQuizQuestion("What does the boy do for the whole family when the chores are done?", listOf("Reads a happy story to everyone", "Breaks the fence", "Hides the shoes"), 0)
+                )
+            )
+        ),
+
+        // 53. Level 2 • Animals & Nature: "Sesa the Friendly Spider"
+        StoryBook(
+            id = "book_sesa_friendly_spider",
+            title = "Sesa the Friendly Spider",
+            nativeTitleUrdu = "سیسا مکڑی کا چاندی جیسا جالا",
+            nativeTitleHindi = "सेसा मकड़ी का चाँदी जैसा जाला",
+            author = "Catherine Holtzhausen",
+            illustrator = "Catherine Holtzhausen",
+            publisher = "Book Dash • StoryWeaver",
+            level = 2,
+            coverAssetPath = "books/sw_13916/image_6.webp",
+            categoryTag = "Animals & Nature",
+            bookType = "SERIES",
+            seriesTag = "Garden Series • Ep 5",
+            pages = listOf(
+                StoryPage(1, "books/sw_13916/image_6.webp", "High between two flowering branches, Sesa the spider weaves a geometric silver web.", "Sesa la araña teje una telaraña plateada entre dos ramas.", "دو پھولدار شاخوں کے درمیان سیسا مکڑی چاندی جیسا خوبصورت جالا بنتی ہے۔", "दो फूलों वाली शाखाओं के बीच सेसा मकड़ी चाँदी जैसा जाला बुनती है।", setOf("spider", "trees")),
+                StoryPage(2, "books/sw_13916/image_5.webp", "Morning dewdrops cling to the silk threads and sparkle like tiny pearls in the sunlight.", "Las gotas de rocío brillan como perlas al sol.", "شبنم کے قطرے ریشمی تاروں پر موتیوں کی طرح دھوپ میں چمکتے ہیں۔", "ओस की बूँदें रेशमी धागों पर मोतियों की तरह धूप में चमकती हैं।", setOf("sunlight", "bright")),
+                StoryPage(3, "books/sw_13916/image_4.webp", "When Lara the yellow ladybird flies by, Sesa waves four of her eight legs with a big grin!", "Cuando Lara vuela cerca, Sesa saluda con una gran sonrisa.", "جب پیلی لیڈی برڈ لارا پاس سے اڑتی ہے تو سیسا مسکرا کر ہاتھ ہلاتی ہے!", "जब पीली लेडीबर्ड लारा पास से गुज़रती है, तो सेसा मुस्कुराकर हाथ हिलाती है!", setOf("ladybird", "spider", "smile"),
+                    StoryQuizQuestion("What sparkles like tiny pearls on Sesa's silver web?", listOf("Morning dewdrops in the sunlight", "Chocolate candies", "Brass coins"), 0)
+                )
+            )
+        ),
+
+        // 54. Level 2 • School & Kindness: "Lara's Red Paint Surprise"
+        StoryBook(
+            id = "book_lara_red_paint",
+            title = "Lara's Red Paint Surprise",
+            nativeTitleUrdu = "لارا کے سرخ رنگ کی حیرت",
+            nativeTitleHindi = "लारा के लाल रंग का अचरज",
+            author = "Nadene Kriel",
+            illustrator = "Catherine Holtzhausen",
+            publisher = "Book Dash • StoryWeaver",
+            level = 2,
+            coverAssetPath = "books/sw_13916/image_9.webp",
+            categoryTag = "School & Kindness",
+            pages = listOf(
+                StoryPage(1, "books/sw_13916/image_9.webp", "With a soft brush and ruby-red paint, Mama covered Lara's yellow wings.", "Con un pincel suave, mamá pintó de rojo las alas de Lara.", "نرم برش اور سرخ رنگ کے ساتھ امی نے لارا کے پیلے پروں کو سرخ کر دیا۔", "नरम ब्रश और लाल रंग से माँ ने लारा के पीले पंखों को लाल रंग दिया।", setOf("painted", "red", "wings")),
+                StoryPage(2, "books/sw_13916/image_10.webp", "On the way to bug school, Bibi Butterfly and Manto Mantis walked right past without recognizing her!", "Camino a la escuela, sus amigos no la reconocieron.", "اسکول جاتے ہوئے راستے میں بی بی تتلی اور مینٹو مینٹس اسے پہچانے بغیر ہی گزر گئے!", "स्कूल के रास्ते में बीबी तितली और मैंटो उसे पहचाने बिना ही आगे निकल गए!", setOf("school", "butterfly")),
+                StoryPage(3, "books/sw_13916/image_12.webp", "Lara realized that blending in was not nearly as fun as shining in her own natural yellow color!", "Lara comprendió que brillar con su propio color era mucho mejor.", "لارا کو احساس ہوا کہ دوسروں جیسا دکھنے سے کہیں بہتر اپنی اصل سنہری شناخت کے ساتھ چمکنا ہے!", "लारा समझ गई कि अपनी असली पीली पहचान के साथ चमकना सबसे अच्छा है!", setOf("yellow", "special"),
+                    StoryQuizQuestion("Why didn't Bibi Butterfly recognize Lara on the way to school?", listOf("Lara's yellow wings were painted red", "It was pitch dark at night", "Lara was riding a train"), 0)
+                )
+            )
+        ),
+
+        // 55. Level 2 • School & Kindness: "The Mushroom Seat at Recess"
+        StoryBook(
+            id = "book_mushroom_seat_recess",
+            title = "The Mushroom Seat at Recess",
+            nativeTitleUrdu = "اسکول کی چھٹی اور سچے دوست",
+            nativeTitleHindi = "स्कूल की छुट्टी और सच्चे दोस्त",
+            author = "Catherine Holtzhausen",
+            illustrator = "Catherine Holtzhausen",
+            publisher = "Book Dash • StoryWeaver",
+            level = 2,
+            coverAssetPath = "books/sw_13916/image_12.webp",
+            categoryTag = "School & Kindness",
+            pages = listOf(
+                StoryPage(1, "books/sw_13916/image_11.webp", "At recess time, all the little bugs played tag around the clover patch.", "En el recreo todos jugaban alrededor del trébol.", "بریک کے وقت تمام ننھے کیڑے پھولوں کے گرد دوڑنے والا کھیل کھیل رہے تھے۔", "छुट्टी के समय सभी नन्हे दोस्त फूलों के पास खेल रहे थे।", setOf("play", "friends")),
+                StoryPage(2, "books/sw_13916/image_12.webp", "Lara sat quietly on a spotted mushroom stool until Miss Miya came over to check on her.", "Lara se sentó en un hongo hasta que la maestra se acercó.", "لارا ایک مشروم کی کرسی پر خاموشی سے بیٹھی رہی یہاں تک کہ مس میا اس کے پاس آئیں۔", "लारा एक मशरूम पर चुपचाप बैठी रही जब तक मिस मिया उसके पास नहीं आईं।", setOf("teacher", "school")),
+                StoryPage(3, "books/sw_13916/image_14.webp", "As soon as her classmates learned it was Lara, they cheered and invited her to lead the game!", "Cuando sus compañeros supieron que era Lara, la invitaron a jugar.", "جیسے ہی ہم جماعتوں کو معلوم ہوا کہ یہ لارا ہے، سب نے خوشی سے اسے کھیل کا کپتان بنا لیا!", "जैसे ही दोस्तों को पता चला कि यह लारा है, सबने खुशी से उसे खेल में शामिल कर लिया!", setOf("friends", "happy"),
+                    StoryQuizQuestion("What did Lara's classmates do when they realized it was Lara?", listOf("Cheered and invited her to play together", "Walked away", "Closed the school gate"), 0)
+                )
+            )
+        ),
+
+        // 56. Level 2 • Family & Friends: "Quiet Steps in the Hallway"
+        StoryBook(
+            id = "book_quiet_steps_hallway",
+            title = "Quiet Steps in the Hallway",
+            nativeTitleUrdu = "برآمدے میں دبے پاؤں",
+            nativeTitleHindi = "बरामदे में दबे पाँव",
+            author = "Letta Machoga",
+            illustrator = "Wiehan de Jager",
+            publisher = "African Storybook • StoryWeaver",
+            level = 2,
+            coverAssetPath = "books/sw_15058/image_5.webp",
+            categoryTag = "Family & Friends",
+            bookType = "DECODABLE",
+            phonicsSkillTag = "Phonics: qu • st • sh",
+            pages = listOf(
+                StoryPage(1, "books/sw_15058/image_4.webp", "Baby sister is dreaming sweetly under her warm patchwork quilt.", "La hermanita sueña bajo su manta tibia.", "ننھی بہن اپنے گرم رنگین لحاف کے نیچے میٹھے خواب دیکھ رہی ہے۔", "छोटी बहन अपने नरम कंबल के नीचे मीठे सपने देख रही है।", setOf("sister", "whispers")),
+                StoryPage(2, "books/sw_15058/image_5.webp", "I hold my storybook close and tiptoe softly down the tiled hallway.", "Camino de puntillas por el pasillo con mi libro.", "میں اپنی کہانی کی کتاب سینے سے لگا کر دبے پاؤں برآمدے سے گزرتا ہوں۔", "मैं अपनी किताब थामे दबे पाँव बरामदे से गुज़रता हूँ।", setOf("books", "walk")),
+                StoryPage(3, "books/sw_15058/image_9.webp", "Being a thoughtful big brother means keeping the room peaceful while she rests!", "Ser un buen hermano mayor significa cuidar su descanso.", "ایک اچھا بڑا بھائی ہونے کا مطلب ہے کہ جب چھوٹی بہن سوئے تو کمرے میں خاموشی کا خیال رکھا جائے!", "एक अच्छा बड़ा भाई अपनी छोटी बहन की नींद का पूरा ध्यान रखता है!", setOf("brother", "sister"),
+                    StoryQuizQuestion("Why does the boy tiptoe softly down the hallway?", listOf("So he does not wake his sleeping baby sister", "Because the floor is wet", "Because he lost his shoes"), 0)
+                )
+            )
+        ),
+
+        // 57. Level 2 • Adventure & Travel: "Bounce Over the Bushes"
+        StoryBook(
+            id = "book_bounce_over_bushes",
+            title = "Bounce Over the Bushes",
+            nativeTitleUrdu = "جھاڑیوں کے اوپر اونچی چھلانگ",
+            nativeTitleHindi = "झाड़ियों के ऊपर ऊँची उछाल",
+            author = "Khothatso Ranoosi",
+            illustrator = "Marion Drew",
+            publisher = "Pratham Books • StoryWeaver",
+            level = 2,
+            coverAssetPath = "books/sw_15195/image_8.webp",
+            categoryTag = "Adventure & Travel",
+            bookType = "SERIES",
+            seriesTag = "Red Ball Adventures • Ep 2",
+            isDailyDrop = true,
+            pages = listOf(
+                StoryPage(1, "books/sw_15195/image_6.webp", "In the sunny garden, I practice kicking my red ball with the tip of my sneaker.", "En el jardín practico patear mi pelota roja.", "روشن باغ میں، میں اپنے جوتے کی نوک سے سرخ گیند کو کک مارنے کی مشق کرتا ہوں۔", "धूप भरे बग़ीचे में मैं अपने जूते से लाल गेंद को किक मारने का अभ्यास करता हूँ।", setOf("ball", "shoe", "garden")),
+                StoryPage(2, "books/sw_15195/image_8.webp", "Boing! The red ball bounces right over the flowering hibiscus bushes!", "La pelota salta sobre los arbustos en flor.", "بوائنگ! سرخ گیند پھولوں والی جھاڑیوں کے بالکل اوپر سے اچھل کر نکل جاتی ہے!", "लाल गेंद फूलों वाली झाड़ियों के ऊपर से उछलकर निकल जाती है!", setOf("ball", "flowers")),
+                StoryPage(3, "books/sw_15195/image_12.webp", "I run around the garden path with a big grin to catch it before it stops rolling!", "Corro por el sendero del jardín para atraparla.", "میں مسکراتے ہوئے باغ کے راستے پر دوڑتا ہوں تاکہ گیند رکنے سے پہلے اسے پکڑ لوں!", "मैं मुस्कुराते हुए बग़ीचे के रास्ते पर दौड़कर गेंद को पकड़ लेता हूँ!", setOf("garden", "smile"),
+                    StoryQuizQuestion("What did the bouncy red ball jump right over?", listOf("The flowering garden bushes", "A silver train", "A library shelf"), 0)
+                )
+            )
+        ),
+
+        // 58. Level 2 • Adventure & Travel: "Searching the Whole Yard"
+        StoryBook(
+            id = "book_searching_whole_yard",
+            title = "Searching the Whole Yard",
+            nativeTitleUrdu = "پورے صحن میں گیند کی تلاش",
+            nativeTitleHindi = "पूरे आँगन में गेंद की खोज",
+            author = "Marion Drew",
+            illustrator = "Marion Drew",
+            publisher = "Pratham Books • StoryWeaver",
+            level = 2,
+            coverAssetPath = "books/sw_15195/image_12.webp",
+            categoryTag = "Adventure & Travel",
+            bookType = "SERIES",
+            seriesTag = "Red Ball Adventures • Ep 3",
+            pages = listOf(
+                StoryPage(1, "books/sw_15195/image_9.webp", "Whoosh! One mighty kick sent my red ball flying faster than a swallow!", "Una gran patada envió mi pelota muy alto.", "شوں! ایک طاقتور کک نے میری سرخ گیند کو ابابیل سے بھی تیز ہوا میں اڑا دیا!", "एक ज़ोरदार किक ने मेरी लाल गेंद को पक्षी से भी तेज़ उड़ा दिया!", setOf("ball", "flying")),
+                StoryPage(2, "books/sw_15195/image_12.webp", "I searched by the garden gate, near the water tap, and behind the mango tree.", "Busqué junto a la puerta del jardín y detrás del árbol.", "میں نے باغ کے دروازے کے پاس، پانی کے نلکے کے قریب اور آم کے درخت کے پیچھے تلاش کیا۔", "मैंने बग़ीचे के दरवाज़े के पास और आम के पेड़ के पीछे ढूँढा।", setOf("garden", "gate", "tree")),
+                StoryPage(3, "books/sw_15195/image_13.webp", "Then I looked straight up—and saw my ball gleaming against the bright blue sky!", "Miré hacia arriba y vi mi pelota en el cielo azul.", "پھر میں نے سیدھا اوپر دیکھا—اور میری گیند چمکدار نیلے آسمان میں جگمگا رہی تھی!", "फिर मैंने सीधा ऊपर देखा—मेरी गेंद नीले आसमान में चमक रही थी!", setOf("ball", "blue", "sky"),
+                    StoryQuizQuestion("Where did the child finally see the red ball gleaming?", listOf("High up against the bright blue sky", "Inside a shoe box", "Under the kitchen table"), 0)
+                )
+            )
+        ),
+
+        // 59. Level 2 • Animals & Nature: "Caterpillar's Scratchy Shoe"
+        StoryBook(
+            id = "book_caterpillar_scratchy_shoe",
+            title = "Caterpillar's Scratchy Shoe",
+            nativeTitleUrdu = "ٹڈے کا کھردرا جوتا",
+            nativeTitleHindi = "टिड्डे का चुभने वाला जूता",
+            author = "Somsanouk Bouttavong",
+            illustrator = "Ounla Santi",
+            publisher = "Room to Read • StoryWeaver",
+            level = 2,
+            coverAssetPath = "books/sw_37273/image_8.webp",
+            categoryTag = "Animals & Nature",
+            bookType = "DECODABLE",
+            phonicsSkillTag = "Phonics: scr • gr • sh",
+            pages = listOf(
+                StoryPage(1, "books/sw_37273/image_7.webp", "In the tall meadow grass, green Grasshopper offered Caterpillar one of his jumping shoes.", "El saltamontes le prestó uno de sus zapatos de salto.", "لمبی گھاس میں ہرے ٹڈے نے کیٹرپلر کو اپنا اچھلنے والا جوتا پہننے کے لیے دیا۔", "लंबी घास में हरे टिड्डे ने कैटरपिलर को अपना कूदने वाला जूता दिया।", setOf("grasshopper", "caterpillar", "shoe")),
+                StoryPage(2, "books/sw_37273/image_8.webp", "\"Ooh, this shoe has spiky little bristles for gripping grass blades!\" giggled Caterpillar.", "Este zapato tiene cerdas para agarrarse a la hierba.", "اوہ، اس جوتے میں تو گھاس پکڑنے کے لیے چھوٹے چھوٹے کانٹے ہیں! کیٹرپلر مسکرا کر بولی۔", "\"ओह, इस जूते में तो घास पकड़ने के लिए छोटे काँटे हैं!\" कैटरपिलर हँसकर बोली।", setOf("shoe", "green")),
+                StoryPage(3, "books/sw_37273/image_9.webp", "She thanked Grasshopper kindly and continued her walk toward the sandy stream!", "Le agradeció amablemente y siguió caminando.", "اس نے ٹڈے کا شکریہ ادا کیا اور ریتیلے کنارے کی طرف اپنا سفر جاری رکھا!", "उसने टिड्डे को धन्यवाद दिया और रेतीले किनारे की ओर आगे बढ़ गई!", setOf("grasshopper", "walk"),
+                    StoryQuizQuestion("Why did Grasshopper's shoe have spiky little bristles?", listOf("For gripping tall grass blades when jumping", "For swimming under water", "For baking bread"), 0)
+                )
+            )
+        ),
+
+        // 60. Level 2 • Animals & Nature: "Seashells on the Beach"
+        StoryBook(
+            id = "book_seashells_on_beach",
+            title = "Seashells on the Beach",
+            nativeTitleUrdu = "ساحل کی چمکدار سیپیاں",
+            nativeTitleHindi = "समुद्र तट की चमकीली सीपियाँ",
+            author = "Ounla Santi",
+            illustrator = "Ounla Santi",
+            publisher = "Room to Read • StoryWeaver",
+            level = 2,
+            coverAssetPath = "books/sw_37273/image_10.webp",
+            categoryTag = "Animals & Nature",
+            pages = listOf(
+                StoryPage(1, "books/sw_37273/image_9.webp", "Where the clear stream meets the ocean beach, pink and white seashells sparkle in the sand.", "En la playa brillan conchas rosas y blancas en la arena.", "جہاں صاف ندی سمندر کے ساحل سے ملتی ہے، وہاں گلابی اور سفید سیپیاں ریت میں چمکتی ہیں۔", "समुद्र के रेतीले तट पर गुलाबी और सफ़ेद सीपियाँ धूप में चमकती हैं।", setOf("beach", "water", "bright")),
+                StoryPage(2, "books/sw_37273/image_10.webp", "Little red Crab arranges the shells in a circle around his sandy doorway.", "El cangrejo rojo ordena las conchas en círculo.", "ننھا سرخ کیکڑا اپنے ریتیلے گھر کے دروازے کے گرد سیپیوں کا دائرہ بناتا ہے۔", "नन्हा लाल केकड़ा अपने रेतीले घर के बाहर सीपियों का घेरा बनाता है।", setOf("crab", "red")),
+                StoryPage(3, "books/sw_37273/image_11.webp", "Caterpillar admires the pretty shells before resting on a cool green leaf nearby!", "La oruga admira las conchas antes de descansar.", "کیٹرپلر قریب ہی ایک ٹھنڈے ہرے پتے پر آرام کرنے سے پہلے خوبصورت سیپیوں کی تعریف کرتی ہے!", "कैटरपिलर पास के हरे पत्ते पर आराम करने से पहले सुंदर सीपियों की तारीफ़ करती है!", setOf("caterpillar", "green", "leaves"),
+                    StoryQuizQuestion("Who arranges the pink and white seashells around a sandy doorway?", listOf("Little red Crab", "Manto Mantis", "Grandmother"), 0)
+                )
+            )
+        ),
+
+        // 61. Level 2 • Adventure & Travel: "Waiting on the Platform"
+        StoryBook(
+            id = "book_waiting_on_platform",
+            title = "Waiting on the Platform",
+            nativeTitleUrdu = "پلیٹ فارم پر ٹرین کا انتظار",
+            nativeTitleHindi = "प्लेटफ़ॉर्म पर ट्रेन का इंतज़ार",
+            author = "Mabel Mnensa",
+            illustrator = "Ntembiso Velemane",
+            publisher = "Book Dash • StoryWeaver",
+            level = 2,
+            coverAssetPath = "books/sw_44485/image_3.webp",
+            categoryTag = "Adventure & Travel",
+            bookType = "SERIES",
+            seriesTag = "Coastline Train • Ep 4",
+            pages = listOf(
+                StoryPage(1, "books/sw_44485/image_2.webp", "Nicole packs her beach bucket and sun hat for her very first railway journey.", "Nicole prepara su sombrero para su primer viaje en tren.", "نکول اپنے پہلے ریل کے سفر کے لیے اپنی ساحلی بالٹی اور دھوپ والی ٹوپی تیار کرتی ہے۔", "निकोल अपनी पहली रेल यात्रा के लिए अपनी टोपी और बैग तैयार करती है।", setOf("beach", "train")),
+                StoryPage(2, "books/sw_44485/image_3.webp", "On the station platform, Mom shows Nicole how to stand safely behind the yellow line.", "En el andén, mamá le enseña a esperar detrás de la línea amarilla.", "اسٹیشن کے پلیٹ فارم پر امی نکول کو پیلی حفاظتی لکیر کے پیچھے کھڑا ہونا سکھاتی ہیں۔", "प्लेटफ़ॉर्म पर माँ निकोल को पीली रेखा के पीछे सुरक्षित खड़ा होना सिखाती हैं।", setOf("mother", "yellow", "train")),
+                StoryPage(3, "books/sw_44485/image_4.webp", "When the silver train glides to a full stop, the doors open and everyone boards in a neat line!", "Cuando el tren se detiene, todos suben en fila.", "جب چمکدار ٹرین پوری طرح رک جاتی ہے تو دروازے کھلتے ہیں اور سب قطار بنا کر سوار ہوتے ہیں!", "जब ट्रेन रुकती है, तो दरवाज़े खुलते हैं और सब कतार में चढ़ते हैं!", setOf("train", "friends"),
+                    StoryQuizQuestion("Where does Mom teach Nicole to stand safely on the train platform?", listOf("Behind the yellow safety line", "On top of a bench", "Inside the ticket booth"), 0)
+                )
+            )
+        ),
+
+        // 62. Level 2 • School & Kindness: "Practice Makes Us Strong"
+        StoryBook(
+            id = "book_practice_makes_strong",
+            title = "Practice Makes Us Strong",
+            nativeTitleUrdu = "مشق ہمیں مضبوط بناتی ہے",
+            nativeTitleHindi = "अभ्यास हमें मज़बूत बनाता है",
+            author = "Mabel Mnensa",
+            illustrator = "Ntembiso Velemane",
+            publisher = "Book Dash • StoryWeaver",
+            level = 2,
+            coverAssetPath = "books/sw_44485/image_7.webp",
+            categoryTag = "School & Kindness",
+            pages = listOf(
+                StoryPage(1, "books/sw_44485/image_7.webp", "The two karate brothers wake up early every Saturday to practice their stances.", "Los dos hermanos practican karate cada sábado.", "کراٹے کھیلنے والے دونوں بھائی ہر ہفتے کی صبح جلدی اٹھ کر اپنی مشق کرتے ہیں۔", "दोनों भाई हर शनिवार सुबह जल्दी उठकर कराटे का अभ्यास करते हैं।", setOf("brother", "early", "morning")),
+                StoryPage(2, "books/sw_44485/image_8.webp", "Their coach teaches them that true strength comes from patience, respect, and focus.", "Su entrenador les enseña paciencia y respeto.", "ان کے استاد انہیں سکھاتے ہیں کہ اصل طاقت صبر، احترام اور توجہ سے آتی ہے۔", "उनके शिक्षक सिखाते हैं कि असली ताकत धैर्य, सम्मान और ध्यान से आती है।", setOf("teacher", "special")),
+                StoryPage(3, "books/sw_44485/image_9.webp", "With a crisp bow and a high leap, they earn applause from every passenger on the train!", "Con un salto alto ganan aplausos de todos.", "باادب سلام اور اونچی چھلانگ کے ساتھ وہ ٹرین کے تمام مسافروں سے داد وصول کرتے ہیں!", "विनम्र प्रणाम और ऊँची छलांग के साथ वे सभी यात्रियों से तालियाँ पाते हैं!", setOf("train", "friends"),
+                    StoryQuizQuestion("According to their coach, where does true karate strength come from?", listOf("Patience, respect, and focus", "Eating lots of candy", "Shouting loudly"), 0)
+                )
+            )
+        ),
+
+        // 63. Level 2 • Science & Weather: "When the Wind Blows"
+        StoryBook(
+            id = "book_when_wind_blows",
+            title = "When the Wind Blows",
+            nativeTitleUrdu = "جب تیز ہوا چلتی ہے",
+            nativeTitleHindi = "जब तेज़ हवा चलती है",
+            author = "Clyde Beech",
+            illustrator = "Mohale Mashigo",
+            publisher = "Book Dash • StoryWeaver",
+            level = 2,
+            coverAssetPath = "books/sw_45764/image_3.webp",
+            categoryTag = "Science & Weather",
+            bookType = "DECODABLE",
+            phonicsSkillTag = "Phonics: bl • w • st",
+            pages = listOf(
+                StoryPage(1, "books/sw_45764/image_2.webp", "A sudden gust of evening wind blows through the window and flickers the candles.", "Una ráfaga de viento entra por la ventana.", "شام کی ہوا کا ایک تیز جھونکا کھڑکی سے اندر آتا ہے اور موم بتیوں کی لو لرز اٹھتی ہے۔", "शाम की हवा का एक तेज़ झोंका खिड़کی से अंदर आता है।", setOf("blast", "candles")),
+                StoryPage(2, "books/sw_45764/image_3.webp", "Outside, tall green palm and mango trees sway as dark monsoon clouds roll across the hills.", "Afuera los árboles se mecen bajo las nubes.", "باہر آم کے اونچے ہرے درخت جھومتے ہیں جب پہاڑیوں پر بارش کے گہرے بادل چھا جاتے ہیں۔", "बाहर आम के ऊँचे पेड़ झूमते हैं जब पहाड़ियों पर बारिश के बादल छा जाते हैं।", setOf("trees", "clouds", "green")),
+                StoryPage(3, "books/sw_45764/image_4.webp", "Lulu closes the latch and watches the cool rain wash the garden clean!", "Lulu cierra la ventana y mira la lluvia fresca.", "لولو کھڑکی بند کرتی ہے اور ٹھنڈی بارش کو باغ کے پودوں کو دھوتے ہوئے دیکھتی ہے!", "लुलु खिड़की बंद करती है और ठंडी बारिश को बग़ीचे को भिगोते हुए देखती है!", setOf("rain", "garden"),
+                    StoryQuizQuestion("What rolls across the hills when the strong evening wind blows?", listOf("Dark monsoon rain clouds", "A yellow bicycle", "A stack of library books"), 0)
+                )
+            )
+        ),
+
+        // 64. Level 2 • Family & Friends: "Teacups in the Cupboard"
+        StoryBook(
+            id = "book_teacups_in_cupboard",
+            title = "Teacups in the Cupboard",
+            nativeTitleUrdu = "لکڑی کی الماری میں چائے کی پیالیاں",
+            nativeTitleHindi = "लकड़ी की अलमारी में चाय के कप",
+            author = "Mohale Mashigo",
+            illustrator = "Clyde Beech",
+            publisher = "Book Dash • StoryWeaver",
+            level = 2,
+            coverAssetPath = "books/sw_45764/image_5.webp",
+            categoryTag = "Family & Friends",
+            pages = listOf(
+                StoryPage(1, "books/sw_45764/image_5.webp", "In Ma's cozy kitchen, painted china teacups sit in neat rows inside the wooden cupboard.", "En la cocina las tazas están ordenadas en el armario.", "امی کے آرام دہ باورچی خانے میں لکڑی کی الماری کے اندر رنگین پیالیاں قطار میں سجائی گئی ہیں۔", "माँ की रसोई में लकड़ी की अलमारी के अंदर सुंदर कप कतार में रखे हैं।", setOf("cupboard", "painted")),
+                StoryPage(2, "books/sw_45764/image_3.webp", "When thunder rumbles outside, the little saucers go clink-clink-clink on the shelf!", "Cuando truena afuera, los platillos tintinean.", "جب باہر بادل گرجتے ہیں تو الماری کے خانے میں رکھی طشتریاں کھنک اٹھتی ہیں!", "जब बाहर बादल गरजते हैं, तो अलमारी में रखे कप खनखना उठते हैं!", setOf("thunder", "cupboard")),
+                StoryPage(3, "books/sw_45764/image_14.webp", "Ma pours warm cinnamon tea into the cups while Lulu reads a story on the rug!", "Mamá sirve té caliente mientras Lulu lee en la alfombra.", "امی پیالیوں میں گرم چائے انڈیلتی ہیں جبکہ لولو قالین پر بیٹھ کر کہانی پڑھتی ہے!", "माँ कप में गर्म चाय डालती हैं और लुलु कालीन पर बैठकर कहानी पढ़ती है!", setOf("mother", "read", "story"),
+                    StoryQuizQuestion("Where are the painted teacups kept in Ma's kitchen?", listOf("Inside the wooden cupboard", "Under the garden tree", "On the train seat"), 0)
+                )
+            )
+        ),
+
+        // 65. Level 2 • Numbers & Rhymes: "Ten Shiny Silver Fish"
+        StoryBook(
+            id = "book_ten_silver_fish",
+            title = "Ten Shiny Silver Fish",
+            nativeTitleUrdu = "دس چمکدار چاندی جیسی مچھلیاں",
+            nativeTitleHindi = "दस चमकीली चाँदी जैसी मछलियाँ",
+            author = "Clyde Beech",
+            illustrator = "Mohale Mashigo",
+            publisher = "Book Dash • StoryWeaver",
+            level = 2,
+            coverAssetPath = "books/sw_45764/image_9.webp",
+            categoryTag = "Numbers & Rhymes",
+            isDailyDrop = true,
+            pages = listOf(
+                StoryPage(1, "books/sw_45764/image_9.webp", "One, two, three, four, five shiny silver fish splash in the garden rain puddle!", "Cinco peces plateados chapotean en el charco.", "ایک، دو، تین، چار، پانچ چمکدار مچھلیاں باغ کے بارش کے پانی میں چھپاکے مار رہی ہیں!", "एक, दो, तीन, चार, पाँच चमकीली मछलियाँ बारिश के पानी में उछल रही हैं!", setOf("fish", "rain", "garden")),
+                StoryPage(2, "books/sw_45764/image_11.webp", "Six, seven, eight, nine, ten! Lulu and her friends bring buckets of clean rainwater.", "Lulu y sus amigos traen cubetas con agua de lluvia.", "چھ، سات، آٹھ، نو، دس! لولو اور اس کے دوست صاف پانی کی بالٹیاں لے کر دوڑتے ہوئے آتے ہیں۔", "छह, सात, आठ, नौ, दस! लुलु और उसके दोस्त साफ़ पानी की बाल्टियाँ लाते हैं।", setOf("friends", "water")),
+                StoryPage(3, "books/sw_45764/image_13.webp", "All ten little fish swim happily back into the flowing river together!", "Los diez pececitos nadan felices de regreso al río.", "دس کی دس ننھی مچھلیاں خوشی سے تیرتی ہوئی واپس بہتے دریا میں چلی جاتی ہیں!", "दसों नन्ही मछलियाँ खुशी से तैरती हुईं वापस नदी में चली जाती हैं!", setOf("fish", "water", "happy"),
+                    StoryQuizQuestion("How many shiny silver fish did the children count and rescue?", listOf("Ten shiny silver fish", "One hundred frogs", "Two yellow birds"), 0)
+                )
+            )
+        ),
+
+        // 66. Level 2 • School & Kindness: "Teamwork in the Rain"
+        StoryBook(
+            id = "book_teamwork_in_rain",
+            title = "Teamwork in the Rain",
+            nativeTitleUrdu = "بارش میں مل جل کر مدد کرنا",
+            nativeTitleHindi = "बारिश में मिलकर मदद करना",
+            author = "Clyde Beech",
+            illustrator = "Clyde Beech",
+            publisher = "Book Dash • StoryWeaver",
+            level = 2,
+            coverAssetPath = "books/sw_45764/image_11.webp",
+            categoryTag = "School & Kindness",
+            pages = listOf(
+                StoryPage(1, "books/sw_45764/image_10.webp", "When Lulu saw the little fish stranded on the lawn, she knew she could not save them all alone.", "Lulu sabía que necesitaba ayuda para salvar a los peces.", "جب لولو نے گھاس پر ننھی مچھلیوں کو دیکھا تو وہ سمجھ گئی کہ اکیلے سب کو بچانا مشکل ہے۔", "जब लुलु ने घास पर मछलियों को देखा, तो उसने अपने दोस्तों को मदद के लिए बुलाया।", setOf("fish", "raincoat")),
+                StoryPage(2, "books/sw_45764/image_11.webp", "She called her neighborhood friends, and soon four children were working side by side with bowls and pails.", "Llamó a sus amigos del barrio para trabajar en equipo.", "اس نے محلے کے دوستوں کو بلایا اور جلد ہی چاروں بچے پیالے اور بالٹیاں لے کر مل کر کام کرنے لگے۔", "मोहल्ले के चारों बच्चे कटोरे और बाल्टियाँ लेकर एक साथ जुट गए।", setOf("friends", "water")),
+                StoryPage(3, "books/sw_45764/image_12.webp", "With teamwork and gentle hands, they finished the rescue in half the time!", "Con trabajo en equipo terminaron el rescate muy rápido.", "اتفاق اور مل جل کر کام کرنے کی بدولت انہوں نے آدھے وقت میں تمام مچھلیوں کو بچا لیا!", "टीमवर्क और सहयोग से उन्होंने बहुत जल्दी सभी मछलियों को बचा लिया!", setOf("friends", "happy"),
+                    StoryQuizQuestion("How did Lulu and her friends finish rescuing the fish so quickly?", listOf("By working together as a team", "By waiting until next week", "By calling a train"), 0)
+                )
+            )
+        ),
+
+        // 67. Level 2 • Bedtime & Folktales: "Butterfly Dreams at Dusk"
+        StoryBook(
+            id = "book_butterfly_dreams_dusk",
+            title = "Butterfly Dreams at Dusk",
+            nativeTitleUrdu = "شام کے وقت تتلی کے خواب",
+            nativeTitleHindi = "शाम के समय तितली के सपने",
+            author = "Somsanouk Bouttavong",
+            illustrator = "Ounla Santi",
+            publisher = "Room to Read • StoryWeaver",
+            level = 2,
+            coverAssetPath = "books/sw_37273/image_11.webp",
+            categoryTag = "Bedtime & Folktales",
+            pages = listOf(
+                StoryPage(1, "books/sw_37273/image_11.webp", "As the pink evening sky cools over the garden, little Caterpillar curls up on a soft green leaf.", "Al atardecer la pequeña oruga se acurruca en una hoja verde.", "جیسے ہی باغ کے اوپر شام کا گلابی آسمان ٹھنڈا ہوتا ہے، ننھی کیٹرپلر ایک نرم ہرے پتے پر سمٹ جاتی ہے۔", "जैसे ही शाम का आसमान ठंडा होता है, नन्ही कैटरपिलर एक नरम हरे पत्ते पर लेट जाती है।", setOf("caterpillar", "green", "leaves")),
+                StoryPage(2, "books/sw_37273/image_12.webp", "The night breeze sings a gentle lullaby through the swaying branches.", "La brisa nocturna canta una suave canción de cuna.", "رات کی ٹھنڈی ہوا جھومتی ہوئی شاخوں میں ایک میٹھی لوری سناتی ہے۔", "रात की ठंडी हवा झूमती शाखाओं में एक मीठी लोरी सुनाती है।", setOf("trees", "whispers")),
+                StoryPage(3, "books/sw_37273/image_14.webp", "Soon she will wake with rainbow wings and dance among the morning blossoms!", "Pronto despertará con alas de mariposa.", "جلد ہی وہ قوسِ قزح جیسے رنگین پروں کے ساتھ جاگے گی اور صبح کے پھولوں میں اڑے گی!", "जल्द ही वह रंग-बिरंगे पंखों के साथ जागेगी और फूलों पर उड़ेगी!", setOf("butterfly", "wings", "flowers"),
+                    StoryQuizQuestion("Where does little Caterpillar curl up to rest at dusk?", listOf("On a soft green leaf", "Inside a teacup", "On a bicycle seat"), 0)
+                )
+            )
+        ),
+
+        // 68. Level 2 • Numbers & Rhymes: "Colors of Our Neighborhood"
+        StoryBook(
+            id = "book_colors_of_neighborhood",
+            title = "Colors of Our Neighborhood",
+            nativeTitleUrdu = "ہمارے محلے کے قوسِ قزح جیسے رنگ",
+            nativeTitleHindi = "हमारे मोहल्ले के सुंदर रंग",
+            author = "Mabel Mnensa",
+            illustrator = "Ntembiso Velemane",
+            publisher = "Book Dash • StoryWeaver",
+            level = 2,
+            coverAssetPath = "books/sw_44485/cover_image.webp",
+            categoryTag = "Numbers & Rhymes",
+            bookType = "DECODABLE",
+            phonicsSkillTag = "Phonics: bl • gr • yl",
+            pages = listOf(
+                StoryPage(1, "books/sw_44485/cover_image.webp", "How many colors can you spot when we walk down our cheerful neighborhood street?", "¿Cuántos colores puedes ver en nuestra calle?", "جب ہم اپنے خوشگوار محلے کی گلی میں چلتے ہیں تو آپ کتنے رنگ تلاش کر سکتے ہیں؟", "जब हम अपने मोहल्ले की गली में चलते हैं, तो आप कितने रंग देख सकते हैं?", setOf("colors", "street", "walk")),
+                StoryPage(2, "books/sw_44485/image_6.webp", "There is golden yellow on the chocolate wrappers and ruby red on the fruit cart!", "Hay amarillo dorado en los dulces y rojo en las frutas.", "چاکلیٹ کے سنہری پیلے ریپرز ہیں اور پھلوں کے ٹھیلے پر یاقوت جیسا سرخ رنگ چمک رہا ہے!", "चॉकलेट पर सुनहरा पीला रंग है और फलों की दुकान पर चमकीला लाल रंग है!", setOf("golden", "yellow", "red")),
+                StoryPage(3, "books/sw_44485/image_11.webp", "And the street drummers wear crimson and gold as they play under the bright blue sky!", "Los bateristas visten de rojo y oro bajo el cielo azul.", "اور گلی کے ڈھول بجانے والے چمکدار نیلے آسمان کے نیچے سرخ اور سنہری لباس پہن کر ڈھول بجاتے ہیں!", "और ढोल वादक नीले आसमान के नीचे लाल और सुनहरे कपड़े पहनकर ढोल बजाते हैं!", setOf("drummers", "blue", "sky"),
+                    StoryQuizQuestion("What colors do the street drummers wear under the blue sky?", listOf("Bright red and golden yellow", "All grey", "Dark brown"), 0)
+                )
+            )
+        ),
+
+        // 69. Level 3 • Animals & Nature: "Bibi Butterfly & Manto Mantis"
+        StoryBook(
+            id = "book_bibi_and_manto",
+            title = "Bibi Butterfly & Manto Mantis",
+            nativeTitleUrdu = "بی بی تتلی اور مینٹو مینٹس کی صبح",
+            nativeTitleHindi = "बीबी तितली और मैंटो की सुबह",
+            author = "Catherine Holtzhausen",
+            illustrator = "Catherine Holtzhausen",
+            publisher = "Book Dash • StoryWeaver",
+            level = 3,
+            coverAssetPath = "books/sw_13916/image_5.webp",
+            categoryTag = "Animals & Nature",
+            bookType = "SERIES",
+            seriesTag = "Garden Series • Ep 6",
+            isDailyDrop = true,
+            pages = listOf(
+                StoryPage(1, "books/sw_13916/image_5.webp", "Every morning at sunrise, Bibi Butterfly spreads her patterned wings while Manto Mantis adjusts his leaf-green coat.", "Cada mañana Bibi Mariposa y Manto Mantis se saludan.", "ہر صبح طلوعِ آفتاب کے وقت بی بی تتلی اپنے نقش و نگار والے پر پھیلاتی ہے اور مینٹو مینٹس اپنا ہرا کوٹ درست کرتا ہے۔", "हर सुबह बीबी तितली अपने सुंदर पंख फैलाती है और मैंटो हाथ हिलाता है।", setOf("butterfly", "wings", "morning")),
+                StoryPage(2, "books/sw_13916/image_4.webp", "Together they patrol the flowerbeds to make sure every young beetle and ladybird reaches school safely.", "Juntos cuidan el camino hacia la escuela del jardín.", "وہ دونوں مل کر پھولوں کی کیاریوں کی نگرانی کرتے ہیں تاکہ ہر ننھا کیڑا اور لیڈی برڈ بحفاظت اسکول پہنچے۔", "वे दोनों मिलकर फूलों के रास्ते की देखभाल करते हैं ताकि सभी बच्चे सुरक्षित स्कूल पहुँचें।", setOf("ladybird", "school", "flowers")),
+                StoryPage(3, "books/sw_13916/image_7.webp", "When the morning bell chimes, they wave from the marigold arch and wish the students a wonderful day of learning!", "Saludan desde el arco de flores deseando un gran día.", "جب صبح کی گھنٹی بجتی ہے تو وہ گیندے کے پھولوں کی محراب سے ہاتھ ہلا کر بچوں کو علم بھرا دن مبارک کہتے ہیں!", "जब घंटी बजती है, तो वे गेंदे के फूलों के पास से बच्चों को शुभकामनाएँ देते हैं!", setOf("marigolds", "school", "friends"),
+                    StoryQuizQuestion("How do Bibi Butterfly and Manto Mantis help the garden bugs every morning?", listOf("They make sure everyone reaches school safely", "They paint everyone's shoes", "They drive the coastal train"), 0)
+                )
+            )
+        ),
+
+        // 70. Level 3 • School & Kindness: "Why Being Yourself Matters"
+        StoryBook(
+            id = "book_being_yourself_matters",
+            title = "Why Being Yourself Matters",
+            nativeTitleUrdu = "اپنی اصل پہچان پر فخر کرو",
+            nativeTitleHindi = "अपनी असली पहचान पर गर्व करो",
+            author = "Nadene Kriel",
+            illustrator = "Catherine Holtzhausen",
+            publisher = "Book Dash • StoryWeaver",
+            level = 3,
+            coverAssetPath = "books/sw_13916/image_14.webp",
+            categoryTag = "School & Kindness",
+            bookSource = "CLASSROOM",
+            assignedByTeacher = "Miss Miya • Grade 3",
+            pages = listOf(
+                StoryPage(1, "books/sw_13916/image_13.webp", "In Miss Miya's circle time, the students talked about what makes each friend one of a kind.", "En la clase hablaron sobre lo que hace único a cada amigo.", "مس میا کی کلاس میں طلبہ نے اس بات پر گفتگو کی کہ ہر دوست کو کون سی خوبی منفرد بناتی ہے۔", "मिस मिया की कक्षा में बच्चों ने बात की कि हर दोस्त को कौन सी खूबी अनोखी बनाती है।", setOf("teacher", "unique", "friends")),
+                StoryPage(2, "books/sw_13916/image_14.webp", "Sipho showed the silver spot on his back, Sally showed her long jumping legs, and Lara showed her golden wings.", "Sipho mostró su lunar, Sally sus piernas largas y Lara sus alas.", "سیفو نے اپنی پیٹھ کا چمکدار نشان دکھایا، سیلی نے اپنی لمبی ٹانگیں اور لارا نے اپنے سنہری پر دکھائے۔", "सीफो ने अपना चमकीला निशान दिखाया, सैली ने लंबी टाँगें और लारा ने सुनहरे पंख दिखाए।", setOf("golden", "wings", "special")),
+                StoryPage(3, "books/sw_13916/image_18.webp", "\"When we celebrate our differences, our whole classroom shines brighter than a rainbow!\" said Miss Miya.", "Cuando celebramos nuestras diferencias, toda la clase brilla.", "جب ہم ایک دوسرے کی انفرادیت کی قدر کرتے ہیں تو ہماری پوری کلاس قوسِ قزح سے زیادہ روشن ہو جاتی ہے! مس میا نے کہا۔", "\"जब हम अपनी अनोखी खूबियों का सम्मान करते हैं, तो पूरी कक्षा चमक उठती है!\" मिस मिया ने कहा।", setOf("classroom", "bright", "teacher"),
+                    StoryQuizQuestion("What happens when the classroom celebrates everyone's unique differences?", listOf("The whole classroom shines brighter together", "Everyone becomes invisible", "School closes early"), 0)
+                )
+            )
+        ),
+
+        // 71. Level 3 • Bedtime & Folktales: "Lara's Leaf Mirror"
+        StoryBook(
+            id = "book_lara_leaf_mirror",
+            title = "Lara's Leaf Mirror",
+            nativeTitleUrdu = "لارا کا چمکتا ہوا آئینہ",
+            nativeTitleHindi = "लारा का चमकता आईना",
+            author = "Catherine Holtzhausen",
+            illustrator = "Catherine Holtzhausen",
+            publisher = "Book Dash • StoryWeaver",
+            level = 3,
+            coverAssetPath = "books/sw_13916/image_17.webp",
+            categoryTag = "Bedtime & Folktales",
+            pages = listOf(
+                StoryPage(1, "books/sw_13916/image_16.webp", "Warm soap bubbles floated in the air as Lara washed away the last streak of red paint.", "Las burbujas flotaban mientras Lara lavaba la pintura roja.", "گرم صابن کے بلبلے ہوا میں اڑ رہے تھے جب لارا نے اپنے پروں سے سرخ رنگ کا آخری نشان بھی دھو ڈالا۔", "गर्म साबुन के बुलबुले हवा में उड़ रहे थे जब लारा ने लाल रंग धो डाला।", setOf("scrubbed", "red", "water")),
+                StoryPage(2, "books/sw_13916/image_17.webp", "She wrapped herself in a fluffy towel and looked into the dewy leaf mirror on her wall.", "Se envolvió en una toalla suave y se miró en el espejo.", "اس نے اپنے گرد ایک نرم تولیہ لپیٹا اور دیوار پر لگے شبنمی پتے کے آئینے میں دیکھا۔", "उसने नरम तौलिया लपेटा और पत्ते के आईने में देखा।", setOf("leaves", "bright")),
+                StoryPage(3, "books/sw_13916/image_18.webp", "Her natural golden-yellow wings gleamed like sunshine, and Lara smiled with pure joy!", "Sus alas amarillas brillaban como el sol y Lara sonrió.", "اس کے قدرتی سنہری پیلے پر دھوپ کی طرح جگمگا رہے تھے، اور لارا خوشی سے مسکرا اٹھی!", "उसके सुनहरे पीले पंख धूप की तरह चमक रहे थे और लारा मुस्कुरा उठी!", setOf("golden", "yellow", "gleamed"),
+                    StoryQuizQuestion("What did Lara see when she looked into her leaf mirror after her bath?", listOf("Her natural golden-yellow wings gleaming like sunshine", "Dark grey clouds", "A pair of frog boots"), 0)
+                )
+            )
+        ),
+
+        // 72. Level 3 • School & Kindness: "Splash of Purple for Fun"
+        StoryBook(
+            id = "book_splash_purple_fun",
+            title = "Splash of Purple for Fun",
+            nativeTitleUrdu = "خوشی کے رنگ اور باغ کا میلہ",
+            nativeTitleHindi = "खुशी के रंग और बग़ीचे का मेला",
+            author = "Nadene Kriel",
+            illustrator = "Catherine Holtzhausen",
+            publisher = "Book Dash • StoryWeaver",
+            level = 3,
+            coverAssetPath = "books/sw_13916/image_18.webp",
+            categoryTag = "School & Kindness",
+            pages = listOf(
+                StoryPage(1, "books/sw_13916/image_18.webp", "On Friday afternoon, Bug School held a joyful Face-Painting and Art Festival in the meadow.", "El viernes la escuela celebró un festival de arte en el jardín.", "جمعہ کی سہ پہر بگز اسکول نے سبزہ زار میں رنگوں اور مصوری کا ایک خوشگوار میلہ سجایا۔", "शुक्रवार दोपहर स्कूल ने बग़ीचे में रंगों और कला का उत्सव मनाया।", setOf("school", "painted", "garden")),
+                StoryPage(2, "books/sw_13916/image_5.webp", "Lara added a tiny swirl of purple paint on her cheek just for fun, while keeping her yellow wings bright!", "Lara probó un toque de púrpura solo por diversión.", "لارا نے صرف تفریح کے لیے اپنے گال پر جامنی رنگ کا ایک چھوٹا سا نقش بنایا جبکہ اس کے پیلے پر چمکتے رہے!", "लारा ने मज़े के लिए थोड़ा बैंगनी रंग लगाया जबकि उसके पीले पंख चमकते रहे!", setOf("yellow", "wings", "bright")),
+                StoryPage(3, "books/sw_13916/image_14.webp", "All her classmates painted colorful patterns on leaf canvases and celebrated together!", "Todos pintaron diseños coloridos y celebraron juntos.", "اس کے تمام ہم جماعتوں نے پتوں کے کینوس پر رنگا رنگ نقش بنائے اور مل کر جشن منایا!", "सभी सहपाठियों ने पत्तों पर सुंदर चित्र बनाए और मिलकर जश्न मनाया!", setOf("friends", "colors", "happy"),
+                    StoryQuizQuestion("Why did Lara try a tiny swirl of purple paint at the festival?", listOf("Just for fun, while keeping her yellow wings proud", "To hide from her friends forever", "Because it was raining"), 0)
+                )
+            )
+        ),
+
+        // 73. Level 3 • Family & Friends: "Afternoon on the Sunny Veranda"
+        StoryBook(
+            id = "book_sunny_veranda_reading",
+            title = "Afternoon on the Sunny Veranda",
+            nativeTitleUrdu = "دھوپ والے برآمدے میں کہانی کا وقت",
+            nativeTitleHindi = "धूप वाले बरामदे में कहानी का समय",
+            author = "Letta Machoga",
+            illustrator = "Wiehan de Jager",
+            publisher = "African Storybook • StoryWeaver",
+            level = 3,
+            coverAssetPath = "books/sw_15058/image_9.webp",
+            categoryTag = "Family & Friends",
+            pages = listOf(
+                StoryPage(1, "books/sw_15058/image_7.webp", "When the afternoon breeze cools the courtyard, I spread a woven mat on the sunny veranda.", "Por la tarde extiendo un tapete en la terraza soleada.", "جب سہ پہر کی ہوا صحن کو ٹھنڈا کرتی ہے تو میں دھوپ والے برآمدے میں چٹائی بچھاتا ہوں۔", "दोपहर बाद जब आँगन में ठंडी हवा चलती है, तो मैं बरामदे में चटाई बिछाता हूँ।", setOf("sunlight", "garden")),
+                StoryPage(2, "books/sw_15058/image_9.webp", "I open my chapter book and read aloud in a clear, expressive voice.", "Abro mi libro y leo en voz alta con claridad.", "میں اپنی کتاب کھولتا ہوں اور صاف، خوبصورت آواز میں بلند خوانی کرتا ہوں۔", "मैं अपनी किताब खोलता हूँ और साफ़ आवाज़ में कहानी पढ़ता हूँ।", setOf("read", "books", "story")),
+                StoryPage(3, "books/sw_15058/image_8.webp", "Soon Grandfather Farouk, Mother, and Father gather around the veranda steps to applaud my reading!", "Pronto toda la familia se reúne para escucharme y aplaudir.", "جلد ہی دادا فاروق، امی اور ابو برآمدے کی سیڑھیوں کے پاس جمع ہو کر میری پڑھائی کی داد دیتے ہیں!", "जल्द ही दादाजी, माँ और पिताजी पास आकर मेरी पढ़ाई की सराहना करते हैं!", setOf("grandfather", "mother", "father"),
+                    StoryQuizQuestion("How does the boy practice his reading on the woven veranda mat?", listOf("By reading aloud in a clear, expressive voice", "By tearing the pages", "By sleeping on the book"), 0)
+                )
+            )
+        ),
+
+        // 74. Level 3 • Science & Weather: "Higher Than the Tallest Tree"
+        StoryBook(
+            id = "book_higher_than_tallest_tree",
+            title = "Higher Than the Tallest Tree",
+            nativeTitleUrdu = "سب سے اونچے درخت سے بھی بلند",
+            nativeTitleHindi = "सबसे ऊँचे पेड़ से भी ऊपर",
+            author = "Marion Drew",
+            illustrator = "Marion Drew",
+            publisher = "Pratham Books • StoryWeaver",
+            level = 3,
+            coverAssetPath = "books/sw_15195/image_14.webp",
+            categoryTag = "Science & Weather",
+            bookType = "DECODABLE",
+            phonicsSkillTag = "Phonics: tr • br • cl",
+            pages = listOf(
+                StoryPage(1, "books/sw_15195/image_13.webp", "Have you ever wondered how high a bird or a balloon can climb above the earth?", "¿Te has preguntado qué tan alto puede subir un globo?", "کیا آپ نے کبھی سوچا ہے کہ ایک پرندہ یا غبارہ زمین سے کتنا اونچا اڑ سکتا ہے؟", "क्या आपने कभी सोचा है कि कोई पक्षी या गुब्बारा कितना ऊँचा उड़ सकता है?", setOf("sky", "flying")),
+                StoryPage(2, "books/sw_15195/image_14.webp", "First it passes the wooden fence, then the house rooftop, and then the crown of the tallest green tree!", "Primero pasa la cerca, luego el techo y la copa del árbol.", "پہلے وہ لکڑی کی باڑ سے اوپر اٹھتا ہے، پھر گھر کی چھت اور پھر سب سے اونچے ہرے درخت کی چوٹی سے بھی اوپر!", "पहले वह छत और फिर सबसे ऊँचे हरे पेड़ की चोटी से भी ऊपर निकल जाता है!", setOf("tree", "green")),
+                StoryPage(3, "books/sw_15195/image_16.webp", "High up in the atmosphere, cool winds carry fluffy white cumulus clouds across the blue sky!", "En lo alto, los vientos llevan nubes blancas por el cielo azul.", "فضا کی بلندیوں میں ٹھنڈی ہوائیں نرم سفید بادلوں کو نیلے آسمان میں اڑا کر لے جاتی ہیں!", "आसमान की ऊँचाई पर ठंडी हवाएँ सफ़ेद बादलों को उड़ाकर ले जाती हैं!", setOf("clouds", "blue", "sky"),
+                    StoryQuizQuestion("What floats high up in the blue atmosphere above the tallest trees?", listOf("Fluffy white cumulus clouds", "Wooden cupboards", "Sand burrows"), 0)
+                )
+            )
+        ),
+
+        // 75. Level 3 • Science & Weather: "The Chrysalis Miracle"
+        StoryBook(
+            id = "book_chrysalis_miracle",
+            title = "The Chrysalis Miracle",
+            nativeTitleUrdu = "کوکون سے تتلی بننے کا معجزہ",
+            nativeTitleHindi = "कोकून से तितली बनने का चमत्कार",
+            author = "Somsanouk Bouttavong",
+            illustrator = "Ounla Santi",
+            publisher = "Room to Read • Science Series",
+            level = 3,
+            coverAssetPath = "books/sw_37273/image_13.webp",
+            categoryTag = "Science & Weather",
+            pages = listOf(
+                StoryPage(1, "books/sw_37273/image_12.webp", "Hanging safely beneath a sturdy branch, the emerald cocoon protects the sleeping caterpillar inside.", "El capullo verde protege a la oruga que duerme adentro.", "مضبوط شاخ کے نیچے لٹکا ہوا ہرا کوکون اپنے اندر سوتی ہوئی کیٹرپلر کو محفوظ رکھتا ہے۔", "शाखा के नीचे लटका हरा कोकून अंदर सोती हुई कैटरपिलर को सुरक्षित रखता है।", setOf("cocoon", "caterpillar", "green")),
+                StoryPage(2, "books/sw_37273/image_13.webp", "After two quiet weeks of sunshine and gentle rain, the silky shell begins to open at dawn.", "Después de dos semanas, el capullo comienza a abrirse al amanecer.", "دو ہفتوں کی دھوپ اور ہلکی بارش کے بعد صبح سویرے ریشمی خول آہستہ آہستہ کھلنے لگتا ہے۔", "दो हफ़्तों के बाद सुबह सवेरे रेशमी कोकून धीरे-धीरे खुलने लगता है।", setOf("sunlight", "rain", "early")),
+                StoryPage(3, "books/sw_37273/image_14.webp", "Out steps a radiant butterfly, drying her colorful wings in the morning sun before her first flight!", "Sale una hermosa mariposa secando sus alas al sol.", "باہر ایک خوبصورت تتلی نکلتی ہے جو اپنی پہلی پرواز سے پہلے صبح کی دھوپ میں اپنے رنگین پر سکھاتی ہے!", "बाहर एक सुंदर तितली निकलती है और अपनी पहली उड़ान के लिए पंख फैलाती है!", setOf("butterfly", "wings", "sunlight"),
+                    StoryQuizQuestion("How long does the caterpillar rest inside the protective cocoon before emerging?", listOf("About two quiet weeks", "Five minutes", "Ten years"), 0)
+                )
+            )
+        ),
+
+        // 76. Level 3 • Adventure & Travel: "Sunset Lanterns on the Coast"
+        StoryBook(
+            id = "book_sunset_lanterns_coast",
+            title = "Sunset Lanterns on the Coast",
+            nativeTitleUrdu = "ساحلی اسٹیشن کی شام اور روشن لالٹینیں",
+            nativeTitleHindi = "समुद्री स्टेशन की शाम और लालटेन",
+            author = "Mabel Mnensa",
+            illustrator = "Ntembiso Velemane",
+            publisher = "Book Dash • StoryWeaver",
+            level = 3,
+            coverAssetPath = "books/sw_44485/image_13.webp",
+            categoryTag = "Adventure & Travel",
+            bookType = "SERIES",
+            seriesTag = "Coastline Train • Ep 5",
+            isDailyDrop = true,
+            pages = listOf(
+                StoryPage(1, "books/sw_44485/image_13.webp", "As the coastal train pulls into the harbor station at dusk, golden paper lanterns glow along the platform.", "Al atardecer las linternas doradas brillan en la estación.", "جیسے ہی شام کے وقت ساحلی ٹرین بندرگاہ کے اسٹیشن پر رکتی ہے، پلیٹ فارم پر سنہری لالٹینیں جگمگا اٹھتی ہیں۔", "शाम के समय जब ट्रेन स्टेशन पर रुकती है, तो प्लेटफ़ॉर्म पर सुनहरी लालटेन जगमगा उठती हैं।", setOf("train", "golden", "bright")),
+                StoryPage(2, "books/sw_44485/image_15.webp", "The ocean breeze carries the scent of sea salt, roasted corn, and blooming jasmine.", "La brisa marina trae aroma de mar y flores.", "سمندری ہوا اپنے ساتھ ساحل کی ٹھنڈک اور کھلتے ہوئے پھولوں کی خوشبو لاتی ہے۔", "समुद्री हवा अपने साथ तट की ताज़गी और फूलों की खुशबू लाती है।", setOf("ocean", "flowers", "beach")),
+                StoryPage(3, "books/sw_44485/image_16.webp", "Nicole holds Mom's hand as they walk out toward the sandy boardwalk under a sky of amber and rose!", "Nicole toma la mano de mamá hacia el paseo marítimo.", "نکول امی کا ہاتھ پکڑ کر سنہری اور گلابی آسمان کے نیچے ساحل کی سیرگاہ کی طرف چل پڑتی ہے!", "निकोल माँ का हाथ पकड़कर सुंदर आसमान के नीचे समुद्र तट की ओर चलती है!", setOf("mother", "beach", "sky"),
+                    StoryQuizQuestion("What glows along the harbor station platform as the coastal train arrives at dusk?", listOf("Golden paper lanterns", "Snowmen", "Campfires"), 0)
+                )
+            )
+        ),
+
+        // 77. Level 3 • Adventure & Travel: "Mango Ice Cream by the Waves"
+        StoryBook(
+            id = "book_mango_ice_cream_waves",
+            title = "Mango Ice Cream by the Waves",
+            nativeTitleUrdu = "سمندر کی لہروں کے پاس آم کی آئس کریم",
+            nativeTitleHindi = "समुद्र की लहरों के पास आम की आइसक्रीम",
+            author = "Mabel Mnensa",
+            illustrator = "Ntembiso Velemane",
+            publisher = "Book Dash • StoryWeaver",
+            level = 3,
+            coverAssetPath = "books/sw_44485/image_16.webp",
+            categoryTag = "Adventure & Travel",
+            pages = listOf(
+                StoryPage(1, "books/sw_44485/image_6.webp", "On the train ride, Mom promised Nicole a special beach treat if she saved space in her tummy.", "En el tren mamá le prometió un helado especial en la playa.", "ٹرین کے سفر میں امی نے نکول سے وعدہ کیا تھا کہ ساحل پر پہنچ کر اسے مزیدار آئس کریم ملے گی۔", "ट्रेन के सफ़र में माँ ने निकोल से समुद्र तट पर आइसक्रीम दिलाने का वादा किया था।", setOf("train", "mother", "beach")),
+                StoryPage(2, "books/sw_44485/image_16.webp", "At the seaside kiosk, they ordered two cones of golden mango ice cream topped with fruit slices!", "Pidieron dos conos de helado de mango dorado.", "ساحل کے اسٹال سے انہوں نے تازہ پھلوں سے سجی سنہری آم کی دو آئس کریم کونز لیں!", "समुद्र तट की दुकान से उन्होंने सुनहरे आम की दो स्वादिष्ट आइसक्रीम लीं!", setOf("golden", "yellow", "happy")),
+                StoryPage(3, "books/sw_44485/image_14.webp", "Watching the blue ocean waves roll onto the sand made the cold sweet ice cream taste even better!", "Mirar las olas azules hizo que el helado supiera aún mejor.", "ریت پر آتی نیلے سمندر کی لہروں کو دیکھتے ہوئے ٹھنڈی میٹھی آئس کریم کا مزہ دوبالا ہو گیا!", "नीले समुद्र की लहरों को देखते हुए आइसक्रीम खाने का मज़ा दोगुना हो गया!", setOf("blue", "ocean", "beach"),
+                    StoryQuizQuestion("What flavor of ice cream did Mom and Nicole enjoy by the ocean waves?", listOf("Golden mango ice cream", "Spinach soup", "Pepperoni"), 0)
+                )
+            )
+        ),
+
+        // 78. Level 3 • Science & Weather: "The Waterspout Over the River"
+        StoryBook(
+            id = "book_waterspout_over_river",
+            title = "The Waterspout Over the River",
+            nativeTitleUrdu = "دریا کے اوپر پانی کا حیرت انگیز بگولا",
+            nativeTitleHindi = "नदी के ऊपर पानी का अद्भुत बवंडर",
+            author = "Clyde Beech",
+            illustrator = "Mohale Mashigo",
+            publisher = "Book Dash • Science Series",
+            level = 3,
+            coverAssetPath = "books/sw_45764/image_8.webp",
+            categoryTag = "Science & Weather",
+            bookType = "DECODABLE",
+            phonicsSkillTag = "Phonics: sp • str • cl",
+            pages = listOf(
+                StoryPage(1, "books/sw_45764/image_7.webp", "During strong summer storms, spinning columns of wind called waterspouts can form over rivers and lakes.", "Durante las tormentas pueden formarse trombas de agua sobre los ríos.", "موسمِ گرما کے تیز طوفانوں کے دوران دریاؤں اور جھیلوں کے اوپر گھومتی ہوئی ہوا کے آبی بگولے بن سکتے ہیں۔", "तेज़ तूफ़ानों के दौरान नदियों के ऊपर घूमती हवा के जल-बवंडर बन सकते हैं।", setOf("water", "clouds", "rain")),
+                StoryPage(2, "books/sw_45764/image_8.webp", "The swirling breeze lifts surface water—and sometimes tiny minnows—right up into the low rainclouds!", "El viento giratorio levanta agua y pequeños peces hacia las nubes.", "گھومتی ہوئی تیز ہوا پانی کے ساتھ کبھی کبھار ننھی مچھلیوں کو بھی اٹھا کر بادلوں تک پہنچا دیتی ہے!", "घूमती हुई हवा पानी के साथ कभी-कभी नन्ही मछलियों को भी बादलों तक उठा लेती है!", setOf("fish", "clouds", "water")),
+                StoryPage(3, "books/sw_45764/image_9.webp", "When the wind slows down, the water and little fish fall gently back to earth with the rain!", "Cuando el viento baja, los peces caen suavemente con la lluvia.", "جب ہوا کی رفتار کم ہوتی ہے تو پانی اور ننھی مچھلیاں بارش کے ساتھ نرم گھاس پر واپس آ گرتی ہیں!", "जब हवा धीमी होती है, तो मछलियाँ बारिश के साथ नरम घास पर गिरती हैं!", setOf("fish", "rain", "green"),
+                    StoryQuizQuestion("What is a spinning column of wind over a river or lake called?", listOf("A waterspout", "A snowdrift", "A rainbow bridge"), 0)
+                )
+            )
+        ),
+
+        // 79. Level 3 • School & Kindness: "Back to the Flowing Stream"
+        StoryBook(
+            id = "book_back_to_flowing_stream",
+            title = "Back to the Flowing Stream",
+            nativeTitleUrdu = "ننھی مچھلیوں کی دریا میں واپسی",
+            nativeTitleHindi = "नन्ही मछलियों की नदी में वापसी",
+            author = "Mohale Mashigo",
+            illustrator = "Clyde Beech",
+            publisher = "Book Dash • StoryWeaver",
+            level = 3,
+            coverAssetPath = "books/sw_45764/image_13.webp",
+            categoryTag = "School & Kindness",
+            pages = listOf(
+                StoryPage(1, "books/sw_45764/image_12.webp", "Lulu and her three friends kneeled on the wet grass and scooped every silver fish into buckets of fresh rainwater.", "Lulu y sus amigos recogieron cada pez en cubetas con agua.", "لولو اور اس کے تینوں دوستوں نے گیلی گھاس پر جھک کر ہر چمکدار مچھلی کو تازہ پانی کی بالٹیوں میں ڈالا۔", "लुलु और उसके तीनों दोस्तों ने हर चमकीली मछली को ताज़ा पानी की बाल्टी में डाला।", setOf("fish", "water", "friends")),
+                StoryPage(2, "books/sw_45764/image_13.webp", "At the grassy riverbank, they tilted their buckets gently so the fish could glide back into the current.", "En la orilla del río inclinaron las cubetas con cuidado.", "دریا کے ہرے بھرے کنارے پر پہنچ کر انہوں نے بالٹیاں آہستہ سے جھکائیں تاکہ مچھلیاں بہتے پانی میں چلی جائیں۔", "नदी के किनारे पहुँचकर उन्होंने बाल्टियाँ झुकाईं ताकि मछलियाँ धारा में तैर सकें।", setOf("return", "fish", "water")),
+                StoryPage(3, "books/sw_45764/image_14.webp", "The little silver fish leaped once in a cheerful arc to say thank you before swimming home!", "Los pececitos saltaron felices para dar las gracias.", "ننھی چمکدار مچھلیوں نے شکریہ ادا کرنے کے لیے پانی سے ایک خوشگوار چھلانگ لگائی اور تیرتی ہوئی چلی گئیں!", "नन्ही मछलियों ने धन्यवाद कहने के लिए पानी में उछाल भरी और तैरती चली गईं!", setOf("fish", "happy", "smile"),
+                    StoryQuizQuestion("Why did the children carry the buckets of rainwater to the grassy riverbank?", listOf("To release the silver fish safely back into the river", "To wash their bicycles", "To paint the bridge"), 0)
+                )
+            )
+        ),
+
+        // 80. Level 3 • Numbers & Rhymes: "Rhythm of the Wooden Drums"
+        StoryBook(
+            id = "book_rhythm_wooden_drums",
+            title = "Rhythm of the Wooden Drums",
+            nativeTitleUrdu = "لکڑی کے ڈھول کی سریلی تال",
+            nativeTitleHindi = "लकड़ी के ढोल की मधुर ताल",
+            author = "Mabel Mnensa",
+            illustrator = "Ntembiso Velemane",
+            publisher = "Book Dash • StoryWeaver",
+            level = 3,
+            coverAssetPath = "books/sw_44485/image_12.webp",
+            categoryTag = "Numbers & Rhymes",
+            pages = listOf(
+                StoryPage(1, "books/sw_44485/image_11.webp", "One, two, three, four! The drummers tap their carved wooden djembe drums in time with the train wheels.", "Uno, dos, tres, cuatro: los tambores suenan al ritmo del tren.", "ایک، دو، تین، چار! ڈھول بجانے والے ٹرین کے پہیوں کی آواز کے ساتھ اپنے لکڑی کے ڈھول بجاتے ہیں۔", "एक, दो, तीन, चार! ढोल वादक ट्रेन के पहियों की ताल पर ढोल बजाते हैं।", setOf("drummers", "train")),
+                StoryPage(2, "books/sw_44485/image_12.webp", "Clap-clap, tap-tap! Nicole counts four beats in every measure as she dances down the aisle.", "Nicole cuenta cuatro tiempos mientras baila con alegría.", "تالی اور تھاپ! نکول خوشی سے ناچتے ہوئے موسیقی کی ہر لے میں چار تالیں گنتی ہے۔", "ताली और थाप! निकोल खुशी से नाचते हुए संगीत की चार तालें गिनती है।", setOf("drummers", "happy", "play")),
+                StoryPage(3, "books/sw_44485/image_14.webp", "Music and counting bring everyone on the coastal train together in one big smiling chorus!", "La música y el ritmo unen a todos en el tren.", "موسیقی اور تال کی گنتی ساحلی ٹرین کے تمام مسافروں کو ایک خوشگوار گیت میں جوڑ دیتی ہے!", "संगीत और ताल की गिनती ट्रेन के सभी यात्रियों को खुशी से जोड़ देती है!", setOf("train", "friends", "smile"),
+                    StoryQuizQuestion("How many beats does Nicole count in every musical measure of the drums?", listOf("Four beats (One, two, three, four!)", "Zero beats", "One hundred beats"), 0)
+                )
+            )
+        ),
+
+        // 81. Level 3 • Animals & Nature: "Eight Legs and One Silky Web"
+        StoryBook(
+            id = "book_eight_legs_silky_web",
+            title = "Eight Legs and One Silky Web",
+            nativeTitleUrdu = "آٹھ ٹانگیں اور ایک ریشمی جالا",
+            nativeTitleHindi = "आठ टाँगें और एक रेशमी जाला",
+            author = "Ounla Santi",
+            illustrator = "Ounla Santi",
+            publisher = "Room to Read • Science Series",
+            level = 3,
+            coverAssetPath = "books/sw_37273/image_2.webp",
+            categoryTag = "Animals & Nature",
+            pages = listOf(
+                StoryPage(1, "books/sw_37273/image_3.webp", "Did you know that insects like ladybirds and butterflies have six legs, while spiders have eight?", "Los insectos tienen seis patas, mientras que las arañas tienen ocho.", "کیا آپ جانتے ہیں کہ لیڈی برڈ اور تتلی کے چھ پاؤں ہوتے ہیں جبکہ مکڑی کی آٹھ ٹانگیں ہوتی ہیں؟", "क्या आप जानते हैं कि तितली के छह पैर होते हैं जबकि मकड़ी के आठ पैर होते हैं?", setOf("spider", "ladybird", "butterfly")),
+                StoryPage(2, "books/sw_13916/image_6.webp", "Spiders use special spinnerets to weave strong silk threads that glisten in the morning dew.", "Las arañas tejen hilos de seda fuertes que brillan al sol.", "مکڑیاں اپنے خاص ریشمی تاروں سے مضبوط جالا بنتی ہیں جو صبح کی شبنم میں چمکتا ہے۔", "मकड़ियाँ अपने रेशमी धागों से मज़बूत जाला बुनती हैं जो ओस में चमकता है।", setOf("spider", "morning", "bright")),
+                StoryPage(3, "books/sw_37273/image_4.webp", "In the garden ecosystem, spiders, frogs, and butterflies all help keep the plants healthy and blooming!", "En el jardín todos ayudan a mantener las plantas sanas.", "باغ کے قدرتی نظام میں مکڑیاں، مینڈک اور تتلیاں سب مل کر پودوں کو تندرست اور ہرا بھرا رکھتی ہیں!", "बग़ीचे में मकड़ी, मेंढक और तितलियाँ मिलकर पौधों को हरा-भरा रखती हैं!", setOf("garden", "frog", "butterfly"),
+                    StoryQuizQuestion("How many legs does a spider have compared to an insect?", listOf("A spider has eight legs, while insects have six", "A spider has two legs", "A spider has fifty legs"), 0)
+                )
+            )
+        ),
+
+        // 82. Level 3 • Bedtime & Folktales: "Starlight Over Green Hills"
+        StoryBook(
+            id = "book_starlight_green_hills",
+            title = "Starlight Over Green Hills",
+            nativeTitleUrdu = "سبز پہاڑیوں پر ستاروں کی چاندنی",
+            nativeTitleHindi = "हरी पहाड़ियों पर तारों की चाँदनी",
+            author = "Martha Evans",
+            illustrator = "Catherine Holtzhausen",
+            publisher = "Book Dash • StoryWeaver",
+            level = 3,
+            coverAssetPath = "books/sw_13916/image_19.webp",
+            categoryTag = "Bedtime & Folktales",
+            pages = listOf(
+                StoryPage(1, "books/sw_13916/image_19.webp", "When twilight settles over the emerald valley, the daytime birds tuck their beaks beneath their wings.", "Al anochecer las aves descansan bajo las estrellas.", "جب ہری بھری وادی پر شام اترتی ہے تو دن کے پرندے اپنے پروں میں سمٹ کر آرام کرتے ہیں۔", "जब हरी घाटी में शाम ढलती है, तो पक्षी अपने घोंसलों में आराम करते हैं।", setOf("wings", "green", "trees")),
+                StoryPage(2, "books/sw_13916/image_20.webp", "One by one, silver constellations light up across the deep indigo sky like a map of glowing lanterns.", "Las constelaciones plateadas iluminan el cielo nocturno.", "ایک ایک کر کے گہرے نیلے آسمان پر چمکتے ستاروں کے جھرمٹ روشن لالٹینوں کی طرح جگمگا اٹھتے ہیں۔", "एक-एक करके गहरे नीले आसमान में तारों के समूह लालटेन की तरह चमक उठते हैं।", setOf("stars", "sky", "bright")),
+                StoryPage(3, "books/sw_15195/image_17.webp", "The gentle moon sends a silver beam across every window, wishing young readers peaceful dreams!", "La luna envía un rayo plateado deseando dulces sueños.", "چاند کی ٹھنڈی چاندنی ہر کھڑکی سے جھانک کر ننھے قارئین کو سہانے خوابوں کی دعا دیتی ہے!", "चाँद की शीतल किरणें बच्चों को मीठे सपनों की शुभकामनाएँ देती हैं!", setOf("moon", "read", "happy"),
+                    StoryQuizQuestion("What lights up across the deep night sky when twilight settles over the valley?", listOf("Silver stars and the gentle moon", "Traffic lights", "School buses"), 0)
+                )
+            )
+        ),
+
+        // 83. Level 4 • Adventure & Travel: "Captain Zara's Ocean Voyage"
+        StoryBook(
+            id = "book_captain_zara_voyage",
+            title = "Captain Zara's Ocean Voyage",
+            nativeTitleUrdu = "کیپٹن زارا کا بحری سفر",
+            nativeTitleHindi = "कैप्टन ज़ारा का समुद्री सफ़र",
+            author = "Mabel Mnensa",
+            illustrator = "Ntembiso Velemane",
+            publisher = "Book Dash • StoryWeaver",
+            level = 4,
+            coverAssetPath = "books/sw_44485/image_15.webp",
+            categoryTag = "Adventure & Travel",
+            bookType = "SERIES",
+            seriesTag = "Coastline Train • Ep 6",
+            isDailyDrop = true,
+            pages = listOf(
+                StoryPage(1, "books/sw_44485/image_10.webp", "Before boarding the coastal train, Captain Zara spent three months sailing a research vessel across the Indian Ocean.", "La capitana Zara navegó tres meses por el océano.", "ساحلی ٹرین میں سفر سے پہلے کیپٹن زارا نے تین ماہ تک بحرِ ہند میں ایک تحقیقی جہاز کی قیادت کی تھی۔", "ट्रेन यात्रा से पहले कैप्टन ज़ारा ने तीन महीने महासागर में जहाज़ चलाया था।", setOf("sailor", "ocean", "train")),
+                StoryPage(2, "books/sw_44485/image_15.webp", "Using her magnetic brass compass, marine charts, and satellite beacons, she guided her crew safely through stormy seas.", "Con su brújula dorada guió a su tripulación con seguridad.", "اپنے سنہری قطب نما اور بحری نقشوں کی مدد سے اس نے طوفانی لہروں میں اپنے عملے کی بحفاظت رہنمائی کی۔", "अपने सुनहरे कंपास और नक़्शों की मदद से उसने जहाज़ को सुरक्षित रास्ता दिखाया।", setOf("sailor", "water", "clouds")),
+                StoryPage(3, "books/sw_44485/image_14.webp", "Inspired by Captain Zara's story, Nicole decided to read every book about ships, oceans, and navigation at her library!", "Inspirada por Zara, Nicole decidió leer libros sobre el mar.", "کیپٹن زارا کی کہانی سے متاثر ہو کر نکول نے لائبریری سے سمندروں اور جہاز رانی کی تمام کتابیں پڑھنے کا عزم کیا!", "कैप्टन ज़ारा की कहानी से प्रेरित होकर निकोल ने समुद्र और जहाज़ों की किताबें पढ़ने का निश्चय किया!", setOf("books", "library", "ocean"),
+                    StoryQuizQuestion("What tools did Captain Zara use to guide her crew safely across the ocean?", listOf("A magnetic brass compass, marine charts, and beacons", "A magic wand", "A pair of roller skates"), 0)
+                )
+            )
+        ),
+
+        // 84. Level 4 • School & Kindness: "The Great Garden Talent Show"
+        StoryBook(
+            id = "book_garden_talent_show",
+            title = "The Great Garden Talent Show",
+            nativeTitleUrdu = "باغ کے اسکول کا سالانہ ٹیلنٹ شو",
+            nativeTitleHindi = "बग़ीचे के स्कूल का टैलेंट शो",
+            author = "Catherine Holtzhausen",
+            illustrator = "Catherine Holtzhausen",
+            publisher = "Book Dash • StoryWeaver",
+            level = 4,
+            coverAssetPath = "books/sw_13916/cover_image.webp",
+            categoryTag = "School & Kindness",
+            bookSource = "CLASSROOM",
+            assignedByTeacher = "Miss Miya • Grade 4",
+            pages = listOf(
+                StoryPage(1, "books/sw_13916/cover_image.webp", "Every spring, Miss Miya organizes the Great Garden Talent Show on the mossy amphitheater stage.", "Cada primavera la maestra organiza el show de talentos del jardín.", "ہر موسمِ بہار میں مس میا باغ کے سبز اسٹیج پر سالانہ گارڈن ٹیلنٹ شو منعقد کرتی ہیں۔", "हर वसंत ऋतु में मिस मिया बग़ीचे के मंच पर वार्षिक टैलेंट शो आयोजित करती हैं।", setOf("teacher", "garden", "school")),
+                StoryPage(2, "books/sw_13916/image_5.webp", "Bibi Butterfly performs an aerial ribbon dance, Manto Mantis recites a poem, and Sesa weaves a glowing silk harp!", "Bibi baila en el aire, Manto recita un poema y Sesa teje un arpa.", "بی بی تتلی ہوا میں رقص دکھاتی ہے، مینٹو مینٹس نظم سناتا ہے اور سیسا مکڑی ریشمی تاروں کا ساز بپاتی ہے!", "बीबी तितली नृत्य करती है, मैंटो कविता सुनाता है और सेसा रेशमी धुन बजाती है!", setOf("butterfly", "spider", "special")),
+                StoryPage(3, "books/sw_13916/image_15.webp", "For the grand finale, Lara leads the whole class in a song about friendship, courage, and shining in your own true colors!", "Para el gran final, Lara dirige una canción sobre la amistad.", "اختتامی تقریب میں لارا پوری کلاس کے ساتھ دوستی، ہمت اور اپنی اصل شناخت پر فخر کا گیت پیش کرتی ہے!", "अंत में लारा पूरी कक्षा के साथ दोस्ती, साहस और अपनी पहचान पर गर्व का गीत गाती है!", setOf("ladybird", "friends", "colors"),
+                    StoryQuizQuestion("What is the theme of the grand finale song that Lara leads at the Talent Show?", listOf("Friendship, courage, and shining in your own true colors", "How to hide under rocks", "Why winter is cold"), 0)
+                )
+            )
+        ),
+
+        // 85. Level 4 • Family & Friends: "Stories Across Three Generations"
+        StoryBook(
+            id = "book_three_generations_stories",
+            title = "Stories Across Three Generations",
+            nativeTitleUrdu = "تین نسلوں کی کہانیوں کا خزانہ",
+            nativeTitleHindi = "तीन पीढ़ियों की कहानियों का ख़ज़ाना",
+            author = "Letta Machoga",
+            illustrator = "Wiehan de Jager",
+            publisher = "African Storybook • StoryWeaver",
+            level = 4,
+            coverAssetPath = "books/sw_15058/cover_image.webp",
+            categoryTag = "Family & Friends",
+            bookType = "ASSESSMENT",
+            pages = listOf(
+                StoryPage(1, "books/sw_15058/cover_image.webp", "In our home, stories are a bridge that connects grandparents, parents, and children across three generations.", "En casa los cuentos unen a abuelos, padres e hijos.", "ہمارے گھر میں کہانیاں ایک ایسا پل ہیں جو دادا دادی، والدین اور بچوں کی تین نسلوں کو آپس میں جوڑتا ہے۔", "हमारे घर में कहानियाँ दादा-दादी, माता-पिता और बच्चों की तीन पीढ़ियों को जोड़ती हैं।", setOf("grandfather", "grandmother", "story")),
+                StoryPage(2, "books/sw_15058/image_6.webp", "Grandmother shares recipes and proverbs from her childhood village, while Grandfather Farouk recounts history under the stars.", "La abuela comparte proverbios y el abuelo historias bajo las estrellas.", "دادی جان اپنے بچپن کی ضرب الامثال سناتی ہیں جبکہ دادا فاروق ستاروں کی چھاؤں میں تاریخ کے قصے بتاتے ہیں۔", "दादीजी अपने बचपन की कहावतें सुनाती हैं और दादा फ़ारूक़ तारों के नीचे इतिहास की बातें बताते हैं।", setOf("grandmother", "grandfather", "stars")),
+                StoryPage(3, "books/sw_15058/image_9.webp", "And by reading new books every day, the children write the next bright chapter of our family's story!", "Al leer libros nuevos cada día, los niños escriben el siguiente capítulo.", "اور ہر روز نئی کتابیں پڑھ کر بچے ہمارے خاندان کی کہانی کا اگلا روشن باب تحریر کرتے ہیں!", "और हर दिन नई किताबें पढ़कर बच्चे हमारे परिवार की कहानी का अगला सुनहरा अध्याय लिखते हैं!", setOf("read", "books", "bright"),
+                    StoryQuizQuestion("What acts as a bridge connecting three generations in the family home?", listOf("Sharing and reading stories together", "Watching silent clocks", "Locked cupboards"), 0)
+                )
+            )
+        ),
+
+        // 86. Level 4 • Science & Weather: "Gravity, Wind, and Flight"
+        StoryBook(
+            id = "book_gravity_wind_flight",
+            title = "Gravity, Wind, and Flight",
+            nativeTitleUrdu = "کششِ ثقل، ہوا اور پرواز کا راز",
+            nativeTitleHindi = "गुरुत्वाकर्षण, हवा और उड़ान का रहस्य",
+            author = "Marion Drew",
+            illustrator = "Marion Drew",
+            publisher = "Pratham Books • Science Series",
+            level = 4,
+            coverAssetPath = "books/sw_15195/image_16.webp",
+            categoryTag = "Science & Weather",
+            bookType = "DECODABLE",
+            phonicsSkillTag = "Phonics: gr • fl • str",
+            pages = listOf(
+                StoryPage(1, "books/sw_15195/image_9.webp", "When you kick a ball upward, the force of your foot launches it high into the air against gravity.", "Cuando pateas una pelota, la fuerza la impulsa hacia el aire.", "جب آپ گیند کو اوپر کی طرف کک مارتے ہیں تو آپ کے پاؤں کی قوت اسے کششِ ثقل کے خلاف ہوا میں بلند کرتی ہے۔", "जब आप गेंद को ऊपर किक मारते हैं, तो पैर का बल उसे हवा में ऊँचा उछालता है।", setOf("ball", "shoe", "flying")),
+                StoryPage(2, "books/sw_15195/image_16.webp", "Birds, butterflies, and airplanes stay aloft by using curved wings to create lift as wind flows over them.", "Las aves y aviones usan sus alas para crear sustentación en el aire.", "پرندے، تتلیاں اور ہوائی جہاز اپنے پروں کے خاص زاویے اور ہوا کے دباؤ کی مدد سے آسمان میں تیرتے ہیں۔", "पक्षी, तितलियाँ और हवाई जहाज़ अपने पंखों और हवा के बहाव की मदद से आसमान में उड़ते हैं।", setOf("wings", "butterfly", "sky")),
+                StoryPage(3, "books/sw_15195/image_17.webp", "And rockets travel even faster—escaping Earth's atmosphere to orbit the silver moon and explore outer space!", "Y los cohetes viajan aún más rápido hacia la luna y el espacio.", "اور خلائی راکٹ اس سے بھی تیز رفتار سے زمین کی فضا سے نکل کر چاند اور خلا کا سفر طے کرتے ہیں!", "और रॉकेट इससे भी तेज़ गति से पृथ्वी के वातावरण से बाहर निकलकर चाँद और अंतरिक्ष में जाते हैं!", setOf("moon", "stars", "sky"),
+                    StoryQuizQuestion("How do birds, butterflies, and airplanes create lift to stay aloft in the sky?", listOf("Using wings as wind flows over them", "By wearing heavy boots", "By hiding under clouds"), 0)
+                )
+            )
+        ),
+
+        // 87. Level 4 • School & Kindness: "Lulu's Community Book Drive"
+        StoryBook(
+            id = "book_lulu_book_drive",
+            title = "Lulu's Community Book Drive",
+            nativeTitleUrdu = "لولو کی محلے میں کتابیں بانٹنے کی مہم",
+            nativeTitleHindi = "लुलु का मोहल्ले में पुस्तक अभियान",
+            author = "Clyde Beech & Mohale Mashigo",
+            illustrator = "Clyde Beech",
+            publisher = "Book Dash • StoryWeaver",
+            level = 4,
+            coverAssetPath = "books/sw_45764/cover_image.webp",
+            categoryTag = "School & Kindness",
+            bookType = "SERIES",
+            seriesTag = "Lulu Library • Ep 4",
+            pages = listOf(
+                StoryPage(1, "books/sw_45764/cover_image.webp", "Lulu loved the neighborhood library so much that she wanted every child in town to have a library card.", "Lulu quería que todos los niños tuvieran su tarjeta de biblioteca.", "لولو کو محلے کی لائبریری سے اتنا پیار تھا کہ وہ چاہتی تھی شہر کے ہر بچے کے پاس لائبریری کارڈ ہو۔", "लुलु चाहती थी कि शहर के हर बच्चे के पास लाइब्रेरी का कार्ड और किताबें हों।", setOf("library", "books", "friends")),
+                StoryPage(2, "books/sw_45764/image_11.webp", "On Saturday morning, she invited her friends to tour the reading shelves and pick their first adventure books.", "El sábado invitó a sus amigos a conocer los estantes de lectura.", "ہفتے کی صبح اس نے اپنے تمام دوستوں کو لائبریری کی سیر کروائی تاکہ ہر بچہ اپنی پسندیدہ کتاب منتخب کرے۔", "शनिवार सुबह उसने अपने दोस्तों को लाइब्रेरी की सैर कराई और नई किताबें चुनने में मदद की।", setOf("morning", "read", "books")),
+                StoryPage(3, "books/sw_45764/image_15.webp", "Now the whole neighborhood gathers every weekend to read, swap stories, and learn together!", "Ahora todo el barrio se reúne cada semana para leer y aprender.", "اب پورا محلہ ہر ہفتے مل کر کتابیں پڑھتا، نئی کہانیاں سناتا اور علم بانٹتا ہے!", "अब पूरा मोहल्ला हर सप्ताह मिलकर किताबें पढ़ता और नई कहानियाँ साझा करता है!", setOf("story", "read", "happy"),
+                    StoryQuizQuestion("Why did Lulu invite all her neighborhood friends to the library on Saturday?", listOf("So every child could get a library card and borrow books", "To clean the kitchen stove", "To look for a lost shoe"), 0)
+                )
+            )
+        ),
+
+        // 88. Level 4 • Animals & Nature: "Pollinators of the Golden Meadow"
+        StoryBook(
+            id = "book_pollinators_golden_meadow",
+            title = "Pollinators of the Golden Meadow",
+            nativeTitleUrdu = "سنہری باغ کے پھول اور تتلیاں",
+            nativeTitleHindi = "सुनहरे बग़ीचे के फूल और तितलियाँ",
+            author = "Somsanouk Bouttavong",
+            illustrator = "Ounla Santi",
+            publisher = "Room to Read • Science Series",
+            level = 4,
+            coverAssetPath = "books/sw_37273/image_14.webp",
+            categoryTag = "Animals & Nature",
+            pages = listOf(
+                StoryPage(1, "books/sw_37273/image_14.webp", "As the newly emerged butterfly glides from marigold to daisy, she drinks sweet nectar from each blossom.", "La mariposa vuela de flor en flor bebiendo néctar dulce.", "جیسے ہی نئی تتلی گیندے کے ایک پھول سے دوسرے پھول تک اڑتی ہے، وہ ہر کلی سے میٹھا رس پیتی ہے۔", "जब तितली एक फूल से दूसरे फूल पर उड़ती है, तो वह फूलों का मीठा रस पीती है।", setOf("butterfly", "marigolds", "flowers")),
+                StoryPage(2, "books/sw_13916/image_4.webp", "Tiny grains of golden pollen stick to her wings and travel to the next flower, helping new seeds and fruits grow!", "El polen dorado viaja en sus alas ayudando a crecer nuevas semillas.", "سنہری زردانے اس کے پروں کے ساتھ لگ کر دوسرے پھولوں تک پہنچتے ہیں جس سے نئے بیج اور پھل اگتے ہیں!", "सुनहरे परागकण उसके पंखों से दूसरे फूलों तक पहुँचते हैं जिससे नए फल और बीज उगते हैं!", setOf("golden", "wings", "flowers")),
+                StoryPage(3, "books/sw_13916/image_1.webp", "Without tiny pollinators like butterflies, bees, and ladybirds, our gardens and orchards could never bloom so brightly!", "Sin los polinizadores nuestros jardines no podrían florecer.", "تتلیوں، شہد کی مکھیوں اور لیڈی برڈز جیسے ننھے مددگاروں کے بغیر ہمارے باغات کبھی اتنے ہرے بھرے نہیں ہو سکتے!", "तितलियों और लेडीबर्ड्स जैसे नन्हे जीवों के कारण ही हमारे बग़ीचे इतने सुंदर खिलते हैं!", setOf("butterfly", "ladybird", "garden"),
+                    StoryQuizQuestion("How do butterflies help new seeds and fruits grow in the garden?", listOf("By carrying golden pollen from flower to flower", "By wearing frog shoes", "By digging sand burrows"), 0)
+                )
+            )
+        ),
+
+        // 89. Level 4 • Numbers & Rhymes: "One Hundred Stars in the Sky"
+        StoryBook(
+            id = "book_one_hundred_stars",
+            title = "One Hundred Stars in the Sky",
+            nativeTitleUrdu = "آسمان میں ایک سو چمکتے ستارے",
+            nativeTitleHindi = "आसमान में एक सौ चमकते तारे",
+            author = "Marion Drew & Martha Evans",
+            illustrator = "Catherine Holtzhausen",
+            publisher = "Book Dash • Space & Math Series",
+            level = 4,
+            coverAssetPath = "books/sw_13916/image_16.webp",
+            categoryTag = "Numbers & Rhymes",
+            pages = listOf(
+                StoryPage(1, "books/sw_13916/image_19.webp", "On a clear night away from city lights, we count stars by tens: ten, twenty, thirty, forty, fifty!", "En una noche clara contamos estrellas de diez en diez.", "شہر کی روشنیوں سے دور صاف رات میں ہم دس دس کر کے ستارے گنتے ہیں: دس، بیس، تیس، چالیس، پچاس!", "साफ़ रात में हम दस-दस करके तारे गिनते हैं: दस, बीस, तीस, चालीस, पचास!", setOf("stars", "sky")),
+                StoryPage(2, "books/sw_13916/image_20.webp", "Sixty, seventy, eighty, ninety, one hundred glowing stars—and thousands more twinkling across the Milky Way!", "Sesenta, setenta, ochenta, noventa y cien estrellas brillantes.", "ساٹھ، ستر، اسی، نوے، اور ایک سو چمکتے ستارے—اور کہکشاں میں ہزاروں مزید ستارے جگمگا رہے ہیں!", "साठ, सत्तर, अस्सी, नब्बे और एक सौ चमकते तारे—और आकाशगंगा में हज़ारों तारे टिमटिमा रहे हैं!", setOf("hundred", "stars", "bright")),
+                StoryPage(3, "books/sw_15195/image_17.webp", "Mathematics and reading help us measure the distance to the moon and unlock the secrets of the cosmos!", "Las matemáticas y la lectura nos ayudan a explorar el cosmos.", "ریاضی اور مطالعہ ہمیں چاند تک کا فاصلہ ناپنے اور کائنات کے راز جاننے میں مدد دیتے ہیں!", "गणित और पढ़ाई हमें चाँद की दूरी मापने और ब्रह्मांड के रहस्य जानने में मदद करते हैं!", setOf("moon", "read", "books"),
+                    StoryQuizQuestion("How many stars do we reach when we count ten groups of ten stars?", listOf("One hundred (100) stars", "Twelve stars", "Five stars"), 0)
+                )
+            )
+        ),
+
+        // 90. Level 1 • Animals & Nature: "Little Bug's Green Leaf"
+        StoryBook(
+            id = "book_little_bug_green_leaf",
+            title = "Little Bug's Green Leaf",
+            nativeTitleUrdu = "ننھے کیڑے کا ہرا پتہ",
+            nativeTitleHindi = "नन्हे कीट का हरा पत्ता",
+            author = "Catherine Holtzhausen",
+            illustrator = "Catherine Holtzhausen",
+            publisher = "Book Dash • StoryWeaver",
+            level = 1,
+            coverAssetPath = "books/sw_13916/image_2.webp",
+            categoryTag = "Animals & Nature",
+            bookType = "DECODABLE",
+            phonicsSkillTag = "Phonics: l • g • b",
+            pages = listOf(
+                StoryPage(1, "books/sw_13916/image_2.webp", "Look at the little yellow bug sitting on a wide green leaf.", "Mira el bichito amarillo sobre una hoja verde.", "چوڑے ہرے پتے پر بیٹھی ننھی پیلی لیڈی برڈ کو دیکھو۔", "चौड़े हरे पत्ते पर बैठी नन्ही पीली लेडीबर्ड को देखो।", setOf("ladybird", "yellow", "green", "leaves")),
+                StoryPage(2, "books/sw_13916/image_1.webp", "The green leaf sways gently in the warm morning sun.", "La hoja verde se mece bajo el sol de la mañana.", "ہرا پتہ صبح کی گرم دھوپ میں ہولے ہولے جھولتا ہے۔", "हरा पत्ता सुबह की धूप में धीरे-धीरे झूमता है।", setOf("green", "leaves", "morning", "sun")),
+                StoryPage(3, "books/sw_13916/image_3.webp", "Up, up, up! The little bug opens her yellow wings and flies!", "El bichito abre sus alas amarillas y vuela.", "اوپر، اور اوپر! ننھی لیڈی برڈ اپنے پیلے پر کھولتی ہے اور اڑتی ہے!", "नन्ही लेडीबर्ड अपने पीले पंख खोलती है और उड़ती है!", setOf("yellow", "wings", "flying"),
+                    StoryQuizQuestion("What color is the leaf that the little yellow bug sits on?", listOf("Green", "Purple", "Black"), 0)
+                )
+            )
+        ),
+
+        // 91. Level 1 • School & Kindness: "Walking to Bug School"
+        StoryBook(
+            id = "book_walking_to_bug_school",
+            title = "Walking to Bug School",
+            nativeTitleUrdu = "بگز اسکول کا خوشگوار راستہ",
+            nativeTitleHindi = "बग़ीचे के स्कूल का रास्ता",
+            author = "Nadene Kriel",
+            illustrator = "Catherine Holtzhausen",
+            publisher = "Book Dash • StoryWeaver",
+            level = 1,
+            coverAssetPath = "books/sw_13916/image_10.webp",
+            categoryTag = "School & Kindness",
+            pages = listOf(
+                StoryPage(1, "books/sw_13916/image_10.webp", "Every morning we walk along the flower path to reach our garden school.", "Cada mañana caminamos por el sendero de flores a la escuela.", "ہر صبح ہم پھولوں والے راستے پر چل کر اپنے باغ کے اسکول پہنچتے ہیں۔", "हर सुबह हम फूलों के रास्ते से होकर अपने बग़ीचे के स्कूल पहुँचते हैं।", setOf("morning", "walk", "flowers", "school")),
+                StoryPage(2, "books/sw_13916/image_11.webp", "Our friends are waiting by the classroom leaf door with big smiles.", "Nuestros amigos esperan junto a la puerta del aula.", "ہمارے دوست بڑی مسکراہٹ کے ساتھ کلاس کے دروازے پر انتظار کر رہے ہیں۔", "हमारे दोस्त मुस्कुराते हुए कक्षा के दरवाज़े पर इंतज़ार कर रहे हैं।", setOf("friends", "classroom", "smile")),
+                StoryPage(3, "books/sw_13916/image_7.webp", "We sit in a circle and read our favorite morning story together!", "Nos sentamos en círculo y leemos nuestro cuento.", "ہم دائرے میں بیٹھتے ہیں اور مل کر اپنی پسندیدہ صبح کی کہانی پڑھتے ہیں!", "हम घेरे में बैठते हैं और मिलकर अपनी पसंदीदा कहानी पढ़ते हैं!", setOf("read", "story", "morning"),
+                    StoryQuizQuestion("Where do the bug friends sit to read their morning story?", listOf("In a circle inside the garden classroom", "On top of a train", "In the ocean"), 0)
+                )
+            )
+        ),
+
+        // 92. Level 1 • Numbers & Rhymes: "Kick with My Shoe"
+        StoryBook(
+            id = "book_kick_with_my_shoe",
+            title = "Kick with My Shoe",
+            nativeTitleUrdu = "میرے جوتے کی زوردار کک",
+            nativeTitleHindi = "मेरे जूते की ज़ोरदार किक",
+            author = "Khothatso Ranoosi",
+            illustrator = "Marion Drew",
+            publisher = "Pratham Books • StoryWeaver",
+            level = 1,
+            coverAssetPath = "books/sw_15195/image_6.webp",
+            categoryTag = "Numbers & Rhymes",
+            bookType = "DECODABLE",
+            phonicsSkillTag = "Phonics: k • sh • b",
+            pages = listOf(
+                StoryPage(1, "books/sw_15195/image_3.webp", "I hold my round red ball in my two hands.", "Sostengo mi pelota roja en mis dos manos.", "میں اپنے دونوں ہاتھوں میں اپنی گول سرخ گیند پکڑتا ہوں۔", "मैं अपने दोनों हाथों में अपनी गोल लाल गेंद पकड़ता हूँ।", setOf("red", "ball")),
+                StoryPage(2, "books/sw_15195/image_6.webp", "I place the ball on the grass and tap it with my shoe.", "Pongo la pelota en el césped y la pateo con mi zapato.", "میں گیند کو گھاس پر رکھتا ہوں اور اپنے جوتے سے اسے کک مارتا ہوں۔", "मैं गेंद को घास पर रखता हूँ और अपने जूते से किक मारता हूँ।", setOf("ball", "shoe", "green")),
+                StoryPage(3, "books/sw_15195/image_7.webp", "Roll, roll, roll! The red ball zooms across the sunny park!", "La pelota roja rueda por el parque soleado.", "لڑھکتی ہوئی سرخ گیند دھوپ والے پارک میں دور تک جاتی ہے!", "लाल गेंद धूप वाले पार्क में दूर तक लुढ़कती जाती है!", setOf("red", "ball", "play"),
+                    StoryQuizQuestion("What does the child use to kick the round red ball across the grass?", listOf("A shoe on their foot", "A wooden spoon", "An umbrella"), 0)
+                )
+            )
+        ),
+
+        // 93. Level 1 • Science & Weather: "Above the Tall Trees"
+        StoryBook(
+            id = "book_above_tall_trees",
+            title = "Above the Tall Trees",
+            nativeTitleUrdu = "اونچے درختوں کے اوپر",
+            nativeTitleHindi = "ऊँचे पेड़ों के ऊपर",
+            author = "Marion Drew",
+            illustrator = "Marion Drew",
+            publisher = "Pratham Books • StoryWeaver",
+            level = 1,
+            coverAssetPath = "books/sw_15195/image_13.webp",
+            categoryTag = "Science & Weather",
+            pages = listOf(
+                StoryPage(1, "books/sw_15195/image_13.webp", "Look up at the tall green trees swaying in the afternoon wind.", "Mira los altos árboles verdes meciéndose al viento.", "سہ پہر کی ہوا میں جھومتے ہوئے اونچے ہرے درختوں کی طرف دیکھو۔", "हवा में झूमते हुए ऊँचे हरे पेड़ों की ओर देखो।", setOf("trees", "green")),
+                StoryPage(2, "books/sw_15195/image_14.webp", "Way up above the highest branch, my red ball is flying in the sky!", "Muy por encima de la rama más alta vuela mi pelota.", "سب سے اونچی شاخ سے بھی اوپر میری سرخ گیند آسمان میں اڑ رہی ہے!", "सबसे ऊँची शाखा के भी ऊपर मेरी लाल गेंद आसमान में उड़ रही है!", setOf("red", "ball", "sky", "flying")),
+                StoryPage(3, "books/sw_15195/image_15.webp", "The bright blue sky stretches wide over our whole green garden!", "El cielo azul brillante se extiende sobre el jardín.", "چمکدار نیلا آسمان ہمارے پورے ہرے باغ کے اوپر پھیلا ہوا ہے!", "चमकीला नीला आसमान हमारे पूरे हरे बग़ीचे के ऊपर फैला है!", setOf("bright", "blue", "sky", "garden"),
+                    StoryQuizQuestion("What is flying in the sky way up above the highest tree branch?", listOf("The bright red ball", "A green frog", "A wooden table"), 0)
+                )
+            )
+        ),
+
+        // 94. Level 1 • Adventure & Travel: "Beach Day with Mom"
+        StoryBook(
+            id = "book_beach_day_with_mom",
+            title = "Beach Day with Mom",
+            nativeTitleUrdu = "امی کے ساتھ ساحل کی سیر",
+            nativeTitleHindi = "माँ के साथ समुद्र तट की सैर",
+            author = "Mabel Mnensa",
+            illustrator = "Ntembiso Velemane",
+            publisher = "Book Dash • StoryWeaver",
+            level = 1,
+            coverAssetPath = "books/sw_44485/image_2.webp",
+            categoryTag = "Adventure & Travel",
+            isDailyDrop = true,
+            pages = listOf(
+                StoryPage(1, "books/sw_44485/image_2.webp", "Hurray! Today is Beach Day, and the golden sun is shining in the sky.", "Hoy es día de playa y el sol dorado brilla.", "واہ! آج ساحل کی سیر کا دن ہے اور آسمان میں سنہرا سورج چمک رہا ہے۔", "वाह! आज समुद्र तट की सैर का दिन है और सुनहरा सूरज चमक रहा है।", setOf("beach", "golden", "sun", "sky")),
+                StoryPage(2, "books/sw_44485/image_4.webp", "Mom and I ride the fast silver train all the way to the coast.", "Mamá y yo viajamos en el rápido tren plateado.", "امی اور میں تیز چاندی جیسی ٹرین میں بیٹھ کر ساحل تک جاتے ہیں۔", "माँ और मैं तेज़ ट्रेन में बैठकर समुद्र तट तक जाते हैं।", setOf("mother", "train")),
+                StoryPage(3, "books/sw_44485/image_16.webp", "At the beach, we eat sweet mango ice cream and watch the blue waves!", "En la playa comemos helado de mango y miramos las olas.", "ساحل پر ہم میٹھی آم کی آئس کریم کھاتے ہیں اور نیلی لہروں کو دیکھتے ہیں!", "समुद्र तट पर हम मीठी आइसक्रीम खाते हैं और नीली लहरें देखते हैं!", setOf("beach", "blue", "water"),
+                    StoryQuizQuestion("How do Mom and Nicole travel all the way to the beach?", listOf("On the fast silver train", "On a camel", "In a submarine"), 0)
+                )
+            )
+        ),
+
+        // 95. Level 2 • Numbers & Rhymes: "Kapow! Karate Count"
+        StoryBook(
+            id = "book_kapow_karate_count",
+            title = "Kapow! Karate Count",
+            nativeTitleUrdu = "کراٹے کی مشق اور گنتی",
+            nativeTitleHindi = "कराटे का अभ्यास और गिनती",
+            author = "Mabel Mnensa",
+            illustrator = "Ntembiso Velemane",
+            publisher = "Book Dash • StoryWeaver",
+            level = 2,
+            coverAssetPath = "books/sw_44485/image_9.webp",
+            categoryTag = "Numbers & Rhymes",
+            pages = listOf(
+                StoryPage(1, "books/sw_44485/image_7.webp", "One, two! The karate boys tie their black belts over their white uniforms.", "Uno, dos: los niños atan sus cinturones negros.", "ایک، دو! کراٹے کرنے والے لڑکے اپنے سفید یونیفارم پر بلیک بیلٹ باندھتے ہیں۔", "एक, दो! कराटे करने वाले बच्चे अपनी सफ़ेद यूनिफ़ॉर्म पर बेल्ट बाँधते हैं।", setOf("white", "friends")),
+                StoryPage(2, "books/sw_44485/image_8.webp", "Three, four! They bow politely and balance on one foot with steady focus.", "Tres, cuatro: hacen una reverencia con equilibrio.", "تین، چار! وہ ادب سے جھک کر سلام کرتے ہیں اور ایک پاؤں پر توازن بناتے ہیں۔", "तीन, चार! वे विनम्र प्रणाम करते हैं और संतुलन बनाते हैं।", setOf("special", "friends")),
+                StoryPage(3, "books/sw_44485/image_9.webp", "Five, six—Kapow! Everyone claps six times for their awesome karate jump!", "Cinco, seis: todos aplauden su gran salto de karate.", "پانچ، چھ—کپاؤ! ان کی شاندار چھلانگ پر سب چھ بار تالیاں بجاتے ہیں!", "पाँच, छह—कपॉव! उनकी शानदार छलांग पर सब तालियाँ बजाते हैं!", setOf("play", "happy"),
+                    StoryQuizQuestion("What color uniforms do the karate boys wear with their black belts?", listOf("Crisp white uniforms", "Pink dresses", "Yellow raincoats"), 0)
+                )
+            )
+        ),
+
+        // 96. Level 2 • Science & Weather: "Candles in the Evening Breeze"
+        StoryBook(
+            id = "book_candles_evening_breeze",
+            title = "Candles in the Evening Breeze",
+            nativeTitleUrdu = "شام کی ہوا اور موم بتیوں کی روشنی",
+            nativeTitleHindi = "शाम की हवा और मोमबत्तियों की रोशनी",
+            author = "Clyde Beech",
+            illustrator = "Mohale Mashigo",
+            publisher = "Book Dash • StoryWeaver",
+            level = 2,
+            coverAssetPath = "books/sw_45764/image_2.webp",
+            categoryTag = "Science & Weather",
+            pages = listOf(
+                StoryPage(1, "books/sw_45764/image_2.webp", "Before the evening rainstorm, three wax candles glowed warmly on the table.", "Antes de la lluvia, tres velas brillaban en la mesa.", "شام کی بارش سے پہلے میز پر تین موم بتیاں گرم روشنی بکھیر رہی تھیں۔", "शाम की बारिश से पहले मेज़ पर तीन मोमबत्तियाँ चमक रही थीं।", setOf("candles", "bright")),
+                StoryPage(2, "books/sw_45764/image_3.webp", "Whoosh! A cool gust of air blew in through the window and puffed the candles out.", "Una ráfaga de aire fresco apagó las velas.", "شوں! کھڑکی سے ٹھنڈی ہوا کا ایک جھونکا آیا اور موم بتیاں بجھ گئیں۔", "खिड़की से ठंडी हवा का झोंका आया और मोमबत्तियाँ बुझ गईं।", setOf("blast", "candles")),
+                StoryPage(3, "books/sw_45764/image_6.webp", "Seconds later, refreshing silver raindrops began pattering across the green garden leaves!", "Segundos después, las gotas de lluvia cayeron en el jardín.", "چند لمحوں بعد باغ کے ہرے پتوں پر بارش کی چاندی جیسی بوندیں برسنے لگیں!", "कुछ ही पल बाद बग़ीचे के हरे पत्तों पर बारिश की बूँदें गिरने लगीं!", setOf("rain", "green", "garden", "leaves"),
+                    StoryQuizQuestion("What blew the three glowing wax candles out before the rain started?", listOf("A cool gust of wind through the window", "A bouncing ball", "A spider web"), 0)
+                )
+            )
+        ),
+
+        // 97. Level 2 • School & Kindness: "Lulu's Favorite Ocean Book"
+        StoryBook(
+            id = "book_lulu_ocean_book",
+            title = "Lulu's Favorite Ocean Book",
+            nativeTitleUrdu = "لولو کی پسندیدہ سمندری کتاب",
+            nativeTitleHindi = "लुलु की पसंदीदा समुद्री किताब",
+            author = "Clyde Beech",
+            illustrator = "Clyde Beech",
+            publisher = "Book Dash • StoryWeaver",
+            level = 2,
+            coverAssetPath = "books/sw_45764/image_7.webp",
+            categoryTag = "School & Kindness",
+            bookType = "SERIES",
+            seriesTag = "Lulu Library • Ep 5",
+            pages = listOf(
+                StoryPage(1, "books/sw_45764/image_7.webp", "In the children's corner of the library, Lulu found a big blue book about ocean animals.", "En la biblioteca Lulu encontró un gran libro azul sobre el océano.", "لائبریری کے بچوں والے حصے میں لولو کو سمندری جانوروں کے بارے میں ایک بڑی نیلی کتاب ملی۔", "लाइब्रेरी में लुलु को समुद्री जीवों के बारे में एक बड़ी नीली किताब मिली।", setOf("library", "blue", "books", "ocean")),
+                StoryPage(2, "books/sw_45764/image_8.webp", "Inside were colorful drawings of dolphins, coral reefs, sea turtles, and silver fish!", "Adentro había dibujos de delfines, tortugas y peces plateados.", "اس کے اندر ڈولفن، مونگے کی چٹانوں، کچھوؤں اور چمکدار مچھلیوں کی رنگین تصاویر تھیں!", "उसके अंदर डॉल्फ़िन, कछुओं और चमकीली मछलियों के सुंदर चित्र थे!", setOf("fish", "colors", "ocean")),
+                StoryPage(3, "books/sw_45764/image_12.webp", "Lulu borrowed the ocean book AND a star book so she could read both with Ma at home!", "Lulu tomó prestado el libro del océano y un libro de estrellas.", "لولو نے سمندر والی کتاب اور ستاروں والی کتاب دونوں ادھار لیں تاکہ گھر جا کر امی کے ساتھ پڑھ سکے!", "लुलु ने समुद्र और तारों वाली दोनों किताबें लीं ताकि घर पर माँ के साथ पढ़ सके!", setOf("borrow", "books", "stars", "mother"),
+                    StoryQuizQuestion("What animals did Lulu see inside her big blue ocean book?", listOf("Dolphins, sea turtles, and silver fish", "Lions and giraffes", "Camels and lizards"), 0)
+                )
+            )
+        ),
+
+        // 98. Level 3 • School & Kindness: "Miss Miya's Kindness Lesson"
+        StoryBook(
+            id = "book_miss_miya_kindness_lesson",
+            title = "Miss Miya's Kindness Lesson",
+            nativeTitleUrdu = "مس میا کا محبت اور ہمدردی کا سبق",
+            nativeTitleHindi = "मिस मिया का दया और दोस्ती का पाठ",
+            author = "Catherine Holtzhausen",
+            illustrator = "Catherine Holtzhausen",
+            publisher = "Book Dash • StoryWeaver",
+            level = 3,
+            coverAssetPath = "books/sw_13916/image_11.webp",
+            categoryTag = "School & Kindness",
+            pages = listOf(
+                StoryPage(1, "books/sw_13916/image_11.webp", "When a classmate sits alone at recess, a kind word can turn their whole day around.", "Cuando un compañero está solo, una palabra amable alegra su día.", "جب کوئی ہم جماعت بریک میں اکیلا بیٹھا ہو تو ایک پیارا جملہ اس کا پورا دن خوشگوار بنا سکتا ہے۔", "जब कोई सहपाठी अकेला बैठा हो, तो एक प्यारा शब्द उसका पूरा दिन खुशहाल बना देता है।", setOf("school", "friends")),
+                StoryPage(2, "books/sw_13916/image_13.webp", "Miss Miya noticed Lara sitting quietly by the mushroom table and walked over to listen.", "La maestra notó a Lara en silencio y se acercó a escucharla.", "مس میا نے لارا کو مشروم کی میز کے پاس خاموش بیٹھے دیکھا اور پیار سے اس کی بات سننے آئیں۔", "मिस मिया ने लारा को चुपचाप बैठे देखा और प्यार से उसकी बात सुनने आईं।", setOf("teacher", "ladybird")),
+                StoryPage(3, "books/sw_13916/image_15.webp", "Soon every bug in the class was hugging Lara and reminding her how much they loved her golden wings!", "Pronto toda la clase abrazó a Lara recordándole cuánto la querían.", "جلد ہی کلاس کے تمام دوستوں نے لارا کو گلے لگایا اور بتایا کہ اس کے سنہری پر سب کو کتنے عزیز ہیں!", "जल्द ही कक्षा के सभी दोस्तों ने लारा को गले लगाया और उसके सुनहरे पंखों की तारीफ़ की!", setOf("golden", "wings", "friends", "happy"),
+                    StoryQuizQuestion("What did Miss Miya do when she saw Lara sitting quietly alone?", listOf("She walked over kindly to listen and include her", "She ignored her", "She gave a difficult test"), 0)
+                )
+            )
+        ),
+
+        // 99. Level 3 • Adventure & Travel: "The Red Ball's Sky Journey"
+        StoryBook(
+            id = "book_red_ball_sky_journey",
+            title = "The Red Ball's Sky Journey",
+            nativeTitleUrdu = "سرخ گیند کا آسمانی سفر",
+            nativeTitleHindi = "लाल गेंद का आसमान का सफ़र",
+            author = "Marion Drew",
+            illustrator = "Marion Drew",
+            publisher = "Pratham Books • StoryWeaver",
+            level = 3,
+            coverAssetPath = "books/sw_15195/cover_image.webp",
+            categoryTag = "Adventure & Travel",
+            bookType = "SERIES",
+            seriesTag = "Red Ball Adventures • Ep 4",
+            pages = listOf(
+                StoryPage(1, "books/sw_15195/cover_image.webp", "From the green backyard grass, the bouncy red ball began an extraordinary journey upward.", "Desde el césped verde, la pelota roja comenzó un viaje hacia el cielo.", "صحن کی ہری گھاس سے اچھلتی ہوئی سرخ گیند نے آسمان کی طرف ایک حیرت انگیز سفر شروع کیا۔", "आँगन की हरी घास से लाल गेंद ने आसमान की ओर एक अनोखा सफ़र शुरू किया।", setOf("green", "red", "ball")),
+                StoryPage(2, "books/sw_15195/image_15.webp", "It soared past chirping sparrows, over the tall eucalyptus trees, and right through a fluffy white cloud!", "Voló junto a los gorriones, sobre los árboles y entre las nubes blancas.", "وہ چہچہاتی چڑیوں کے پاس سے گزری، اونچے درختوں کو پار کیا اور سفید بادلوں کے درمیان جا پہنچی!", "वह चिड़ियों के पास से गुज़री, ऊँचे पेड़ों को पार किया और सफ़ेद बादलों में जा पहुँची!", setOf("trees", "white", "clouds", "flying")),
+                StoryPage(3, "books/sw_15195/image_17.webp", "From high in the sky, the whole town looked like a colorful patchwork quilt of green gardens and blue rivers!", "Desde el cielo, la ciudad parecía un mosaico de jardines verdes y ríos azules.", "آسمان کی بلندی سے پورا شہر ہرے باغات اور نیلے دریاؤں کے ایک رنگین نقشے جیسا نظر آ رہا تھا!", "आसमान की ऊँचाई से पूरा शहर हरे बग़ीचों और नीली नदियों के सुंदर नक़्शे जैसा दिख रहा था!", setOf("sky", "green", "garden", "blue"),
+                    StoryQuizQuestion("What did the town look like from high up in the sky?", listOf("A colorful patchwork of green gardens and blue rivers", "A dark cave", "An empty desert"), 0)
+                )
+            )
+        ),
+
+        // 100. Level 3 • Animals & Nature: "Caterpillar's Four Garden Friends"
+        StoryBook(
+            id = "book_caterpillar_four_friends",
+            title = "Caterpillar's Four Garden Friends",
+            nativeTitleUrdu = "کیٹرپلر کے چار مخلص دوست",
+            nativeTitleHindi = "कैटरपिलर के चार प्यारे दोस्त",
+            author = "Somsanouk Bouttavong",
+            illustrator = "Ounla Santi",
+            publisher = "Room to Read • StoryWeaver",
+            level = 3,
+            coverAssetPath = "books/sw_37273/image_4.webp",
+            categoryTag = "Animals & Nature",
+            pages = listOf(
+                StoryPage(1, "books/sw_37273/image_3.webp", "When Caterpillar lost her tiny shoe, four kind neighbors offered to share their own footwear right away.", "Cuando la oruga perdió su zapato, cuatro amigos ofrecieron ayudarla.", "جب کیٹرپلر کا ننھا جوتا کھو گیا تو باغ کے چار مہربان دوستوں نے فوراً اپنے جوتے پیش کیے۔", "जब कैटरपिलर का जूता खो गया, तो चार दयालु दोस्तों ने तुरंत मदद की पेशकश की।", setOf("caterpillar", "shoe", "friends")),
+                StoryPage(2, "books/sw_37273/image_5.webp", "Spider offered a tiny slipper, Frog offered a big green sneaker, Grasshopper shared a spiky boot, and Crab shared a sand claw.", "La araña, la rana, el saltamontes y el cangrejo compartieron sus zapatos.", "مکڑی نے ننھا جوتا دیا، مینڈک نے بڑا ہرا جوتا، ٹڈے نے گھاس والا بوٹ اور کیکڑے نے ریتیلا جوتا پیش کیا۔", "मकड़ी, मेंढक, टिड्डे और केकड़े सभी ने खुशी से अपने जूते दिखाए।", setOf("spider", "frog", "grasshopper", "crab")),
+                StoryPage(3, "books/sw_37273/image_14.webp", "Even though none of the shoes fit, their generosity made Caterpillar feel loved until she grew her butterfly wings!", "Aunque ningún zapato le quedó, la bondad de sus amigos la hizo feliz.", "اگرچہ کوئی جوتا پورا نہیں آیا، مگر دوستوں کی محبت نے کیٹرپلر کو خوش رکھا یہاں تک کہ اس کے تتلی کے پر نکل آئے!", "भले ही कोई जूता फ़िट नहीं आया, पर दोस्तों के प्यार ने उसका दिल खुश कर दिया!", setOf("butterfly", "wings", "friends", "happy"),
+                    StoryQuizQuestion("Who were the four kind neighbors who offered to share their shoes with Caterpillar?", listOf("Spider, Frog, Grasshopper, and Crab", "Lion, Tiger, Bear, and Wolf", "Whale, Shark, Dolphin, and Seal"), 0)
+                )
+            )
+        ),
+
+        // 101. Level 4 • School & Kindness: "The Young Reader's Promise"
+        StoryBook(
+            id = "book_young_readers_promise",
+            title = "The Young Reader's Promise",
+            nativeTitleUrdu = "ننھے قاری کا روزانہ مطالعہ کا وعدہ",
+            nativeTitleHindi = "नन्हे पाठक का प्रतिदिन पढ़ने का संकल्प",
+            author = "Letta Machoga",
+            illustrator = "Wiehan de Jager",
+            publisher = "African Storybook • StoryWeaver",
+            level = 4,
+            coverAssetPath = "books/sw_15058/image_2.webp",
+            categoryTag = "School & Kindness",
+            isDailyDrop = true,
+            pages = listOf(
+                StoryPage(1, "books/sw_15058/image_2.webp", "Reading just fifteen minutes every day unlocks thousands of new words, ideas, and worlds over a year.", "Leer quince minutos cada día abre miles de palabras e ideas nuevas.", "روزانہ صرف پندرہ منٹ مطالعہ کرنا سال بھر میں ہزاروں نئے الفاظ، خیالات اور علم کے دروازے کھول دیتا ہے۔", "प्रतिदिन केवल पंद्रह मिनट पढ़ना हज़ारों नए शब्दों और विचारों के द्वार खोलता है।", setOf("read", "books", "every")),
+                StoryPage(2, "books/sw_15058/image_5.webp", "Whether you read to your parents, your grandparents, your siblings, or aloud to yourself, every page builds confidence.", "Ya sea que leas a tu familia o para ti mismo, cada página da confianza.", "چاہے آپ والدین کو پڑھ کر سنائیں، دادا دادی کو یا خود بلند آواز سے پڑھیں، ہر صفحہ آپ کا اعتماد بڑھاتا ہے۔", "चाहे आप परिवार को पढ़कर सुनाएँ या स्वयं पढ़ें, हर पन्ना आत्मविश्वास बढ़ाता है।", setOf("grandfather", "grandmother", "read")),
+                StoryPage(3, "books/sw_15058/image_9.webp", "Make the Young Reader's Promise today: open a storybook every day and let your imagination soar!", "Abre un libro de cuentos cada día y deja volar tu imaginación.", "آج ہی ننھے قاری کا وعدہ کریں: ہر روز ایک کہانی کھولیں اور اپنے تخیل کو نئی بلندیوں تک اڑنے دیں!", "आज ही संकल्प लें: हर दिन एक कहानी पढ़ें और अपनी कल्पना को उड़ान दें!", setOf("story", "books", "happy"),
+                    StoryQuizQuestion("How many minutes of daily reading can unlock thousands of new words over a year?", listOf("Just fifteen minutes every day", "Zero minutes", "Only once a year"), 0)
+                )
+            )
+        ),
+
+        // 102. Level 4 • Science & Weather: "Seasons of the Monsoon Valley"
+        StoryBook(
+            id = "book_seasons_monsoon_valley",
+            title = "Seasons of the Monsoon Valley",
+            nativeTitleUrdu = "وادی میں موسمِ برسات کی بہار",
+            nativeTitleHindi = "घाटी में मानसून की बहार",
+            author = "Clyde Beech & Mohale Mashigo",
+            illustrator = "Mohale Mashigo",
+            publisher = "Book Dash • Science Series",
+            level = 4,
+            coverAssetPath = "books/sw_45764/image_6.webp",
+            categoryTag = "Science & Weather",
+            pages = listOf(
+                StoryPage(1, "books/sw_45764/image_3.webp", "After months of warm summer sunshine, moisture-filled monsoon winds blow inland from the ocean toward the green hills.", "Los vientos del monzón traen humedad desde el océano hacia las colinas.", "گرمیوں کی طویل دھوپ کے بعد سمندر سے نمی والی مون سون ہوائیں ہری پہاڑیوں کی طرف چلتی ہیں۔", "गर्मियों की धूप के बाद समुद्र से मानसून की हवाएँ हरी पहाड़ियों की ओर चलती हैं।", setOf("ocean", "clouds", "green")),
+                StoryPage(2, "books/sw_45764/image_6.webp", "Abundant monsoon rains refill the rivers, nourish the mango orchards, and turn every meadow emerald green.", "Las lluvias del monzón llenan los ríos y reverdecen los jardines.", "مون سون کی بھرپور بارشیں دریاؤں کو بھر دیتی ہیں، آم کے باغات کو سیراب کرتی ہیں اور ہر میدان کو سرسبز بنا دیتی ہیں۔", "मानसून की बारिश नदियों को भर देती है और हर बग़ीचे को हरा-भरा कर देती है।", setOf("rain", "water", "garden", "trees")),
+                StoryPage(3, "books/sw_45764/image_13.webp", "Children in bright raincoats celebrate the life-giving water that keeps farms, fish, and forests thriving all year!", "Los niños celebran el agua que da vida a los bosques y ríos.", "رنگین برساتی کوٹ پہنے بچے زندگی بخشنے والے اس پانی کا خیرمقدم کرتے ہیں جو کھیتوں اور جنگلات کو آباد رکھتا ہے!", "रंगीन रेनकोट पहने बच्चे इस जीवनदायिनी बारिश का स्वागत करते हैं!", setOf("raincoat", "fish", "water", "happy"),
+                    StoryQuizQuestion("Where do the moisture-filled monsoon winds travel from before reaching the green hills?", listOf("Inland from the wide ocean", "From inside a cupboard", "From the desert sand"), 0)
+                )
+            )
+        ),
+
+        // 103. Level 4 • Adventure & Travel: "Murals Along the Railway Track"
+        StoryBook(
+            id = "book_murals_railway_track",
+            title = "Murals Along the Railway Track",
+            nativeTitleUrdu = "ریلوے ٹریک کی رنگین مصوری",
+            nativeTitleHindi = "रेलवे ट्रैक की रंगीन चित्रकारी",
+            author = "Mabel Mnensa",
+            illustrator = "Ntembiso Velemane",
+            publisher = "Book Dash • StoryWeaver",
+            level = 4,
+            coverAssetPath = "books/sw_44485/image_4.webp",
+            categoryTag = "Adventure & Travel",
+            pages = listOf(
+                StoryPage(1, "books/sw_44485/image_1.webp", "Local artists and school students worked together all summer to paint community murals along the transit avenue.", "Artistas y estudiantes pintaron murales a lo largo de la avenida.", "مقامی مصوروں اور اسکول کے طلبہ نے پوری گرمیوں میں مل کر ٹرین کی سڑک کے ساتھ دیواروں پر خوبصورت تصاویر بنائیں۔", "स्थानीय कलाकारों और छात्रों ने मिलकर सड़क की दीवारों पर सुंदर चित्र बनाए।", setOf("painted", "school", "street")),
+                StoryPage(2, "books/sw_44485/image_4.webp", "As the silver coastal train glides past, passengers admire giant painted sunflowers, soaring doves, and ocean waves.", "Mientras el tren pasa, los pasajeros admiran los girasoles y olas pintadas.", "جب چمکدار ٹرین وہاں سے گزرتی ہے تو مسافر دیواروں پر بنے سورج مکھی کے پھولوں، پرندوں اور سمندری لہروں کی داد دیتے ہیں۔", "जब ट्रेन वहाँ से गुज़रती है, तो यात्री दीवारों पर बने फूलों और लहरों के चित्रों की प्रशंसा करते हैं।", setOf("train", "painted", "flowers", "ocean")),
+                StoryPage(3, "books/sw_44485/image_14.webp", "Public art turns every ordinary commute into an inspiring gallery of color, pride, and togetherness!", "El arte público convierte cada viaje en una galería de color y alegría.", "عوامی فن مصوری ہر روز کے عام سفر کو رنگوں، یکجہتی اور خوشی کی ایک خوبصورت نمائش بنا دیتا ہے!", "सार्वजनिक कला हर दिन के सफ़र को रंगों और एकता की सुंदर प्रदर्शनी बना देती है!", setOf("colors", "friends", "bright"),
+                    StoryQuizQuestion("Who painted the colorful community murals along the railway avenue?", listOf("Local artists and school students working together", "Passing clouds", "Ocean crabs"), 0)
+                )
+            )
+        ),
+
+        // 104. Level 4 • Bedtime & Folktales: "The Library After Sundown"
+        StoryBook(
+            id = "book_library_after_sundown",
+            title = "The Library After Sundown",
+            nativeTitleUrdu = "شام کے بعد کتابوں کی جادوئی دنیا",
+            nativeTitleHindi = "शाम के बाद किताबों की जादुई दुनिया",
+            author = "Clyde Beech",
+            illustrator = "Clyde Beech",
+            publisher = "Book Dash • StoryWeaver",
+            level = 4,
+            coverAssetPath = "books/sw_45764/image_14.webp",
+            categoryTag = "Bedtime & Folktales",
+            bookType = "SERIES",
+            seriesTag = "Lulu Library • Ep 6",
+            pages = listOf(
+                StoryPage(1, "books/sw_45764/image_1.webp", "When the library clock strikes five and the doors lock for the evening, the rows of books rest quietly on their oak shelves.", "Cuando la biblioteca cierra, los libros descansan en sus estantes.", "جب لائبریری کی گھڑی پانچ بجاتی ہے اور شام کو دروازے بند ہوتے ہیں تو کتابیں اپنی الماریوں میں خاموشی سے آرام کرتی ہیں۔", "जब शाम को लाइब्रेरी बंद होती है, तो किताबें अपनी अलमारियों में शांत विश्राम करती हैं।", setOf("library", "books")),
+                StoryPage(2, "books/sw_45764/image_14.webp", "Yet inside homes all across the neighborhood, borrowed library books are wide open under warm bedside lamps!", "Pero en las casas del barrio, los libros prestados están abiertos bajo las lámparas.", "مگر محلے بھر کے گھروں میں لائبریری سے ادھار لی گئی کتابیں رات کے لیمپ کی روشنی میں کھلی ہوئی ہیں!", "पर मोहल्ले के घरों में लाइब्रेरी से लाई गईं किताबें लैंप की रोशनी में खुली हैं!", setOf("borrow", "books", "bright")),
+                StoryPage(3, "books/sw_45764/image_15.webp", "As Lulu drifts to sleep hugging her favorite story, heroes, sailors, and butterflies dance through her dreams!", "Mientras Lulu se duerme, marineros y mariposas bailan en sus sueños.", "جیسے ہی لولو اپنی پسندیدہ کتاب کے ساتھ میٹھی نیند سوتی ہے، بہادر ملاح اور رنگین تتلیاں اس کے خوابوں میں جگمگاتی ہیں!", "जब लुलु अपनी पसंदीदा किताब के साथ सोती है, तो नाविक और तितलियाँ उसके सपनों में आती हैं!", setOf("story", "sailor", "butterfly"),
+                    StoryQuizQuestion("Where are the borrowed library books wide open after the library closes for the evening?", listOf("Inside children's homes under warm bedside lamps", "At the bottom of the river", "On top of the roof"), 0)
+                )
+            )
+        ),
+
+        // 105. Level 4 • Numbers & Rhymes: "The Golden Symphony of Nature"
+        StoryBook(
+            id = "book_golden_symphony_nature",
+            title = "The Golden Symphony of Nature",
+            nativeTitleUrdu = "فطرت کے رنگوں اور سروں کی سمفنی",
+            nativeTitleHindi = "प्रकृति के रंगों और सुरों का संगम",
+            author = "Catherine Holtzhausen & Somsanouk Bouttavong",
+            illustrator = "Ounla Santi",
+            publisher = "Room to Read • Nature Anthology",
+            level = 4,
+            coverAssetPath = "books/sw_37273/cover_image.webp",
+            categoryTag = "Numbers & Rhymes",
+            isDailyDrop = true,
+            pages = listOf(
+                StoryPage(1, "books/sw_37273/cover_image.webp", "From dawn until starlight, the meadow plays a mathematical symphony of patterns, colors, and rhythms.", "Desde el amanecer, el jardín toca una sinfonía de patrones y colores.", "طلوعِ آفتاب سے لے کر ستاروں بھری رات تک، باغ میں رنگوں، توازن اور سروں کی ایک دلکش سمفنی بجتی ہے۔", "सुबह से लेकर तारों भरी रात तक बग़ीचे में रंगों और सुरों का सुंदर संगम दिखता है।", setOf("garden", "colors", "morning")),
+                StoryPage(2, "books/sw_37273/image_7.webp", "Five petals on a wildflower, six legs on a yellow ladybird, seven colors in a raincloud bow, and eight legs on a spider's web!", "Cinco pétalos, seis patas de mariquita, siete colores del arcoíris y ocho patas de araña.", "پھول کی پانچ پتیاں، پیلی لیڈی برڈ کے چھ پاؤں، قوسِ قزح کے سات رنگ اور مکڑی کے جالے پر آٹھ ٹانگیں!", "फूल की पाँच पंखुड़ियाँ, लेडीबर्ड के छह पैर, इंद्रधनुष के सात रंग और मकड़ी के आठ पैर!", setOf("flowers", "ladybird", "spider", "colors")),
+                StoryPage(3, "books/sw_37273/image_14.webp", "Every number, every rhyme, and every creature has a special place in the grand storybook of our natural world!", "Cada número, rima y criatura tiene un lugar especial en la naturaleza.", "قدرت کی اس عظیم کتاب میں ہر عدد، ہر نغمے اور ہر جاندار کا ایک خاص اور انمول مقام ہے!", "प्रकृति की इस महान किताब में हर संख्या, हर गीत और हर जीव का एक ख़ास स्थान है!", setOf("special", "story", "books"),
+                    StoryQuizQuestion("How many colors are in a rainbow after a gentle garden rain?", listOf("Seven colors", "Two colors", "Twenty colors"), 0)
+                )
+            )
         )
     )
 

@@ -71,6 +71,8 @@ fun LibraryTabScreen(
             "Level 4",
             "Animals & Nature",
             "Family & Friends",
+            "School & Kindness",
+            "Numbers & Rhymes",
             "Phonics",
             "Adventure & Travel",
             "Science & Weather",
@@ -126,6 +128,12 @@ fun LibraryTabScreen(
     val familyFriendsBooks = remember(books) {
         books.filter { it.categoryTag == "Family & Friends" }
     }
+    val schoolKindnessBooks = remember(books) {
+        books.filter { it.categoryTag == "School & Kindness" }
+    }
+    val numbersRhymesBooks = remember(books) {
+        books.filter { it.categoryTag == "Numbers & Rhymes" }
+    }
     val adventureTravelBooks = remember(books) {
         books.filter { it.categoryTag == "Adventure & Travel" }
     }
@@ -174,6 +182,8 @@ fun LibraryTabScreen(
                 "Level 4" -> b.level == 4
                 "Animals & Nature" -> b.categoryTag == "Animals & Nature"
                 "Family & Friends" -> b.categoryTag == "Family & Friends"
+                "School & Kindness" -> b.categoryTag == "School & Kindness"
+                "Numbers & Rhymes" -> b.categoryTag == "Numbers & Rhymes"
                 "Adventure & Travel" -> b.categoryTag == "Adventure & Travel"
                 "Science & Weather" -> b.categoryTag == "Science & Weather"
                 "Bedtime & Folktales" -> b.categoryTag == "Bedtime & Folktales"
@@ -329,7 +339,7 @@ fun LibraryTabScreen(
                     }
                 }
 
-                // If user selects "Games" filter chip, show the dedicated Word Games Arcade Hub!
+                // If user selects "Games" filter chip, show the dedicated 10 Kids Learning Games Arcade Hub!
                 if (selectedCategoryFilter == "Games") {
                     item {
                         Spacer(modifier = Modifier.height(8.dp))
@@ -341,7 +351,7 @@ fun LibraryTabScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Word Games Arcade (4)",
+                                text = "Kids Learning Games (10)",
                                 fontFamily = GoogleSansFamily,
                                 fontWeight = FontWeight.ExtraBold,
                                 fontSize = 20.sp,
@@ -366,6 +376,12 @@ fun LibraryTabScreen(
                         val arcadeGames = listOf(
                             listOf("Jumbled Words", "Unscramble letters with smart hints & bilingual clues", "a • p • p • l • e • s", "+20 ⭐", "JUMBLE") to SeekhJumblePurple,
                             listOf("Pop The Balloons", "Pop rising phonics sound balloons before time runs out", "🎈 S • B • M • SH", "+30 ⭐", "BALLOON") to Color(0xFF00838F),
+                            listOf("Sentence Builder", "Tap scrambled word tiles in order to build story sentences", "🧩 Build Sentence", "+25 ⭐", "SENTENCE") to Color(0xFF1E40AF),
+                            listOf("Rhyming Words", "Match phonics rhyme families (-AIN, -ALL, -IGHT, -OOK)", "🎵 Rhyme Match", "+25 ⭐", "RHYME") to Color(0xFFBE185D),
+                            listOf("Missing Phonics Sound", "Fill in the missing vowel or digraph sound in story words", "🔤 Fill Blank", "+20 ⭐", "MISSING_SOUND") to Color(0xFF0F766E),
+                            listOf("Listen & Pick", "Ear-training audio game: hear Noor's voice clue & pick the picture", "🔊 Ear Training", "+25 ⭐", "LISTEN_FIND") to Color(0xFF4338CA),
+                            listOf("Opposite Words", "Learn core English antonyms (Big/Small, Day/Night, Hot/Cold)", "⚖️ Antonyms", "+25 ⭐", "OPPOSITES") to Color(0xFFD97706),
+                            listOf("Count, Numbers & Math", "Interactive kids counting, numbers & story addition fun", "🔢 123 & Math", "+30 ⭐", "COUNT_COLOR") to Color(0xFF047857),
                             listOf("Speed Reading", "30-second fluency challenge to unlock speed vehicles", "⏱ 30 sec WPM", "+25 ⭐", "SPEED") to Color(0xFFF57F17),
                             listOf("Word Meanings", "9 illustrated picture vocabulary themes to master", "🎨 9 Themes", "+15 ⭐", "VOCAB") to SeekhVocabDarkGreen
                         )
@@ -556,11 +572,11 @@ fun LibraryTabScreen(
                             LibrarySectionHeader(
                                 title = "New & Daily stories (${dailyDropBooks.size})",
                                 onSpeak = { onSpeakText("New and daily recommended stories") },
-                                actionLabel = "See all →",
+                                actionLabel = "See all (${dailyDropBooks.size}) →",
                                 onActionClick = { selectedCategoryFilter = "New & Daily" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = dailyDropBooks.take(6),
+                                sectionBooks = dailyDropBooks.take(9),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -578,11 +594,11 @@ fun LibraryTabScreen(
                             LibrarySectionHeader(
                                 title = "Level 1 stories (${level1Books.size})",
                                 onSpeak = { onSpeakText("Level 1 stories") },
-                                actionLabel = "See all →",
+                                actionLabel = "See all (${level1Books.size}) →",
                                 onActionClick = { selectedCategoryFilter = "Level 1" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = level1Books.take(6),
+                                sectionBooks = level1Books.take(9),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -594,12 +610,12 @@ fun LibraryTabScreen(
                         }
                     }
 
-                    // 4. "Play games" Section (seekh: play_games — Jumbled Words, Pop The Balloons, Speed Reading, Word Meanings)
+                    // 4. "Play games" Section (10 Kids Learning Games!)
                     item {
                         LibrarySectionHeader(
-                            title = "Play games",
-                            onSpeak = { onSpeakText("Play games") },
-                            actionLabel = "All 4 Games →",
+                            title = "Kids Learning Games (10)",
+                            onSpeak = { onSpeakText("Play 10 kids learning games") },
+                            actionLabel = "All 10 Games →",
                             onActionClick = { selectedCategoryFilter = "Games" }
                         )
                         Spacer(modifier = Modifier.height(8.dp))
@@ -627,6 +643,66 @@ fun LibraryTabScreen(
                                     badgeText = "🎈 S • B • M",
                                     rewardText = "+30 ⭐",
                                     onClick = { onOpenGame("BALLOON") }
+                                )
+                            }
+                            item {
+                                GameShelfCard(
+                                    title = "Sentence Builder",
+                                    subtitle = "Build story sentences",
+                                    containerColor = Color(0xFF1E40AF),
+                                    badgeText = "🧩 Word Order",
+                                    rewardText = "+25 ⭐",
+                                    onClick = { onOpenGame("SENTENCE") }
+                                )
+                            }
+                            item {
+                                GameShelfCard(
+                                    title = "Rhyming Words",
+                                    subtitle = "Match rhyme families",
+                                    containerColor = Color(0xFFBE185D),
+                                    badgeText = "🎵 -AIN • -ALL",
+                                    rewardText = "+25 ⭐",
+                                    onClick = { onOpenGame("RHYME") }
+                                )
+                            }
+                            item {
+                                GameShelfCard(
+                                    title = "Missing Sound",
+                                    subtitle = "Fill phonics blanks",
+                                    containerColor = Color(0xFF0F766E),
+                                    badgeText = "🔤 Vowels & Blends",
+                                    rewardText = "+20 ⭐",
+                                    onClick = { onOpenGame("MISSING_SOUND") }
+                                )
+                            }
+                            item {
+                                GameShelfCard(
+                                    title = "Listen & Pick",
+                                    subtitle = "Audio ear training",
+                                    containerColor = Color(0xFF4338CA),
+                                    badgeText = "🔊 Hear & Match",
+                                    rewardText = "+25 ⭐",
+                                    onClick = { onOpenGame("LISTEN_FIND") }
+                                )
+                            }
+                            item {
+                                GameShelfCard(
+                                    title = "Opposite Words",
+                                    subtitle = "Learn antonyms",
+                                    containerColor = Color(0xFFD97706),
+                                    badgeText = "⚖️ Big ↔ Small",
+                                    rewardText = "+25 ⭐",
+                                    onClick = { onOpenGame("OPPOSITES") }
+                                )
+                            }
+                            item {
+                                GameShelfCard(
+                                    title = "Count & Numbers",
+                                    subtitle = "123 & story math",
+                                    containerColor = Color(0xFF047857),
+                                    badgeText = "🔢 Count Objects",
+                                    rewardText = "+30 ⭐",
+                                    onClick = { onOpenGame("COUNT_COLOR") }
                                 )
                             }
                             item {
@@ -659,11 +735,33 @@ fun LibraryTabScreen(
                             LibrarySectionHeader(
                                 title = "Animals & Nature (${animalsNatureBooks.size})",
                                 onSpeak = { onSpeakText("Animals and nature stories") },
-                                actionLabel = "See all →",
+                                actionLabel = "See all (${animalsNatureBooks.size}) →",
                                 onActionClick = { selectedCategoryFilter = "Animals & Nature" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = animalsNatureBooks.take(6),
+                                sectionBooks = animalsNatureBooks.take(9),
+                                profile = profile,
+                                selectedLanguageCode = selectedLanguage.code,
+                                downloadedCloudBookIds = downloadedCloudBookIds,
+                                downloadingBookIds = downloadingBookIds,
+                                onDownloadCloudBook = onDownloadCloudBook,
+                                onOpenBook = onOpenBook
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+                    }
+
+                    // 4c. "School & Kindness" Category Shelf
+                    if (schoolKindnessBooks.isNotEmpty()) {
+                        item {
+                            LibrarySectionHeader(
+                                title = "School & Kindness (${schoolKindnessBooks.size})",
+                                onSpeak = { onSpeakText("School, classroom, and kindness stories") },
+                                actionLabel = "See all (${schoolKindnessBooks.size}) →",
+                                onActionClick = { selectedCategoryFilter = "School & Kindness" }
+                            )
+                            LibraryBooksThreeColumnRows(
+                                sectionBooks = schoolKindnessBooks.take(9),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -681,11 +779,11 @@ fun LibraryTabScreen(
                             LibrarySectionHeader(
                                 title = "Phonics & Decodable stories (${phonicsBooks.size})",
                                 onSpeak = { onSpeakText("Phonics and decodable skill stories") },
-                                actionLabel = "See all →",
+                                actionLabel = "See all (${phonicsBooks.size}) →",
                                 onActionClick = { selectedCategoryFilter = "Phonics" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = phonicsBooks.take(6),
+                                sectionBooks = phonicsBooks.take(9),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -703,11 +801,11 @@ fun LibraryTabScreen(
                             LibrarySectionHeader(
                                 title = "Level 2 stories (${level2Books.size})",
                                 onSpeak = { onSpeakText("Level 2 stories") },
-                                actionLabel = "See all →",
+                                actionLabel = "See all (${level2Books.size}) →",
                                 onActionClick = { selectedCategoryFilter = "Level 2" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = level2Books.take(6),
+                                sectionBooks = level2Books.take(9),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -725,11 +823,33 @@ fun LibraryTabScreen(
                             LibrarySectionHeader(
                                 title = "Family & Friends (${familyFriendsBooks.size})",
                                 onSpeak = { onSpeakText("Family and friends stories") },
-                                actionLabel = "See all →",
+                                actionLabel = "See all (${familyFriendsBooks.size}) →",
                                 onActionClick = { selectedCategoryFilter = "Family & Friends" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = familyFriendsBooks.take(6),
+                                sectionBooks = familyFriendsBooks.take(9),
+                                profile = profile,
+                                selectedLanguageCode = selectedLanguage.code,
+                                downloadedCloudBookIds = downloadedCloudBookIds,
+                                downloadingBookIds = downloadingBookIds,
+                                onDownloadCloudBook = onDownloadCloudBook,
+                                onOpenBook = onOpenBook
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+                    }
+
+                    // 6c. "Numbers, Colors & Rhymes" Category Shelf
+                    if (numbersRhymesBooks.isNotEmpty()) {
+                        item {
+                            LibrarySectionHeader(
+                                title = "Numbers, Colors & Rhymes (${numbersRhymesBooks.size})",
+                                onSpeak = { onSpeakText("Numbers, counting, colors, and rhymes stories") },
+                                actionLabel = "See all (${numbersRhymesBooks.size}) →",
+                                onActionClick = { selectedCategoryFilter = "Numbers & Rhymes" }
+                            )
+                            LibraryBooksThreeColumnRows(
+                                sectionBooks = numbersRhymesBooks.take(9),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -747,11 +867,11 @@ fun LibraryTabScreen(
                             LibrarySectionHeader(
                                 title = "Story Series (${seriesBooks.size})",
                                 onSpeak = { onSpeakText("Multi-chapter story series") },
-                                actionLabel = "See all →",
+                                actionLabel = "See all (${seriesBooks.size}) →",
                                 onActionClick = { selectedCategoryFilter = "Series" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = seriesBooks.take(6),
+                                sectionBooks = seriesBooks.take(9),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -769,11 +889,11 @@ fun LibraryTabScreen(
                             LibrarySectionHeader(
                                 title = "Level 3 stories (${level3Books.size})",
                                 onSpeak = { onSpeakText("Level 3 stories") },
-                                actionLabel = "See all →",
+                                actionLabel = "See all (${level3Books.size}) →",
                                 onActionClick = { selectedCategoryFilter = "Level 3" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = level3Books.take(6),
+                                sectionBooks = level3Books.take(9),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -791,11 +911,11 @@ fun LibraryTabScreen(
                             LibrarySectionHeader(
                                 title = "Adventure & Travel (${adventureTravelBooks.size})",
                                 onSpeak = { onSpeakText("Adventure and travel stories") },
-                                actionLabel = "See all →",
+                                actionLabel = "See all (${adventureTravelBooks.size}) →",
                                 onActionClick = { selectedCategoryFilter = "Adventure & Travel" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = adventureTravelBooks.take(6),
+                                sectionBooks = adventureTravelBooks.take(9),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -813,11 +933,11 @@ fun LibraryTabScreen(
                             LibrarySectionHeader(
                                 title = "Science & Weather (${scienceWeatherBooks.size})",
                                 onSpeak = { onSpeakText("Science, nature, and weather stories") },
-                                actionLabel = "See all →",
+                                actionLabel = "See all (${scienceWeatherBooks.size}) →",
                                 onActionClick = { selectedCategoryFilter = "Science & Weather" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = scienceWeatherBooks.take(6),
+                                sectionBooks = scienceWeatherBooks.take(9),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -835,11 +955,11 @@ fun LibraryTabScreen(
                             LibrarySectionHeader(
                                 title = "Level 4 stories (${level4Books.size})",
                                 onSpeak = { onSpeakText("Level 4 stories") },
-                                actionLabel = "See all →",
+                                actionLabel = "See all (${level4Books.size}) →",
                                 onActionClick = { selectedCategoryFilter = "Level 4" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = level4Books.take(6),
+                                sectionBooks = level4Books.take(9),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -857,11 +977,11 @@ fun LibraryTabScreen(
                             LibrarySectionHeader(
                                 title = "Bedtime & Folktales (${bedtimeFolktaleBooks.size})",
                                 onSpeak = { onSpeakText("Bedtime and folktale stories") },
-                                actionLabel = "See all →",
+                                actionLabel = "See all (${bedtimeFolktaleBooks.size}) →",
                                 onActionClick = { selectedCategoryFilter = "Bedtime & Folktales" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = bedtimeFolktaleBooks.take(6),
+                                sectionBooks = bedtimeFolktaleBooks.take(9),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -871,6 +991,24 @@ fun LibraryTabScreen(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                         }
+                    }
+
+                    // 9c. Complete Library Catalog Shelf ("All Stories (${books.size})") so every single story in the 105-story library is accessible directly by scrolling!
+                    item {
+                        LibrarySectionHeader(
+                            title = "Complete Story Catalog (${books.size})",
+                            onSpeak = { onSpeakText("Complete catalog of ${books.size} illustrated stories") }
+                        )
+                        LibraryBooksThreeColumnRows(
+                            sectionBooks = nonHeroBooks,
+                            profile = profile,
+                            selectedLanguageCode = selectedLanguage.code,
+                            downloadedCloudBookIds = downloadedCloudBookIds,
+                            downloadingBookIds = downloadingBookIds,
+                            onDownloadCloudBook = onDownloadCloudBook,
+                            onOpenBook = onOpenBook
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
 
                     // 10. Signed-In "Create your own story & My stories" Section (BOOK_SOURCE_CYOC / LUMOS_ADD_STORY_TAB_CLICKED / MY_BOOK_CONTENT_MENU_CLICKED)

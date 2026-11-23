@@ -4013,3 +4013,1953 @@ fun VocabularyBuilderGameScreen(
         )
     }
 }
+
+// ============================================================================================
+// 6. NEW KIDS LEARNING GAME #5: SENTENCE BUILDER ("Build the Sentence / جملہ بنائیں")
+// ============================================================================================
+data class SentenceBuilderChallenge(
+    val words: List<String>,
+    val imageAssetPath: String,
+    val urduTranslation: String,
+    val hindiTranslation: String,
+    val grammarTip: String
+)
+
+private val sentenceBuilderChallenges = listOf(
+    SentenceBuilderChallenge(
+        words = listOf("Lara", "has", "bright", "yellow", "wings"),
+        imageAssetPath = "books/sw_13916/image_3.webp",
+        urduTranslation = "لارا کے چمکدار پیلے پر ہیں۔",
+        hindiTranslation = "लारा के चमकीले पीले पंख हैं।",
+        grammarTip = "Subject (Lara) + Verb (has) + Adjectives (bright yellow) + Noun (wings)"
+    ),
+    SentenceBuilderChallenge(
+        words = listOf("The", "green", "frog", "jumps", "high"),
+        imageAssetPath = "books/sw_37273/image_5.webp",
+        urduTranslation = "ہرا مینڈک اونچی چھلانگ لگاتا ہے۔",
+        hindiTranslation = "हरा मेंढक ऊँची छलांग लगाता है।",
+        grammarTip = "Article (The) + Adjective (green) + Noun (frog) + Verb (jumps) + Adverb (high)"
+    ),
+    SentenceBuilderChallenge(
+        words = listOf("I", "kick", "my", "big", "red", "ball"),
+        imageAssetPath = "books/sw_15195/image_6.webp",
+        urduTranslation = "میں اپنی بڑی سرخ گیند کو کک مارتا ہوں۔",
+        hindiTranslation = "मैं अपनी बड़ी लाल गेंद को किक मारता हूँ।",
+        grammarTip = "Pronoun (I) + Action Verb (kick) + Object (my big red ball)"
+    ),
+    SentenceBuilderChallenge(
+        words = listOf("Nicole", "rides", "the", "silver", "train"),
+        imageAssetPath = "books/sw_44485/image_4.webp",
+        urduTranslation = "نکول چمکدار ٹرین میں سفر کرتی ہے۔",
+        hindiTranslation = "निकोल चमकीली ट्रेन में सफ़र करती है।",
+        grammarTip = "Subject (Nicole) + Action Verb (rides) + Object (the silver train)"
+    ),
+    SentenceBuilderChallenge(
+        words = listOf("Lulu", "reads", "books", "in", "the", "library"),
+        imageAssetPath = "books/sw_45764/cover_image.webp",
+        urduTranslation = "لولو لائبریری میں کتابیں پڑھتی ہے۔",
+        hindiTranslation = "लुलु लाइब्रेरी में किताबें पढ़ती है।",
+        grammarTip = "Subject (Lulu) + Verb (reads) + Object (books) + Place (in the library)"
+    ),
+    SentenceBuilderChallenge(
+        words = listOf("My", "little", "sister", "is", "fast", "asleep"),
+        imageAssetPath = "books/sw_15058/image_4.webp",
+        urduTranslation = "میری چھوٹی بہن گہری نیند سو رہی ہے۔",
+        hindiTranslation = "मेरी छोटी बहन गहरी नींद सो रही है।",
+        grammarTip = "Subject (My little sister) + Linking Verb (is) + State (fast asleep)"
+    ),
+    SentenceBuilderChallenge(
+        words = listOf("Spider", "wears", "eight", "tiny", "shoes"),
+        imageAssetPath = "books/sw_37273/image_3.webp",
+        urduTranslation = "مکڑی آٹھ ننھے جوتے پہنتی ہے۔",
+        hindiTranslation = "मकड़ी आठ नन्हे जूते पहनती है।",
+        grammarTip = "Subject (Spider) + Verb (wears) + Number & Adjective (eight tiny) + Noun (shoes)"
+    ),
+    SentenceBuilderChallenge(
+        words = listOf("The", "drummers", "play", "a", "happy", "beat"),
+        imageAssetPath = "books/sw_44485/image_11.webp",
+        urduTranslation = "ڈھول بجانے والے خوشگوار دھن بجاتے ہیں۔",
+        hindiTranslation = "ढोल वादक खुशहाल ताल बजाते हैं।",
+        grammarTip = "Subject (The drummers) + Verb (play) + Object (a happy beat)"
+    ),
+    SentenceBuilderChallenge(
+        words = listOf("Silver", "fish", "swim", "in", "the", "river"),
+        imageAssetPath = "books/sw_45764/image_13.webp",
+        urduTranslation = "چاندی جیسی مچھلیاں دریا میں تیرتی ہیں۔",
+        hindiTranslation = "चमकीली मछलियाँ नदी में तैरती हैं।",
+        grammarTip = "Subject (Silver fish) + Action Verb (swim) + Place (in the river)"
+    ),
+    SentenceBuilderChallenge(
+        words = listOf("Stars", "twinkle", "in", "the", "night", "sky"),
+        imageAssetPath = "books/sw_13916/image_19.webp",
+        urduTranslation = "رات کے آسمان میں ستارے جگمگاتے ہیں۔",
+        hindiTranslation = "रात के आसमान में तारे टिमटिमाते हैं।",
+        grammarTip = "Subject (Stars) + Verb (twinkle) + Place (in the night sky)"
+    )
+)
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun SentenceBuilderGameScreen(
+    profile: LearnerProfile,
+    buddyMood: BuddyMood,
+    selectedLanguageCode: String = "en_ur",
+    onSpeakText: (String) -> Unit,
+    onPlayPhoneme: (Int) -> Unit = {},
+    onAwardStars: (Int) -> Unit,
+    onBack: () -> Unit
+) {
+    var roundIdx by remember { mutableIntStateOf(0) }
+    val challenge = sentenceBuilderChallenges[roundIdx % sentenceBuilderChallenges.size]
+    val fullSentence = remember(challenge) { challenge.words.joinToString(" ") + "." }
+
+    data class WordChip(val id: Int, val word: String)
+
+    var placedWords by remember(roundIdx) { mutableStateOf(emptyList<WordChip>()) }
+    var availableWords by remember(roundIdx) {
+        val raw = challenge.words.mapIndexed { idx, w -> WordChip(idx, w) }
+        var shuf = raw.shuffled()
+        if (shuf.map { it.word } == challenge.words && raw.size > 1) {
+            shuf = raw.reversed()
+        }
+        mutableStateOf(shuf)
+    }
+    var wrongTapFeedback by remember(roundIdx) { mutableStateOf<String?>(null) }
+    var isSolved by remember(roundIdx) { mutableStateOf(false) }
+    var starTrigger by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(roundIdx) {
+        onSpeakText("Tap the words in order to build the sentence: $fullSentence")
+    }
+
+    LaunchedEffect(isSolved) {
+        if (isSolved) {
+            kotlinx.coroutines.delay(2200)
+            if (isSolved) {
+                roundIdx++
+            }
+        }
+    }
+
+    val headerBlue = Color(0xFF1E40AF)
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(SeekhSurfaceGray)
+    ) {
+        CurvedGreenHeaderBackground(
+            headerHeight = 195.dp,
+            curveDepth = 32.dp,
+            color = headerBlue
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .navigationBarsPadding()
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+                ThreeStepProgressIndicator(currentStep = roundIdx, totalSteps = 5)
+                StarCounterPill(
+                    stars = profile.stars,
+                    backgroundColor = Color.White.copy(alpha = 0.22f),
+                    textColor = Color.White
+                )
+            }
+
+            Text(
+                text = "Sentence Builder • Round ${(roundIdx % sentenceBuilderChallenges.size) + 1}/${sentenceBuilderChallenges.size}",
+                fontFamily = GoogleSansFamily,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 18.sp,
+                color = Color.White,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 18.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                // Story Illustration & Bilingual Meaning Clue Card
+                Surface(
+                    shape = RoundedCornerShape(24.dp),
+                    color = Color.White,
+                    shadowElevation = 6.dp,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier.padding(14.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(155.dp)
+                                .clip(RoundedCornerShape(18.dp))
+                        ) {
+                            AssetWebpImage(
+                                assetPath = challenge.imageAssetPath,
+                                contentDescription = fullSentence,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = if (selectedLanguageCode.contains("hi")) challenge.hindiTranslation else challenge.urduTranslation,
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 16.sp,
+                                    color = SeekhTextPrimary
+                                )
+                                Text(
+                                    text = challenge.grammarTip,
+                                    fontFamily = GoogleSansFamily,
+                                    fontSize = 11.5.sp,
+                                    color = SeekhTextSecondary
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Surface(
+                                shape = RoundedCornerShape(50),
+                                color = SeekhBlueSoft,
+                                modifier = Modifier.bouncyClick {
+                                    onSpeakText(fullSentence)
+                                }
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.VolumeUp,
+                                        contentDescription = "Hear sentence",
+                                        tint = SeekhBlue600,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(5.dp))
+                                    Text(
+                                        text = "Hear",
+                                        fontFamily = GoogleSansFamily,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        fontSize = 12.sp,
+                                        color = SeekhBlue600
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Sentence Construction Tray
+                Surface(
+                    shape = RoundedCornerShape(22.dp),
+                    color = if (isSolved) SeekhGreenSoft else Color.White,
+                    border = BorderStroke(
+                        2.dp,
+                        when {
+                            isSolved -> SeekhGreenMint
+                            wrongTapFeedback != null -> SeekhCoralRed
+                            else -> Color(0xFFBFDBFE)
+                        }
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 96.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(14.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        if (placedWords.isEmpty()) {
+                            Text(
+                                text = "Tap the word tiles below in the right order...",
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 14.sp,
+                                color = SeekhTextSecondary
+                            )
+                        } else {
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                placedWords.forEach { chip ->
+                                    Surface(
+                                        shape = RoundedCornerShape(14.dp),
+                                        color = if (isSolved) SeekhGreenMint else headerBlue,
+                                        shadowElevation = 3.dp
+                                    ) {
+                                        Text(
+                                            text = chip.word,
+                                            fontFamily = GoogleSansFamily,
+                                            fontWeight = FontWeight.ExtraBold,
+                                            fontSize = 17.sp,
+                                            color = Color.White,
+                                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        if (wrongTapFeedback != null) {
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = wrongTapFeedback!!,
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.5.sp,
+                                color = SeekhCoralRed
+                            )
+                        }
+                    }
+                }
+
+                // Scrambled Word Chips Pool + Hint Button
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Tap next word:",
+                        fontFamily = GoogleSansFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = SeekhTextPrimary
+                    )
+                    if (!isSolved && availableWords.isNotEmpty()) {
+                        Surface(
+                            shape = RoundedCornerShape(50),
+                            color = SeekhYellow500,
+                            modifier = Modifier.bouncyClick {
+                                val nextExpectedWord = challenge.words[placedWords.size]
+                                val matchChip = availableWords.firstOrNull { it.word == nextExpectedWord }
+                                if (matchChip != null) {
+                                    wrongTapFeedback = null
+                                    val newPlaced = placedWords + matchChip
+                                    placedWords = newPlaced
+                                    availableWords = availableWords.filterNot { it.id == matchChip.id }
+                                    onSpeakText(matchChip.word)
+                                    if (newPlaced.size == challenge.words.size) {
+                                        isSolved = true
+                                        starTrigger++
+                                        onAwardStars(25)
+                                        onSpeakText("Awesome! $fullSentence")
+                                    }
+                                }
+                            }
+                        ) {
+                            Text(
+                                text = "💡 Hint (Next Word)",
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 12.sp,
+                                color = SeekhTextPrimary,
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                            )
+                        }
+                    }
+                }
+
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    availableWords.forEach { chip ->
+                        Surface(
+                            shape = RoundedCornerShape(16.dp),
+                            color = Color.White,
+                            shadowElevation = 4.dp,
+                            border = BorderStroke(1.5.dp, headerBlue),
+                            modifier = Modifier.bouncyClick {
+                                if (isSolved) return@bouncyClick
+                                val expectedWord = challenge.words[placedWords.size]
+                                if (chip.word.equals(expectedWord, ignoreCase = true)) {
+                                    wrongTapFeedback = null
+                                    val newPlaced = placedWords + chip
+                                    placedWords = newPlaced
+                                    availableWords = availableWords.filterNot { it.id == chip.id }
+                                    onPlayPhoneme(newPlaced.size)
+                                    onSpeakText(chip.word)
+                                    if (newPlaced.size == challenge.words.size) {
+                                        isSolved = true
+                                        starTrigger++
+                                        onAwardStars(25)
+                                        onSpeakText("Well done! $fullSentence")
+                                    }
+                                } else {
+                                    wrongTapFeedback = "Try starting the next word with \"${expectedWord.first()}\"!"
+                                    onSpeakText("Try the word $expectedWord next!")
+                                }
+                            }
+                        ) {
+                            Text(
+                                text = chip.word,
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 18.sp,
+                                color = headerBlue,
+                                modifier = Modifier.padding(horizontal = 18.dp, vertical = 10.dp)
+                            )
+                        }
+                    }
+                }
+
+                if (isSolved) {
+                    Surface(
+                        shape = RoundedCornerShape(18.dp),
+                        color = SeekhGreenMint,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .bouncyClick { roundIdx++ }
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(14.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "🎉 Perfect Sentence! +25 ⭐ • Next Sentence →",
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 15.sp,
+                                color = Color.White
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        FlyingStarsOverlay(triggerCount = starTrigger)
+
+        FloatingReadingBuddy(
+            mood = buddyMood,
+            speechBubbleText = null,
+            onClick = { onSpeakText(fullSentence) },
+            size = 76.dp,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .navigationBarsPadding()
+                .padding(end = 10.dp, bottom = 8.dp)
+        )
+    }
+}
+
+// ============================================================================================
+// 7. NEW KIDS LEARNING GAME #6: RHYMING WORDS MATCH ("Rhyme Match / ہم قافیہ الفاظ")
+// ============================================================================================
+data class RhymeChallengeItem(
+    val targetWord: String,
+    val targetEmoji: String,
+    val rhymeFamily: String,
+    val correctRhyme: String,
+    val correctEmoji: String,
+    val distractors: List<Pair<String, String>>,
+    val urduClue: String,
+    val hindiClue: String
+)
+
+private val rhymeChallenges = listOf(
+    RhymeChallengeItem("TRAIN", "🚆", "-AIN", "RAIN", "🌧️", listOf("BOOK" to "📖", "FROG" to "🐸", "BALL" to "⚽"), "ٹرین (Train) کے ہم قافیہ لفظ بارش (Rain) کو چنیں", "ट्रेन (Train) से मिलता-जुलता तुकांत शब्द बारिश (Rain) चुनें"),
+    RhymeChallengeItem("BALL", "🔴", "-ALL", "TALL", "🌳", listOf("FISH" to "🐟", "STAR" to "⭐", "SHOE" to "👟"), "گیند (Ball) کی آواز سے ملتا لفظ لمبا (Tall) تلاش کریں", "गेंद (Ball) की आवाज़ से मिलता शब्द लंबा (Tall) चुनें"),
+    RhymeChallengeItem("BRIGHT", "✨", "-IGHT", "NIGHT", "🌙", listOf("GREEN" to "🌿", "CRAB" to "🦀", "SOUP" to "🍲"), "چمکدار (Bright) کا ہم قافیہ لفظ رات (Night) ہے", "चमकीला (Bright) का तुकांत शब्द रात (Night) है"),
+    RhymeChallengeItem("BOOK", "📚", "-OOK", "COOK", "👩‍🍳", listOf("TREE" to "🌲", "CLOUD" to "☁️", "DRUM" to "🥁"), "کتاب (Book) کے ساتھ ملتی آواز پکانا (Cook) چنیں", "किताब (Book) से मिलता-जुलता शब्द पकाना (Cook) चुनें"),
+    RhymeChallengeItem("FROG", "🐸", "-OG", "LOG", "🪵", listOf("SUN" to "☀️", "HAT" to "🎩", "BOAT" to "⛵"), "مینڈک (Frog) کی آواز سے ملتا لفظ لکڑی (Log) ہے", "मेंढक (Frog) की आवाज़ से मिलता शब्द लकड़ी (Log) है"),
+    RhymeChallengeItem("STAR", "⭐", "-AR", "CAR", "🚗", listOf("LEAF" to "🍃", "MOON" to "🌕", "CUP" to "☕"), "ستارہ (Star) کے ہم قافیہ لفظ گاڑی (Car) کو دبائیں", "तारा (Star) का तुकांत शब्द गाड़ी (Car) चुनें"),
+    RhymeChallengeItem("BEE", "🐝", "-EE", "TREE", "🌳", listOf("RED" to "🟥", "SOCK" to "🧦", "FISH" to "🐟"), "شہد کی مکھی (Bee) کا ہم قافیہ لفظ درخت (Tree) ہے", "मधुमक्खी (Bee) का तुकांत शब्द पेड़ (Tree) है"),
+    RhymeChallengeItem("SHOE", "👟", "-OE / -UE", "BLUE", "🔵", listOf("CAT" to "🐱", "BED" to "🛏️", "GATE" to "🚪"), "جوتا (Shoe) کی آواز سے ملتا رنگ نیلا (Blue) چنیں", "जूता (Shoe) की आवाज़ से मिलता रंग नीला (Blue) चुनें"),
+    RhymeChallengeItem("SUN", "☀️", "-UN", "RUN", "🏃", listOf("BOX" to "📦", "BELL" to "🔔", "KITE" to "🪁"), "سورج (Sun) کا ہم قافیہ لفظ دوڑنا (Run) ہے", "सूरज (Sun) का तुकांत शब्द दौड़ना (Run) है"),
+    RhymeChallengeItem("CAKE", "🎂", "-AKE", "LAKE", "🏞️", listOf("BIRD" to "🐦", "SHIP" to "🚢", "LAMP" to "🛋️"), "کیک (Cake) کی آواز سے ملتا لفظ جھیل (Lake) چنیں", "केक (Cake) से मिलता-जुलता शब्द झील (Lake) चुनें")
+)
+
+@Composable
+fun RhymingWordsGameScreen(
+    profile: LearnerProfile,
+    buddyMood: BuddyMood,
+    selectedLanguageCode: String = "en_ur",
+    onSpeakText: (String) -> Unit,
+    onAwardStars: (Int) -> Unit,
+    onBack: () -> Unit
+) {
+    var roundIdx by remember { mutableIntStateOf(0) }
+    val item = rhymeChallenges[roundIdx % rhymeChallenges.size]
+    val choices = remember(roundIdx) {
+        (listOf(item.correctRhyme to item.correctEmoji) + item.distractors).shuffled()
+    }
+    var tappedWords by remember(roundIdx) { mutableStateOf(emptySet<String>()) }
+    var isSolved by remember(roundIdx) { mutableStateOf(false) }
+    var starTrigger by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(roundIdx) {
+        onSpeakText("Which word rhymes with ${item.targetWord}? Listen to the ending sound ${item.rhymeFamily}!")
+    }
+
+    LaunchedEffect(isSolved) {
+        if (isSolved) {
+            kotlinx.coroutines.delay(2000)
+            if (isSolved) roundIdx++
+        }
+    }
+
+    val headerMagenta = Color(0xFFBE185D)
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(SeekhSurfaceGray)
+    ) {
+        CurvedGreenHeaderBackground(
+            headerHeight = 195.dp,
+            curveDepth = 32.dp,
+            color = headerMagenta
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .navigationBarsPadding()
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+                ThreeStepProgressIndicator(currentStep = roundIdx, totalSteps = 5)
+                StarCounterPill(
+                    stars = profile.stars,
+                    backgroundColor = Color.White.copy(alpha = 0.22f),
+                    textColor = Color.White
+                )
+            }
+
+            Text(
+                text = "Rhyming Words • Find the matching sound!",
+                fontFamily = GoogleSansFamily,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 17.sp,
+                color = Color.White,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 18.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                // Target Word Card
+                Surface(
+                    shape = RoundedCornerShape(24.dp),
+                    color = Color.White,
+                    shadowElevation = 6.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .bouncyClick {
+                            onSpeakText("${item.targetWord}. Ending sound: ${item.rhymeFamily}. Which word rhymes with ${item.targetWord}?")
+                        }
+                ) {
+                    Column(
+                        modifier = Modifier.padding(18.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(50),
+                            color = headerMagenta.copy(alpha = 0.12f)
+                        ) {
+                            Text(
+                                text = "Rhyme Family: ${item.rhymeFamily}",
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 13.sp,
+                                color = headerMagenta,
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 5.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Text(text = item.targetEmoji, fontSize = 44.sp)
+                            Text(
+                                text = item.targetWord,
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 34.sp,
+                                color = SeekhTextPrimary
+                            )
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.VolumeUp,
+                                contentDescription = "Hear word",
+                                tint = headerMagenta,
+                                modifier = Modifier.size(28.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = if (selectedLanguageCode.contains("hi")) item.hindiClue else item.urduClue,
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.5.sp,
+                            color = SeekhTextSecondary,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+
+                // 2x2 Grid of Rhyming Choices
+                choices.chunked(2).forEach { rowChoices ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(14.dp)
+                    ) {
+                        rowChoices.forEach { (word, emoji) ->
+                            val tapped = tappedWords.contains(word)
+                            val isCorrect = word == item.correctRhyme
+                            Surface(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(132.dp)
+                                    .bouncyClick {
+                                        if (isSolved) return@bouncyClick
+                                        tappedWords = tappedWords + word
+                                        if (isCorrect) {
+                                            isSolved = true
+                                            starTrigger++
+                                            onAwardStars(25)
+                                            onSpeakText("Great job! ${item.targetWord} and $word rhyme!")
+                                        } else {
+                                            onSpeakText("$word does not rhyme with ${item.targetWord}. Try again!")
+                                        }
+                                    },
+                                shape = RoundedCornerShape(22.dp),
+                                color = when {
+                                    tapped && isCorrect -> SeekhGreenSoft
+                                    tapped && !isCorrect -> Color(0xFFFFF1F2)
+                                    else -> Color.White
+                                },
+                                shadowElevation = 4.dp,
+                                border = BorderStroke(
+                                    if (tapped) 3.dp else 1.5.dp,
+                                    when {
+                                        tapped && isCorrect -> SeekhGreenMint
+                                        tapped && !isCorrect -> SeekhCoralRed
+                                        else -> SeekhBorderGray
+                                    }
+                                )
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(12.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Text(text = emoji, fontSize = 38.sp)
+                                    Spacer(modifier = Modifier.height(6.dp))
+                                    Text(
+                                        text = word,
+                                        fontFamily = GoogleSansFamily,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        fontSize = 20.sp,
+                                        color = when {
+                                            tapped && isCorrect -> SeekhGreen600
+                                            tapped && !isCorrect -> SeekhCoralRed
+                                            else -> SeekhTextPrimary
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        FlyingStarsOverlay(triggerCount = starTrigger)
+
+        FloatingReadingBuddy(
+            mood = buddyMood,
+            speechBubbleText = null,
+            onClick = { onSpeakText("Find the word that rhymes with ${item.targetWord}!") },
+            size = 76.dp,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .navigationBarsPadding()
+                .padding(end = 10.dp, bottom = 8.dp)
+        )
+    }
+}
+
+// ============================================================================================
+// 8. NEW KIDS LEARNING GAME #7: MISSING PHONICS SOUND ("Fill the Blank / خالی آواز بھریں")
+// ============================================================================================
+data class MissingPhonicsChallenge(
+    val fullWord: String,
+    val prefix: String,
+    val missingSound: String,
+    val suffix: String,
+    val options: List<String>,
+    val imageAssetPath: String,
+    val urduMeaning: String,
+    val hindiMeaning: String
+)
+
+private val missingPhonicsChallenges = listOf(
+    MissingPhonicsChallenge("TRAIN", "TR", "AI", "N", listOf("AI", "OO", "EA", "OU"), "books/sw_44485/image_4.webp", "ریل گاڑی (Train)", "रेलगाड़ी (Train)"),
+    MissingPhonicsChallenge("CLOUDS", "CL", "OU", "DS", listOf("OU", "AI", "EE", "OA"), "books/sw_45764/image_3.webp", "آسمان کے بادل (Clouds)", "आसमान के बादल (Clouds)"),
+    MissingPhonicsChallenge("SCHOOL", "SCH", "OO", "L", listOf("OO", "AI", "OU", "IE"), "books/sw_13916/image_7.webp", "اسکول (School)", "स्कूल (School)"),
+    MissingPhonicsChallenge("RAINCOAT", "R", "AI", "NCOAT", listOf("AI", "OO", "OU", "EE"), "books/sw_15195/image_4.webp", "برساتی کوٹ (Raincoat)", "बारिश का रेनकोट (Raincoat)"),
+    MissingPhonicsChallenge("YELLOW", "Y", "E", "LLOW", listOf("E", "A", "I", "U"), "books/sw_13916/image_2.webp", "پیلا رنگ (Yellow)", "पीला रंग (Yellow)"),
+    MissingPhonicsChallenge("BUTTERFLY", "B", "U", "TTERFLY", listOf("U", "A", "E", "O"), "books/sw_37273/image_14.webp", "خوبصورت تتلی (Butterfly)", "सुंदर तितली (Butterfly)"),
+    MissingPhonicsChallenge("FROG", "FR", "O", "G", listOf("O", "A", "E", "U"), "books/sw_37273/image_5.webp", "تالاب کا مینڈک (Frog)", "तालाब का मेंढक (Frog)"),
+    MissingPhonicsChallenge("SPIDER", "SP", "I", "DER", listOf("I", "A", "O", "U"), "books/sw_13916/image_6.webp", "جالا بننے والی مکڑی (Spider)", "जाला बुनने वाली मकड़ी (Spider)"),
+    MissingPhonicsChallenge("BOOKS", "B", "OO", "KS", listOf("OO", "AI", "OU", "EA"), "books/sw_15058/image_2.webp", "کہانیوں کی کتابیں (Books)", "कहानियों की किताबें (Books)"),
+    MissingPhonicsChallenge("BEACH", "B", "EA", "CH", listOf("EA", "OO", "OU", "AI"), "books/sw_44485/image_16.webp", "ساحلِ سمندر (Beach)", "समुद्र तट (Beach)")
+)
+
+@Composable
+fun MissingPhonicsSoundGameScreen(
+    profile: LearnerProfile,
+    buddyMood: BuddyMood,
+    selectedLanguageCode: String = "en_ur",
+    onSpeakText: (String) -> Unit,
+    onAwardStars: (Int) -> Unit,
+    onBack: () -> Unit
+) {
+    var roundIdx by remember { mutableIntStateOf(0) }
+    val item = missingPhonicsChallenges[roundIdx % missingPhonicsChallenges.size]
+    val shuffledOptions = remember(roundIdx) { item.options.shuffled() }
+    var tappedOptions by remember(roundIdx) { mutableStateOf(emptySet<String>()) }
+    var isSolved by remember(roundIdx) { mutableStateOf(false) }
+    var starTrigger by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(roundIdx) {
+        onSpeakText("Choose the missing sound to complete the word: ${item.fullWord}!")
+    }
+
+    LaunchedEffect(isSolved) {
+        if (isSolved) {
+            kotlinx.coroutines.delay(1900)
+            if (isSolved) roundIdx++
+        }
+    }
+
+    val headerTeal = Color(0xFF0F766E)
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(SeekhSurfaceGray)
+    ) {
+        CurvedGreenHeaderBackground(
+            headerHeight = 195.dp,
+            curveDepth = 32.dp,
+            color = headerTeal
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .navigationBarsPadding()
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+                ThreeStepProgressIndicator(currentStep = roundIdx, totalSteps = 5)
+                StarCounterPill(
+                    stars = profile.stars,
+                    backgroundColor = Color.White.copy(alpha = 0.22f),
+                    textColor = Color.White
+                )
+            }
+
+            Text(
+                text = "Missing Phonics Sound • Tap the missing letters!",
+                fontFamily = GoogleSansFamily,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 16.sp,
+                color = Color.White,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 18.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(24.dp),
+                    color = Color.White,
+                    shadowElevation = 6.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .bouncyClick { onSpeakText(item.fullWord) }
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(155.dp)
+                                .clip(RoundedCornerShape(18.dp))
+                        ) {
+                            AssetWebpImage(
+                                assetPath = item.imageAssetPath,
+                                contentDescription = item.fullWord,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+                        // Word with Missing Phonics Box
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = item.prefix,
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 32.sp,
+                                color = SeekhTextPrimary
+                            )
+                            Surface(
+                                shape = RoundedCornerShape(12.dp),
+                                color = if (isSolved) SeekhGreenMint else SeekhYellow500.copy(alpha = 0.25f),
+                                border = BorderStroke(2.dp, if (isSolved) SeekhGreenMint else headerTeal),
+                                modifier = Modifier.padding(horizontal = 4.dp)
+                            ) {
+                                Text(
+                                    text = if (isSolved) item.missingSound else " ? ",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 30.sp,
+                                    color = if (isSolved) Color.White else headerTeal,
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)
+                                )
+                            }
+                            Text(
+                                text = item.suffix,
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 32.sp,
+                                color = SeekhTextPrimary
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = if (selectedLanguageCode.contains("hi")) item.hindiMeaning else item.urduMeaning,
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp,
+                            color = SeekhGreen600
+                        )
+                    }
+                }
+
+                // 2x2 Grid of Phonics Sound Tiles
+                shuffledOptions.chunked(2).forEach { rowOpts ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(14.dp)
+                    ) {
+                        rowOpts.forEach { opt ->
+                            val tapped = tappedOptions.contains(opt)
+                            val isCorrect = opt == item.missingSound
+                            Surface(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(86.dp)
+                                    .bouncyClick {
+                                        if (isSolved) return@bouncyClick
+                                        tappedOptions = tappedOptions + opt
+                                        if (isCorrect) {
+                                            isSolved = true
+                                            starTrigger++
+                                            onAwardStars(20)
+                                            onSpeakText("Awesome! $opt makes the word ${item.fullWord}!")
+                                        } else {
+                                            onSpeakText("Try another sound for ${item.fullWord}!")
+                                        }
+                                    },
+                                shape = RoundedCornerShape(20.dp),
+                                color = when {
+                                    tapped && isCorrect -> SeekhGreenMint
+                                    tapped && !isCorrect -> Color(0xFFFFF1F2)
+                                    else -> Color.White
+                                },
+                                shadowElevation = 4.dp,
+                                border = BorderStroke(
+                                    2.dp,
+                                    when {
+                                        tapped && isCorrect -> SeekhGreenMint
+                                        tapped && !isCorrect -> SeekhCoralRed
+                                        else -> headerTeal
+                                    }
+                                )
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Text(
+                                        text = opt,
+                                        fontFamily = GoogleSansFamily,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        fontSize = 28.sp,
+                                        color = when {
+                                            tapped && isCorrect -> Color.White
+                                            tapped && !isCorrect -> SeekhCoralRed
+                                            else -> headerTeal
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        FlyingStarsOverlay(triggerCount = starTrigger)
+
+        FloatingReadingBuddy(
+            mood = buddyMood,
+            speechBubbleText = null,
+            onClick = { onSpeakText("Tap the missing letters to spell ${item.fullWord}!") },
+            size = 76.dp,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .navigationBarsPadding()
+                .padding(end = 10.dp, bottom = 8.dp)
+        )
+    }
+}
+
+// ============================================================================================
+// 9. NEW KIDS LEARNING GAME #8: LISTEN & PICK ("Ear Training / آواز سنو اور تصویر چنیں")
+// ============================================================================================
+data class ListenPickChallenge(
+    val word: String,
+    val spokenClue: String,
+    val imageAssetPath: String,
+    val urduLabel: String,
+    val hindiLabel: String,
+    val distractors: List<Triple<String, String, String>> // (word, imageAssetPath, urduLabel)
+)
+
+private val listenPickChallenges = listOf(
+    ListenPickChallenge(
+        word = "Ladybird",
+        spokenClue = "Ladybird. Lara is a cute yellow ladybird sitting on a green leaf.",
+        imageAssetPath = "books/sw_13916/image_2.webp",
+        urduLabel = "لیڈی برڈ (Ladybird)",
+        hindiLabel = "लेडीबर्ड (Ladybird)",
+        distractors = listOf(
+            Triple("Train", "books/sw_44485/image_4.webp", "ٹرین (Train)"),
+            Triple("Frog", "books/sw_37273/image_5.webp", "مینڈک (Frog)"),
+            Triple("Red Ball", "books/sw_15195/image_2.webp", "سرخ گیند (Ball)")
+        )
+    ),
+    ListenPickChallenge(
+        word = "Drummers",
+        spokenClue = "Drummers. The cheerful street drummers wear red and yellow shirts.",
+        imageAssetPath = "books/sw_44485/image_11.webp",
+        urduLabel = "ڈھول بجانے والے (Drummers)",
+        hindiLabel = "ढोल वादक (Drummers)",
+        distractors = listOf(
+            Triple("Spider", "books/sw_13916/image_6.webp", "مکڑی (Spider)"),
+            Triple("Cocoon", "books/sw_37273/image_12.webp", "کوکون (Cocoon)"),
+            Triple("Library", "books/sw_45764/image_1.webp", "لائبریری (Library)")
+        )
+    ),
+    ListenPickChallenge(
+        word = "Butterfly",
+        spokenClue = "Butterfly. Caterpillar transforms into a colorful butterfly with bright wings.",
+        imageAssetPath = "books/sw_37273/image_14.webp",
+        urduLabel = "خوبصورت تتلی (Butterfly)",
+        hindiLabel = "सुंदर तितली (Butterfly)",
+        distractors = listOf(
+            Triple("Cupboard", "books/sw_45764/image_5.webp", "الماری (Cupboard)"),
+            Triple("Karate", "books/sw_44485/image_8.webp", "کراٹے (Karate)"),
+            Triple("Kitchen", "books/sw_15058/image_6.webp", "باورچی خانہ (Kitchen)")
+        )
+    ),
+    ListenPickChallenge(
+        word = "Silver Fish",
+        spokenClue = "Silver Fish. Lulu and her friends rescue the shiny silver fish in buckets.",
+        imageAssetPath = "books/sw_45764/image_12.webp",
+        urduLabel = "چمکدار مچھلیاں (Silver Fish)",
+        hindiLabel = "चमकीली मछलियाँ (Silver Fish)",
+        distractors = listOf(
+            Triple("Moon", "books/sw_15195/image_17.webp", "چاند (Moon)"),
+            Triple("Grandfather", "books/sw_15058/image_8.webp", "دادا جان (Grandfather)"),
+            Triple("Bug School", "books/sw_13916/image_7.webp", "اسکول (School)")
+        )
+    ),
+    ListenPickChallenge(
+        word = "Navy Sailor",
+        spokenClue = "Navy Sailor. Captain Zara wears a crisp white navy sailor uniform and cap.",
+        imageAssetPath = "books/sw_44485/image_10.webp",
+        urduLabel = "بحریہ کی ملاح (Navy Sailor)",
+        hindiLabel = "नौसेना की नाविक (Navy Sailor)",
+        distractors = listOf(
+            Triple("Crab", "books/sw_37273/image_9.webp", "کیکڑا (Crab)"),
+            Triple("Raincoat", "books/sw_15195/image_4.webp", "برساتی کوٹ (Raincoat)"),
+            Triple("Bubble Bath", "books/sw_13916/image_16.webp", "نہانا (Bath)")
+        )
+    ),
+    ListenPickChallenge(
+        word = "Chocolates",
+        spokenClue = "Chocolates. Golden chocolates and sweet treats shine in the corner shop.",
+        imageAssetPath = "books/sw_44485/image_6.webp",
+        urduLabel = "میٹھی چاکلیٹ (Chocolates)",
+        hindiLabel = "मीठी चॉकलेट (Chocolates)",
+        distractors = listOf(
+            Triple("Grasshopper", "books/sw_37273/image_7.webp", "ٹڈا (Grasshopper)"),
+            Triple("Sleeping Sister", "books/sw_15058/image_4.webp", "سوتی بہن (Sister)"),
+            Triple("Candles", "books/sw_45764/image_2.webp", "موم بتیاں (Candles)")
+        )
+    ),
+    ListenPickChallenge(
+        word = "Full Moon",
+        spokenClue = "Full Moon. The red ball flies high in the night sky over the glowing moon.",
+        imageAssetPath = "books/sw_15195/image_17.webp",
+        urduLabel = "چمکتا چاند (Full Moon)",
+        hindiLabel = "चमकता चाँद (Full Moon)",
+        distractors = listOf(
+            Triple("Kitchen Soup", "books/sw_15058/image_6.webp", "گرم سوپ (Soup)"),
+            Triple("Frog's Boot", "books/sw_37273/image_6.webp", "مینڈک کا جوتا (Boot)"),
+            Triple("Curtain", "books/sw_45764/image_4.webp", "کھڑکی کا پردہ (Curtain)")
+        )
+    ),
+    ListenPickChallenge(
+        word = "Storybooks",
+        spokenClue = "Storybooks. I love reading colorful storybooks every single day.",
+        imageAssetPath = "books/sw_15058/image_2.webp",
+        urduLabel = "کہانیوں کی کتابیں (Storybooks)",
+        hindiLabel = "कहानियों की किताबें (Storybooks)",
+        distractors = listOf(
+            Triple("Red Crab", "books/sw_37273/image_10.webp", "سرخ کیکڑا (Crab)"),
+            Triple("Karate Kick", "books/sw_44485/image_9.webp", "کراٹے کک (Karate)"),
+            Triple("Storm Clouds", "books/sw_45764/image_3.webp", "طوفانی بادل (Clouds)")
+        )
+    )
+)
+
+@Composable
+fun ListenAndPickGameScreen(
+    profile: LearnerProfile,
+    buddyMood: BuddyMood,
+    selectedLanguageCode: String = "en_ur",
+    onSpeakText: (String) -> Unit,
+    onAwardStars: (Int) -> Unit,
+    onBack: () -> Unit
+) {
+    var roundIdx by remember { mutableIntStateOf(0) }
+    val item = listenPickChallenges[roundIdx % listenPickChallenges.size]
+    val cards = remember(roundIdx) {
+        (listOf(Triple(item.word, item.imageAssetPath, if (selectedLanguageCode.contains("hi")) item.hindiLabel else item.urduLabel)) + item.distractors).shuffled()
+    }
+    var tappedWords by remember(roundIdx) { mutableStateOf(emptySet<String>()) }
+    var isSolved by remember(roundIdx) { mutableStateOf(false) }
+    var starTrigger by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(roundIdx) {
+        onSpeakText("Listen carefully and tap the matching picture: ${item.spokenClue}")
+    }
+
+    LaunchedEffect(isSolved) {
+        if (isSolved) {
+            kotlinx.coroutines.delay(2000)
+            if (isSolved) roundIdx++
+        }
+    }
+
+    val headerIndigo = Color(0xFF4338CA)
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(SeekhSurfaceGray)
+    ) {
+        CurvedGreenHeaderBackground(
+            headerHeight = 195.dp,
+            curveDepth = 32.dp,
+            color = headerIndigo
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .navigationBarsPadding()
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+                ThreeStepProgressIndicator(currentStep = roundIdx, totalSteps = 4)
+                StarCounterPill(
+                    stars = profile.stars,
+                    backgroundColor = Color.White.copy(alpha = 0.22f),
+                    textColor = Color.White
+                )
+            }
+
+            Text(
+                text = "Listen & Pick • Ear Training Game",
+                fontFamily = GoogleSansFamily,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 18.sp,
+                color = Color.White,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 18.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                // Big Audio Speaker Prompt Card
+                Surface(
+                    shape = RoundedCornerShape(24.dp),
+                    color = Color.White,
+                    shadowElevation = 6.dp,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = if (isSolved) "✓ ${item.word} (${if (selectedLanguageCode.contains("hi")) item.hindiLabel else item.urduLabel})" else "🔊 Listen to the voice clue and find the picture!",
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 16.sp,
+                            color = if (isSolved) SeekhGreen600 else SeekhTextPrimary,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Surface(
+                                shape = RoundedCornerShape(50),
+                                color = headerIndigo,
+                                modifier = Modifier.bouncyClick {
+                                    onSpeakText(item.spokenClue)
+                                }
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 10.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.VolumeUp,
+                                        contentDescription = "Hear clue",
+                                        tint = Color.White,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = "Hear Word Again",
+                                        fontFamily = GoogleSansFamily,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        fontSize = 14.sp,
+                                        color = Color.White
+                                    )
+                                }
+                            }
+
+                            Surface(
+                                shape = RoundedCornerShape(50),
+                                color = SeekhYellow500,
+                                modifier = Modifier.bouncyClick {
+                                    val spelled = item.word.toCharArray().joinToString(" ")
+                                    onSpeakText("${item.word}. Spelled: $spelled.")
+                                }
+                            ) {
+                                Text(
+                                    text = "🐢 Slow Spell",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 13.sp,
+                                    color = SeekhTextPrimary,
+                                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // 2x2 Grid of 4 Hand-Drawn Story Illustration Cards
+                cards.chunked(2).forEach { rowCards ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        rowCards.forEach { (cardWord, assetPath, nativeLbl) ->
+                            val tapped = tappedWords.contains(cardWord)
+                            val isCorrect = cardWord == item.word
+                            Surface(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(185.dp)
+                                    .bouncyClick {
+                                        if (isSolved) return@bouncyClick
+                                        tappedWords = tappedWords + cardWord
+                                        if (isCorrect) {
+                                            isSolved = true
+                                            starTrigger++
+                                            onAwardStars(25)
+                                            onSpeakText("Wonderful! That is ${item.word}!")
+                                        } else {
+                                            onSpeakText("That picture is $cardWord. Listen again for ${item.word}!")
+                                        }
+                                    },
+                                shape = RoundedCornerShape(22.dp),
+                                color = when {
+                                    tapped && isCorrect -> SeekhGreenSoft
+                                    tapped && !isCorrect -> Color(0xFFFFF1F2)
+                                    else -> Color.White
+                                },
+                                shadowElevation = 4.dp,
+                                border = BorderStroke(
+                                    if (tapped) 3.dp else 1.5.dp,
+                                    when {
+                                        tapped && isCorrect -> SeekhGreenMint
+                                        tapped && !isCorrect -> SeekhCoralRed
+                                        else -> SeekhBorderGray
+                                    }
+                                )
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(10.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .weight(1f)
+                                            .clip(RoundedCornerShape(16.dp))
+                                    ) {
+                                        AssetWebpImage(
+                                            assetPath = assetPath,
+                                            contentDescription = cardWord,
+                                            modifier = Modifier.fillMaxSize(),
+                                            contentScale = ContentScale.Crop
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(6.dp))
+                                    Text(
+                                        text = if (tapped || isSolved) {
+                                            if (isCorrect) "✓ $nativeLbl" else "✗ $cardWord"
+                                        } else {
+                                            "Tap picture"
+                                        },
+                                        fontFamily = GoogleSansFamily,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        fontSize = 13.sp,
+                                        color = when {
+                                            tapped && isCorrect -> SeekhGreen600
+                                            tapped && !isCorrect -> SeekhCoralRed
+                                            else -> SeekhTextSecondary
+                                        },
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        FlyingStarsOverlay(triggerCount = starTrigger)
+
+        FloatingReadingBuddy(
+            mood = buddyMood,
+            speechBubbleText = null,
+            onClick = { onSpeakText(item.spokenClue) },
+            size = 76.dp,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .navigationBarsPadding()
+                .padding(end = 10.dp, bottom = 8.dp)
+        )
+    }
+}
+
+// ============================================================================================
+// 10. NEW KIDS LEARNING GAME #9: OPPOSITE WORDS QUEST ("Antonyms / الفاظ متضاد")
+// ============================================================================================
+data class OppositePairItem(
+    val baseWord: String,
+    val baseEmoji: String,
+    val baseUrdu: String,
+    val baseHindi: String,
+    val oppositeWord: String,
+    val oppositeEmoji: String,
+    val oppositeUrdu: String,
+    val oppositeHindi: String,
+    val distractors: List<Pair<String, String>>
+)
+
+private val oppositePairChallenges = listOf(
+    OppositePairItem("BIG", "🐘", "بڑا (Big)", "बड़ा (Big)", "SMALL", "🐜", "چھوٹا (Small)", "छोटा (Small)", listOf("LOUD" to "🥁", "WET" to "🌧️", "FAST" to "🚀")),
+    OppositePairItem("DAY", "🌞", "دن (Day)", "दिन (Day)", "NIGHT", "🌙", "رات (Night)", "रात (Night)", listOf("TALL" to "🦒", "FULL" to "🪣", "OPEN" to "📖")),
+    OppositePairItem("HAPPY", "😊", "خوش (Happy)", "ख़ुश (Happy)", "SAD", "😢", "اداس (Sad)", "उदास (Sad)", listOf("COLD" to "❄️", "SHORT" to "🐇", "DRY" to "☀️")),
+    OppositePairItem("HOT", "🔥", "گرم (Hot)", "गर्म (Hot)", "COLD", "❄️", "ٹھنڈا (Cold)", "ठंडा (Cold)", listOf("UP" to "⬆️", "CLEAN" to "✨", "SLOW" to "🐢")),
+    OppositePairItem("FAST", "🚀", "تیز (Fast)", "तेज़ (Fast)", "SLOW", "🐢", "آہستہ (Slow)", "धीमा (Slow)", listOf("EMPTY" to "🥣", "CLOSED" to "📕", "SMALL" to "🐜")),
+    OppositePairItem("UP", "⬆️", "اوپر (Up)", "ऊपर (Up)", "DOWN", "⬇️", "نیچے (Down)", "नीचे (Down)", listOf("NIGHT" to "🌙", "QUIET" to "🤫", "COLD" to "❄️")),
+    OppositePairItem("OPEN", "📖", "کھلا ہوا (Open)", "खुला (Open)", "CLOSED", "📕", "بند (Closed)", "बंद (Closed)", listOf("SAD" to "😢", "DRY" to "☀️", "SHORT" to "🐇")),
+    OppositePairItem("WET", "🌧️", "گیلا (Wet)", "गीला (Wet)", "DRY", "☀️", "خشک (Dry)", "सूखा (Dry)", listOf("SLOW" to "🐢", "DOWN" to "⬇️", "SMALL" to "🐜")),
+    OppositePairItem("TALL", "🦒", "لمبا (Tall)", "लंबा (Tall)", "SHORT", "🐇", "چھوٹے قد کا (Short)", "छोटा कद (Short)", listOf("COLD" to "❄️", "EMPTY" to "🥣", "NIGHT" to "🌙")),
+    OppositePairItem("FULL", "🪣", "بھرا ہوا (Full)", "भरा हुआ (Full)", "EMPTY", "🥣", "خالی (Empty)", "ख़ाली (Empty)", listOf("SAD" to "😢", "SLOW" to "🐢", "CLOSED" to "📕"))
+)
+
+@Composable
+fun OppositesQuestGameScreen(
+    profile: LearnerProfile,
+    buddyMood: BuddyMood,
+    selectedLanguageCode: String = "en_ur",
+    onSpeakText: (String) -> Unit,
+    onAwardStars: (Int) -> Unit,
+    onBack: () -> Unit
+) {
+    var roundIdx by remember { mutableIntStateOf(0) }
+    val item = oppositePairChallenges[roundIdx % oppositePairChallenges.size]
+    val choices = remember(roundIdx) {
+        (listOf(item.oppositeWord to item.oppositeEmoji) + item.distractors).shuffled()
+    }
+    var tappedWords by remember(roundIdx) { mutableStateOf(emptySet<String>()) }
+    var isSolved by remember(roundIdx) { mutableStateOf(false) }
+    var starTrigger by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(roundIdx) {
+        onSpeakText("What is the opposite of ${item.baseWord}?")
+    }
+
+    LaunchedEffect(isSolved) {
+        if (isSolved) {
+            kotlinx.coroutines.delay(2000)
+            if (isSolved) roundIdx++
+        }
+    }
+
+    val headerOrange = Color(0xFFD97706)
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(SeekhSurfaceGray)
+    ) {
+        CurvedGreenHeaderBackground(
+            headerHeight = 195.dp,
+            curveDepth = 32.dp,
+            color = headerOrange
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .navigationBarsPadding()
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+                ThreeStepProgressIndicator(currentStep = roundIdx, totalSteps = 5)
+                StarCounterPill(
+                    stars = profile.stars,
+                    backgroundColor = Color.White.copy(alpha = 0.22f),
+                    textColor = Color.White
+                )
+            }
+
+            Text(
+                text = "Opposite Words • Find the opposite meaning!",
+                fontFamily = GoogleSansFamily,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 17.sp,
+                color = Color.White,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 18.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(24.dp),
+                    color = Color.White,
+                    shadowElevation = 6.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .bouncyClick {
+                            onSpeakText("What is the opposite of ${item.baseWord}?")
+                        }
+                ) {
+                    Column(
+                        modifier = Modifier.padding(18.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "FIND THE OPPOSITE OF:",
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 12.sp,
+                            color = headerOrange
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Text(text = item.baseEmoji, fontSize = 46.sp)
+                            Column {
+                                Text(
+                                    text = item.baseWord,
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 34.sp,
+                                    color = SeekhTextPrimary
+                                )
+                                Text(
+                                    text = if (selectedLanguageCode.contains("hi")) item.baseHindi else item.baseUrdu,
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 15.sp,
+                                    color = SeekhTextSecondary
+                                )
+                            }
+                        }
+                        if (isSolved) {
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Surface(
+                                shape = RoundedCornerShape(50),
+                                color = SeekhGreenSoft
+                            ) {
+                                Text(
+                                    text = "✓ ${item.baseWord} ↔ ${item.oppositeWord} (${if (selectedLanguageCode.contains("hi")) item.oppositeHindi else item.oppositeUrdu})",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 14.sp,
+                                    color = SeekhGreen600,
+                                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // 2x2 Grid of Opposite Choices
+                choices.chunked(2).forEach { rowChoices ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(14.dp)
+                    ) {
+                        rowChoices.forEach { (word, emoji) ->
+                            val tapped = tappedWords.contains(word)
+                            val isCorrect = word == item.oppositeWord
+                            Surface(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(132.dp)
+                                    .bouncyClick {
+                                        if (isSolved) return@bouncyClick
+                                        tappedWords = tappedWords + word
+                                        if (isCorrect) {
+                                            isSolved = true
+                                            starTrigger++
+                                            onAwardStars(25)
+                                            onSpeakText("Correct! The opposite of ${item.baseWord} is ${item.oppositeWord}!")
+                                        } else {
+                                            onSpeakText("Not quite! Try finding the opposite of ${item.baseWord}.")
+                                        }
+                                    },
+                                shape = RoundedCornerShape(22.dp),
+                                color = when {
+                                    tapped && isCorrect -> SeekhGreenSoft
+                                    tapped && !isCorrect -> Color(0xFFFFF1F2)
+                                    else -> Color.White
+                                },
+                                shadowElevation = 4.dp,
+                                border = BorderStroke(
+                                    if (tapped) 3.dp else 1.5.dp,
+                                    when {
+                                        tapped && isCorrect -> SeekhGreenMint
+                                        tapped && !isCorrect -> SeekhCoralRed
+                                        else -> SeekhBorderGray
+                                    }
+                                )
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(12.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Text(text = emoji, fontSize = 38.sp)
+                                    Spacer(modifier = Modifier.height(6.dp))
+                                    Text(
+                                        text = word,
+                                        fontFamily = GoogleSansFamily,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        fontSize = 20.sp,
+                                        color = when {
+                                            tapped && isCorrect -> SeekhGreen600
+                                            tapped && !isCorrect -> SeekhCoralRed
+                                            else -> SeekhTextPrimary
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        FlyingStarsOverlay(triggerCount = starTrigger)
+
+        FloatingReadingBuddy(
+            mood = buddyMood,
+            speechBubbleText = null,
+            onClick = { onSpeakText("What is the opposite of ${item.baseWord}?") },
+            size = 76.dp,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .navigationBarsPadding()
+                .padding(end = 10.dp, bottom = 8.dp)
+        )
+    }
+}
+
+// ============================================================================================
+// 11. NEW KIDS LEARNING GAME #10: COUNT, NUMBERS & COLORS ("Kids Math & Colors / گنتی اور رنگ")
+// ============================================================================================
+data class CountAndColorChallenge(
+    val questionEn: String,
+    val questionUr: String,
+    val questionHi: String,
+    val visualTokens: List<String>,
+    val correctAnswer: String,
+    val options: List<String>,
+    val spokenCountOut: String
+)
+
+private val countAndColorChallenges = listOf(
+    CountAndColorChallenge(
+        questionEn = "Count the yellow ladybirds in Lara's garden!",
+        questionUr = "باغ میں موجود پیلی لیڈی برڈز گنیں!",
+        questionHi = "बग़ीचे में मौजूद पीली लेडीबर्ड्स गिनें!",
+        visualTokens = listOf("🐞", "🐞", "🐞", "🐞", "🐞"),
+        correctAnswer = "5 • Five",
+        options = listOf("5 • Five", "3 • Three", "7 • Seven", "9 • Nine"),
+        spokenCountOut = "One, two, three, four, five! Five yellow ladybirds!"
+    ),
+    CountAndColorChallenge(
+        questionEn = "How many bouncy red balls are on the grass?",
+        questionUr = "گھاس پر کتنی سرخ گیندیں ہیں؟",
+        questionHi = "घास पर कितनी लाल गेंदें हैं?",
+        visualTokens = listOf("🔴", "🔴", "🔴", "🔴", "🔴", "🔴", "🔴"),
+        correctAnswer = "7 • Seven",
+        options = listOf("7 • Seven", "4 • Four", "6 • Six", "10 • Ten"),
+        spokenCountOut = "One, two, three, four, five, six, seven! Seven red balls!"
+    ),
+    CountAndColorChallenge(
+        questionEn = "Spider has 4 shoes on the left and 4 shoes on the right. How many shoes in total?",
+        questionUr = "مکڑی کے 4 جوتے بائیں اور 4 دائیں طرف ہیں۔ کل کتنے جوتے ہوئے؟",
+        questionHi = "मकड़ी के 4 जूते बाएँ और 4 दाएँ हैं। कुल कितने जूते हुए?",
+        visualTokens = listOf("👟", "👟", "👟", "👟", "➕", "👟", "👟", "👟", "👟"),
+        correctAnswer = "8 • Eight",
+        options = listOf("8 • Eight", "6 • Six", "5 • Five", "12 • Twelve"),
+        spokenCountOut = "Four plus four equals eight! Spider wears eight tiny shoes!"
+    ),
+    CountAndColorChallenge(
+        questionEn = "Count the shiny silver fish that Lulu rescued in her bucket!",
+        questionUr = "لولو کی بالٹی میں موجود چمکدار مچھلیاں گنیں!",
+        questionHi = "लुलु की बाल्टी में मौजूद चमकीली मछलियाँ गिनें!",
+        visualTokens = listOf("🐟", "🐟", "🐟", "🐟", "🐟", "🐟"),
+        correctAnswer = "6 • Six",
+        options = listOf("6 • Six", "3 • Three", "8 • Eight", "11 • Eleven"),
+        spokenCountOut = "One, two, three, four, five, six! Six shiny silver fish!"
+    ),
+    CountAndColorChallenge(
+        questionEn = "3 butterflies and 2 green frogs meet by the pond. How many friends in all?",
+        questionUr = "تالاب پر 3 تتلیاں اور 2 ہرے مینڈک ملتے ہیں۔ کل کتنے دوست ہیں؟",
+        questionHi = "तालाब पर 3 तितलियाँ और 2 मेंढक मिलते हैं। कुल कितने दोस्त हैं?",
+        visualTokens = listOf("🦋", "🦋", "🦋", "➕", "🐸", "🐸"),
+        correctAnswer = "5 • Five",
+        options = listOf("5 • Five", "4 • Four", "6 • Six", "8 • Eight"),
+        spokenCountOut = "Three butterflies plus two frogs equals five garden friends!"
+    ),
+    CountAndColorChallenge(
+        questionEn = "Count the twinkling golden stars in the night sky!",
+        questionUr = "رات کے آسمان میں چمکتے سنہری ستارے گنیں!",
+        questionHi = "रात के आसमान में चमकते सुनहरे तारे गिनें!",
+        visualTokens = listOf("⭐", "⭐", "⭐", "⭐", "⭐", "⭐", "⭐", "⭐", "⭐"),
+        correctAnswer = "9 • Nine",
+        options = listOf("9 • Nine", "6 • Six", "8 • Eight", "10 • Ten"),
+        spokenCountOut = "One, two, three, four, five, six, seven, eight, nine! Nine golden stars!"
+    ),
+    CountAndColorChallenge(
+        questionEn = "Lulu borrowed 4 ocean books and 6 space books. How many books did she borrow?",
+        questionUr = "لولو نے 4 سمندری اور 6 خلائی کتابیں لیں۔ کل کتنی کتابیں ہوئیں؟",
+        questionHi = "लुलु ने 4 समुद्री और 6 अंतरिक्ष की किताबें लीं। कुल कितनी किताबें हुईं?",
+        visualTokens = listOf("📘", "📘", "📘", "📘", "➕", "📙", "📙", "📙", "📙", "📙", "📙"),
+        correctAnswer = "10 • Ten",
+        options = listOf("10 • Ten", "8 • Eight", "9 • Nine", "12 • Twelve"),
+        spokenCountOut = "Four plus six equals ten! Ten colorful library books!"
+    ),
+    CountAndColorChallenge(
+        questionEn = "Count the wooden drums played by the street drummers!",
+        questionUr = "گلی کے ڈھول بجانے والوں کے ڈھول گنیں!",
+        questionHi = "गली के ढोल वादकों के ढोल गिनें!",
+        visualTokens = listOf("🥁", "🥁", "🥁", "🥁"),
+        correctAnswer = "4 • Four",
+        options = listOf("4 • Four", "2 • Two", "5 • Five", "7 • Seven"),
+        spokenCountOut = "One, two, three, four! Four wooden drums!"
+    )
+)
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun CountAndColorsGameScreen(
+    profile: LearnerProfile,
+    buddyMood: BuddyMood,
+    selectedLanguageCode: String = "en_ur",
+    onSpeakText: (String) -> Unit,
+    onAwardStars: (Int) -> Unit,
+    onBack: () -> Unit
+) {
+    var roundIdx by remember { mutableIntStateOf(0) }
+    val item = countAndColorChallenges[roundIdx % countAndColorChallenges.size]
+    val shuffledOptions = remember(roundIdx) { item.options.shuffled() }
+    var tappedOptions by remember(roundIdx) { mutableStateOf(emptySet<String>()) }
+    var isSolved by remember(roundIdx) { mutableStateOf(false) }
+    var starTrigger by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(roundIdx) {
+        onSpeakText(item.questionEn)
+    }
+
+    LaunchedEffect(isSolved) {
+        if (isSolved) {
+            kotlinx.coroutines.delay(2200)
+            if (isSolved) roundIdx++
+        }
+    }
+
+    val headerEmerald = Color(0xFF047857)
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(SeekhSurfaceGray)
+    ) {
+        CurvedGreenHeaderBackground(
+            headerHeight = 195.dp,
+            curveDepth = 32.dp,
+            color = headerEmerald
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .navigationBarsPadding()
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+                ThreeStepProgressIndicator(currentStep = roundIdx, totalSteps = 4)
+                StarCounterPill(
+                    stars = profile.stars,
+                    backgroundColor = Color.White.copy(alpha = 0.22f),
+                    textColor = Color.White
+                )
+            }
+
+            Text(
+                text = "Count, Numbers & Story Math",
+                fontFamily = GoogleSansFamily,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 18.sp,
+                color = Color.White,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 18.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(24.dp),
+                    color = Color.White,
+                    shadowElevation = 6.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .bouncyClick { onSpeakText(item.spokenCountOut) }
+                ) {
+                    Column(
+                        modifier = Modifier.padding(18.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = item.questionEn,
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 18.sp,
+                            color = SeekhTextPrimary,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = if (selectedLanguageCode.contains("hi")) item.questionHi else item.questionUr,
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            color = SeekhGreen600,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(14.dp))
+
+                        // Interactive Visual Objects to Tap & Count!
+                        Surface(
+                            shape = RoundedCornerShape(18.dp),
+                            color = SeekhSurfaceGray,
+                            border = BorderStroke(1.5.dp, Color(0xFFD1FAE5)),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            FlowRow(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(14.dp),
+                                horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                item.visualTokens.forEachIndexed { idx, tok ->
+                                    Surface(
+                                        shape = RoundedCornerShape(14.dp),
+                                        color = Color.White,
+                                        shadowElevation = 2.dp,
+                                        modifier = Modifier.bouncyClick {
+                                            onSpeakText("${idx + 1}")
+                                        }
+                                    ) {
+                                        Text(
+                                            text = tok,
+                                            fontSize = 32.sp,
+                                            modifier = Modifier.padding(8.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Tap any icon above to count out loud!",
+                            fontFamily = GoogleSansFamily,
+                            fontSize = 12.sp,
+                            color = SeekhTextSecondary
+                        )
+                    }
+                }
+
+                // 2x2 Answer Grid
+                shuffledOptions.chunked(2).forEach { rowOpts ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(14.dp)
+                    ) {
+                        rowOpts.forEach { opt ->
+                            val tapped = tappedOptions.contains(opt)
+                            val isCorrect = opt == item.correctAnswer
+                            Surface(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(92.dp)
+                                    .bouncyClick {
+                                        if (isSolved) return@bouncyClick
+                                        tappedOptions = tappedOptions + opt
+                                        if (isCorrect) {
+                                            isSolved = true
+                                            starTrigger++
+                                            onAwardStars(30)
+                                            onSpeakText("Brilliant! ${item.spokenCountOut}")
+                                        } else {
+                                            onSpeakText("Let's count again carefully!")
+                                        }
+                                    },
+                                shape = RoundedCornerShape(22.dp),
+                                color = when {
+                                    tapped && isCorrect -> SeekhGreenMint
+                                    tapped && !isCorrect -> Color(0xFFFFF1F2)
+                                    else -> Color.White
+                                },
+                                shadowElevation = 4.dp,
+                                border = BorderStroke(
+                                    2.dp,
+                                    when {
+                                        tapped && isCorrect -> SeekhGreenMint
+                                        tapped && !isCorrect -> SeekhCoralRed
+                                        else -> headerEmerald
+                                    }
+                                )
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Text(
+                                        text = opt,
+                                        fontFamily = GoogleSansFamily,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        fontSize = 23.sp,
+                                        color = when {
+                                            tapped && isCorrect -> Color.White
+                                            tapped && !isCorrect -> SeekhCoralRed
+                                            else -> headerEmerald
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        FlyingStarsOverlay(triggerCount = starTrigger)
+
+        FloatingReadingBuddy(
+            mood = buddyMood,
+            speechBubbleText = null,
+            onClick = { onSpeakText(item.spokenCountOut) },
+            size = 76.dp,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .navigationBarsPadding()
+                .padding(end = 10.dp, bottom = 8.dp)
+        )
+    }
+}

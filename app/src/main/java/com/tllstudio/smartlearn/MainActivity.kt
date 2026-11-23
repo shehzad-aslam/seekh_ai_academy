@@ -38,7 +38,13 @@ enum class AppScreen {
     GAME_JUMBLE,
     GAME_BALLOON,
     GAME_SPEED,
-    GAME_VOCAB
+    GAME_VOCAB,
+    GAME_SENTENCE,
+    GAME_RHYME,
+    GAME_MISSING_SOUND,
+    GAME_LISTEN_FIND,
+    GAME_OPPOSITES,
+    GAME_COUNT_COLOR
 }
 
 class MainActivity : ComponentActivity() {
@@ -267,7 +273,13 @@ fun SeekhRootApp(
             currentScreen == AppScreen.GAME_JUMBLE ||
             currentScreen == AppScreen.GAME_BALLOON ||
             currentScreen == AppScreen.GAME_SPEED ||
-            currentScreen == AppScreen.GAME_VOCAB
+            currentScreen == AppScreen.GAME_VOCAB ||
+            currentScreen == AppScreen.GAME_SENTENCE ||
+            currentScreen == AppScreen.GAME_RHYME ||
+            currentScreen == AppScreen.GAME_MISSING_SOUND ||
+            currentScreen == AppScreen.GAME_LISTEN_FIND ||
+            currentScreen == AppScreen.GAME_OPPOSITES ||
+            currentScreen == AppScreen.GAME_COUNT_COLOR
         if (isLearningScreen && profiles.isNotEmpty()) {
             while (true) {
                 delay(15000)
@@ -726,6 +738,12 @@ fun SeekhRootApp(
                                             "JUMBLE" -> AppScreen.GAME_JUMBLE
                                             "BALLOON" -> AppScreen.GAME_BALLOON
                                             "SPEED" -> AppScreen.GAME_SPEED
+                                            "SENTENCE" -> AppScreen.GAME_SENTENCE
+                                            "RHYME" -> AppScreen.GAME_RHYME
+                                            "MISSING_SOUND" -> AppScreen.GAME_MISSING_SOUND
+                                            "LISTEN_FIND" -> AppScreen.GAME_LISTEN_FIND
+                                            "OPPOSITES" -> AppScreen.GAME_OPPOSITES
+                                            "COUNT_COLOR" -> AppScreen.GAME_COUNT_COLOR
                                             else -> AppScreen.GAME_VOCAB
                                         }
                                         navigateTo(targetGame)
@@ -1060,6 +1078,12 @@ fun SeekhRootApp(
                             "BALLOON" -> AppScreen.GAME_BALLOON
                             "SPEED" -> AppScreen.GAME_SPEED
                             "VOCAB" -> AppScreen.GAME_VOCAB
+                            "SENTENCE" -> AppScreen.GAME_SENTENCE
+                            "RHYME" -> AppScreen.GAME_RHYME
+                            "MISSING_SOUND" -> AppScreen.GAME_MISSING_SOUND
+                            "LISTEN_FIND" -> AppScreen.GAME_LISTEN_FIND
+                            "OPPOSITES" -> AppScreen.GAME_OPPOSITES
+                            "COUNT_COLOR" -> AppScreen.GAME_COUNT_COLOR
                             else -> AppScreen.GAME_JUMBLE
                         }
                         navigateTo(targetGame, replaceCurrent = true)
@@ -1126,6 +1150,73 @@ fun SeekhRootApp(
                     onBack = {
                         navigateBack()
                     }
+                )
+            }
+
+            AppScreen.GAME_SENTENCE -> {
+                SentenceBuilderGameScreen(
+                    profile = activeProfile,
+                    buddyMood = buddyMood,
+                    selectedLanguageCode = selectedLangCode,
+                    onSpeakText = { voiceEngine.speak(it) },
+                    onPlayPhoneme = { idx -> voiceEngine.playPhonemeSound(idx) },
+                    onAwardStars = { awardStarsToActiveProfile(it, isFromGame = true) },
+                    onBack = { navigateBack() }
+                )
+            }
+
+            AppScreen.GAME_RHYME -> {
+                RhymingWordsGameScreen(
+                    profile = activeProfile,
+                    buddyMood = buddyMood,
+                    selectedLanguageCode = selectedLangCode,
+                    onSpeakText = { voiceEngine.speak(it) },
+                    onAwardStars = { awardStarsToActiveProfile(it, isFromGame = true) },
+                    onBack = { navigateBack() }
+                )
+            }
+
+            AppScreen.GAME_MISSING_SOUND -> {
+                MissingPhonicsSoundGameScreen(
+                    profile = activeProfile,
+                    buddyMood = buddyMood,
+                    selectedLanguageCode = selectedLangCode,
+                    onSpeakText = { voiceEngine.speak(it) },
+                    onAwardStars = { awardStarsToActiveProfile(it, isFromGame = true) },
+                    onBack = { navigateBack() }
+                )
+            }
+
+            AppScreen.GAME_LISTEN_FIND -> {
+                ListenAndPickGameScreen(
+                    profile = activeProfile,
+                    buddyMood = buddyMood,
+                    selectedLanguageCode = selectedLangCode,
+                    onSpeakText = { voiceEngine.speak(it) },
+                    onAwardStars = { awardStarsToActiveProfile(it, isFromGame = true) },
+                    onBack = { navigateBack() }
+                )
+            }
+
+            AppScreen.GAME_OPPOSITES -> {
+                OppositesQuestGameScreen(
+                    profile = activeProfile,
+                    buddyMood = buddyMood,
+                    selectedLanguageCode = selectedLangCode,
+                    onSpeakText = { voiceEngine.speak(it) },
+                    onAwardStars = { awardStarsToActiveProfile(it, isFromGame = true) },
+                    onBack = { navigateBack() }
+                )
+            }
+
+            AppScreen.GAME_COUNT_COLOR -> {
+                CountAndColorsGameScreen(
+                    profile = activeProfile,
+                    buddyMood = buddyMood,
+                    selectedLanguageCode = selectedLangCode,
+                    onSpeakText = { voiceEngine.speak(it) },
+                    onAwardStars = { awardStarsToActiveProfile(it, isFromGame = true) },
+                    onBack = { navigateBack() }
                 )
             }
         }
