@@ -81,15 +81,52 @@ fun InteractiveStoryReaderScreen(
         mutableStateOf(initialPageIndex > 0 && initialPageIndex == book.pages.size - 1 && currentPage.quiz != null)
     }
 
-    var readWordCount by remember(pageIndex, book.id) {
-        mutableIntStateOf(if (pageIndex == 0 && book.id == "book_rained_fish") 11 else 0)
+    // Per-page persistent state across Back / Next navigation within the book (prevents reset & duplicate star farming!)
+    var pageReadWordCounts by remember(book.id) {
+        mutableStateOf(
+            buildMap<Int, Int> {
+                if (book.id == "book_rained_fish") put(0, 11)
+                for (idx in 0 until initialPageIndex) {
+                    val pgWords = book.pages.getOrNull(idx)?.text?.trim()?.split(Regex("\\s+"))?.filter { it.isNotEmpty() }?.size ?: 0
+                    put(idx, pgWords)
+                }
+            }
+        )
     }
-    var masteredPracticeWords by remember(pageIndex, book.id) {
-        mutableStateOf(emptySet<String>())
+    val readWordCount = pageReadWordCounts[pageIndex] ?: 0
+    val setReadWordCount: (Int) -> Unit = { newCount ->
+        pageReadWordCounts = pageReadWordCounts + (pageIndex to newCount)
     }
+
+    var rewardedPageIndices by remember(book.id) {
+        mutableStateOf(
+            if (profile.completedBookIds.contains(book.id)) {
+                book.pages.indices.toSet()
+            } else {
+                (0 until initialPageIndex).toSet()
+            }
+        )
+    }
+    var rewardedQuizPageIndices by remember(book.id) {
+        mutableStateOf(
+            if (profile.completedBookIds.contains(book.id)) {
+                book.pages.indices.toSet()
+            } else {
+                emptySet()
+            }
+        )
+    }
+    var masteredPracticeWordsByPage by remember(book.id) {
+        mutableStateOf<Map<Int, Set<String>>>(emptyMap())
+    }
+    val masteredPracticeWords = masteredPracticeWordsByPage[pageIndex] ?: emptySet()
+    var quizAnswersByPage by remember(book.id) {
+        mutableStateOf<Map<Int, Int>>(emptyMap())
+    }
+    val selectedQuizAnswer = quizAnswersByPage[pageIndex]
+
     var selectedTooltipWord by remember(pageIndex) { mutableStateOf<String?>(null) }
     var isMicActive by remember { mutableStateOf(false) }
-    var selectedQuizAnswer by remember(pageIndex) { mutableStateOf<Int?>(null) }
     var showBlockBookDialog by remember { mutableStateOf(false) }
     var readingMode by remember { mutableStateOf("Read aloud") } // "Read aloud" | "Listen" | "Silent" (READING_MODE_DROPDOWN_SHOWN)
     var showReadingModeDialog by remember { mutableStateOf(false) }
@@ -98,6 +135,14 @@ fun InteractiveStoryReaderScreen(
     var starBurstTrigger by remember { mutableIntStateOf(0) }
     var hearLineTrigger by remember(pageIndex) { mutableIntStateOf(0) }
     val startTimeMs = remember { System.currentTimeMillis() }
+
+    val awardPageStarsOnce: (Int, Int) -> Unit = { targetPageIdx, starsToAward ->
+        if (!rewardedPageIndices.contains(targetPageIdx)) {
+            rewardedPageIndices = rewardedPageIndices + targetPageIdx
+            starBurstTrigger++
+            onAwardStars(starsToAward)
+        }
+    }
 
     // Sub-state aware BackHandler inside Story Reader!
     BackHandler {
@@ -144,12 +189,13 @@ fun InteractiveStoryReaderScreen(
     // Real-time word-by-word highlight progression when user taps Noor Buddy for help
     LaunchedEffect(hearLineTrigger) {
         if (hearLineTrigger > 0) {
-            readWordCount = 0
+            setReadWordCount(0)
             onSpeakText(currentPage.text)
             for (i in 1..words.size) {
                 delay(310)
-                readWordCount = i
+                setReadWordCount(i)
             }
+            awardPageStarsOnce(pageIndex, 10)
         }
     }
 
@@ -157,12 +203,13 @@ fun InteractiveStoryReaderScreen(
     LaunchedEffect(isMicActive, pageIndex, isOnCoverPage, isShowingQuizPage) {
         if (isMicActive && !isOnCoverPage && !isShowingQuizPage) {
             onStartListening {}
-            while (isMicActive && readWordCount < words.size) {
+            var currentRead = pageReadWordCounts[pageIndex] ?: 0
+            while (isMicActive && currentRead < words.size) {
                 delay(360)
-                readWordCount = (readWordCount + 1).coerceAtMost(words.size)
-                if (readWordCount == words.size) {
-                    starBurstTrigger++
-                    onAwardStars(15)
+                currentRead = (currentRead + 1).coerceAtMost(words.size)
+                setReadWordCount(currentRead)
+                if (currentRead == words.size) {
+                    awardPageStarsOnce(pageIndex, 15)
                     isMicActive = false
                     onStopListening()
                     onSpeakText("Well done! Tap the green arrow for the next page.")
@@ -185,7 +232,7 @@ fun InteractiveStoryReaderScreen(
                 showFullCelebrationScreen = false
                 isOnCoverPage = true
                 pageIndex = 0
-                readWordCount = 0
+                pageReadWordCounts = emptyMap()
             },
             onBackToLibrary = {
                 showFullCelebrationScreen = false
@@ -567,10 +614,13 @@ fun InteractiveStoryReaderScreen(
                                 .fillMaxWidth()
                                 .padding(vertical = 6.dp)
                                 .clickable {
-                                    selectedQuizAnswer = optIdx
+                                    quizAnswersByPage = quizAnswersByPage + (pageIndex to optIdx)
                                     if (isCorrect) {
-                                        starBurstTrigger++
-                                        onAwardStars(20)
+                                        if (!rewardedQuizPageIndices.contains(pageIndex)) {
+                                            rewardedQuizPageIndices = rewardedQuizPageIndices + pageIndex
+                                            starBurstTrigger++
+                                            onAwardStars(20)
+                                        }
                                         onSpeakText("Correct answer! $optionText! Well done!")
                                     } else {
                                         onSpeakText("Try again!")
@@ -613,8 +663,6 @@ fun InteractiveStoryReaderScreen(
                     onNext = {
                         isShowingQuizPage = false
                         if (pageIndex < book.pages.size - 1) {
-                            starBurstTrigger++
-                            onAwardStars(10)
                             pageIndex++
                         } else {
                             val elapsedMin = ((System.currentTimeMillis() - startTimeMs) / 60000L).toInt().coerceAtLeast(1)
@@ -715,10 +763,10 @@ fun InteractiveStoryReaderScreen(
                                         selectedTooltipWord = cleanWord.ifEmpty { rawWord }
                                         onSpeakText(cleanWord.ifEmpty { rawWord })
                                         if (index >= readWordCount) {
-                                            readWordCount = index + 1
-                                            if (readWordCount == words.size) {
-                                                starBurstTrigger++
-                                                onAwardStars(10)
+                                            val nextCount = index + 1
+                                            setReadWordCount(nextCount)
+                                            if (nextCount == words.size) {
+                                                awardPageStarsOnce(pageIndex, 10)
                                             }
                                         }
                                     }
@@ -829,9 +877,13 @@ fun InteractiveStoryReaderScreen(
                                         }
                                         Button(
                                             onClick = {
-                                                masteredPracticeWords = masteredPracticeWords + word.lowercase()
-                                                starBurstTrigger++
-                                                onAwardStars(10)
+                                                val wordKey = word.lowercase()
+                                                val alreadyMastered = masteredPracticeWords.contains(wordKey)
+                                                masteredPracticeWordsByPage = masteredPracticeWordsByPage + (pageIndex to (masteredPracticeWords + wordKey))
+                                                if (!alreadyMastered) {
+                                                    starBurstTrigger++
+                                                    onAwardStars(10)
+                                                }
                                                 onSpeakText("Awesome! You mastered the word $word!")
                                                 selectedTooltipWord = null
                                             },
@@ -923,7 +975,7 @@ fun InteractiveStoryReaderScreen(
                     }
                 }
 
-                // Exact Reference Bottom Circular Previous / Next Arrow Row (Zero extra "Hear Line" button!)
+                // Exact Reference Bottom Circular Previous / Next Arrow Row (Pure Page Navigation — does NOT award stars on Back/Next click!)
                 ReaderBottomCircularNavigationRow(
                     showPrevious = pageIndex > 0 || book.id != "book_rained_fish",
                     isLastPage = pageIndex >= book.pages.size - 1 && currentPage.quiz == null,
@@ -943,8 +995,6 @@ fun InteractiveStoryReaderScreen(
                             // Open dedicated full-page SelectionQuestionPage for this page's comprehension question!
                             isShowingQuizPage = true
                         } else if (pageIndex < book.pages.size - 1) {
-                            starBurstTrigger++
-                            onAwardStars(10)
                             pageIndex++
                         } else {
                             val elapsedMin = ((System.currentTimeMillis() - startTimeMs) / 60000L).toInt().coerceAtLeast(1)

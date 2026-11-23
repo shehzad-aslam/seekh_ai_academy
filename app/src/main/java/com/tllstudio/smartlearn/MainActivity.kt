@@ -867,12 +867,20 @@ fun SeekhRootApp(
                     buddyMood = buddyMood,
                     initialPageIndex = initialPage,
                     onPageChanged = { newIdx ->
-                        updateActiveProfile { p ->
-                            val newMap = p.bookPageProgress.toMutableMap()
-                            newMap[activeBook.id] = newIdx
-                            p.copy(bookPageProgress = newMap)
+                        val prevMaxIdx = activeProfile.bookPageProgress[activeBook.id] ?: -1
+                        if (newIdx > prevMaxIdx) {
+                            updateActiveProfile { p ->
+                                val currentMax = p.bookPageProgress[activeBook.id] ?: -1
+                                if (newIdx > currentMax) {
+                                    val newMap = p.bookPageProgress.toMutableMap()
+                                    newMap[activeBook.id] = newIdx
+                                    p.copy(bookPageProgress = newMap)
+                                } else p
+                            }
+                            if (prevMaxIdx >= 0) {
+                                recordReadingTimeAndProgress(addedSeconds = 20)
+                            }
                         }
-                        recordReadingTimeAndProgress(addedSeconds = 20)
                     },
                     onSpeakText = { voiceEngine.speak(it) },
                     onPlayPhoneme = { idx -> voiceEngine.playPhonemeSound(idx) },
@@ -880,8 +888,13 @@ fun SeekhRootApp(
                     onStopListening = { voiceEngine.stopVoiceListening() },
                     onAwardStars = { awardStarsToActiveProfile(it, isFromGame = false) },
                     onBookCompleted = { completedBook, newWpm ->
+                        val wasAlreadyCompleted = activeProfile.completedBookIds.contains(completedBook.id)
                         voiceEngine.playClappingSound()
-                        voiceEngine.speak("Congratulations ${activeProfile.name}! You finished ${completedBook.title} and earned fifty golden stars!")
+                        if (!wasAlreadyCompleted) {
+                            voiceEngine.speak("Congratulations ${activeProfile.name}! You finished ${completedBook.title} and earned fifty golden stars!")
+                        } else {
+                            voiceEngine.speak("Awesome reading ${activeProfile.name}! You finished reading ${completedBook.title} again!")
+                        }
                         if (completedBook.bookSource == "CLASSROOM" || completedBook.assignedByTeacher.isNotBlank()) {
                             repository.markAssignmentTurnedIn(completedBook.id)
                             turnedInAssignmentIds = repository.getTurnedInAssignmentIds()
@@ -889,9 +902,13 @@ fun SeekhRootApp(
                         val todayIdx = repository.getTodayDayOfWeekIndex()
                         val todayKey = repository.getTodayDateKey()
                         updateActiveProfile { p ->
+                            val alreadyDone = p.completedBookIds.contains(completedBook.id)
                             val newMap = p.bookPageProgress.toMutableMap()
                             newMap.remove(completedBook.id)
-                            val newMinToday = p.minutesReadToday + 2
+                            val addedMin = if (alreadyDone) 0 else 2
+                            val addedSec = if (alreadyDone) 0 else 120
+                            val addedStars = if (alreadyDone) 0 else 50
+                            val newMinToday = p.minutesReadToday + addedMin
                             val newWeek = p.weeklyMinutes.toMutableList().apply {
                                 while (size < 7) add(0)
                                 this[todayIdx] = newMinToday
@@ -903,9 +920,9 @@ fun SeekhRootApp(
                             }
                             val updatedWpm = if (p.wordsPerMinute == 0) newWpm else ((p.wordsPerMinute + newWpm) / 2).coerceIn(30, 120)
                             p.copy(
-                                stars = p.stars + 50,
+                                stars = p.stars + addedStars,
                                 minutesReadToday = newMinToday,
-                                readingSecondsToday = p.readingSecondsToday + 120,
+                                readingSecondsToday = p.readingSecondsToday + addedSec,
                                 wordsPerMinute = updatedWpm,
                                 completedBookIds = p.completedBookIds + completedBook.id,
                                 weeklyMinutes = newWeek,
