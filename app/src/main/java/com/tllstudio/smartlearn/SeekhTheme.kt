@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
@@ -268,7 +269,7 @@ object AssetBitmapCache {
     }
 }
 
-// Story Illustration Renderer with Soft Artistic Vignette & Rounded Frame
+// 100% Original Children's Picture-Book Vector Illustration Engine (Replaces all reference story bitmaps with copyright-safe bespoke storybook scenes tailored to every book pack and page!)
 @Composable
 fun AssetWebpImage(
     assetPath: String,
@@ -276,44 +277,353 @@ fun AssetWebpImage(
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop
 ) {
-    val context = LocalContext.current
-    val bitmap = remember(assetPath) {
-        AssetBitmapCache.loadWebpOrPng(context, assetPath)
+    val pageNum = remember(assetPath) {
+        val m = Regex("image_(\\d+)").find(assetPath)
+        m?.groupValues?.getOrNull(1)?.toIntOrNull() ?: 0
     }
-    Box(modifier = modifier) {
-        if (bitmap != null) {
-            Image(
-                bitmap = bitmap,
-                contentDescription = contentDescription,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = contentScale
-            )
-            // Subtle warm soft-light gradient glaze for original cohesive look
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color(0x0D5E4AE3),
-                                Color.Transparent,
-                                Color(0x181E1B4B)
-                            )
-                        )
-                    )
-            )
+    val packKey = remember(assetPath) {
+        when {
+            assetPath.contains("sw_13916") -> "sw_13916" // Lara the Golden Ladybird & Bug School
+            assetPath.contains("sw_15058") -> "sw_15058" // Read to Me & Family Home Courtyard
+            assetPath.contains("sw_15195") -> "sw_15195" // Colors on the Street, Rained Fish, Red Ball, Moon & Stars
+            assetPath.contains("sw_37273") -> "sw_37273" // Caterpillar's Shoe, Spider, Frog, Grasshopper, Crab
+            assetPath.contains("sw_44485") -> "sw_44485" // Coastal Train, Karate, Sailor, Drummers & Beach
+            else -> "sw_45764"                           // Lulu Library, Bookshelves, Curtain & Cozy Book Fort
+        }
+    }
+
+    Canvas(modifier = modifier.clipToBounds()) {
+        val w = size.width
+        val h = size.height
+        val variant = pageNum % 7
+
+        // 1. Dynamic Storybook Sky / Room Background Palette per Pack & Page Variant
+        val skyColors = when (packKey) {
+            "sw_13916" -> when (variant) {
+                0, 1 -> listOf(Color(0xFFDFF6FF), Color(0xFFFFF6D6))
+                2, 3 -> listOf(Color(0xFFE3F9E5), Color(0xFFFFF9DB))
+                4 -> listOf(Color(0xFFFFE4E6), Color(0xFFFFF1F2))    // Red painted wings scene
+                5 -> listOf(Color(0xFFDBEAFE), Color(0xFFE0F2FE))    // Rain shower washing wings
+                else -> listOf(Color(0xFFFEF3C7), Color(0xFFECFDF5)) // Golden celebration
+            }
+            "sw_15058" -> when (variant) {
+                0, 1 -> listOf(Color(0xFFFFF4E6), Color(0xFFFFE8CC)) // Cozy living room
+                2, 3 -> listOf(Color(0xFFEDE9FE), Color(0xFFF5F3FF)) // Quiet bedroom crib
+                4, 5 -> listOf(Color(0xFFFFF1F2), Color(0xFFFFFBEB)) // Warm kitchen
+                else -> listOf(Color(0xFFD1FAE5), Color(0xFFFEF3C7)) // Courtyard garden
+            }
+            "sw_15195" -> when {
+                pageNum in 8..12 -> listOf(Color(0xFFBAE6FD), Color(0xFFE0F2FE)) // Monsoon rain & silver fish
+                pageNum >= 14 -> listOf(Color(0xFF1E1B4B), Color(0xFF312E81))    // Starry night moon & cosmos
+                variant % 2 == 0 -> listOf(Color(0xFFFFF7ED), Color(0xFFFEF08A)) // Sunny colorful street
+                else -> listOf(Color(0xFFE0F2FE), Color(0xFFDCFCE7))             // Bouncy red ball meadow
+            }
+            "sw_37273" -> when (variant) {
+                0, 1 -> listOf(Color(0xFFECFDF5), Color(0xFFD1FAE5)) // Garden trail & caterpillar
+                2 -> listOf(Color(0xFFF3E8FF), Color(0xFFFAE8FF))    // Spider web twig
+                3, 4 -> listOf(Color(0xFFE0F2FE), Color(0xFFBAE6FD)) // Blue pond & leaping frog
+                5 -> listOf(Color(0xFFFEF3C7), Color(0xFFFDE68A))    // Sandy shore & red crab
+                else -> listOf(Color(0xFFFCE7F3), Color(0xFFE0E7FF)) // Butterfly flight
+            }
+            "sw_44485" -> when (variant) {
+                0, 1 -> listOf(Color(0xFFE0F2FE), Color(0xFFFFFBEB)) // Sunny train station
+                2, 3 -> listOf(Color(0xFFF1F5F9), Color(0xFFE0F2FE)) // Train carriage interior
+                4, 5 -> listOf(Color(0xFFFEF3C7), Color(0xFFFFE4E6)) // Drummers & chocolate cart
+                else -> listOf(Color(0xFF7DD3FC), Color(0xFFFEF08A)) // Sunny palm beach
+            }
+            else -> when (variant) {
+                0, 1 -> listOf(Color(0xFFF5F3FF), Color(0xFFEDE9FE)) // Library shelves
+                2, 3 -> listOf(Color(0xFFE0F2FE), Color(0xFFF0F9FF)) // Blue window curtain & sofa
+                4, 5 -> listOf(Color(0xFFFEF3C7), Color(0xFFFFF7ED)) // Librarian desk
+                else -> listOf(Color(0xFF312E81), Color(0xFF4338CA)) // Cozy flashlight book fort
+            }
+        }
+        drawRect(brush = Brush.verticalGradient(skyColors))
+
+        // 2. Celestial / Ceiling Backdrop Details (Sun, Fluffy Clouds, Stars, or Indoor Window)
+        val isNightScene = (packKey == "sw_15195" && pageNum >= 14) || (packKey == "sw_45764" && variant == 6)
+        if (isNightScene) {
+            // Glowing Silver-Gold Moon & Twinkling Stars
+            val moonX = w * (0.72f - (pageNum % 3) * 0.12f)
+            val moonY = h * 0.24f
+            drawCircle(color = Color(0x33FEF08A), radius = h * 0.17f, center = Offset(moonX, moonY))
+            drawCircle(color = Color(0xFFFEF9C3), radius = h * 0.11f, center = Offset(moonX, moonY))
+            for (s in 0..7) {
+                val sx = w * ((s * 0.13f + pageNum * 0.05f) % 0.90f + 0.05f)
+                val sy = h * ((s * 0.09f + 0.08f) % 0.45f)
+                drawCircle(color = Color(0xFFFDE047), radius = 3.5f + (s % 3) * 1.5f, center = Offset(sx, sy))
+            }
         } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.linearGradient(
-                            listOf(SeekhGreenSoft, SeekhBlueSoft)
+            // Warm Storybook Sun & Soft Fluffy Clouds
+            val sunX = w * (0.16f + ((pageNum * 17) % 68) / 100f)
+            val sunY = h * (0.18f + (pageNum % 3) * 0.04f)
+            drawCircle(color = Color(0x33FBBF24), radius = h * 0.15f, center = Offset(sunX, sunY))
+            drawCircle(color = Color(0xFFFBBF24), radius = h * 0.095f, center = Offset(sunX, sunY))
+
+            // 2 Fluffy Clouds
+            val c1x = w * ((0.22f + pageNum * 0.11f) % 0.75f)
+            val c1y = h * 0.20f
+            drawRoundRect(
+                color = Color.White.copy(alpha = 0.85f),
+                topLeft = Offset(c1x, c1y),
+                size = Size(w * 0.22f, h * 0.09f),
+                cornerRadius = CornerRadius(h * 0.05f, h * 0.05f)
+            )
+            drawCircle(color = Color.White.copy(alpha = 0.90f), radius = h * 0.055f, center = Offset(c1x + w * 0.07f, c1y))
+            drawCircle(color = Color.White.copy(alpha = 0.90f), radius = h * 0.048f, center = Offset(c1x + w * 0.14f, c1y + h * 0.01f))
+        }
+
+        // 3. Rolling Hills / Floor / Ocean Horizon
+        val groundColor1 = when (packKey) {
+            "sw_44485" -> if (variant == 6) Color(0xFF38BDF8) else Color(0xFFCBD5E1)
+            "sw_15058", "sw_45764" -> Color(0xFFFDE68A)
+            else -> Color(0xFF86EFAC)
+        }
+        val groundColor2 = when (packKey) {
+            "sw_44485" -> if (variant == 6) Color(0xFFFDE047) else Color(0xFF94A3B8)
+            "sw_15058", "sw_45764" -> Color(0xFFFCD34D)
+            else -> Color(0xFF4ADE80)
+        }
+        drawOval(
+            color = groundColor1,
+            topLeft = Offset(-w * 0.15f, h * 0.62f),
+            size = Size(w * 0.85f, h * 0.55f)
+        )
+        drawOval(
+            color = groundColor2,
+            topLeft = Offset(w * 0.28f, h * 0.65f),
+            size = Size(w * 0.90f, h * 0.52f)
+        )
+
+        // 4. Story-Specific Character & Scene Focal Illustration per Book Pack & Page Number!
+        val cx = w * (0.42f + ((pageNum % 3) - 1) * 0.08f)
+        val cy = h * 0.54f
+        val unit = minOf(w, h)
+
+        when (packKey) {
+            "sw_13916" -> {
+                // Botanical Flowers in background
+                for (f in 0..2) {
+                    val fx = w * (0.18f + f * 0.32f)
+                    val fy = h * 0.66f
+                    drawLine(color = Color(0xFF15803D), start = Offset(fx, fy), end = Offset(fx, fy - unit * 0.18f), strokeWidth = 5f)
+                    drawCircle(color = if (f % 2 == 0) Color(0xFFF43F5E) else Color(0xFFA855F7), radius = unit * 0.055f, center = Offset(fx, fy - unit * 0.18f))
+                    drawCircle(color = Color(0xFFFACC15), radius = unit * 0.025f, center = Offset(fx, fy - unit * 0.18f))
+                }
+
+                // Lara the Ladybird (Golden Yellow or Painted Red on page 4/10)
+                val wingColor = if (variant == 4) Color(0xFFEF4444) else Color(0xFFFACC15)
+                // Leaf perch
+                drawOval(
+                    color = Color(0xFF16A34A),
+                    topLeft = Offset(cx - unit * 0.24f, cy + unit * 0.06f),
+                    size = Size(unit * 0.48f, unit * 0.14f)
+                )
+                // Ladybird Body & Glowing Shell
+                drawCircle(color = Color(0xFF1E293B), radius = unit * 0.15f, center = Offset(cx, cy))
+                drawCircle(color = wingColor, radius = unit * 0.145f, center = Offset(cx - unit * 0.01f, cy - unit * 0.01f))
+                // Center wing split line & cute black spots
+                drawLine(color = Color(0xFF1E293B), start = Offset(cx, cy - unit * 0.14f), end = Offset(cx, cy + unit * 0.14f), strokeWidth = 4f)
+                drawCircle(color = Color(0xFF1E293B), radius = unit * 0.026f, center = Offset(cx - unit * 0.06f, cy - unit * 0.04f))
+                drawCircle(color = Color(0xFF1E293B), radius = unit * 0.026f, center = Offset(cx + unit * 0.06f, cy - unit * 0.04f))
+                drawCircle(color = Color(0xFF1E293B), radius = unit * 0.024f, center = Offset(cx - unit * 0.05f, cy + unit * 0.05f))
+                drawCircle(color = Color(0xFF1E293B), radius = unit * 0.024f, center = Offset(cx + unit * 0.05f, cy + unit * 0.05f))
+                // Ladybird Head & Expressive Eyes
+                val headX = cx + unit * 0.13f
+                val headY = cy - unit * 0.05f
+                drawCircle(color = Color(0xFF1E293B), radius = unit * 0.075f, center = Offset(headX, headY))
+                drawCircle(color = Color.White, radius = unit * 0.026f, center = Offset(headX + unit * 0.02f, headY - unit * 0.02f))
+                drawCircle(color = Color(0xFF0F172A), radius = unit * 0.013f, center = Offset(headX + unit * 0.025f, headY - unit * 0.02f))
+                // Antennae
+                drawLine(color = Color(0xFF1E293B), start = Offset(headX + unit * 0.02f, headY - unit * 0.06f), end = Offset(headX + unit * 0.08f, headY - unit * 0.13f), strokeWidth = 3.5f)
+                drawCircle(color = Color(0xFFF59E0B), radius = unit * 0.016f, center = Offset(headX + unit * 0.08f, headY - unit * 0.13f))
+
+                // Companion Bug Friend (Bibi Butterfly or Manto Mantis on alternating pages)
+                if (pageNum % 2 == 1) {
+                    val bx = w * 0.74f
+                    val by = h * 0.34f
+                    drawCircle(color = Color(0xFFEC4899), radius = unit * 0.065f, center = Offset(bx - unit * 0.04f, by - unit * 0.03f))
+                    drawCircle(color = Color(0xFF06B6D4), radius = unit * 0.055f, center = Offset(bx + unit * 0.04f, by - unit * 0.02f))
+                    drawLine(color = Color(0xFF1E1B4B), start = Offset(bx, by - unit * 0.07f), end = Offset(bx, by + unit * 0.06f), strokeWidth = 5f)
+                }
+            }
+
+            "sw_15195" -> {
+                if (pageNum in 8..12) {
+                    // "The Day It Rained Fish": Silver raindrops & playful jumping silver-blue fish!
+                    for (r in 0..9) {
+                        val rx = w * ((r * 0.11f + pageNum * 0.03f) % 0.92f + 0.04f)
+                        val ry = h * ((r * 0.08f + 0.15f) % 0.55f)
+                        drawLine(color = Color(0xFF0284C7), start = Offset(rx, ry), end = Offset(rx - 6f, ry + 18f), strokeWidth = 3f)
+                    }
+                    for (f in 0..2) {
+                        val fx = w * (0.24f + f * 0.25f)
+                        val fy = h * (0.38f + (f % 2) * 0.14f)
+                        drawOval(color = Color(0xFF0EA5E9), topLeft = Offset(fx - unit * 0.10f, fy - unit * 0.05f), size = Size(unit * 0.20f, unit * 0.10f))
+                        val tail = Path().apply {
+                            moveTo(fx - unit * 0.09f, fy)
+                            lineTo(fx - unit * 0.16f, fy - unit * 0.05f)
+                            lineTo(fx - unit * 0.16f, fy + unit * 0.05f)
+                            close()
+                        }
+                        drawPath(tail, color = Color(0xFF0284C7))
+                        drawCircle(color = Color.White, radius = unit * 0.016f, center = Offset(fx + unit * 0.05f, fy - unit * 0.01f))
+                    }
+                } else {
+                    // "Colors on the Street" & "Red Ball": Colorful street houses/stalls, golden marigolds & bouncy red ball!
+                    // Colorful Neighborhood Houses / Kites in background
+                    val houseColors = listOf(Color(0xFF38BDF8), Color(0xFFFBBF24), Color(0xFFA78BFA))
+                    for (i in 0..2) {
+                        val hx = w * (0.14f + i * 0.26f)
+                        val hy = h * 0.44f
+                        drawRoundRect(
+                            color = houseColors[(i + pageNum) % 3],
+                            topLeft = Offset(hx, hy),
+                            size = Size(w * 0.18f, h * 0.24f),
+                            cornerRadius = CornerRadius(12f, 12f)
                         )
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                GoldenStarIcon(size = 36.dp)
+                        // Windows
+                        drawRect(color = Color.White.copy(alpha = 0.85f), topLeft = Offset(hx + w * 0.04f, hy + h * 0.05f), size = Size(w * 0.04f, h * 0.05f))
+                        drawRect(color = Color.White.copy(alpha = 0.85f), topLeft = Offset(hx + w * 0.10f, hy + h * 0.05f), size = Size(w * 0.04f, h * 0.05f))
+                    }
+                    // Bouncy Glossy Red Ball in foreground
+                    val ballY = h * (0.64f - (pageNum % 5) * 0.07f)
+                    drawCircle(color = Color(0xFFEF4444), radius = unit * 0.135f, center = Offset(cx, ballY))
+                    drawCircle(color = Color(0xFFFCA5A5), radius = unit * 0.042f, center = Offset(cx - unit * 0.045f, ballY - unit * 0.045f))
+                }
+            }
+
+            "sw_37273" -> {
+                // "The Caterpillar's Shoe": Segmented Emerald Caterpillar with tiny colorful shoes, Frog, or Crab!
+                if (variant == 3 || variant == 4) {
+                    // Happy Green Frog on a Lotus Lily Pad
+                    drawOval(color = Color(0xFF10B981), topLeft = Offset(cx - unit * 0.24f, cy + unit * 0.04f), size = Size(unit * 0.48f, unit * 0.14f))
+                    drawCircle(color = Color(0xFF22C55E), radius = unit * 0.13f, center = Offset(cx, cy - unit * 0.02f))
+                    drawCircle(color = Color.White, radius = unit * 0.042f, center = Offset(cx - unit * 0.06f, cy - unit * 0.12f))
+                    drawCircle(color = Color.White, radius = unit * 0.042f, center = Offset(cx + unit * 0.06f, cy - unit * 0.12f))
+                    drawCircle(color = Color(0xFF0F172A), radius = unit * 0.02f, center = Offset(cx - unit * 0.06f, cy - unit * 0.12f))
+                    drawCircle(color = Color(0xFF0F172A), radius = unit * 0.02f, center = Offset(cx + unit * 0.06f, cy - unit * 0.12f))
+                } else if (variant == 5) {
+                    // Cheerful Red Crab with seashells
+                    drawOval(color = Color(0xFFEF4444), topLeft = Offset(cx - unit * 0.16f, cy - unit * 0.08f), size = Size(unit * 0.32f, unit * 0.18f))
+                    drawCircle(color = Color(0xFFDC2626), radius = unit * 0.055f, center = Offset(cx - unit * 0.18f, cy - unit * 0.12f))
+                    drawCircle(color = Color(0xFFDC2626), radius = unit * 0.055f, center = Offset(cx + unit * 0.18f, cy - unit * 0.12f))
+                    drawCircle(color = Color.White, radius = unit * 0.025f, center = Offset(cx - unit * 0.05f, cy - unit * 0.08f))
+                    drawCircle(color = Color.White, radius = unit * 0.025f, center = Offset(cx + unit * 0.05f, cy - unit * 0.08f))
+                } else {
+                    // Cute Segmented Caterpillar wearing colorful tiny shoes
+                    for (seg in 0..4) {
+                        val sx = cx - unit * 0.18f + seg * (unit * 0.09f)
+                        val sy = cy - kotlin.math.sin(seg * 0.9f) * (unit * 0.04f)
+                        val segCol = if (seg % 2 == 0) Color(0xFF22C55E) else Color(0xFF4ADE80)
+                        drawCircle(color = segCol, radius = unit * 0.072f, center = Offset(sx, sy))
+                        // Tiny red/gold shoes under segments
+                        drawRoundRect(
+                            color = if (seg % 2 == 0) Color(0xFFEF4444) else Color(0xFFF59E0B),
+                            topLeft = Offset(sx - unit * 0.025f, sy + unit * 0.065f),
+                            size = Size(unit * 0.05f, unit * 0.03f),
+                            cornerRadius = CornerRadius(6f, 6f)
+                        )
+                    }
+                    // Caterpillar smiling face on rightmost segment
+                    val headX = cx + unit * 0.18f
+                    drawCircle(color = Color.White, radius = unit * 0.024f, center = Offset(headX + unit * 0.02f, cy - unit * 0.02f))
+                    drawCircle(color = Color(0xFF0F172A), radius = unit * 0.012f, center = Offset(headX + unit * 0.024f, cy - unit * 0.02f))
+                }
+            }
+
+            "sw_44485" -> {
+                // "Going to the Beach": Sleek Coastal Express Train & Sunny Palm Beach!
+                // Railway Track
+                drawLine(color = Color(0xFF475569), start = Offset(0f, h * 0.72f), end = Offset(w, h * 0.72f), strokeWidth = 6f)
+                // Sleek Blue & Silver Train Carriage
+                val trainLeft = w * 0.15f
+                val trainTop = h * 0.36f
+                val trainW = w * 0.70f
+                val trainH = h * 0.32f
+                drawRoundRect(
+                    color = Color(0xFF0284C7),
+                    topLeft = Offset(trainLeft, trainTop),
+                    size = Size(trainW, trainH),
+                    cornerRadius = CornerRadius(24f, 24f)
+                )
+                // Golden stripe along train
+                drawRect(
+                    color = Color(0xFFFACC15),
+                    topLeft = Offset(trainLeft, trainTop + trainH * 0.62f),
+                    size = Size(trainW, trainH * 0.12f)
+                )
+                // 3 Sunny Train Windows with happy passengers
+                for (win in 0..2) {
+                    val wx = trainLeft + trainW * (0.10f + win * 0.28f)
+                    val wy = trainTop + trainH * 0.16f
+                    drawRoundRect(
+                        color = Color(0xFFE0F2FE),
+                        topLeft = Offset(wx, wy),
+                        size = Size(trainW * 0.20f, trainH * 0.38f),
+                        cornerRadius = CornerRadius(10f, 10f)
+                    )
+                    // Passenger head silhouette inside window
+                    drawCircle(
+                        color = listOf(Color(0xFFF97316), Color(0xFF8B5CF6), Color(0xFF10B981))[(win + pageNum) % 3],
+                        radius = unit * 0.038f,
+                        center = Offset(wx + trainW * 0.10f, wy + trainH * 0.23f)
+                    )
+                }
+                // Train Wheels
+                drawCircle(color = Color(0xFF1E293B), radius = unit * 0.055f, center = Offset(trainLeft + trainW * 0.20f, trainTop + trainH))
+                drawCircle(color = Color(0xFF1E293B), radius = unit * 0.055f, center = Offset(trainLeft + trainW * 0.80f, trainTop + trainH))
+            }
+
+            else -> {
+                // "sw_15058" & "sw_45764": Cozy Bookshelves, Open glowing Storybook & Friendly Reader Character!
+                // Background colorful bookshelf row
+                for (b in 0..5) {
+                    val bx = w * (0.16f + b * 0.11f)
+                    val by = h * 0.32f
+                    val bookCol = listOf(
+                        Color(0xFFEF4444),
+                        Color(0xFF3B82F6),
+                        Color(0xFF10B981),
+                        Color(0xFFF59E0B),
+                        Color(0xFF8B5CF6),
+                        Color(0xFFEC4899)
+                    )[(b + pageNum) % 6]
+                    drawRoundRect(
+                        color = bookCol,
+                        topLeft = Offset(bx, by),
+                        size = Size(w * 0.085f, h * 0.24f),
+                        cornerRadius = CornerRadius(6f, 6f)
+                    )
+                }
+                // Shelf plank
+                drawRoundRect(
+                    color = Color(0xFFB45309),
+                    topLeft = Offset(w * 0.12f, h * 0.56f),
+                    size = Size(w * 0.76f, h * 0.035f),
+                    cornerRadius = CornerRadius(6f, 6f)
+                )
+                // Foreground Open Illustrated Storybook with glowing pages
+                val bookW = unit * 0.42f
+                val bookH = unit * 0.24f
+                drawRoundRect(
+                    color = Color(0xFF4F46E5),
+                    topLeft = Offset(cx - bookW / 2f, h * 0.63f),
+                    size = Size(bookW, bookH),
+                    cornerRadius = CornerRadius(14f, 14f)
+                )
+                drawRoundRect(
+                    color = Color.White,
+                    topLeft = Offset(cx - bookW * 0.45f, h * 0.645f),
+                    size = Size(bookW * 0.43f, bookH * 0.82f),
+                    cornerRadius = CornerRadius(8f, 8f)
+                )
+                drawRoundRect(
+                    color = Color(0xFFF8FAFC),
+                    topLeft = Offset(cx + bookW * 0.02f, h * 0.645f),
+                    size = Size(bookW * 0.43f, bookH * 0.82f),
+                    cornerRadius = CornerRadius(8f, 8f)
+                )
             }
         }
     }
@@ -1289,7 +1599,7 @@ fun SeekhMainTopBar(
     }
 }
 
-// Redesigned Soft Bento Story Book Card (3D Book-Spine Light Reflection + Color-Coded Level Jewel Pill + Diffused Indigo/Emerald Drop Shadow + Uniform Row Height!)
+// Clean Soft Bento Story Book Card (Zero 3D thumbnail effects, pure unobstructed flat-crisp illustration + clean pastel level & page metadata row below thumbnail!)
 @Composable
 fun StoryBookCard(
     book: StoryBook,
@@ -1307,58 +1617,43 @@ fun StoryBookCard(
         label = "book_prog"
     )
 
-    val cardShape = RoundedCornerShape(22.dp)
-    val levelAccentColor = when (book.level) {
-        1 -> Color(0xFF059669) // Emerald Mint
-        2 -> Color(0xFF0284C7) // Sky Ocean Blue
-        3 -> Color(0xFF5E4AE3) // Royal Indigo Violet
-        else -> Color(0xFFD97706) // Warm Golden Amber
+    val cardShape = RoundedCornerShape(20.dp)
+    val (levelBgColor, levelTextColor) = when (book.level) {
+        1 -> Color(0xFFECFDF5) to Color(0xFF059669)
+        2 -> Color(0xFFEFF6FF) to Color(0xFF0284C7)
+        3 -> SeekhGreenSoft to SeekhGreen600
+        else -> Color(0xFFFFFBEB) to Color(0xFFD97706)
     }
 
     Surface(
         modifier = modifier
             .softCardShadow(
-                elevation = 12.dp,
+                elevation = 7.dp,
                 shape = cardShape,
-                spotColor = if (isCompleted) Color(0x4810B981) else Color(0x403B28B0),
-                ambientColor = Color(0x241E1B4B)
+                spotColor = if (isCompleted) Color(0x3310B981) else Color(0x2B3B28B0),
+                ambientColor = Color(0x181E1B4B)
             )
-            .bouncyClick(scaleDown = 0.95f, onClick = onClick),
+            .bouncyClick(scaleDown = 0.96f, onClick = onClick),
         shape = cardShape,
         color = Color.White,
         shadowElevation = 0.dp,
         border = BorderStroke(
-            width = 1.2.dp,
-            brush = Brush.verticalGradient(
-                colors = if (isCompleted) {
-                    listOf(SeekhGreenMint.copy(alpha = 0.65f), SeekhGreenMint.copy(alpha = 0.25f))
-                } else {
-                    listOf(Color.White, Color(0xFFE0E5F6))
-                }
-            )
+            width = 1.dp,
+            color = if (isCompleted) SeekhGreenMint.copy(alpha = 0.45f) else Color(0xFFEAEEF8)
         )
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(Color.White, Color(0xFFFAF9FF))
-                    )
-                )
-                .padding(8.dp),
+                .padding(7.dp),
             horizontalAlignment = Alignment.Start
         ) {
+            // Pure Flat-Clean Thumbnail Box (Zero 3D spine, zero dark scrim, zero inner shadow!)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(0.92f)
-                    .softCardShadow(
-                        elevation = 5.dp,
-                        shape = RoundedCornerShape(16.dp),
-                        spotColor = Color(0x301E1B4B)
-                    )
-                    .clip(RoundedCornerShape(16.dp))
+                    .aspectRatio(0.96f)
+                    .clip(RoundedCornerShape(14.dp))
                     .background(SeekhSurfaceGray)
             ) {
                 AssetWebpImage(
@@ -1368,86 +1663,20 @@ fun StoryBookCard(
                     contentScale = ContentScale.Crop
                 )
 
-                // Subtle 3D Book-Spine Left Edge Light Reflection & Bottom Scrim
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(7.dp)
-                        .align(Alignment.CenterStart)
-                        .background(
-                            Brush.horizontalGradient(
-                                colors = listOf(
-                                    Color.White.copy(alpha = 0.42f),
-                                    Color(0x22000000),
-                                    Color.Transparent
-                                )
-                            )
-                        )
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(38.dp)
-                        .align(Alignment.BottomCenter)
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(Color.Transparent, Color(0x660F172A))
-                            )
-                        )
-                )
-
-                // Color-Coded Jewel Level Pill at bottom-left
-                Surface(
-                    shape = RoundedCornerShape(50),
-                    color = levelAccentColor.copy(alpha = 0.94f),
-                    border = BorderStroke(1.dp, Color.White.copy(alpha = 0.45f)),
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(6.dp)
-                ) {
-                    Text(
-                        text = "Lvl ${book.level}",
-                        fontFamily = GoogleSansFamily,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 10.sp,
-                        color = Color.White,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.5.dp)
-                    )
-                }
-
-                // Page Count Micro-Pill at bottom-right
-                Surface(
-                    shape = RoundedCornerShape(50),
-                    color = Color(0xB31E1B4B),
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(6.dp)
-                ) {
-                    Text(
-                        text = "${book.pages.size}p",
-                        fontFamily = GoogleSansFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 9.5.sp,
-                        color = Color.White.copy(alpha = 0.95f),
-                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                    )
-                }
-
                 // Cloud Download Badge or Downloading Spinner at top-left
                 if (needsDownload || isDownloading) {
                     Surface(
                         modifier = Modifier
                             .padding(6.dp)
-                            .size(28.dp)
-                            .align(Alignment.TopStart)
-                            .softCardShadow(elevation = 4.dp, shape = CircleShape),
+                            .size(26.dp)
+                            .align(Alignment.TopStart),
                         shape = CircleShape,
-                        color = Color.White.copy(alpha = 0.96f)
+                        color = Color.White.copy(alpha = 0.95f)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             if (isDownloading) {
                                 CircularProgressIndicator(
-                                    modifier = Modifier.size(16.dp),
+                                    modifier = Modifier.size(15.dp),
                                     color = SeekhGreen500,
                                     strokeWidth = 2.dp
                                 )
@@ -1456,7 +1685,7 @@ fun StoryBookCard(
                                     imageVector = Icons.Default.CloudDownload,
                                     contentDescription = "Download Story",
                                     tint = SeekhGreen500,
-                                    modifier = Modifier.size(16.dp)
+                                    modifier = Modifier.size(15.dp)
                                 )
                             }
                         }
@@ -1468,9 +1697,8 @@ fun StoryBookCard(
                     Box(
                         modifier = Modifier
                             .padding(6.dp)
-                            .size(24.dp)
+                            .size(22.dp)
                             .align(Alignment.TopEnd)
-                            .softCardShadow(elevation = 4.dp, shape = CircleShape, spotColor = SeekhGreenMint)
                             .clip(CircleShape)
                             .background(SeekhGreenMint)
                             .border(1.5.dp, Color.White, CircleShape),
@@ -1480,26 +1708,58 @@ fun StoryBookCard(
                             imageVector = Icons.Default.Check,
                             contentDescription = "Completed",
                             tint = Color.White,
-                            modifier = Modifier.size(14.dp)
+                            modifier = Modifier.size(13.dp)
                         )
                     }
                 }
             }
 
             if (progressFraction > 0f && !isCompleted) {
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(5.dp))
                 LinearProgressIndicator(
                     progress = { animatedProg.coerceIn(0.08f, 1f) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(5.dp)
+                        .height(4.dp)
                         .clip(RoundedCornerShape(50)),
                     color = SeekhGreen500,
                     trackColor = SeekhGreen100
                 )
             }
 
-            Spacer(modifier = Modifier.height(7.dp))
+            Spacer(modifier = Modifier.height(6.dp))
+
+            // Clean Soft Pastel Level Pill & Page Count Row right below thumbnail (keeps thumbnail 100% clean!)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 2.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = levelBgColor
+                ) {
+                    Text(
+                        text = "Lvl ${book.level}",
+                        fontFamily = GoogleSansFamily,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 9.5.sp,
+                        color = levelTextColor,
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp)
+                    )
+                }
+                Text(
+                    text = "${book.pages.size}p",
+                    fontFamily = GoogleSansFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 9.5.sp,
+                    color = SeekhTextSecondary
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
 
             Text(
                 text = book.title,
@@ -1511,7 +1771,7 @@ fun StoryBookCard(
                 minLines = 2,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 3.dp)
+                modifier = Modifier.padding(horizontal = 2.dp)
             )
 
             val nativeSub = when {
@@ -1520,17 +1780,17 @@ fun StoryBookCard(
                 else -> ""
             }
             if (nativeSub.isNotBlank()) {
-                Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(1.dp))
                 Text(
                     text = nativeSub,
                     fontFamily = GoogleSansFamily,
                     fontWeight = FontWeight.Medium,
-                    fontSize = 11.sp,
-                    lineHeight = 14.sp,
+                    fontSize = 10.5.sp,
+                    lineHeight = 13.5.sp,
                     color = SeekhGreen600,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(horizontal = 3.dp)
+                    modifier = Modifier.padding(horizontal = 2.dp)
                 )
             }
         }
@@ -1594,7 +1854,7 @@ fun FlyingStarsOverlay(
     }
 }
 
-// Featured Hero Story Card at the top of the Library (Soft Diffused Indigo Shadow + Glass Badges + "Read ▶" CTA + Bouncy Touch Micro-Interaction!)
+// Featured Hero Story Card at the top of the Library (Clean flat-crisp cover illustration without dark scrims + soft card shadow + "Read ▶" CTA!)
 @Composable
 fun FeaturedStoryHeroCard(
     book: StoryBook,
@@ -1602,48 +1862,31 @@ fun FeaturedStoryHeroCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val heroShape = RoundedCornerShape(28.dp)
+    val heroShape = RoundedCornerShape(26.dp)
     Surface(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 18.dp)
             .softCardShadow(
-                elevation = 18.dp,
+                elevation = 12.dp,
                 shape = heroShape,
-                spotColor = Color(0x4D3B28B0),
-                ambientColor = Color(0x2B1E1B4B)
+                spotColor = Color(0x363B28B0),
+                ambientColor = Color(0x1E1E1B4B)
             )
             .bouncyClick(scaleDown = 0.97f, onClick = onClick),
         shape = heroShape,
         color = Color.White,
         shadowElevation = 0.dp,
-        border = BorderStroke(
-            width = 1.5.dp,
-            brush = Brush.verticalGradient(
-                listOf(Color.White, SeekhGreen100)
-            )
-        )
+        border = BorderStroke(1.dp, Color(0xFFE8ECF7))
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(Color.White, Color(0xFFF7F5FF))
-                    )
-                )
-        ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            // Pure Bright Cover Illustration (No dark scrims or 3D inner shadows!)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(178.dp)
+                    .height(172.dp)
                     .padding(start = 10.dp, end = 10.dp, top = 10.dp)
-                    .softCardShadow(
-                        elevation = 6.dp,
-                        shape = RoundedCornerShape(20.dp),
-                        spotColor = Color(0x331E1B4B)
-                    )
-                    .clip(RoundedCornerShape(20.dp))
+                    .clip(RoundedCornerShape(18.dp))
             ) {
                 AssetWebpImage(
                     assetPath = book.coverAssetPath,
@@ -1652,69 +1895,12 @@ fun FeaturedStoryHeroCard(
                     contentScale = ContentScale.Crop
                 )
 
-                // Soft bottom scrim on Hero image
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .align(Alignment.BottomCenter)
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(Color.Transparent, Color(0x730F172A))
-                            )
-                        )
-                )
-
-                // Top-Left Floating Glass Featured Pill
-                Surface(
-                    shape = RoundedCornerShape(50),
-                    color = Color(0xCC1E1B4B),
-                    border = BorderStroke(1.dp, Color.White.copy(alpha = 0.32f)),
-                    modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(10.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(5.dp)
-                    ) {
-                        GoldenStarIcon(size = 13.dp)
-                        Text(
-                            text = "Featured Story • ${book.pages.size} Pages",
-                            fontFamily = GoogleSansFamily,
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 10.5.sp,
-                            color = Color.White
-                        )
-                    }
-                }
-
-                // Bottom-Left Level Pill inside cover
-                Surface(
-                    shape = RoundedCornerShape(50),
-                    color = SeekhYellow500,
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(10.dp)
-                ) {
-                    Text(
-                        text = "Level ${book.level} • ${book.categoryTag}",
-                        fontFamily = GoogleSansFamily,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 11.sp,
-                        color = SeekhTextPrimary,
-                        modifier = Modifier.padding(horizontal = 11.dp, vertical = 4.dp)
-                    )
-                }
-
                 if (isCompleted) {
                     Box(
                         modifier = Modifier
                             .padding(10.dp)
-                            .size(30.dp)
+                            .size(28.dp)
                             .align(Alignment.TopEnd)
-                            .softCardShadow(elevation = 5.dp, shape = CircleShape, spotColor = SeekhGreenMint)
                             .clip(CircleShape)
                             .background(SeekhGreenMint)
                             .border(2.dp, Color.White, CircleShape),
@@ -1724,7 +1910,7 @@ fun FeaturedStoryHeroCard(
                             imageVector = Icons.Default.Check,
                             contentDescription = "Completed",
                             tint = Color.White,
-                            modifier = Modifier.size(17.dp)
+                            modifier = Modifier.size(16.dp)
                         )
                     }
                 }
@@ -1733,23 +1919,51 @@ fun FeaturedStoryHeroCard(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column(modifier = Modifier.weight(1f)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(50),
+                            color = SeekhGreenSoft
+                        ) {
+                            Text(
+                                text = "Level ${book.level}",
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 10.5.sp,
+                                color = SeekhGreen600,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                            )
+                        }
+                        Text(
+                            text = "• ${book.pages.size} Pages • ${book.categoryTag}",
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 11.sp,
+                            color = SeekhTextSecondary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(3.dp))
                     Text(
                         text = book.title,
                         fontFamily = GoogleSansFamily,
                         fontWeight = FontWeight.ExtraBold,
-                        fontSize = 19.sp,
+                        fontSize = 18.sp,
                         color = SeekhTextPrimary,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                     if (book.nativeTitleUrdu.isNotBlank()) {
                         Text(
-                            text = "${book.nativeTitleUrdu} • Written by ${book.author}",
+                            text = book.nativeTitleUrdu,
                             fontFamily = GoogleSansFamily,
                             fontWeight = FontWeight.Medium,
                             fontSize = 12.sp,
@@ -1764,12 +1978,7 @@ fun FeaturedStoryHeroCard(
 
                 Surface(
                     shape = RoundedCornerShape(50),
-                    color = SeekhGreen500,
-                    modifier = Modifier.softCardShadow(
-                        elevation = 6.dp,
-                        shape = RoundedCornerShape(50),
-                        spotColor = SeekhGreen500.copy(alpha = 0.55f)
-                    )
+                    color = SeekhGreen500
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
