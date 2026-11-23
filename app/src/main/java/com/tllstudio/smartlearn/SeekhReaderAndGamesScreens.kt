@@ -592,10 +592,11 @@ fun InteractiveStoryReaderScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         // Top 36% of Full Screen: Clean Story Illustration
+                        val isAlphabetPage = page.alphabetBadgeLetters.isNotBlank()
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .weight(0.36f)
+                                .weight(if (isAlphabetPage) 0.46f else 0.36f)
                                 .clip(RoundedCornerShape(20.dp))
                                 .background(SeekhSurfaceGray)
                                 .clickable {
@@ -612,50 +613,98 @@ fun InteractiveStoryReaderScreen(
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop
                             )
+
+                            if (isAlphabetPage) {
+                                Surface(
+                                    shape = RoundedCornerShape(18.dp),
+                                    color = Color.White.copy(alpha = 0.96f),
+                                    border = BorderStroke(2.dp, SeekhGreen500),
+                                    shadowElevation = 6.dp,
+                                    modifier = Modifier
+                                        .align(Alignment.TopStart)
+                                        .padding(12.dp)
+                                        .bouncyClick {
+                                            onPlayPhoneme(pIdx % 7)
+                                            onSpeakText(page.alphabetBadgeLetters)
+                                        }
+                                ) {
+                                    Text(
+                                        text = page.alphabetBadgeLetters.trim(),
+                                        fontFamily = GoogleSansFamily,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        fontSize = 32.sp,
+                                        color = SeekhGreen600,
+                                        modifier = Modifier.padding(horizontal = 18.dp, vertical = 6.dp)
+                                    )
+                                }
+                            }
                         }
 
                         Spacer(modifier = Modifier.height(10.dp))
 
-                        // Bottom 64% of Full Screen: Interactive Alphabet Letter Tiles (if Alphabet Book) + 100% Complete Unclipped Interactive Story Text + Bilingual Subtitle!
+                        // Bottom Section of Full Screen: Single Alphabet Pill + Complete Unclipped Interactive Story Text + Bilingual Subtitle!
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .weight(0.64f),
+                                .weight(if (isAlphabetPage) 0.54f else 0.64f),
                             verticalArrangement = Arrangement.Top
                         ) {
-                            // Interactive Alphabet Letter Cards Banner for Basic Alphabets Books!
-                            if (page.alphabetBadgeLetters.isNotBlank()) {
-                                val letterTokens = remember(page.alphabetBadgeLetters) {
-                                    page.alphabetBadgeLetters.split(Regex("\\s+")).filter { it.isNotBlank() && it != "•" }
-                                }
+                            if (isAlphabetPage) {
+                                val singleLetter = page.alphabetBadgeLetters.trim()
+                                val wordLabel = page.urduTranslation.ifBlank { singleLetter }
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(bottom = 10.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                                 ) {
-                                    letterTokens.take(6).forEachIndexed { lIdx, ltrToken ->
-                                        Surface(
-                                            shape = RoundedCornerShape(14.dp),
-                                            color = if (lIdx % 2 == 0) SeekhGreenSoft else Color(0xFFFFF8E1),
-                                            border = BorderStroke(
-                                                1.5.dp,
-                                                if (lIdx % 2 == 0) SeekhGreen500 else SeekhYellow500
-                                            ),
-                                            modifier = Modifier.bouncyClick {
-                                                onPlayPhoneme(lIdx * 2)
-                                                onSpeakText(ltrToken)
-                                            }
+                                    Surface(
+                                        shape = RoundedCornerShape(16.dp),
+                                        color = SeekhYellow500,
+                                        border = BorderStroke(1.5.dp, Color(0xFFD97706)),
+                                        modifier = Modifier.bouncyClick {
+                                            onPlayPhoneme(pIdx % 7)
+                                            onSpeakText(singleLetter)
+                                        }
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(6.dp)
                                         ) {
                                             Text(
-                                                text = ltrToken,
+                                                text = singleLetter,
                                                 fontFamily = GoogleSansFamily,
                                                 fontWeight = FontWeight.ExtraBold,
-                                                fontSize = 24.sp,
-                                                color = SeekhTextPrimary,
-                                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
+                                                fontSize = 26.sp,
+                                                color = SeekhTextPrimary
+                                            )
+                                            Icon(
+                                                imageVector = Icons.AutoMirrored.Filled.VolumeUp,
+                                                contentDescription = singleLetter,
+                                                tint = SeekhTextPrimary,
+                                                modifier = Modifier.size(18.dp)
                                             )
                                         }
+                                    }
+
+                                    Surface(
+                                        shape = RoundedCornerShape(14.dp),
+                                        color = SeekhGreenSoft,
+                                        border = BorderStroke(1.dp, SeekhGreen100),
+                                        modifier = Modifier.bouncyClick {
+                                            onSpeakText(page.text)
+                                        }
+                                    ) {
+                                        Text(
+                                            text = wordLabel,
+                                            fontFamily = GoogleSansFamily,
+                                            fontWeight = FontWeight.ExtraBold,
+                                            fontSize = 18.sp,
+                                            color = SeekhGreen600,
+                                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+                                        )
                                     }
                                 }
                             }

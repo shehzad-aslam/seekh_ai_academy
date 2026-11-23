@@ -852,359 +852,500 @@ object SeekhCatalog {
     }
 
     // Complete Language-Specific Basic Alphabets Book Pinned at the Very Top of the Home Screen for each of the 11 languages!
+    // STRICT 1-ALPHABET-PER-PAGE RULE: Every single page contains ONLY ONE single alphabet letter and its 100% matching object drawing!
     fun getAlphabetBookForLanguage(langCode: String): StoryBook {
-        val imgs = listOf(
-            "books/sw_13916/image_2.webp",
-            "books/sw_15195/image_4.webp",
-            "books/sw_37273/image_2.webp",
-            "books/sw_44485/image_2.webp",
-            "books/sw_15058/image_2.webp",
-            "books/sw_45764/image_6.webp",
-            "books/sw_13916/image_5.webp",
-            "books/sw_37273/image_5.webp",
-            "books/sw_44485/image_6.webp",
-            "books/sw_15195/image_14.webp",
-            "books/sw_13916/image_14.webp",
-            "books/sw_37273/image_14.webp",
-            "books/sw_44485/image_14.webp"
-        )
+        val coverImg = "books/alphabets/cover_alphabet.webp"
+        val imgApple = "books/alphabets/alpha_a_apple.webp"
+        val imgBall = "books/alphabets/alpha_b_ball.webp"
+        val imgCat = "books/alphabets/alpha_c_cat.webp"
+        val imgDrum = "books/alphabets/alpha_d_drum.webp"
+        val imgElephant = "books/alphabets/alpha_e_elephant.webp"
+        val imgFish = "books/alphabets/alpha_f_fish.webp"
+        val imgGrapes = "books/alphabets/alpha_g_grapes.webp"
+        val imgHouse = "books/alphabets/alpha_h_house.webp"
+        val imgIcecream = "books/alphabets/alpha_i_icecream.webp"
+        val imgJug = "books/alphabets/alpha_j_jug.webp"
+        val imgKite = "books/alphabets/alpha_k_kite.webp"
+        val imgLion = "books/alphabets/alpha_l_lion.webp"
+        val imgMango = "books/alphabets/alpha_m_mango.webp"
+        val imgNest = "books/alphabets/alpha_n_nest.webp"
+        val imgOrange = "books/alphabets/alpha_o_orange.webp"
+        val imgParrot = "books/alphabets/alpha_p_parrot.webp"
+        val imgQueen = "books/alphabets/alpha_q_queen.webp"
+        val imgRabbit = "books/alphabets/alpha_r_rabbit.webp"
+        val imgSun = "books/alphabets/alpha_s_sun.webp"
+        val imgTree = "books/alphabets/alpha_t_tree.webp"
+        val imgUmbrella = "books/alphabets/alpha_u_umbrella.webp"
+        val imgVan = "books/alphabets/alpha_v_van.webp"
+        val imgWatermelon = "books/alphabets/alpha_w_watermelon.webp"
+        val imgXylophone = "books/alphabets/alpha_x_xylophone.webp"
+        val imgYacht = "books/alphabets/alpha_y_yacht.webp"
+        val imgZebra = "books/alphabets/alpha_z_zebra.webp"
+        val imgAnar = "books/alphabets/alpha_anar_pomegranate.webp"
+        val imgButterfly = "books/alphabets/alpha_butterfly.webp"
+        val imgTomato = "books/alphabets/alpha_tomato.webp"
+        val imgMoon = "books/alphabets/alpha_moon.webp"
+        val imgTrain = "books/alphabets/alpha_train.webp"
+        val imgMountain = "books/alphabets/alpha_mountain.webp"
+        val imgOwl = "books/alphabets/alpha_owl.webp"
+        val imgPencil = "books/alphabets/alpha_pencil.webp"
+        val imgFlower = "books/alphabets/alpha_flower.webp"
+        val imgDuck = "books/alphabets/alpha_duck.webp"
+        val imgCamel = "books/alphabets/alpha_camel.webp"
+        val imgHorse = "books/alphabets/alpha_horse.webp"
+        val imgBicycle = "books/alphabets/alpha_bicycle.webp"
+        val imgBook = "books/alphabets/alpha_book.webp"
+        val imgBalloon = "books/alphabets/alpha_balloon.webp"
+        val imgFrog = "books/alphabets/alpha_frog.webp"
+        val imgTurtle = "books/alphabets/alpha_turtle.webp"
+        val imgPeacock = "books/alphabets/alpha_peacock.webp"
+        val imgPineapple = "books/alphabets/alpha_pineapple.webp"
+        val imgSpoon = "books/alphabets/alpha_spoon.webp"
+
+        fun buildSingleLetterBook(
+            id: String,
+            title: String,
+            subtitleUrdu: String,
+            subtitleHindi: String,
+            author: String,
+            phonicsTag: String,
+            coverBadges: String,
+            entries: List<Array<String>> // [letterBadge, imgPath, primaryText, secondaryLabel, practiceWord]
+        ): StoryBook {
+            val pages = entries.mapIndexed { idx, arr ->
+                StoryPage(
+                    pageNumber = idx + 1,
+                    imageAssetPath = arr[1],
+                    text = arr[2],
+                    spanishTranslation = arr[3],
+                    urduTranslation = arr[3],
+                    hindiTranslation = arr[3],
+                    practiceWords = if (arr.size > 4 && arr[4].isNotBlank()) setOf(arr[4]) else emptySet(),
+                    alphabetBadgeLetters = arr[0]
+                )
+            }
+            return StoryBook(
+                id = id,
+                title = title,
+                nativeTitleUrdu = subtitleUrdu,
+                nativeTitleHindi = subtitleHindi,
+                author = author,
+                illustrator = "Seekh Alphabet Studio",
+                publisher = "Foundational Literacy Pack",
+                level = 1,
+                coverAssetPath = coverImg,
+                isFeaturedHero = true,
+                bookType = "ALPHABET",
+                categoryTag = "Numbers & Rhymes",
+                phonicsSkillTag = phonicsTag,
+                alphabetBadgeLetters = coverBadges,
+                pages = pages
+            )
+        }
+
         return when (langCode) {
-            "en" -> StoryBook(
+            "en" -> buildSingleLetterBook(
                 id = "alphabet_book_en",
                 title = "English Alphabets (A to Z)",
-                nativeTitleUrdu = "Learn letters A to Z with phonics & example words",
-                nativeTitleHindi = "A to Z Phonics & Sight Words",
+                subtitleUrdu = "26 Letters • 1 Letter & Matching Picture on Every Page",
+                subtitleHindi = "A to Z Phonics & Picture Words",
                 author = "Seekh Reading Curriculum",
-                illustrator = "StoryWeaver Illustrations",
-                publisher = "Foundational Literacy Pack",
-                level = 1,
-                coverAssetPath = "books/sw_13916/cover_image.webp",
-                isFeaturedHero = true,
-                bookType = "ALPHABET",
-                categoryTag = "Numbers & Rhymes",
-                phonicsSkillTag = "Alphabets: A to Z",
-                alphabetBadgeLetters = "A  B  C  D",
-                pages = listOf(
-                    StoryPage(1, imgs[0], "A is for Apple and Ant. B is for Ball and Butterfly.", "", "A a (Apple, Ant) • B b (Ball, Butterfly)", "", setOf("apple", "ball", "butterfly"), alphabetBadgeLetters = "A a   •   B b"),
-                    StoryPage(2, imgs[1], "C is for Cat and Cloud. D is for Drum and Duck.", "", "C c (Cat, Cloud) • D d (Drum, Duck)", "", setOf("clouds", "drummer"), alphabetBadgeLetters = "C c   •   D d"),
-                    StoryPage(3, imgs[2], "E is for Elephant and Egg. F is for Fish and Frog.", "", "E e (Elephant, Egg) • F f (Fish, Frog)", "", setOf("fish", "frog"),
-                        StoryQuizQuestion("Which letter does the word 'Apple' start with?", listOf("Letter A", "Letter D", "Letter F"), 0),
-                        alphabetBadgeLetters = "E e   •   F f"
-                    ),
-                    StoryPage(4, imgs[3], "G is for Garden and Gate. H is for House and Hat.", "", "G g (Garden, Gate) • H h (House, Hat)", "", setOf("garden", "gate"), alphabetBadgeLetters = "G g   •   H h"),
-                    StoryPage(5, imgs[4], "I is for Igloo and Ink. J is for Jump and Jam.", "", "I i (Igloo, Ink) • J j (Jump, Jam)", "", setOf("inside"), alphabetBadgeLetters = "I i   •   J j"),
-                    StoryPage(6, imgs[5], "K is for Kite and King. L is for Ladybird and Leaf.", "", "K k (Kite, King) • L l (Ladybird, Leaf)", "", setOf("ladybird", "leaves"),
-                        StoryQuizQuestion("Which letter does 'Ladybird' start with?", listOf("Letter L", "Letter K", "Letter G"), 0),
-                        alphabetBadgeLetters = "K k   •   L l"
-                    ),
-                    StoryPage(7, imgs[6], "M is for Moon and Mother. N is for Nest and Night.", "", "M m (Moon, Mother) • N n (Nest, Night)", "", setOf("moon", "mother"), alphabetBadgeLetters = "M m   •   N n"),
-                    StoryPage(8, imgs[7], "O is for Ocean and Orange. P is for Pond and Pencil.", "", "O o (Ocean, Orange) • P p (Pond, Pencil)", "", setOf("ocean"), alphabetBadgeLetters = "O o   •   P p"),
-                    StoryPage(9, imgs[8], "Q is for Queen and Quilt. R is for Rain and Rainbow.", "", "Q q (Queen, Quilt) • R r (Rain, Rainbow)", "", setOf("rain", "rainbow"), alphabetBadgeLetters = "Q q   •   R r"),
-                    StoryPage(10, imgs[9], "S is for Sun and Star. T is for Train and Tree.", "", "S s (Sun, Star) • T t (Train, Tree)", "", setOf("sun", "stars", "train", "tree"),
-                        StoryQuizQuestion("Which letter does 'Sun' and 'Star' begin with?", listOf("Letter S", "Letter R", "Letter T"), 0),
-                        alphabetBadgeLetters = "S s   •   T t"
-                    ),
-                    StoryPage(11, imgs[10], "U is for Umbrella. V is for Van and Violin.", "", "U u (Umbrella) • V v (Van, Violin)", "", setOf("umbrella"), alphabetBadgeLetters = "U u   •   V v"),
-                    StoryPage(12, imgs[11], "W is for Water and Wings. X is for Xylophone.", "", "W w (Water, Wings) • X x (Xylophone)", "", setOf("water", "wings"), alphabetBadgeLetters = "W w   •   X x"),
-                    StoryPage(13, imgs[12], "Y is for Yellow. Z is for Zebra and Zoo. Now you know all 26 letters from A to Z!", "", "Y y (Yellow) • Z z (Zebra, Zoo)", "", setOf("yellow"),
-                        StoryQuizQuestion("How many letters are in the English Alphabet from A to Z?", listOf("26 letters", "10 letters", "50 letters"), 0),
-                        alphabetBadgeLetters = "Y y   •   Z z"
-                    )
+                phonicsTag = "Alphabets: A to Z",
+                coverBadges = "A  B  C  D",
+                entries = listOf(
+                    arrayOf("A", imgApple, "A is for Apple. Look at the bright red apple with a fresh green leaf.", "A a • Apple", "apple"),
+                    arrayOf("B", imgBall, "B is for Ball. Bounce the round soccer ball across the green grass.", "B b • Ball", "ball"),
+                    arrayOf("C", imgCat, "C is for Cat. The cute orange cat walks happily in the sunny yard.", "C c • Cat", "friends"),
+                    arrayOf("D", imgDrum, "D is for Drum. Tap the red drum with two wooden drumsticks.", "D d • Drum", "drummer"),
+                    arrayOf("E", imgElephant, "E is for Elephant. The friendly grey elephant has big floppy ears and a long trunk.", "E e • Elephant", "bright"),
+                    arrayOf("F", imgFish, "F is for Fish. The colorful tropical fish swims in the clear blue water.", "F f • Fish", "fish"),
+                    arrayOf("G", imgGrapes, "G is for Grapes. A sweet bunch of purple grapes hangs on the green stem.", "G g • Grapes", "garden"),
+                    arrayOf("H", imgHouse, "H is for House. A cozy little house with a red roof and a green tree.", "H h • House", "bright"),
+                    arrayOf("I", imgIcecream, "I is for Ice cream. A delicious cold vanilla ice cream cone on a sunny day.", "I i • Ice cream", "bright"),
+                    arrayOf("J", imgJug, "J is for Juice. Sip fresh sweet orange juice with a straw.", "J j • Juice", "bright"),
+                    arrayOf("K", imgKite, "K is for Kite. The bright diamond kite flies high in the blue sky.", "K k • Kite", "sky"),
+                    arrayOf("L", imgLion, "L is for Lion. The brave golden lion has a big fluffy brown mane.", "L l • Lion", "golden"),
+                    arrayOf("M", imgMango, "M is for Mango. A sweet ripe golden mango with a green leaf.", "M m • Mango", "golden"),
+                    arrayOf("N", imgNest, "N is for Nest. Blue bird eggs rest safely inside the woven twig nest.", "N n • Nest", "tree"),
+                    arrayOf("O", imgOrange, "O is for Orange. A round juicy orange fruit with a fresh green leaf.", "O o • Orange", "bright"),
+                    arrayOf("P", imgParrot, "P is for Parrot. The bright green parrot has a curved yellow beak.", "P p • Parrot", "green"),
+                    arrayOf("Q", imgQueen, "Q is for Queen. The kind royal queen wears a shiny golden crown.", "Q q • Queen", "golden"),
+                    arrayOf("R", imgRabbit, "R is for Rabbit. A fluffy white rabbit with long pink ears hops on the grass.", "R r • Rabbit", "friends"),
+                    arrayOf("S", imgSun, "S is for Sun. The warm golden sun smiles brightly in the morning sky.", "S s • Sun", "sun"),
+                    arrayOf("T", imgTree, "T is for Tree. A tall green shady tree grows in the sunny meadow.", "T t • Tree", "tree"),
+                    arrayOf("U", imgUmbrella, "U is for Umbrella. Open the purple umbrella when the raindrops fall.", "U u • Umbrella", "umbrella"),
+                    arrayOf("V", imgVan, "V is for Van. The family van drives smoothly down the road.", "V v • Van", "bright"),
+                    arrayOf("W", imgWatermelon, "W is for Watermelon. A juicy red slice of watermelon with black seeds.", "W w • Watermelon", "red"),
+                    arrayOf("X", imgXylophone, "X is for Xylophone. Tap the seven rainbow bars of the xylophone to make music.", "X x • Xylophone", "colors"),
+                    arrayOf("Y", imgYacht, "Y is for Yacht. The white sailboat yacht glides across the blue ocean water.", "Y y • Yacht", "water"),
+                    arrayOf("Z", imgZebra, "Z is for Zebra. The friendly zebra has bold black and white stripes.", "Z z • Zebra", "friends")
                 )
             )
 
-            "en_ur" -> StoryBook(
+            "en_ur" -> buildSingleLetterBook(
                 id = "alphabet_book_en_ur",
                 title = "اردو حروفِ تہجی (ا، ب، پ، ت)",
-                nativeTitleUrdu = "ا سے ے تک مکمل اردو قاعدہ اور الفاظ",
-                nativeTitleHindi = "Urdu Alphabets (Alif, Be, Pe, Te)",
+                subtitleUrdu = "ا سے ے تک ہر صفحے پر ایک الگ حرف اور اس کی تصویر (37 صفحات)",
+                subtitleHindi = "Urdu Alphabets (1 Letter Per Page)",
                 author = "اردو بنیادی قاعدہ",
-                illustrator = "StoryWeaver Illustrations",
-                publisher = "Foundational Literacy Pack",
-                level = 1,
-                coverAssetPath = "books/sw_13916/cover_image.webp",
-                isFeaturedHero = true,
-                bookType = "ALPHABET",
-                categoryTag = "Numbers & Rhymes",
-                phonicsSkillTag = "حروفِ تہجی: ا تا ے",
-                alphabetBadgeLetters = "ا  ب  پ  ت",
-                pages = listOf(
-                    StoryPage(1, imgs[0], "Alif (ا) is for Anar (Pomegranate). Alif Madd (آ) is for Aam (Mango).", "", "ا سے انار، آ سے آم — آؤ مل کر حروفِ تہجی پڑھیں!", "", setOf("apple"), alphabetBadgeLetters = "ا   آ"),
-                    StoryPage(2, imgs[1], "Be (ب) is for Billi (Cat) and Badal (Cloud). Pe (پ) is for Patang (Kite) and Pani (Water).", "", "ب سے بلی اور بادل • پ سے پتنگ اور پانی", "", setOf("clouds", "water"), alphabetBadgeLetters = "ب   پ"),
-                    StoryPage(3, imgs[2], "Te (ت) is for Titli (Butterfly). Tte (ٹ) is for Tamatar (Tomato). Se (ث) is for Samar (Fruit).", "", "ت سے تتلی • ٹ سے ٹماٹر • ث سے ثمر (پھل)", "", setOf("butterfly"),
-                        StoryQuizQuestion("تتلی (Titli) کس حرف سے شروع ہوتی ہے؟", listOf("ت (Te)", "ب (Be)", "ج (Jeem)"), 0),
-                        alphabetBadgeLetters = "ت   ٹ   ث"
-                    ),
-                    StoryPage(4, imgs[3], "Jeem (ج) is for Joota (Shoe). Che (چ) is for Chand (Moon). He (ح) is forulwa. Khe (خ) is for Khargosh.", "", "ج سے جوتا • چ سے چاند • ح سے حلوائی • خ سے خرگوش", "", setOf("shoe", "moon"), alphabetBadgeLetters = "ج   چ   ح   خ"),
-                    StoryPage(5, imgs[4], "Dal (د) is for Darakht (Tree). Ddal (ڈ) is for Dhol (Drum). Zal (ذ) is for Zakhira.", "", "د سے درخت اور دوست • ڈ سے ڈھول • ذ سے ذخیرہ", "", setOf("tree", "drummer", "friends"), alphabetBadgeLetters = "د   ڈ   ذ"),
-                    StoryPage(6, imgs[5], "Re (ر) is for Rail Gari (Train). Rre (ڑ) is for Pahar. Ze (ز) is for Zameen. Zhe (ژ) is for Zhala-bari.", "", "ر سے ریل گاڑی • ڑ سے پہاڑ • ز سے زمین • ژ سے ژالہ باری", "", setOf("train"),
-                        StoryQuizQuestion("ریل گاڑی (Rail Gari) کس حرف سے شروع ہوتی ہے؟", listOf("ر (Re)", "د (Dal)", "س (Seen)"), 0),
-                        alphabetBadgeLetters = "ر   ڑ   ز   ژ"
-                    ),
-                    StoryPage(7, imgs[6], "Seen (س) is for Suraj (Sun) and Seb (Apple). Sheen (ش) is for Sher (Lion) and Sham.", "", "س سے سورج اور سیب • ش سے شیر اور شمع", "", setOf("sun", "apple"), alphabetBadgeLetters = "س   ش"),
-                    StoryPage(8, imgs[7], "Suad (ص) is for Sabun (Soap). Zuad (ض) is for Zaeef. Toe (ط) is for Tota (Parrot). Zoe (ظ) is for Zaraf.", "", "ص سے صابن • ض سے ضعیف • ط سے طوطا • ظ سے ظروف", "", setOf("bright"), alphabetBadgeLetters = "ص   ض   ط   ظ"),
-                    StoryPage(9, imgs[8], "Ain (ع) is for Ainak (Glasses). Ghain (غ) is for Ghubara (Balloon).", "", "ع سے عینک • غ سے غبارہ", "", setOf("special"), alphabetBadgeLetters = "ع   غ"),
-                    StoryPage(10, imgs[9], "Fe (ف) is for Fawara (Fountain). Qaf (ق) is for Qalam (Pen).", "", "ف سے فوارہ • ق سے قلم اور قالین", "", setOf("books"), alphabetBadgeLetters = "ف   ق"),
-                    StoryPage(11, imgs[10], "Kaf (ک) is for Kitab (Book). Gaf (گ) is for Gend (Ball) and Gulab (Rose).", "", "ک سے کتاب • گ سے گیند اور گلاب", "", setOf("books", "ball", "flower"),
-                        StoryQuizQuestion("کتاب (Kitab) کس حرف سے شروع ہوتی ہے؟", listOf("ک (Kaf)", "ق (Qaf)", "ل (Lam)"), 0),
-                        alphabetBadgeLetters = "ک   گ"
-                    ),
-                    StoryPage(12, imgs[11], "Lam (ل) is for Ladybird. Meem (م) is for Machhli (Fish) and मोर. Noon (ن) is for Nadi (River).", "", "ل سے لیموں • م سے مچھلی • ن سے ندی", "", setOf("fish", "ladybird"), alphabetBadgeLetters = "ل   م   ن"),
-                    StoryPage(13, imgs[12], "Wao (و) is for Waqt. He (ہ) is for Hathi. Hamza (ء), Choti Ye (ی), Bari Ye (ے) — Yakka and Tare (Stars)!", "", "و سے ورق • ہ سے ہاتھی • ء • ی • ے سے تارے (مکمل حروفِ تہجی!)", "", setOf("stars"),
-                        StoryQuizQuestion("اردو حروفِ تہجی کا پہلا اور آخری حرف کون سا ہے؟", listOf("ا اور ے", "ب اور ن", "س اور م"), 0),
-                        alphabetBadgeLetters = "و   ہ   ء   ی   ے"
-                    )
+                phonicsTag = "حروفِ تہجی: ا تا ے",
+                coverBadges = "ا  ب  پ  ت",
+                entries = listOf(
+                    arrayOf("ا", imgAnar, "Alif (ا) is for Anar (Pomegranate). Look at the ruby-red pomegranate and its sweet seeds.", "ا سے انار", "red"),
+                    arrayOf("آ", imgMango, "Alif Madd (آ) is for Aam (Mango). A sweet ripe golden mango with a green leaf.", "آ سے آم", "golden"),
+                    arrayOf("ب", imgCat, "Be (ب) is for Billi (Cat). The cute orange cat walks happily on the grass.", "ب سے بلی", "friends"),
+                    arrayOf("پ", imgKite, "Pe (پ) is for Patang (Kite). The bright kite flies high in the blue sky.", "پ سے پتنگ", "sky"),
+                    arrayOf("ت", imgButterfly, "Te (ت) is for Titli (Butterfly). A colorful butterfly with bright patterned wings.", "ت سے تتلی", "butterfly"),
+                    arrayOf("ٹ", imgTomato, "Tte (ٹ) is for Tamatar (Tomato). A round juicy red tomato with a green stem.", "ٹ سے ٹماٹر", "red"),
+                    arrayOf("ث", imgGrapes, "Se (ث) is for Samar (Fruit). A sweet bunch of purple grapes on the vine.", "ث سے ثمر (پھل)", "garden"),
+                    arrayOf("ج", imgJug, "Jeem (ج) is for Juice. Fresh sweet fruit juice with a drinking straw.", "ج سے جوس", "bright"),
+                    arrayOf("چ", imgMoon, "Che (چ) is for Chand (Moon). The golden crescent moon shines in the night sky.", "چ سے چاند", "moon"),
+                    arrayOf("ح", imgBook, "He (ح) is for Hikayat (Storybook). Open the storybook to read a wonderful tale.", "ح سے حکایت (کتاب)", "books"),
+                    arrayOf("خ", imgRabbit, "Khe (خ) is for Khargosh (Rabbit). A fluffy white rabbit with long ears.", "خ سے خرگوش", "friends"),
+                    arrayOf("د", imgTree, "Dal (د) is for Darakht (Tree). A tall green shady tree in the meadow.", "د سے درخت", "tree"),
+                    arrayOf("ڈ", imgDrum, "Ddal (ڈ) is for Dhol (Drum). A red drum with two wooden drumsticks.", "ڈ سے ڈھول", "drummer"),
+                    arrayOf("ذ", imgOrange, "Zal (ذ) is for Zaiqa (Sweet Orange). A juicy round orange fruit.", "ذ سے ذائقہ دار پھل", "bright"),
+                    arrayOf("ر", imgTrain, "Re (ر) is for Rail Gari (Train). The steam locomotive train rolls on the tracks.", "ر سے ریل گاڑی", "train"),
+                    arrayOf("ڑ", imgMountain, "Rre (ڑ) is for Pahar (Mountain). A tall snow-capped mountain peak.", "ڑ — پہاڑ", "bright"),
+                    arrayOf("ز", imgZebra, "Ze (ز) is for Zebra. A friendly zebra with black and white stripes.", "ز سے زیبرا", "friends"),
+                    arrayOf("ژ", imgUmbrella, "Zhe (ژ) is for Zhala-bari (Rain & Umbrella). Open the umbrella in the rain.", "ژ سے ژالہ باری", "umbrella"),
+                    arrayOf("س", imgApple, "Seen (س) is for Seb (Apple). A bright red apple with a fresh green leaf.", "س سے سیب", "apple"),
+                    arrayOf("ش", imgLion, "Sheen (ش) is for Sher (Lion). The brave lion has a big brown mane.", "ش سے شیر", "golden"),
+                    arrayOf("ص", imgHouse, "Suad (ص) is for Sahn (Courtyard House). A cozy home with a garden.", "ص سے صحن والا گھر", "bright"),
+                    arrayOf("ض", imgSun, "Zuad (ض) is for Zia (Sunlight). The warm golden sun shines in the sky.", "ض سے ضیا (سورج)", "sun"),
+                    arrayOf("ط", imgParrot, "Toe (ط) is for Tota (Parrot). A bright green parrot with a curved beak.", "ط سے طوطا", "green"),
+                    arrayOf("ظ", imgSpoon, "Zoe (ظ) is for Zuroof (Spoon & Utensil). A shiny silver spoon on the table.", "ظ سے ظروف (چمچ)", "bright"),
+                    arrayOf("ع", imgOwl, "Ain (ع) is for Uqaab / Owl. A wise feathered bird perched in the meadow.", "ع سے عقاب", "bright"),
+                    arrayOf("غ", imgBalloon, "Ghain (غ) is for Ghubara (Balloon). A bright red balloon floating in the air.", "غ سے غبارہ", "red"),
+                    arrayOf("ف", imgFlower, "Fe (ف) is for Fasl-e-Bahar (Blooming Flower). A pink lotus flower in bloom.", "ف سے فصلِ بہار کا پھول", "flower"),
+                    arrayOf("ق", imgPencil, "Qaf (ق) is for Qalam (Pencil). A sharpened yellow pencil for writing.", "ق سے قلم", "books"),
+                    arrayOf("ک", imgYacht, "Kaf (ک) is for Kashti (Sailboat). A white sailboat gliding on blue water.", "ک سے کشتی", "water"),
+                    arrayOf("گ", imgBall, "Gaf (گ) is for Gend (Ball). A round ball rolling on the green grass.", "گ سے گیند", "ball"),
+                    arrayOf("ل", imgOrange, "Lam (ل) is for Leemu (Citrus). A fresh juicy citrus fruit with a green leaf.", "ل سے لیموں", "bright"),
+                    arrayOf("م", imgFish, "Meem (م) is for Machhli (Fish). A colorful fish swimming in blue water.", "م سے مچھلی", "fish"),
+                    arrayOf("ن", imgNest, "Noon (ن) is forasheen / Ghonsla (Nest). Blue bird eggs inside a twig nest.", "ن سے ننھا گھونسلہ", "tree"),
+                    arrayOf("و", imgVan, "Wao (و) is for Van. A family van parked on the sunny road.", "و سے وین", "bright"),
+                    arrayOf("ہ", imgElephant, "He (ہ) is for Hathi (Elephant). A friendly grey elephant with big ears.", "ہ سے ہاتھی", "water"),
+                    arrayOf("ی", imgYacht, "Choti Ye (ی) is for Yacht (Sailboat). A graceful sailboat on the sea.", "ی سے یکہ و بادبانی کشتی", "water"),
+                    arrayOf("ے", imgSun, "Bari Ye (ے) is for Tare & Suraj. You learned every single Urdu alphabet letter!", "ے — چمکتے تارے اور سورج", "sun")
                 )
             )
 
-            "en_hi" -> StoryBook(
+            "en_hi" -> buildSingleLetterBook(
                 id = "alphabet_book_en_hi",
                 title = "हिंदी वर्णमाला (अ, आ, इ, क, ख)",
-                nativeTitleUrdu = "अ से ज्ञ तक स्वर और व्यंजन वर्णमाला",
-                nativeTitleHindi = "अ से ज्ञ तक स्वर और व्यंजन वर्णमाला",
+                subtitleUrdu = "हर पृष्ठ पर एक अलग अक्षर और उसका चित्र (33 पृष्ठ)",
+                subtitleHindi = "हर पृष्ठ पर एक अलग अक्षर और उसका चित्र",
                 author = "हिंदी अक्षर ज्ञान",
-                illustrator = "StoryWeaver Illustrations",
-                publisher = "Foundational Literacy Pack",
-                level = 1,
-                coverAssetPath = "books/sw_13916/cover_image.webp",
-                isFeaturedHero = true,
-                bookType = "ALPHABET",
-                categoryTag = "Numbers & Rhymes",
-                phonicsSkillTag = "वर्णमाला: अ से ज्ञ",
-                alphabetBadgeLetters = "अ  आ  इ  क",
-                pages = listOf(
-                    StoryPage(1, imgs[0], "A (अ) is for Anar (Pomegranate). Aa (आ) is for Aam (Mango). I (इ) is for Imli. Ee (ई) is for Eekh.", "", "अ से अनार • आ से आम • इ से इमली • ई से ईख", "अ से अनार • आ से आम • इ से इमली • ई से ईख", setOf("apple"), alphabetBadgeLetters = "अ   आ   इ   ई"),
-                    StoryPage(2, imgs[1], "U (उ) is for Ullu (Owl). Oo (ऊ) is for Oon (Wool). Ri (ऋ) is for Rishi.", "", "उ से उल्लू • ऊ से ऊन • ऋ से ऋषि", "उ से उल्लू • ऊ से ऊन • ऋ से ऋषि", setOf("bright"), alphabetBadgeLetters = "उ   ऊ   ऋ"),
-                    StoryPage(3, imgs[2], "E (ए) is for Ek (One). Ai (ऐ) is for Ainak (Glasses). O (ओ) is for Okhli. Au (औ) is for Aurat.", "", "ए से एक • ऐ से ऐनक • ओ से ओखली • औ से औरत • अं से अंगूर", "ए से एक • ऐ से ऐनक • ओ से ओखली • औ से औरत • अं से अंगूर", setOf("special"),
-                        StoryQuizQuestion("'आम' (Mango) किस स्वर से शुरू होता है?", listOf("आ", "इ", "उ"), 0),
-                        alphabetBadgeLetters = "ए   ऐ   ओ   औ   अं   अः"
-                    ),
-                    StoryPage(4, imgs[3], "Ka (क) is for Kamal (Lotus) and Kitab. Kha (ख) is for Khargosh. Ga (ग) is for Gamla. Gha (घ) is for Ghar (Home).", "", "क से कमल • ख से खरगोश • ग से गमला • घ से घर", "क से कमल • ख से खरगोश • ग से गमला • घ से घर", setOf("flower", "books"), alphabetBadgeLetters = "क   ख   ग   घ   ङ"),
-                    StoryPage(5, imgs[4], "Cha (च) is for Chand (Moon). Chha (छ) is for Chhatri (Umbrella). Ja (ज) is for Jahaz. Jha (झ) is for Jharna.", "", "च से चाँद • छ से छतरी • ज से जहाज़ • झ से झरना", "च से चाँद • छ से छतरी • ज से जहाज़ • झ से झरना", setOf("moon", "umbrella"), alphabetBadgeLetters = "च   छ   ज   झ   ञ"),
-                    StoryPage(6, imgs[5], "Ta (ट) is for Tamatar. Tha (ठ) is for Thathera. Da (ड) is for Damru. Dha (ढ) is for Dholak (Drum).", "", "ट से टमाटर • ठ से ठठेरा • ड से डमरू • ढ से ढोलक", "ट से टमाटर • ठ से ठठेरा • ड से डमरू • ढ से ढोलक", setOf("drummer"), alphabetBadgeLetters = "ट   ठ   ड   ढ   ण"),
-                    StoryPage(7, imgs[6], "Ta (त) is for Titli (Butterfly) and Tara (Star). Tha (थ) is for Thali. Da (द) is for Darwaza. Dha (ध) is for Dhanush. Na (न) is for Nadi.", "", "त से तितली • थ से थाली • द से दरवाज़ा • ध से धनुष • न से नदी", "त से तितली • थ से थाली • द से दरवाज़ा • ध से धनुष • न से नदी", setOf("butterfly", "stars"),
-                        StoryQuizQuestion("'तितली' (Butterfly) किस अक्षर से शुरू होती है?", listOf("त", "क", "प"), 0),
-                        alphabetBadgeLetters = "त   थ   द   ध   न"
-                    ),
-                    StoryPage(8, imgs[7], "Pa (प) is for Patang (Kite) and Pani. Pha (फ) is for Phool (Flower). Ba (ब) is for Badal. Bha (भ) is for Bhalu. Ma (म) is for Machhli (Fish).", "", "प से पतंग • फ से फूल • ब से बादल • भ से भालू • म से मछली", "प से पतंग • फ से फूल • ब से बादल • भ से भालू • म से मछली", setOf("flower", "clouds", "fish"), alphabetBadgeLetters = "प   फ   ब   भ   म"),
-                    StoryPage(9, imgs[8], "Ya (य) is for Yatra. Ra (र) is for Railgari (Train). La (ल) is for Ladki. Va (व) is for Vriksh (Tree).", "", "य से यात्रा • र से रेलगाड़ी • ल से लट्टू • व से वृक्ष (पेड़)", "य से यात्रा • र से रेलगाड़ी • ल से लट्टू • व से वृक्ष (पेड़)", setOf("train", "tree"), alphabetBadgeLetters = "य   र   ल   व"),
-                    StoryPage(10, imgs[9], "Sha (श) is for Sher. Sha (ष) is for Shatkon. Sa (स) is for Suraj (Sun). Ha (ह) is for Hathi (Elephant).", "", "श से शेर • ष से षट्कोण • स से सूरज • ह से हाथी", "श से शेर • ष से षट्कोण • स से सूरज • ह से हाथी", setOf("sun"), alphabetBadgeLetters = "श   ष   स   ह"),
-                    StoryPage(11, imgs[10], "Ksha (क्ष) is for Kshatriya. Tra (त्र) is for Trishul. Gya (ज्ञ) is for Gyani (Wise Scholar). Shra (श्र) is for Shram.", "", "क्ष से कक्षा • त्र से त्रिकोण • ज्ञ से ज्ञान • श्र से परिश्रम", "क्ष से कक्षा • त्र से त्रिकोण • ज्ञ से ज्ञान • श्र से परिश्रम", setOf("books", "school"),
-                        StoryQuizQuestion("'सूरज' (Sun) किस अक्षर से शुरू होता है?", listOf("स", "म", "च"), 0),
-                        alphabetBadgeLetters = "क्ष   त्र   ज्ञ   श्र"
-                    )
+                phonicsTag = "वर्णमाला: अ से ज्ञ",
+                coverBadges = "अ  आ  इ  क",
+                entries = listOf(
+                    arrayOf("अ", imgAnar, "A (अ) is for Anar (Pomegranate). A ruby-red pomegranate with sweet seeds.", "अ से अनार", "red"),
+                    arrayOf("आ", imgMango, "Aa (आ) is for Aam (Mango). A sweet ripe golden mango with a green leaf.", "आ से आम", "golden"),
+                    arrayOf("इ", imgHouse, "I (इ) is for Imarat (Building / House). A cozy house with a red roof.", "इ से इमारत", "bright"),
+                    arrayOf("ई", imgIcecream, "Ee (ई) is for Eeshwar's sweet Ice-cream treat on a sunny day.", "ई से ईख और आइसक्रीम", "bright"),
+                    arrayOf("उ", imgOwl, "U (उ) is for Ullu (Owl). A wise brown owl with big round eyes.", "उ से उल्लू", "bright"),
+                    arrayOf("ऊ", imgCamel, "Oo (ऊ) is for Oont (Camel). A tall desert camel walking on the hill.", "ऊ से ऊँट", "bright"),
+                    arrayOf("ए", imgApple, "E (ए) is for Ek Seb (One Apple). One bright red apple with a green leaf.", "ए से एक सेब", "apple"),
+                    arrayOf("ऐ", imgElephant, "Ai (ऐ) is for Airavat (Royal Elephant). A friendly grey elephant.", "ऐ से ऐरावत (हाथी)", "water"),
+                    arrayOf("ओ", imgOrange, "O (ओ) is for Orange & ओस (Morning Dew on Fruit). A fresh juicy citrus fruit.", "ओ से ओस और संतरा", "bright"),
+                    arrayOf("अं", imgGrapes, "Am (अं) is for Angoor (Grapes). A sweet bunch of purple grapes.", "अं से अंगूर", "garden"),
+                    arrayOf("क", imgFlower, "Ka (क) is for Kamal (Lotus Flower). A pink lotus blooming in the morning.", "क से कमल", "flower"),
+                    arrayOf("ख", imgRabbit, "Kha (ख) is for Khargosh (Rabbit). A fluffy white rabbit on the grass.", "ख से खरगोश", "friends"),
+                    arrayOf("ग", imgBall, "Ga (ग) is for Gend (Ball). A round ball rolling across the green lawn.", "ग से गेंद", "ball"),
+                    arrayOf("घ", imgHouse, "Gha (घ) is for Ghar (Home). A warm little house with a garden tree.", "घ से घर", "bright"),
+                    arrayOf("च", imgSpoon, "Cha (च) is for Chamach (Spoon). A shiny silver spoon on the table.", "च से चम्मच", "bright"),
+                    arrayOf("छ", imgUmbrella, "Chha (छ) is for Chhatri (Umbrella). Open the umbrella when raindrops fall.", "छ से छतरी", "umbrella"),
+                    arrayOf("ज", imgYacht, "Ja (ज) is for Jahaz (Sailboat). A white sailboat gliding across blue water.", "ज से जहाज़ (नाव)", "water"),
+                    arrayOf("ट", imgTomato, "Ta (ट) is for Tamatar (Tomato). A bright red juicy tomato.", "ट से टमाटर", "red"),
+                    arrayOf("ड", imgDrum, "Da (ड) is for Damru & Drum. Tap the red drum with two wooden sticks.", "ड से डमरू और ढोल", "drummer"),
+                    arrayOf("त", imgWatermelon, "Ta (त) is for Tarbooz (Watermelon). A sweet juicy red slice of watermelon.", "त से तरबूज़", "red"),
+                    arrayOf("द", imgTree, "Da (द) is for Darakht / Vriksh (Tree). A tall green shady tree.", "द से दरख़्त (पेड़)", "tree"),
+                    arrayOf("न", imgNest, "Na (न) is for Neer (Bird's Nest). Blue bird eggs resting inside a twig nest.", "न से नीड़ (घोंसला)", "tree"),
+                    arrayOf("प", imgKite, "Pa (प) is for Patang (Kite). A colorful diamond kite soaring in the sky.", "प से पतंग", "sky"),
+                    arrayOf("फ", imgApple, "Pha (फ) is for Phal (Fruit). A fresh red apple from the orchard.", "फ से फल", "apple"),
+                    arrayOf("ब", imgDuck, "Ba (ब) is for Batakh (Duck). A swimming duck on the blue pond.", "ब से बत्तख", "water"),
+                    arrayOf("म", imgFish, "Ma (म) is for Machhli (Fish). A colorful tropical fish swimming in water.", "म से मछली", "fish"),
+                    arrayOf("य", imgYacht, "Ya (य) is for Yacht (Nauka). A sailboat travelling across the water.", "य से यान (नौका)", "water"),
+                    arrayOf("र", imgTrain, "Ra (र) is for Railgari (Train). A steam locomotive train on the tracks.", "र से रेलगाड़ी", "train"),
+                    arrayOf("ल", imgPencil, "La (ल) is for Lekhni (Pencil). A sharpened yellow pencil for writing.", "ल से लेखनी (पेंसिल)", "books"),
+                    arrayOf("व", imgVan, "Va (व) is for Van. A family van parked on the sunny road.", "व से वैन", "bright"),
+                    arrayOf("श", imgLion, "Sha (श) is for Sher (Lion). A brave golden lion with a fluffy mane.", "श से शेर", "golden"),
+                    arrayOf("स", imgSun, "Sa (स) is for Suraj (Sun). The bright golden sun smiling in the sky.", "स से सूरज", "sun"),
+                    arrayOf("ह", imgElephant, "Ha (ह) is for Hathi (Elephant). A friendly baby elephant with big ears.", "ह से हाथी", "water")
                 )
             )
 
-            "en_ar" -> StoryBook(
+            "en_ar" -> buildSingleLetterBook(
                 id = "alphabet_book_en_ar",
                 title = "الحروف الأبجدية العربية (أ، ب، ت، ث)",
-                nativeTitleUrdu = "تعلّم الحروف العربية من الألف إلى الياء مع الكلمات",
-                nativeTitleHindi = "Arabic Alphabets (Alif, Ba, Ta, Tha)",
+                subtitleUrdu = "كل حرف في صفحة مستقلة مع صورته المرسومة (28 صفحة)",
+                subtitleHindi = "Arabic Alphabets (28 Letters • 1 Letter Per Page)",
                 author = "منهج القراءة العربي",
-                illustrator = "StoryWeaver Illustrations",
-                publisher = "Foundational Literacy Pack",
-                level = 1,
-                coverAssetPath = "books/sw_13916/cover_image.webp",
-                isFeaturedHero = true,
-                bookType = "ALPHABET",
-                categoryTag = "Numbers & Rhymes",
-                phonicsSkillTag = "الحروف: أ إلى ي",
-                alphabetBadgeLetters = "أ  ب  ت  ث",
-                pages = listOf(
-                    StoryPage(1, imgs[0], "Alif (أ) is for Arnab (Rabbit). Ba (ب) is for Batta (Duck) and Bayt (House).", "", "أ - أرنب وأسد • ب - بطة وبيت", "", setOf("friends"), alphabetBadgeLetters = "أ   ب"),
-                    StoryPage(2, imgs[1], "Ta (ت) is for Tuffaha (Apple). Tha (ث) is for Tha'lab (Fox).", "", "ت - تفاحة وتاج • ث - ثعلب وثوب", "", setOf("apple"), alphabetBadgeLetters = "ت   ث"),
-                    StoryPage(3, imgs[2], "Jeem (ج) is for Jamal (Camel). Ha (ح) is for Hisan (Horse). Kha (خ) is for Kharoof (Sheep).", "", "ج - جمل وجبل • ح - حصان وحديقة • خ - خروف وخبز", "", setOf("garden"),
-                        StoryQuizQuestion("بأي حرف تبدأ كلمة (تفاحة)؟", listOf("حرف التاء (ت)", "حرف الباء (ب)", "حرف الجيم (ج)"), 0),
-                        alphabetBadgeLetters = "ج   ح   خ"
-                    ),
-                    StoryPage(4, imgs[3], "Dal (د) is for Darraja (Bicycle). Dhal (ذ) is for Dhura (Corn).", "", "د - دراجة ودب • ذ - ذرة وذهب", "", setOf("bicycle"), alphabetBadgeLetters = "د   ذ"),
-                    StoryPage(5, imgs[4], "Ra (ر) is for Rumman (Pomegranate). Zay (ز) is for Zahra (Flower).", "", "ر - رمان ورمل • ز - زهرة وزرافة", "", setOf("flower"), alphabetBadgeLetters = "ر   ز"),
-                    StoryPage(6, imgs[5], "Seen (س) is for Samaka (Fish) and Sama (Sky). Sheen (ش) is for Shams (Sun) and Shajara (Tree).", "", "س - سمكة وسماء • ش - شمس وشجرة", "", setOf("fish", "sky", "sun", "tree"), alphabetBadgeLetters = "س   ش"),
-                    StoryPage(7, imgs[6], "Sad (ص) is for Saqr (Falcon). Dad (ض) is for Difda' (Frog).", "", "ص - صقر وصباح • ض - ضفدع وضوء", "", setOf("frog", "morning"), alphabetBadgeLetters = "ص   ض"),
-                    StoryPage(8, imgs[7], "Ta (ط) is for Ta'ira (Airplane). Za (ظ) is for Zarf (Envelope).", "", "ط - طائرة وطائر • ظ - ظرف وظل", "", setOf("flying"), alphabetBadgeLetters = "ط   ظ"),
-                    StoryPage(9, imgs[8], "Ain (ع) is for Usfoor (Bird). Ghain (غ) is for Ghayma (Cloud).", "", "ع - عصفور وعسل • غ - غيمة وغابة", "", setOf("clouds"), alphabetBadgeLetters = "ع   غ"),
-                    StoryPage(10, imgs[9], "Fa (ف) is for Farasha (Butterfly). Qaf (ق) is for Qamar (Moon) and Qitar (Train).", "", "ف - فراشة وفيل • ق - قمر وقطار", "", setOf("butterfly", "moon", "train"), alphabetBadgeLetters = "ف   ق"),
-                    StoryPage(11, imgs[10], "Kaf (ك) is for Kitab (Book) and Kura (Ball). Lam (ل) is for Laymoon (Lemon).", "", "ك - كتاب وكرة • ل - ليمون ولعبة", "", setOf("books", "ball"), alphabetBadgeLetters = "ك   ل"),
-                    StoryPage(12, imgs[11], "Meem (م) is for Madrasa (School) and Matar (Rain). Noon (ن) is for Najma (Star). Ha (هـ), Waw (و), Ya (ي)!", "", "م - مدرسة ومطر • ن - نجمة ونهر • هـ - هلال • و - وردة • ي - يد", "", setOf("school", "rain", "stars"),
-                        StoryQuizQuestion("بأي حرف تبدأ كلمة (شمس)؟", listOf("حرف الشين (ش)", "حرف السين (س)", "حرف القاف (ق)"), 0),
-                        alphabetBadgeLetters = "م   ن   هـ   و   ي"
-                    )
+                phonicsTag = "الحروف: أ إلى ي",
+                coverBadges = "أ  ب  ت  ث",
+                entries = listOf(
+                    arrayOf("أ", imgRabbit, "Alif (أ) is for Arnab (Rabbit). A fluffy white rabbit with long ears.", "أ - أرنب", "friends"),
+                    arrayOf("ب", imgDuck, "Ba (ب) is for Batta (Duck). A cheerful duck swimming in the blue pond.", "ب - بطة", "water"),
+                    arrayOf("ت", imgApple, "Ta (ت) is for Tuffaha (Apple). A bright red apple with a fresh green leaf.", "ت - تفاحة", "apple"),
+                    arrayOf("ث", imgIcecream, "Tha (ث) is for Thalj (Ice cream). A cold sweet ice cream cone.", "ث - ثلج ومثلجات", "bright"),
+                    arrayOf("ج", imgCamel, "Jeem (ج) is for Jamal (Camel). A tall desert camel walking on the hill.", "ج - جمل", "bright"),
+                    arrayOf("ح", imgHorse, "Ha (ح) is for Hisan (Horse). A swift brown horse running across the meadow.", "ح - حصان", "friends"),
+                    arrayOf("خ", imgWatermelon, "Kha (خ) is for Khayr & Battikh (Melon). A juicy red slice of melon.", "خ - خيرات وفاكهة", "red"),
+                    arrayOf("د", imgBicycle, "Dal (د) is for Darraja (Bicycle). A bicycle with two round wheels.", "د - دراجة", "bicycle"),
+                    arrayOf("ذ", imgSun, "Dhal (ذ) is for Dhahab (Golden Sun). The golden sun shining in the sky.", "ذ - ذهب وشمس ذهبية", "sun"),
+                    arrayOf("ر", imgAnar, "Ra (ر) is for Rumman (Pomegranate). A ruby-red pomegranate with sweet seeds.", "ر - رمان", "red"),
+                    arrayOf("ز", imgFlower, "Zay (ز) is for Zahra (Flower). A blooming pink lotus flower.", "ز - زهرة", "flower"),
+                    arrayOf("س", imgFish, "Seen (س) is for Samaka (Fish). A colorful fish swimming in blue water.", "س - سمكة", "fish"),
+                    arrayOf("ش", imgTree, "Sheen (ش) is for Shajara (Tree). A tall green shady tree in the meadow.", "ش - شجرة", "tree"),
+                    arrayOf("ص", imgOwl, "Sad (ص) is for Saqr / Bird. A feathered bird perched on the hill.", "ص - صقر وطائر", "bright"),
+                    arrayOf("ض", imgFrog, "Dad (ض) is for Difda' (Frog). A friendly green frog by the pond.", "ض - ضفدع", "frog"),
+                    arrayOf("ط", imgParrot, "Ta (ط) is for Ta'ir (Parrot). A bright green parrot with a curved beak.", "ط - طائر الببغاء", "green"),
+                    arrayOf("ظ", imgUmbrella, "Za (ظ) is for Zill (Shade Umbrella). An open umbrella giving shade.", "ظ - ظل ومظلة", "umbrella"),
+                    arrayOf("ع", imgGrapes, "Ain (ع) is for Inab (Grapes). A sweet bunch of purple grapes.", "ع - عنب", "garden"),
+                    arrayOf("غ", imgBalloon, "Ghain (غ) is for Ghubara / Balloon floating up toward the clouds.", "غ - غيمة وبالون", "sky"),
+                    arrayOf("ف", imgElephant, "Fa (ف) is for Feel (Elephant). A friendly grey elephant with a long trunk.", "ف - فيل", "water"),
+                    arrayOf("ق", imgCat, "Qaf (ق) is for Qitta (Cat). A cute orange cat walking on the grass.", "ق - قطة", "friends"),
+                    arrayOf("ك", imgBall, "Kaf (ك) is for Kura (Ball). A round ball rolling on the green lawn.", "ك - كرة", "ball"),
+                    arrayOf("ل", imgOrange, "Lam (ل) is for Laymoon (Citrus). A fresh juicy citrus fruit with a leaf.", "ل - ليمون وبرتقال", "bright"),
+                    arrayOf("م", imgMango, "Meem (م) is for Mango. A sweet ripe golden mango with a green leaf.", "م - مانجو", "golden"),
+                    arrayOf("ن", imgNest, "Noon (ن) is for عش النجم (Bird's Nest). Smooth blue bird eggs in a nest.", "ن - نجم وعش", "tree"),
+                    arrayOf("هـ", imgMoon, "Ha (هـ) is for Hilal (Crescent Moon). The golden crescent moon in the night sky.", "هـ - هلال", "moon"),
+                    arrayOf("و", imgFlower, "Waw (و) is for Warda (Rose / Flower). A blooming pink flower.", "و - وردة", "flower"),
+                    arrayOf("ي", imgYacht, "Ya (ي) is for Yakht (Sailboat Yacht). A white sailboat gliding on the sea.", "ي - يخت شراعي", "water")
                 )
             )
 
-            "en_es" -> StoryBook(
+            "en_es" -> buildSingleLetterBook(
                 id = "alphabet_book_en_es",
                 title = "El Abecedario Español (A a Z, Ñ)",
-                nativeTitleUrdu = "Aprende las letras del abecedario de la A a la Z con la Ñ",
-                nativeTitleHindi = "Spanish Alphabets (A, B, C ... Ñ ... Z)",
+                subtitleUrdu = "27 Letras • 1 Letra y su dibujo en cada página",
+                subtitleHindi = "Spanish Alphabets (1 Letter Per Page)",
                 author = "Seekh Español",
-                illustrator = "StoryWeaver Illustrations",
-                publisher = "Foundational Literacy Pack",
-                level = 1,
-                coverAssetPath = "books/sw_13916/cover_image.webp",
-                isFeaturedHero = true,
-                bookType = "ALPHABET",
-                categoryTag = "Numbers & Rhymes",
-                phonicsSkillTag = "Abecedario: A - Z",
-                alphabetBadgeLetters = "A  B  C  Ñ",
-                pages = listOf(
-                    StoryPage(1, imgs[0], "A is for Árbol (Tree) and Abeja (Bee). B is for Barco (Boat) and Ballena (Whale).", "A de Árbol y Abeja • B de Barco y Ballena", "A de Árbol y Abeja • B de Barco y Ballena", "", setOf("tree"), alphabetBadgeLetters = "A a   •   B b"),
-                    StoryPage(2, imgs[1], "C is for Casa (House) and Cielo (Sky). D is for Delfín (Dolphin) and Día (Day).", "C de Casa y Cielo • D de Delfín y Día", "C de Casa y Cielo • D de Delfín y Día", "", setOf("sky"), alphabetBadgeLetters = "C c   •   D d"),
-                    StoryPage(3, imgs[2], "E is for Estrella (Star) and Elefante. F is for Flor (Flower) and Familia.", "E de Estrella y Elefante • F de Flor y Familia", "E de Estrella y Elefante • F de Flor y Familia", "", setOf("stars", "flower"), alphabetBadgeLetters = "E e   •   F f"),
-                    StoryPage(4, imgs[3], "G is for Gato (Cat) and Girasol. H is for Hoja (Leaf). I is for Isla (Island).", "G de Gato • H de Hoja • I de Isla", "G de Gato • H de Hoja • I de Isla", "", setOf("leaves"), alphabetBadgeLetters = "G g   •   H h   •   I i"),
-                    StoryPage(5, imgs[4], "J is for Jardín (Garden). K is for Koala. L is for Luna (Moon) and Libro (Book).", "J de Jardín • K de Koala • L de Luna y Libro", "J de Jardín • K de Koala • L de Luna y Libro", "", setOf("garden", "moon", "books"), alphabetBadgeLetters = "J j   •   K k   •   L l"),
-                    StoryPage(6, imgs[5], "M is for Mariposa (Butterfly). N is for Nube (Cloud). Ñ is for Ñandú and Niño (Child).", "M de Mariposa • N de Nube • Ñ de Ñandú y Niño", "M de Mariposa • N de Nube • Ñ de Ñandú y Niño", "", setOf("butterfly", "clouds"),
-                        StoryQuizQuestion("¿Cuál es la letra especial del abecedario español en la palabra 'Niño'?", listOf("La letra Ñ", "La letra X", "La letra W"), 0),
-                        alphabetBadgeLetters = "M m   •   N n   •   Ñ ñ"
-                    ),
-                    StoryPage(7, imgs[6], "O is for Océano and Oso (Bear). P is for Pelota (Ball) and Pájaro (Bird). Q is for Queso.", "O de Océano • P de Pelota • Q de Queso", "O de Océano • P de Pelota • Q de Queso", "", setOf("ocean", "ball"), alphabetBadgeLetters = "O o   •   P p   •   Q q"),
-                    StoryPage(8, imgs[7], "R is for Rana (Frog) and Río. S is for Sol (Sun) and Sonrisa (Smile). T is for Tren (Train).", "R de Rana • S de Sol • T de Tren", "R de Rana • S de Sol • T de Tren", "", setOf("frog", "sun", "smile", "train"), alphabetBadgeLetters = "R r   •   S s   •   T t"),
-                    StoryPage(9, imgs[8], "U is for Uvas. V is for Viento. W, X, Y, and Z is for Zorro and Zapato (Shoe)!", "U de Uvas • V de Viento • X de Xilófono • Y • Z de Zapato", "U de Uvas • V de Viento • X de Xilófono • Y • Z de Zapato", "", setOf("shoe"), alphabetBadgeLetters = "U u • V v • W w • X x • Y y • Z z")
+                phonicsTag = "Abecedario: A - Z",
+                coverBadges = "A  B  C  Ñ",
+                entries = listOf(
+                    arrayOf("A", imgTree, "A is for Árbol (Tree). A tall green shady tree in the sunny meadow.", "A a • Árbol", "tree"),
+                    arrayOf("B", imgBall, "B is for Balón (Ball). A round soccer ball on the green grass.", "B b • Balón", "ball"),
+                    arrayOf("C", imgHouse, "C is for Casa (House). A cozy little house with a red roof.", "C c • Casa", "bright"),
+                    arrayOf("D", imgDrum, "D is for Tambor de Día (Drum). Tap the red drum with two wooden sticks.", "D d • Día de Tambor", "drummer"),
+                    arrayOf("E", imgElephant, "E is for Elefante (Elephant). A friendly grey elephant with big ears.", "E e • Elefante", "water"),
+                    arrayOf("F", imgFlower, "F is for Flor (Flower). A blooming pink lotus flower in the garden.", "F f • Flor", "flower"),
+                    arrayOf("G", imgCat, "G is for Gato (Cat). A cute orange cat walking in the yard.", "G g • Gato", "friends"),
+                    arrayOf("H", imgIcecream, "H is for Helado (Ice cream). A cold sweet vanilla ice cream cone.", "H h • Helado", "bright"),
+                    arrayOf("I", imgHouse, "I is for Isla y Hogar. A peaceful home surrounded by green grass.", "I i • Isla", "bright"),
+                    arrayOf("J", imgJug, "J is for Jugo (Juice). Fresh sweet fruit juice with a straw.", "J j • Jugo", "bright"),
+                    arrayOf("K", imgKite, "K is for Cometa / Kite flying high in the sunny blue sky.", "K k • Cometa", "sky"),
+                    arrayOf("L", imgLion, "L is for León (Lion). A brave golden lion with a big brown mane.", "L l • León", "golden"),
+                    arrayOf("M", imgMango, "M is for Mango. A sweet ripe golden mango with a green leaf.", "M m • Mango", "golden"),
+                    arrayOf("N", imgNest, "N is for Nido (Nest). Three blue bird eggs inside a woven twig nest.", "N n • Nido", "tree"),
+                    arrayOf("Ñ", imgPineapple, "Ñ is for Piña (Pineapple). A sweet tropical golden pineapple.", "Ñ ñ • Piña", "golden"),
+                    arrayOf("O", imgOwl, "O is for Ojos de Búho (Owl). A wise brown owl with big eyes.", "O o • Ojos de Búho", "bright"),
+                    arrayOf("P", imgParrot, "P is for Perico (Parrot). A bright green parrot with a curved beak.", "P p • Perico", "green"),
+                    arrayOf("Q", imgQueen, "Q is for Queen / Reina. A kind royal queen wearing a golden crown.", "Q q • Reina", "golden"),
+                    arrayOf("R", imgRabbit, "R is for Ratón y Conejo (Rabbit). A fluffy white rabbit on the grass.", "R r • Conejo", "friends"),
+                    arrayOf("S", imgSun, "S is for Sol (Sun). The warm golden sun smiling in the sky.", "S s • Sol", "sun"),
+                    arrayOf("T", imgTrain, "T is for Tren (Train). A colorful steam locomotive train on the tracks.", "T t • Tren", "train"),
+                    arrayOf("U", imgGrapes, "U is for Uvas (Grapes). A sweet bunch of purple grapes on the stem.", "U u • Uvas", "garden"),
+                    arrayOf("V", imgVan, "V is for Vagón (Van). A family van driving down the sunny road.", "V v • Vagón", "bright"),
+                    arrayOf("W", imgWatermelon, "W is for Watermelon / Sandía. A juicy red slice of watermelon.", "W w • Sandía", "red"),
+                    arrayOf("X", imgXylophone, "X is for Xilófono (Xylophone). A rainbow wooden xylophone with two mallets.", "X x • Xilófono", "colors"),
+                    arrayOf("Y", imgYacht, "Y is for Yate (Yacht). A white sailboat yacht gliding across blue water.", "Y y • Yate", "water"),
+                    arrayOf("Z", imgZebra, "Z is for Cebra (Zebra). A friendly zebra with black and white stripes.", "Z z • Cebra", "friends")
                 )
             )
 
-            "en_pt" -> StoryBook(
+            "en_pt" -> buildSingleLetterBook(
                 id = "alphabet_book_en_pt",
                 title = "O Alfabeto Português (A a Z)",
-                nativeTitleUrdu = "Aprenda as letras de A a Z com sons e palavras",
-                nativeTitleHindi = "Portuguese Alphabets (A to Z)",
+                subtitleUrdu = "26 Letras • 1 Letra e sua ilustração em cada página",
+                subtitleHindi = "Portuguese Alphabets (1 Letter Per Page)",
                 author = "Seekh Português",
-                illustrator = "StoryWeaver Illustrations",
-                publisher = "Foundational Literacy Pack",
-                level = 1,
-                coverAssetPath = "books/sw_13916/cover_image.webp",
-                isFeaturedHero = true,
-                bookType = "ALPHABET",
-                categoryTag = "Numbers & Rhymes",
-                phonicsSkillTag = "Alfabeto: A - Z",
-                alphabetBadgeLetters = "A  B  C  D",
-                pages = listOf(
-                    StoryPage(1, imgs[0], "A is for Abelha (Bee) and Árvore (Tree). B is for Bola (Ball) and Borboleta (Butterfly).", "", "A de Abelha e Árvore • B de Bola e Borboleta", "", setOf("tree", "ball", "butterfly"), alphabetBadgeLetters = "A a   •   B b"),
-                    StoryPage(2, imgs[1], "C is for Casa and Chuva (Rain). D is for Dia. E is for Estrela (Star). F is for Flor (Flower).", "", "C de Chuva • D de Dia • E de Estrela • F de Flor", "", setOf("rain", "stars", "flower"), alphabetBadgeLetters = "C c   •   D d   •   E e   •   F f"),
-                    StoryPage(3, imgs[2], "G is for Gato. H is for Hora. I is for Ilha. J is for Jardim (Garden). L is for Livro (Book) and Lua (Moon).", "", "G de Gato • J de Jardim • L de Livro e Lua", "", setOf("garden", "books", "moon"), alphabetBadgeLetters = "G g • H h • I i • J j • K k • L l"),
-                    StoryPage(4, imgs[3], "M is for Mar. N is for Nuvem (Cloud). O is for Oceano. P is for Peixe (Fish). Q is for Quadro.", "", "M de Mar • N de Nuvem • O de Oceano • P de Peixe", "", setOf("clouds", "ocean", "fish"), alphabetBadgeLetters = "M m • N n • O o • P p • Q q"),
-                    StoryPage(5, imgs[4], "R is for Rio. S is for Sol (Sun) and Sapo (Frog). T is for Trem (Train). U, V, W, X, Y, Z is for Zebra!", "", "R de Rio • S de Sol e Sapo • T de Trem • Z de Zebra", "", setOf("sun", "frog", "train"), alphabetBadgeLetters = "R r • S s • T t • U u • V v • Z z")
+                phonicsTag = "Alfabeto: A - Z",
+                coverBadges = "A  B  C  D",
+                entries = listOf(
+                    arrayOf("A", imgTree, "A is for Árvore (Tree). A tall green shady tree in the meadow.", "A a • Árvore", "tree"),
+                    arrayOf("B", imgBall, "B is for Bola (Ball). A round ball rolling across the green lawn.", "B b • Bola", "ball"),
+                    arrayOf("C", imgHouse, "C is for Casa (House). A cozy little house with a red roof.", "C c • Casa", "bright"),
+                    arrayOf("D", imgDrum, "D is for Tambor (Drum). Tap the red drum with two wooden drumsticks.", "D d • Tambor", "drummer"),
+                    arrayOf("E", imgElephant, "E is for Elefante (Elephant). A friendly grey elephant with big ears.", "E e • Elefante", "water"),
+                    arrayOf("F", imgFlower, "F is for Flor (Flower). A blooming pink lotus flower.", "F f • Flor", "flower"),
+                    arrayOf("G", imgCat, "G is for Gato (Cat). A cute orange cat walking in the yard.", "G g • Gato", "friends"),
+                    arrayOf("H", imgHouse, "H is for Habitação (Home). A peaceful cottage house with a garden.", "H h • Habitação", "bright"),
+                    arrayOf("I", imgIcecream, "I is for Ice-cream / Sorvete. A sweet cold cone on a sunny day.", "I i • Sorvete", "bright"),
+                    arrayOf("J", imgJug, "J is for Jarra de Suco (Juice). Fresh sweet orange juice.", "J j • Jarra de Suco", "bright"),
+                    arrayOf("K", imgKite, "K is for Kite / Pipa. A bright diamond kite soaring in the sky.", "K k • Pipa", "sky"),
+                    arrayOf("L", imgLion, "L is for Leão (Lion). A brave golden lion with a fluffy mane.", "L l • Leão", "golden"),
+                    arrayOf("M", imgMango, "M is for Manga (Mango). A sweet ripe golden mango with a green leaf.", "M m • Manga", "golden"),
+                    arrayOf("N", imgNest, "N is for Ninho (Nest). Three blue bird eggs inside a twig nest.", "N n • Ninho", "tree"),
+                    arrayOf("O", imgOwl, "O is for Olhos da Coruja (Owl). A wise brown owl on the hill.", "O o • Coruja", "bright"),
+                    arrayOf("P", imgParrot, "P is for Papagaio (Parrot). A bright green parrot with a curved beak.", "P p • Papagaio", "green"),
+                    arrayOf("Q", imgQueen, "Q is for Queen / Rainha. A kind queen wearing a golden crown.", "Q q • Rainha", "golden"),
+                    arrayOf("R", imgRabbit, "R is for Coelho Rápido (Rabbit). A fluffy white rabbit on the grass.", "R r • Coelho", "friends"),
+                    arrayOf("S", imgSun, "S is for Sol (Sun). The warm golden sun smiling in the sky.", "S s • Sol", "sun"),
+                    arrayOf("T", imgTrain, "T is for Trem (Train). A steam locomotive train rolling on the tracks.", "T t • Trem", "train"),
+                    arrayOf("U", imgGrapes, "U is for Uva (Grapes). A sweet bunch of purple grapes.", "U u • Uva", "garden"),
+                    arrayOf("V", imgVan, "V is for Van. A family van driving down the sunny road.", "V v • Van", "bright"),
+                    arrayOf("W", imgWatermelon, "W is for Watermelon / Melancia. A juicy red slice of watermelon.", "W w • Melancia", "red"),
+                    arrayOf("X", imgXylophone, "X is for Xilofone (Xylophone). A rainbow wooden xylophone with mallets.", "X x • Xilofone", "colors"),
+                    arrayOf("Y", imgYacht, "Y is for Yacht / Veleiro. A white sailboat gliding on blue water.", "Y y • Veleiro", "water"),
+                    arrayOf("Z", imgZebra, "Z is for Zebra. A friendly zebra with black and white stripes.", "Z z • Zebra", "friends")
                 )
             )
 
-            "en_bn" -> StoryBook(
+            "en_bn" -> buildSingleLetterBook(
                 id = "alphabet_book_en_bn",
                 title = "বাংলা বর্ণমালা (অ, আ, ই, ক, খ)",
-                nativeTitleUrdu = "স্বরবর্ণ ও ব্যঞ্জনবর্ণ — অ থেকে চন্দ্রবিন্দু",
-                nativeTitleHindi = "Bengali Alphabets (Swaroborno & Byanjonborno)",
+                subtitleUrdu = "প্রতি পৃষ্ঠায় একটি করে অক্ষর ও তার ছবি (২০ পৃষ্ঠা)",
+                subtitleHindi = "Bengali Alphabets (1 Letter Per Page)",
                 author = "বাংলা বর্ণ পরিচয়",
-                illustrator = "StoryWeaver Illustrations",
-                publisher = "Foundational Literacy Pack",
-                level = 1,
-                coverAssetPath = "books/sw_13916/cover_image.webp",
-                isFeaturedHero = true,
-                bookType = "ALPHABET",
-                categoryTag = "Numbers & Rhymes",
-                phonicsSkillTag = "বর্ণমালা: অ - ঁ",
-                alphabetBadgeLetters = "অ  আ  ক  খ",
-                pages = listOf(
-                    StoryPage(1, imgs[0], "Swaroborno: O (অ) for Ajogor, Aa (আ) for Aam (Mango), Hrosho-I (ই) for Elish (Fish), Dirgho-I (ঈ) for Eagle.", "", "অ - অজগর • আ - আম • ই - ইলিশ • ঈ - ঈগল", "", setOf("fish"), alphabetBadgeLetters = "অ   আ   ই   ঈ"),
-                    StoryPage(2, imgs[1], "Hrosho-U (উ) for Uth, Dirgho-U (ঊ) for Usha (Morning), Ri (ঋ) for Ritu, E (এ) for Ektaara, Oi (ঐ), O (ও), Ou (ঔ).", "", "উ - উট • ঊ - ঊষা • ঋ - ঋতু • এ - একতারা • ঐ • ও • ঔ", "", setOf("morning"), alphabetBadgeLetters = "উ   ঊ   ঋ   এ   ঐ   ও   ঔ"),
-                    StoryPage(3, imgs[2], "Byanjonborno: Ko (ক) for Kola & Kitab, Kho (খ) for Khargosh, Go (গ) for Gach (Tree), Gho (ঘ) for Ghor (House).", "", "ক - কমলা ও কিতাব • খ - খরগোশ • গ - গাছ • ঘ - ঘর • ঙ", "", setOf("tree", "books"), alphabetBadgeLetters = "ক   খ   গ   ঘ   ঙ"),
-                    StoryPage(4, imgs[3], "Cho (চ) for Chand (Moon), Chho (ছ) for Chhata (Umbrella), Borgiyo-Jo (জ) for Jahaj, Jho (ঝ) for Jhorna.", "", "চ - চাঁদ • ছ - ছাতা • জ - জাহাজ • ঝ - ঝরনা • ঞ", "", setOf("moon", "umbrella"), alphabetBadgeLetters = "চ   ছ   জ   ঝ   ঞ"),
-                    StoryPage(5, imgs[4], "To (ত) for Tara (Star), Do (দ) for Doyel, No (ন) for Nodi, Po (প) for Phool (Flower), Bo (ব) for Boi (Book), Mo (ম) for Machh (Fish)!", "", "ত - তারা • ন - নদী • প - প্রজাপতি ও ফুল • ব - বই • ম - মাছ • স - সূর্য", "", setOf("stars", "flower", "books", "fish", "sun"), alphabetBadgeLetters = "ত  থ  দ  ধ  ন  •  প  ফ  ব  ভ  ম  •  স  হ")
+                phonicsTag = "বর্ণমালা: অ - হ",
+                coverBadges = "অ  আ  ক  খ",
+                entries = listOf(
+                    arrayOf("অ", imgPineapple, "O (অ) is for Anaros (Pineapple). A sweet golden tropical pineapple.", "অ - আনারস", "golden"),
+                    arrayOf("আ", imgMango, "Aa (আ) is for Aam (Mango). A sweet ripe golden mango with a green leaf.", "আ - আম", "golden"),
+                    arrayOf("ই", imgFish, "Hrosho-I (ই) is for Elish (Fish). A shiny fish swimming in blue water.", "ই - ইলিশ মাছ", "fish"),
+                    arrayOf("ঈ", imgOwl, "Dirgho-I (ঈ) is for Eagle / Bird. A feathered bird perched on the hill.", "ঈ - ঈগল পাখি", "bright"),
+                    arrayOf("উ", imgCamel, "Hrosho-U (উ) is for Uth (Camel). A tall camel walking on the hill.", "উ - উট", "bright"),
+                    arrayOf("ঊ", imgSun, "Dirgho-U (ঊ) is for Usha (Morning Sun). The golden sun shining in the morning.", "ঊ - ঊষা (সকালের সূর্য)", "sun"),
+                    arrayOf("এ", imgTrain, "E (এ) is for Express Train. A steam locomotive train rolling on the tracks.", "এ - এক্সপ্রেস ট্রেন", "train"),
+                    arrayOf("ও", imgOrange, "O (ও) is for Komola (Orange). A round juicy citrus fruit.", "ও - কমলালেবু", "bright"),
+                    arrayOf("ক", imgFlower, "Ko (ক) is for Komol (Lotus Flower). A blooming pink lotus flower.", "ক - কমল (পদ্মফুল)", "flower"),
+                    arrayOf("খ", imgRabbit, "Kho (খ) is for Khargosh (Rabbit). A fluffy white rabbit on the grass.", "খ - খরগোশ", "friends"),
+                    arrayOf("গ", imgTree, "Go (গ) is for Gach (Tree). A tall green shady tree in the meadow.", "গ - গাছ", "tree"),
+                    arrayOf("ঘ", imgHouse, "Gho (ঘ) is for Ghor (House). A cozy little house with a red roof.", "ঘ - ঘর", "bright"),
+                    arrayOf("চ", imgMoon, "Cho (চ) is for Chand (Moon). The golden crescent moon in the night sky.", "চ - চাঁদ", "moon"),
+                    arrayOf("ছ", imgUmbrella, "Chho (ছ) is for Chhata (Umbrella). Open the umbrella when raindrops fall.", "ছ - ছাতা", "umbrella"),
+                    arrayOf("জ", imgYacht, "Jo (জ) is for Jahaj (Sailboat). A white sailboat gliding on blue water.", "জ - জাহাজ ও নৌকা", "water"),
+                    arrayOf("ত", imgWatermelon, "To (ত) is for Tormuj (Watermelon). A sweet juicy red slice of watermelon.", "ত - তরমুজ", "red"),
+                    arrayOf("প", imgParrot, "Po (প) is for Pakhi (Parrot). A bright green parrot with a curved beak.", "প - পাখি (টিয়া)", "green"),
+                    arrayOf("ব", imgBook, "Bo (ব) is for Boi (Book). Open the storybook to read together.", "ব - বই", "books"),
+                    arrayOf("স", imgLion, "So (স) is for Singha (Lion). A brave golden lion with a fluffy mane.", "স - সিংহ", "golden"),
+                    arrayOf("হ", imgElephant, "Ho (হ) is for Hati (Elephant). A friendly grey elephant with big ears.", "হ - হাতি", "water")
                 )
             )
 
-            "en_ta" -> StoryBook(
+            "en_ta" -> buildSingleLetterBook(
                 id = "alphabet_book_en_ta",
                 title = "தமிழ் எழுத்துக்கள் (அ, ஆ, இ, க, ச)",
-                nativeTitleUrdu = "உயிர் எழுத்துக்கள் மற்றும் மெய் எழுத்துக்கள்",
-                nativeTitleHindi = "Tamil Alphabets (Uyir & Mei Ezhuthukkal)",
+                subtitleUrdu = "ஒவ்வொரு பக்கத்திலும் ஒரு எழுத்து மற்றும் அதன் படம் (18 பக்கங்கள்)",
+                subtitleHindi = "Tamil Alphabets (1 Letter Per Page)",
                 author = "தமிழ் அரிச்சுவடி",
-                illustrator = "StoryWeaver Illustrations",
-                publisher = "Foundational Literacy Pack",
-                level = 1,
-                coverAssetPath = "books/sw_13916/cover_image.webp",
-                isFeaturedHero = true,
-                bookType = "ALPHABET",
-                categoryTag = "Numbers & Rhymes",
-                phonicsSkillTag = "தமிழ்: அ - ன",
-                alphabetBadgeLetters = "அ  ஆ  இ  க",
-                pages = listOf(
-                    StoryPage(1, imgs[0], "Uyir Ezhuthukkal: A (அ) for Amma (Mother), Aa (ஆ) for Aadu, I (இ) for Ilai (Leaf), Ee (ஈ) for Eetti.", "", "அ - அம்மா • ஆ - ஆடு • இ - இலை • ஈ - ஈட்டி", "", setOf("mother", "leaves"), alphabetBadgeLetters = "அ   ஆ   இ   ஈ"),
-                    StoryPage(2, imgs[1], "U (உ) for Ulagam, Oo (ஊ) for Oonjal, E (எ) for Eli, Ae (ஏ) for Aeni, Ai (ஐ) for Ainthu.", "", "உ - உலகம் • ஊ - ஊஞ்சல் • எ - எலி • ஏ - ஏணி • ஐ - ஐந்து", "", setOf("bright"), alphabetBadgeLetters = "உ   ஊ   எ   ஏ   ஐ"),
-                    StoryPage(3, imgs[2], "O (ஒ) for Ondru (One), Oo (ஓ) for Odam (Boat), Au (ஔ) for Auvaiyar, Ayutha Ezhuthu (ஃ).", "", "ஒ - ஒன்று • ஓ - ஓடம் • ஔ - ஔவையார் • ஃ - எஃகு", "", setOf("special"), alphabetBadgeLetters = "ஒ   ஓ   ஔ   ஃ"),
-                    StoryPage(4, imgs[3], "Mei & Uyirmei: Ka (க) for Kadal (Ocean), Cha (ச) for Suryan (Sun), Ta (ட), Tha (த) for Thamarai (Flower).", "", "க - கடல் • ங • ச - சூரியன் • ஞ • ட • ண • த - தாமரை", "", setOf("ocean", "sun", "flower"), alphabetBadgeLetters = "க   ங   ச   ஞ   ட   ண   த   ந"),
-                    StoryPage(5, imgs[4], "Pa (ப) for Pattampoochi (Butterfly) & Panthu (Ball), Ma (ம) for Maram (Tree) & Mazhai (Rain), Va (வ) for Vaanam (Sky)!", "", "ப - பட்டாம்பூச்சி மற்றும் பந்து • ம - மரம் மற்றும் மழை • வ - வானம்", "", setOf("butterfly", "ball", "tree", "rain", "sky"), alphabetBadgeLetters = "ப  ம  ய  ர  ல  வ  ழ  ள  ற  ன")
+                phonicsTag = "தமிழ்: அ - வ",
+                coverBadges = "அ  ஆ  இ  க",
+                entries = listOf(
+                    arrayOf("அ", imgPineapple, "A (அ) is for Annasi (Pineapple). A sweet golden tropical pineapple.", "அ - அன்னாசிப்பழம்", "golden"),
+                    arrayOf("ஆ", imgApple, "Aa (ஆ) is for Apple. A bright red apple with a fresh green leaf.", "ஆ - ஆப்பிள்", "apple"),
+                    arrayOf("இ", imgHouse, "I (இ) is for Illam (Home). A cozy house with a red roof and garden.", "இ - இல்லம் (வீடு)", "bright"),
+                    arrayOf("ஈ", imgButterfly, "Ee (ஈ) is for Flying Insect / Butterfly with bright colorful wings.", "ஈ - வண்ணத்துப்பூச்சி", "butterfly"),
+                    arrayOf("உ", imgOrange, "U (உ) is for Urundai Pazham (Round Orange). A juicy citrus fruit.", "உ - ஆரஞ்சு பழம்", "bright"),
+                    arrayOf("ஊ", imgBalloon, "Oo (ஊ) is for Oothu Balloon. A bright red balloon floating in the air.", "ஊ - பலூன்", "red"),
+                    arrayOf("எ", imgOwl, "E (எ) is for Ezhil Bird (Owl). A wise brown owl on the hill.", "எ - ஆந்தை", "bright"),
+                    arrayOf("ஏ", imgElephant, "Ae (ஏ) is for Yanai (Elephant). A friendly grey elephant with big ears.", "ஏ - யானை", "water"),
+                    arrayOf("ஓ", imgYacht, "Oo (ஓ) is for Odam (Sailboat). A white sailboat gliding on blue water.", "ஓ - ஓடம் (படகு)", "water"),
+                    arrayOf("க", imgTurtle, "Ka (க) is for Kadal Aamai (Turtle). A friendly green turtle by the water.", "க - கடல் ஆமை", "water"),
+                    arrayOf("ச", imgSun, "Cha (ச) is for Suryan (Sun). The warm golden sun smiling in the sky.", "ச - சூரியன்", "sun"),
+                    arrayOf("த", imgFrog, "Tha (த) is for Thavalai (Frog). A cheerful green frog near the pond.", "த - தவளை", "frog"),
+                    arrayOf("ப", imgBall, "Pa (ப) is for Panthu (Ball). A round ball rolling on the green grass.", "ப - பந்து", "ball"),
+                    arrayOf("ம", imgTree, "Ma (ம) is for Maram (Tree). A tall green shady tree in the meadow.", "ம - மரம்", "tree"),
+                    arrayOf("ய", imgElephant, "Ya (ய) is for Yanai (Elephant). The baby elephant has a curved trunk.", "ய - யானை", "water"),
+                    arrayOf("ர", imgTrain, "Ra (ர) is for Rayil (Train). A steam locomotive train rolling on the tracks.", "ர - ரயில்", "train"),
+                    arrayOf("ல", imgLion, "La (ல) is for Singam (Lion). A brave golden lion with a fluffy mane.", "ல - சிங்கம்", "golden"),
+                    arrayOf("வ", imgParrot, "Va (வ) is for Vanna Kili (Parrot). A bright green parrot with a yellow beak.", "வ - வண்ணக் கிளி", "green")
                 )
             )
 
-            "en_te" -> StoryBook(
+            "en_te" -> buildSingleLetterBook(
                 id = "alphabet_book_en_te",
                 title = "తెలుగు వర్ణమాల (అ, ఆ, ఇ, క, గ)",
-                nativeTitleUrdu = "అచ్చులు మరియు హల్లులు — తెలుగు అక్షరాలు",
-                nativeTitleHindi = "Telugu Alphabets (Achulu & Hallulu)",
+                subtitleUrdu = "ప్రతి పేజీలో ఒకే అక్షరం మరియు దాని బొమ్మ (18 పేజీలు)",
+                subtitleHindi = "Telugu Alphabets (1 Letter Per Page)",
                 author = "తెలుగు అక్షరమాల",
-                illustrator = "StoryWeaver Illustrations",
-                publisher = "Foundational Literacy Pack",
-                level = 1,
-                coverAssetPath = "books/sw_13916/cover_image.webp",
-                isFeaturedHero = true,
-                bookType = "ALPHABET",
-                categoryTag = "Numbers & Rhymes",
-                phonicsSkillTag = "వర్ణమాల: అ - ఱ",
-                alphabetBadgeLetters = "అ  ఆ  ఇ  క",
-                pages = listOf(
-                    StoryPage(1, imgs[0], "Achulu: A (అ) for Amma (Mother), Aa (ఆ) for Aavu, I (ఇ) for Illu (House), Ee (ఈ) for Eega.", "", "అ - అమ్మ • ఆ - ఆవు • ఇ - ఇల్లు • ఈ - ఈగ", "", setOf("mother"), alphabetBadgeLetters = "అ   ఆ   ఇ   ఈ"),
-                    StoryPage(2, imgs[1], "U (ఉ) for Uduta, Oo (ఊ) for Ooyala, Ru (ఋ) for Rushi, E (ఎ) for Eluka, Ae (ఏ) for Aenugu (Elephant), Ai (ఐ).", "", "ఉ - ఉడుత • ఊ - ఊయల • ఋ - ఋషి • ఎ - ఎలుక • ఏ - ఏనుగు • ఐ - ఐదు", "", setOf("bright"), alphabetBadgeLetters = "ఉ   ఊ   ఋ   ఎ   ఏ   ఐ"),
-                    StoryPage(3, imgs[2], "O (ఒ) for Onte, Oo (ఓ) for Oda (Boat), Au (ఔ) for Aushadham, Am (అం), Aha (అః).", "", "ఒ - ఒంటె • ఓ - ఓడ • ఔ - ఔషధం • అం - అంకెలు • అః", "", setOf("special"), alphabetBadgeLetters = "ఒ   ఓ   ఔ   అం   అః"),
-                    StoryPage(4, imgs[3], "Hallulu: Ka (క) for Kamal (Lotus), Kha (ఖ), Ga (గ) for Gadiyaram, Cha (చ) for Chandamama (Moon), Ja (జ).", "", "క - కమలం • ఖ • గ - గడియారం • ఘ • చ - చందమామ • छ • జ", "", setOf("flower", "moon"), alphabetBadgeLetters = "క  ఖ  గ  ఘ  •  చ  ఛ  జ  ఝ"),
-                    StoryPage(5, imgs[4], "Ta (త) for Tara (Star), Pa (ప) foruvvu (Flower), Ba (బ) foranthi (Ball), Ma (మ) for Megham (Cloud), Sa (స) for Suryudu (Sun)!", "", "త - తార • প - పువ్వు • బ - బంతి • మ - మేఘం • స - సూర్యుడు", "", setOf("stars", "flower", "ball", "clouds", "sun"), alphabetBadgeLetters = "త  థ  ద  ధ  న  •  ప  ఫ  బ  భ  మ  •  స  హ")
+                phonicsTag = "వర్ణమాల: అ - హ",
+                coverBadges = "అ  ఆ  ఇ  క",
+                entries = listOf(
+                    arrayOf("అ", imgPineapple, "A (అ) is for Anasa (Pineapple). A sweet golden tropical pineapple.", "అ - అనాసపండు", "golden"),
+                    arrayOf("ఆ", imgApple, "Aa (ఆ) is for Apple. A bright red apple with a fresh green leaf.", "ఆ - ஆపిల్ పండు", "apple"),
+                    arrayOf("ఇ", imgHouse, "I (ఇ) is for Illu (House). A cozy house with a red roof and garden.", "ఇ - ఇల్లు", "bright"),
+                    arrayOf("ఈ", imgButterfly, "Ee (ఈ) is for Eeka & Butterfly. A colorful butterfly in the meadow.", "ఈ - సీతాకోకచిలుక", "butterfly"),
+                    arrayOf("ఉ", imgOwl, "U (ఉ) is for Owl / Bird perched on the sunny hill.", "ఉ - గుడ్లగూబ", "bright"),
+                    arrayOf("ఏ", imgElephant, "Ae (ఏ) is for Aenugu (Elephant). A friendly grey elephant with big ears.", "ఏ - ఏనుగు", "water"),
+                    arrayOf("ఓ", imgYacht, "Oo (ఓ) is for Oda (Sailboat). A white sailboat gliding on blue water.", "ఓ - ఓడ", "water"),
+                    arrayOf("క", imgFlower, "Ka (క) is for Kamalam (Lotus). A blooming pink lotus flower.", "క - కమలం", "flower"),
+                    arrayOf("గ", imgNest, "Ga (గ) is for Gudu (Bird's Nest). Three blue eggs resting inside a nest.", "గ - గూడు", "tree"),
+                    arrayOf("చ", imgMoon, "Cha (చ) is for Chandamama (Moon). The golden crescent moon in the night sky.", "చ - చందమామ", "moon"),
+                    arrayOf("छ", imgUmbrella, "Chha (ఛ) is for Chhatri (Umbrella). Open the umbrella when raindrops fall.", "ఛ - గొడుగు", "umbrella"),
+                    arrayOf("ట", imgTomato, "Ta (ట) is for Tamata (Tomato). A round juicy red tomato.", "ట - టమాటా", "red"),
+                    arrayOf("प", imgParrot, "Pa (ప) is for Chiluka (Parrot). A bright green parrot with a curved beak.", "ప - రామచిలుక", "green"),
+                    arrayOf("బ", imgBall, "Ba (బ) is for Banthi (Ball). A round ball rolling on the green grass.", "బ - బంతి", "ball"),
+                    arrayOf("మ", imgMango, "Ma (మ) is for Mamidi (Mango). A sweet ripe golden mango with a leaf.", "మ - మామిడి పండు", "golden"),
+                    arrayOf("ర", imgTrain, "Ra (ర) is for Railu (Train). A steam locomotive train on the tracks.", "ర - రైలు", "train"),
+                    arrayOf("స", imgSun, "Sa (స) is for Suryudu (Sun). The warm golden sun smiling in the sky.", "స - సూర్యుడు", "sun"),
+                    arrayOf("హ", imgLion, "Ha (హ) is for Simham (Lion). A brave golden lion with a fluffy mane.", "హ - సింహం", "golden")
                 )
             )
 
-            "en_mr" -> StoryBook(
+            "en_mr" -> buildSingleLetterBook(
                 id = "alphabet_book_en_mr",
                 title = "मराठी मुळाक्षरे (अ, आ, इ, क, ख, ळ)",
-                nativeTitleUrdu = "अ ते ज्ञ संपूर्ण मराठी स्वर आणि व्यंजने",
-                nativeTitleHindi = "अ ते ज्ञ संपूर्ण मराठी मुळाक्षरे",
+                subtitleUrdu = "प्रत्येक पानावर एकच मुळाक्षर आणि त्याचे चित्र (२० पाने)",
+                subtitleHindi = "Marathi Alphabets (1 Letter Per Page)",
                 author = "मराठी अक्षरओळख",
-                illustrator = "StoryWeaver Illustrations",
-                publisher = "Foundational Literacy Pack",
-                level = 1,
-                coverAssetPath = "books/sw_13916/cover_image.webp",
-                isFeaturedHero = true,
-                bookType = "ALPHABET",
-                categoryTag = "Numbers & Rhymes",
-                phonicsSkillTag = "मुळाक्षरे: अ ते ज्ञ",
-                alphabetBadgeLetters = "अ  आ  क  ळ",
-                pages = listOf(
-                    StoryPage(1, imgs[0], "Swar: A (अ) for Ananas, Aa (आ) for Aai (Mother) and Aag-gadi (Train), I (इ) for Imarat, Ee (ई) for Idlimb.", "", "अ - अननस • आ - आई आणि आगगाडी • इ - इमारत • ई - इडलिंबू", "अ - अननस • आ - आई आणि आगगाडी • इ - इमारत • ई - इडलिंबू", setOf("mother", "train"), alphabetBadgeLetters = "अ   आ   इ   ई"),
-                    StoryPage(2, imgs[1], "U (उ) for Ukhal, Oo (ऊ) for Oos, Ru (ऋ) for Rushi, E (ए) for Ek, Ai (ऐ) for Airan, O (ओ), Au (औ).", "", "उ - उखळ • ऊ - ऊस • ऋ - ऋषी • ए - एक • ऐ - ऐरण • ओ - ओढा • औ - औषध", "उ - उखळ • ऊ - ऊस • ऋ - ऋषी • ए - एक • ऐ - ऐरण • ओ - ओढा • औ - औषध", setOf("bright"), alphabetBadgeLetters = "उ   ऊ   ऋ   ए   ऐ   ओ   औ"),
-                    StoryPage(3, imgs[2], "Vyanjane: Ka (क) for Kamal (Lotus), Kha (ख) for Kharu, Ga (ग) for Gavat (Grass), Gha (घ) for Ghar (Home).", "", "क - कमळ • ख - खारूताई • ग - गवत • घ - घर", "क - कमळ • ख - खारूताई • ग - गवत • घ - घर", setOf("flower"), alphabetBadgeLetters = "क   ख   ग   घ   ङ"),
-                    StoryPage(4, imgs[3], "Cha (च) for Chandoba (Moon), Chha (छ) for Chhatri (Umbrella), Ja (ज) for Jahaj, Jha (झ) for Jhad (Tree).", "", "च - चांदोबा • छ - छत्री • ज - जहाज • झ - झाड", "च - चांदोबा • छ - छत्री • ज - जहाज • झ - झाड", setOf("moon", "umbrella", "tree"), alphabetBadgeLetters = "च   छ   ज   झ   ञ"),
-                    StoryPage(5, imgs[4], "Pa (प) forulपाखरू (Butterfly) & Pustak (Book), Ma (म) for Masa (Fish), Sa (स) for Surya (Sun), and Marathi special La (ळ) for Bal!", "", "प - फुलपाखरू आणि पुस्तक • म - मासा • स - सूर्य • ह - हत्ती • ळ - बाळ • क्ष • ज्ञ", "प - फुलपाखरू आणि पुस्तक • म - मासा • स - सूर्य • ह - हत्ती • ळ - बाळ • क्ष • ज्ञ", setOf("butterfly", "books", "fish", "sun"), alphabetBadgeLetters = "प  फ  ब  भ  म  •  स  ह  ळ  क्ष  ज्ञ")
+                phonicsTag = "मुळाक्षरे: अ ते ज्ञ",
+                coverBadges = "अ  आ  क  ळ",
+                entries = listOf(
+                    arrayOf("अ", imgPineapple, "A (अ) is for Ananas (Pineapple). A sweet golden tropical pineapple.", "अ - अननस", "golden"),
+                    arrayOf("आ", imgTrain, "Aa (आ) is for Aag-gadi (Train). A steam locomotive train on the tracks.", "आ - आगगाडी", "train"),
+                    arrayOf("इ", imgHouse, "I (इ) is for Imarat (House). A cozy house with a red roof and garden.", "इ - इमारत", "bright"),
+                    arrayOf("उ", imgCamel, "U (उ) is for Unt (Camel). A tall camel walking on the hill.", "उ - उंट", "bright"),
+                    arrayOf("अं", imgGrapes, "Am (अं) is for Angoor / Drakshe (Grapes). A sweet bunch of purple grapes.", "अं - द्राक्षे", "garden"),
+                    arrayOf("क", imgFlower, "Ka (क) is for Kamal (Lotus). A blooming pink lotus flower.", "क - कमळ", "flower"),
+                    arrayOf("ख", imgRabbit, "Kha (ख) is for Khargosh / Sasa (Rabbit). A fluffy white rabbit on the grass.", "ख - ससा", "friends"),
+                    arrayOf("ग", imgBall, "Ga (ग) is for Gend / Chendu (Ball). A round ball rolling on the lawn.", "ग - चेंडू", "ball"),
+                    arrayOf("घ", imgHouse, "Gha (घ) is for Ghar (Home). A warm little house with a red roof.", "घ - घर", "bright"),
+                    arrayOf("च", imgMoon, "Cha (च) is for Chandoba (Moon). The golden crescent moon in the night sky.", "च - चांदोबा", "moon"),
+                    arrayOf("छ", imgUmbrella, "Chha (छ) is for Chhatri (Umbrella). Open the umbrella when raindrops fall.", "छ - छत्री", "umbrella"),
+                    arrayOf("ज", imgYacht, "Ja (ज) is for Jahaj (Sailboat). A white sailboat gliding on blue water.", "ज - जहाज", "water"),
+                    arrayOf("झ", imgTree, "Jha (झ) is for Jhad (Tree). A tall green shady tree in the meadow.", "झ - झाड", "tree"),
+                    arrayOf("ट", imgTomato, "Ta (ट) is for Tomato. A round juicy red tomato with a green stem.", "ट - टोमॅटो", "red"),
+                    arrayOf("ढ", imgDrum, "Dha (ढ) is for Dhol (Drum). A red drum with two wooden drumsticks.", "ढ - ढोल", "drummer"),
+                    arrayOf("प", imgParrot, "Pa (प) is for Popat (Parrot). A bright green parrot with a curved beak.", "प - पोपट", "green"),
+                    arrayOf("फ", imgButterfly, "Pha (फ) is for Phulpakharu (Butterfly). A colorful butterfly in the garden.", "फ - फुलपाखरू", "butterfly"),
+                    arrayOf("म", imgFish, "Ma (म) is for Masa (Fish). A colorful fish swimming in blue water.", "म - मासा", "fish"),
+                    arrayOf("स", imgSun, "Sa (स) is for Surya (Sun). The warm golden sun smiling in the sky.", "स - सूर्य", "sun"),
+                    arrayOf("ह", imgElephant, "Ha (ह) is for Hatti (Elephant). A friendly grey elephant with big ears.", "ह - हत्ती", "water")
                 )
             )
 
-            "en_gu" -> StoryBook(
+            "en_gu" -> buildSingleLetterBook(
                 id = "alphabet_book_en_gu",
                 title = "ગુજરાતી મૂળાક્ષરો (અ, આ, ઇ, ક, ખ)",
-                nativeTitleUrdu = "અ થી જ્ઞ સુધીના ગુજરાતી સ્વર અને વ્યંજન",
-                nativeTitleHindi = "Gujarati Alphabets (Swar & Vyanjan)",
+                subtitleUrdu = "દરેક પાના પર એક જ મૂળાક્ષર અને તેનું ચિત્ર (૨૦ પાનાં)",
+                subtitleHindi = "Gujarati Alphabets (1 Letter Per Page)",
                 author = "ગુજરાતી અક્ષરજ્ઞાન",
-                illustrator = "StoryWeaver Illustrations",
-                publisher = "Foundational Literacy Pack",
-                level = 1,
-                coverAssetPath = "books/sw_13916/cover_image.webp",
-                isFeaturedHero = true,
-                bookType = "ALPHABET",
-                categoryTag = "Numbers & Rhymes",
-                phonicsSkillTag = "મૂળાક્ષરો: અ થી જ્ઞ",
-                alphabetBadgeLetters = "અ  આ  ક  ખ",
-                pages = listOf(
-                    StoryPage(1, imgs[0], "Swar: A (અ) for Ananas, Aa (આ) for Aag-gadi (Train), I (ઇ) for Imarat, Ee (ઈ) for Eeshwar.", "", "અ - અનાનસ • આ - આગગાડી • ઇ - ઇમારત • ઈ - ઈશ્વર", "", setOf("train"), alphabetBadgeLetters = "અ   આ   ઇ   ઈ"),
-                    StoryPage(2, imgs[1], "U (ઉ) for Uth, Oo (ઊ) for Oon, Ru (ઋ) for Rushi, E (એ) for Ek, Ai (ઐ) for Airavat, O (ઓ), Au (ઔ).", "", "ઉ - ઊંટ • ઊ - ઊન • ઋ - ઋષિ • એ - એક • ઐ - ઐરાવત • ઓ - ઓશીકું • ઔ - ઔષધ", "", setOf("bright"), alphabetBadgeLetters = "ઉ   ઊ   ઋ   એ   ઐ   ઓ   ઔ"),
-                    StoryPage(3, imgs[2], "Vyanjan: Ka (ક) for Kamal (Lotus), Kha (ખ) for Khiskoli, Ga (ગ) for Ganpati, Gha (ઘ) for Ghar (Home).", "", "ક - કમળ • ખ - ખિસકોલી • ગ - ગણપતિ • ઘ - ઘર", "", setOf("flower"), alphabetBadgeLetters = "ક   ખ   ગ   ઘ"),
-                    StoryPage(4, imgs[3], "Cha (ચ) for Chakli (Sparrow), Chha (છ) for Chhatri (Umbrella), Ja (જ) for Jhad (Tree), Jha (ઝ) for Jharna.", "", "ચ - ચકલી • છ - છત્રી • જ - ઝાડ • ઝ - ઝરણું", "", setOf("umbrella", "tree"), alphabetBadgeLetters = "ચ   છ   જ   ઝ"),
-                    StoryPage(5, imgs[4], "Pa (પ) for Patangiyu (Butterfly), Ba (બ) foragicho (Garden), Ma (મ) for Machhli (Fish), Sa (સ) for Suraj (Sun), La (ળ), Ksha (ક્ષ), Gna (જ્ઞ)!", "", "પ - પતંગિયું • બ - બગીચો • મ - માછલી • સ - સૂરજ • ળ - નળ • ક્ષ • જ્ઞ", "", setOf("butterfly", "garden", "fish", "sun"), alphabetBadgeLetters = "પ  ફ  બ  ભ  મ  •  સ  હ  ળ  ક્ષ  જ્ઞ")
+                phonicsTag = "મૂળાક્ષરો: અ થી જ્ઞ",
+                coverBadges = "અ  આ  ક  ખ",
+                entries = listOf(
+                    arrayOf("અ", imgPineapple, "A (અ) is for Ananas (Pineapple). A sweet golden tropical pineapple.", "અ - અનાનસ", "golden"),
+                    arrayOf("આ", imgTrain, "Aa (આ) is for Aag-gadi (Train). A steam locomotive train on the tracks.", "આ - આગગાડી", "train"),
+                    arrayOf("ઇ", imgHouse, "I (ઇ) is for Imarat (House). A cozy house with a red roof and garden.", "ઇ - ઇમારત", "bright"),
+                    arrayOf("ઉ", imgCamel, "U (ઉ) is for Unt (Camel). A tall desert camel walking on the hill.", "ઉ - ઊંટ", "bright"),
+                    arrayOf("અં", imgGrapes, "Am (અં) is for Draksh (Grapes). A sweet bunch of purple grapes.", "અં - દ્રાક્ષ", "garden"),
+                    arrayOf("ક", imgFlower, "Ka (ક) is for Kamal (Lotus). A blooming pink lotus flower.", "ક - કમળ", "flower"),
+                    arrayOf("ખ", imgRabbit, "Kha (ખ) is for Saslu (Rabbit). A fluffy white rabbit on the grass.", "ખ - સસલું", "friends"),
+                    arrayOf("ગ", imgBall, "Ga (ગ) is for Dodo (Ball). A round ball rolling on the green grass.", "ગ - દડો", "ball"),
+                    arrayOf("ઘ", imgHouse, "Gha (ઘ) is for Ghar (Home). A warm little house with a red roof.", "ઘ - ઘર", "bright"),
+                    arrayOf("ચ", imgMoon, "Cha (ચ) is for Chando (Moon). The golden crescent moon in the night sky.", "ચ - ચાંદો", "moon"),
+                    arrayOf("છ", imgUmbrella, "Chha (છ) is for Chhatri (Umbrella). Open the umbrella when raindrops fall.", "છ - છત્રી", "umbrella"),
+                    arrayOf("જ", imgTree, "Ja (જ) is for Jhad (Tree). A tall green shady tree in the meadow.", "જ - ઝાડ", "tree"),
+                    arrayOf("ટ", imgTomato, "Ta (ટ) is for Tametu (Tomato). A round juicy red tomato.", "ટ - ટામેટું", "red"),
+                    arrayOf("ઢ", imgDrum, "Dha (ઢ) is for Dhol (Drum). A red drum with two wooden drumsticks.", "ઢ - ઢોલ", "drummer"),
+                    arrayOf("ત", imgWatermelon, "Ta (ત) is for Tarbuch (Watermelon). A sweet juicy red slice of watermelon.", "ત - તરબૂચ", "red"),
+                    arrayOf("પ", imgKite, "Pa (પ) is for Patang (Kite). A colorful diamond kite soaring in the sky.", "પ - પતંગ", "sky"),
+                    arrayOf("ફ", imgButterfly, "Pha (ફ) is for Patangiyu (Butterfly). A colorful butterfly in the garden.", "ફ - પતંગિયું", "butterfly"),
+                    arrayOf("મ", imgFish, "Ma (મ) is for Machhli (Fish). A colorful fish swimming in blue water.", "મ - માછલી", "fish"),
+                    arrayOf("સ", imgSun, "Sa (સ) is for Suraj (Sun). The warm golden sun smiling in the sky.", "સ - સૂરજ", "sun"),
+                    arrayOf("હ", imgElephant, "Ha (હ) is for Hathi (Elephant). A friendly grey elephant with big ears.", "હ - હાથી", "water")
                 )
             )
 
