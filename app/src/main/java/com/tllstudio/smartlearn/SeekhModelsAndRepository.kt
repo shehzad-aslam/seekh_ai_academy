@@ -1756,8 +1756,8 @@ object SeekhCatalog {
                 daysCountTag = "7 دن • پیر-اتوار",
                 monthsTitle = "سال کے مہینے",
                 monthsCountTag = "12 مہینے",
-                sectionDaysHeader = "ہفتے کے دن (7 Days of the Week)",
-                sectionMonthsHeader = "سال کے مہینے (12 Months of the Year)"
+                sectionDaysHeader = "ہفتے کے دن • 7 Days",
+                sectionMonthsHeader = "سال کے مہینے • 12 Months"
             )
             "en_hi" -> TopTrioLocalizedLabels(
                 alphabetsTitle = "वर्णमाला",
@@ -1766,8 +1766,8 @@ object SeekhCatalog {
                 daysCountTag = "7 दिन • सोम-रवि",
                 monthsTitle = "साल के महीने",
                 monthsCountTag = "12 महीने",
-                sectionDaysHeader = "सप्ताह के 7 दिन (Days of the Week)",
-                sectionMonthsHeader = "साल के 12 महीने (Months of the Year)"
+                sectionDaysHeader = "सप्ताह के 7 दिन",
+                sectionMonthsHeader = "साल के 12 महीने"
             )
             "en_es" -> TopTrioLocalizedLabels(
                 alphabetsTitle = "Alfabeto",
@@ -1776,8 +1776,8 @@ object SeekhCatalog {
                 daysCountTag = "7 Días • Semana",
                 monthsTitle = "Meses",
                 monthsCountTag = "12 Meses • Año",
-                sectionDaysHeader = "Días de la Semana (7 Days)",
-                sectionMonthsHeader = "Meses del Año (12 Months)"
+                sectionDaysHeader = "Días de la Semana",
+                sectionMonthsHeader = "Meses del Año"
             )
             "en_pt" -> TopTrioLocalizedLabels(
                 alphabetsTitle = "Alfabeto",
@@ -1786,8 +1786,8 @@ object SeekhCatalog {
                 daysCountTag = "7 Dias • Semana",
                 monthsTitle = "Meses",
                 monthsCountTag = "12 Meses • Ano",
-                sectionDaysHeader = "Dias da Semana (7 Days)",
-                sectionMonthsHeader = "Meses do Ano (12 Months)"
+                sectionDaysHeader = "Dias da Semana",
+                sectionMonthsHeader = "Meses do Ano"
             )
             "en_ar" -> TopTrioLocalizedLabels(
                 alphabetsTitle = "الحروف الأبجدية",
@@ -1796,8 +1796,8 @@ object SeekhCatalog {
                 daysCountTag = "٧ أيام",
                 monthsTitle = "أشهر السنة",
                 monthsCountTag = "١٢ شهراً",
-                sectionDaysHeader = "أيام الأسبوع (Days of the Week)",
-                sectionMonthsHeader = "أشهر السنة (Months of the Year)"
+                sectionDaysHeader = "أيام الأسبوع • ٧ أيام",
+                sectionMonthsHeader = "أشهر السنة • ١٢ شهراً"
             )
             "en_bn" -> TopTrioLocalizedLabels(
                 alphabetsTitle = "বর্ণমালা",
@@ -1806,8 +1806,8 @@ object SeekhCatalog {
                 daysCountTag = "৭ দিন",
                 monthsTitle = "বছরের মাস",
                 monthsCountTag = "১২ মাস",
-                sectionDaysHeader = "সপ্তাহের ৭ দিন (Days of the Week)",
-                sectionMonthsHeader = "বছরের ১২ মাস (Months of the Year)"
+                sectionDaysHeader = "সপ্তাহের ৭ দিন",
+                sectionMonthsHeader = "বছরের ১২ মাস"
             )
             "en_ta" -> TopTrioLocalizedLabels(
                 alphabetsTitle = "எழுத்துக்கள்",
@@ -1816,8 +1816,8 @@ object SeekhCatalog {
                 daysCountTag = "7 நாட்கள்",
                 monthsTitle = "மாதங்கள்",
                 monthsCountTag = "12 மாதங்கள்",
-                sectionDaysHeader = "வாரத்தின் 7 நாட்கள் (Days of the Week)",
-                sectionMonthsHeader = "ஆண்டின் 12 மாதங்கள் (Months of the Year)"
+                sectionDaysHeader = "வாரத்தின் 7 நாட்கள்",
+                sectionMonthsHeader = "ஆண்டின் 12 மாதங்கள்"
             )
             "en_te" -> TopTrioLocalizedLabels(
                 alphabetsTitle = "అక్షరమాల",
@@ -1826,8 +1826,8 @@ object SeekhCatalog {
                 daysCountTag = "7 రోజులు",
                 monthsTitle = "నెలలు",
                 monthsCountTag = "12 నెలలు",
-                sectionDaysHeader = "వారంలోని 7 రోజులు (Days of the Week)",
-                sectionMonthsHeader = "సంవత్సరంలోని 12 నెలలు (Months of the Year)"
+                sectionDaysHeader = "వారంలోని 7 రోజులు",
+                sectionMonthsHeader = "సంవత్సరంలోని 12 నెలలు"
             )
             "en_mr" -> TopTrioLocalizedLabels(
                 alphabetsTitle = "मुळाक्षरे",
@@ -1836,8 +1836,8 @@ object SeekhCatalog {
                 daysCountTag = "७ वार",
                 monthsTitle = "वर्षाचे महिने",
                 monthsCountTag = "१२ महिने",
-                sectionDaysHeader = "आठवड्याचे ७ वार (Days of the Week)",
-                sectionMonthsHeader = "वर्षाचे १२ महिने (Months of the Year)"
+                sectionDaysHeader = "आठवड्याचे ७ वार",
+                sectionMonthsHeader = "वर्षाचे १२ महिने"
             )
             "en_gu" -> TopTrioLocalizedLabels(
                 alphabetsTitle = "મૂળાક્ષરો",
@@ -1846,8 +1846,8 @@ object SeekhCatalog {
                 daysCountTag = "૭ વાર",
                 monthsTitle = "વર્ષના મહિના",
                 monthsCountTag = "૧૨ મહિના",
-                sectionDaysHeader = "અઠવાડિયાના ૭ વાર (Days of the Week)",
-                sectionMonthsHeader = "વર્ષના ૧૨ મહિના (Months of the Year)"
+                sectionDaysHeader = "અઠવાડિયાના ૭ વાર",
+                sectionMonthsHeader = "વર્ષના ૧૨ મહિના"
             )
             else -> TopTrioLocalizedLabels(
                 alphabetsTitle = "Alphabets",
@@ -1856,8 +1856,8 @@ object SeekhCatalog {
                 daysCountTag = "7 Days • Mon-Sun",
                 monthsTitle = "Months of Year",
                 monthsCountTag = "12 Months • Jan-Dec",
-                sectionDaysHeader = "Days of the Week (7 Days)",
-                sectionMonthsHeader = "Months of the Year (12 Months)"
+                sectionDaysHeader = "Days of the Week",
+                sectionMonthsHeader = "Months of the Year"
             )
         }
     }

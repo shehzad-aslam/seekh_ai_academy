@@ -1214,7 +1214,7 @@ fun SeekhMainTopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 18.dp, vertical = 10.dp),
+            .padding(horizontal = 20.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -1877,8 +1877,8 @@ fun TopFoundationalTrioSection(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 18.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
+            .padding(horizontal = 20.dp),
+        horizontalArrangement = Arrangement.spacedBy(11.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // 1. Alphabets Top Card
@@ -1888,7 +1888,7 @@ fun TopFoundationalTrioSection(
             badgeText = alphabetBook.alphabetBadgeLetters.trim().split(Regex("\\s+")).take(3).joinToString(" "),
             previewAssetPath = alphabetBook.pages.firstOrNull()?.imageAssetPath ?: alphabetBook.coverAssetPath,
             headerBgColor = Color(0xFFF5F3FF),
-            headerBorderColor = Color(0xFFDDD6FE),
+            headerBorderColor = Color(0xFFE0D7FE),
             accentColor = Color(0xFF5E4AE3),
             ctaLabel = uiStrings.readCta,
             isCompleted = completedBookIds.contains(alphabetBook.id),
@@ -1900,7 +1900,7 @@ fun TopFoundationalTrioSection(
         TopFoundationalSingleCard(
             title = trioLabels.daysTitle,
             subtitle = trioLabels.daysCountTag,
-            badgeText = daysBook.alphabetBadgeLetters.trim().split(Regex("\\s+")).take(2).joinToString(" • "),
+            badgeText = "7",
             previewAssetPath = daysBook.coverAssetPath,
             headerBgColor = Color(0xFFFFFBEB),
             headerBorderColor = Color(0xFFFDE68A),
@@ -1915,7 +1915,7 @@ fun TopFoundationalTrioSection(
         TopFoundationalSingleCard(
             title = trioLabels.monthsTitle,
             subtitle = trioLabels.monthsCountTag,
-            badgeText = monthsBook.alphabetBadgeLetters.trim().split(Regex("\\s+")).take(2).joinToString(" • "),
+            badgeText = "12",
             previewAssetPath = monthsBook.coverAssetPath,
             headerBgColor = Color(0xFFECFDF5),
             headerBorderColor = Color(0xFFA7F3D0),
@@ -1942,14 +1942,14 @@ private fun TopFoundationalSingleCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val cardShape = RoundedCornerShape(20.dp)
+    val cardShape = RoundedCornerShape(22.dp)
     Surface(
         modifier = modifier
             .softCardShadow(
-                elevation = 8.dp,
+                elevation = 10.dp,
                 shape = cardShape,
-                spotColor = accentColor.copy(alpha = 0.22f),
-                ambientColor = Color(0x141E1B4B)
+                spotColor = accentColor.copy(alpha = 0.24f),
+                ambientColor = Color(0x161E1B4B)
             )
             .bouncyClick(scaleDown = 0.96f, onClick = onClick),
         shape = cardShape,
@@ -1960,44 +1960,33 @@ private fun TopFoundationalSingleCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
+                .padding(start = 9.dp, end = 9.dp, top = 9.dp, bottom = 11.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Clean Single-Layer Rounded Illustration Stage (No triple-nested boxes, no overlapping center pill!)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(92.dp)
-                    .clip(RoundedCornerShape(14.dp))
+                    .height(86.dp)
+                    .clip(RoundedCornerShape(15.dp))
                     .background(headerBgColor)
-                    .border(1.dp, headerBorderColor, RoundedCornerShape(14.dp))
-                    .padding(6.dp)
+                    .border(1.dp, headerBorderColor, RoundedCornerShape(15.dp))
             ) {
-                // Clean Single-Object Illustration Frame in Center-Bottom
-                Surface(
-                    shape = RoundedCornerShape(12.dp),
-                    color = Color.White,
-                    border = BorderStroke(1.dp, Color.White),
-                    shadowElevation = 1.dp,
-                    modifier = Modifier
-                        .size(54.dp)
-                        .align(Alignment.BottomCenter)
-                ) {
-                    AssetWebpImage(
-                        assetPath = previewAssetPath,
-                        contentDescription = title,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(11.dp)),
-                        contentScale = ContentScale.Crop
-                    )
-                }
+                AssetWebpImage(
+                    assetPath = previewAssetPath,
+                    contentDescription = title,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
 
-                // Clean Top Pastel Pill Badge
+                // Sleek Minimal Corner Pill Tag tucked in Top-Start Corner
                 Surface(
-                    shape = RoundedCornerShape(50),
-                    color = Color.White,
+                    shape = RoundedCornerShape(8.dp),
+                    color = Color.White.copy(alpha = 0.94f),
                     border = BorderStroke(1.dp, headerBorderColor),
-                    modifier = Modifier.align(Alignment.TopCenter)
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(5.dp)
                 ) {
                     Text(
                         text = badgeText,
@@ -2007,13 +1996,14 @@ private fun TopFoundationalSingleCard(
                         color = accentColor,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp)
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 1.5.dp)
                     )
                 }
 
                 if (isCompleted) {
                     Box(
                         modifier = Modifier
+                            .padding(5.dp)
                             .size(18.dp)
                             .align(Alignment.TopEnd)
                             .clip(CircleShape)
@@ -2031,7 +2021,7 @@ private fun TopFoundationalSingleCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(7.dp))
+            Spacer(modifier = Modifier.height(9.dp))
 
             Text(
                 text = title,
@@ -2044,6 +2034,8 @@ private fun TopFoundationalSingleCard(
                 textAlign = TextAlign.Center
             )
 
+            Spacer(modifier = Modifier.height(2.dp))
+
             Text(
                 text = subtitle,
                 fontFamily = GoogleSansFamily,
@@ -2055,15 +2047,17 @@ private fun TopFoundationalSingleCard(
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(9.dp))
 
             Surface(
                 shape = RoundedCornerShape(50),
                 color = accentColor,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(30.dp)
             ) {
                 Row(
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
@@ -2071,7 +2065,7 @@ private fun TopFoundationalSingleCard(
                         text = ctaLabel,
                         fontFamily = GoogleSansFamily,
                         fontWeight = FontWeight.ExtraBold,
-                        fontSize = 11.sp,
+                        fontSize = 11.5.sp,
                         color = Color.White,
                         maxLines = 1
                     )
@@ -2101,12 +2095,20 @@ fun FoundationalPageFlashcard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val cardShape = RoundedCornerShape(18.dp)
+    val cardShape = RoundedCornerShape(20.dp)
+    val cleanPrimaryName = remember(fullLabel) {
+        fullLabel.substringAfter("•").trim().ifBlank { fullLabel }
+    }
+    val cleanSubTag = remember(fullLabel, indexNumber, shortBadge) {
+        val beforeBullet = fullLabel.substringBefore("•", "").trim()
+        if (beforeBullet.isNotBlank() && beforeBullet != fullLabel) beforeBullet else "#$indexNumber • $shortBadge"
+    }
+
     Surface(
         modifier = modifier
-            .width(126.dp)
+            .width(134.dp)
             .softCardShadow(
-                elevation = 6.dp,
+                elevation = 7.dp,
                 shape = cardShape,
                 spotColor = accentColor.copy(alpha = 0.18f),
                 ambientColor = Color(0x121E1B4B)
@@ -2115,21 +2117,21 @@ fun FoundationalPageFlashcard(
         shape = cardShape,
         color = Color.White,
         shadowElevation = 0.dp,
-        border = BorderStroke(1.1.dp, Color(0xFFE8ECF7))
+        border = BorderStroke(1.2.dp, Color(0xFFE8ECF7))
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
+                .padding(start = 9.dp, end = 9.dp, top = 9.dp, bottom = 11.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(82.dp)
-                    .clip(RoundedCornerShape(13.dp))
+                    .height(86.dp)
+                    .clip(RoundedCornerShape(14.dp))
                     .background(softBgColor)
-                    .border(1.dp, borderColor, RoundedCornerShape(13.dp))
+                    .border(1.dp, borderColor, RoundedCornerShape(14.dp))
             ) {
                 AssetWebpImage(
                     assetPath = imageAssetPath,
@@ -2139,33 +2141,46 @@ fun FoundationalPageFlashcard(
                 )
 
                 Surface(
-                    shape = RoundedCornerShape(50),
-                    color = Color.White.copy(alpha = 0.95f),
+                    shape = RoundedCornerShape(8.dp),
+                    color = Color.White.copy(alpha = 0.94f),
                     border = BorderStroke(1.dp, borderColor),
                     modifier = Modifier
                         .align(Alignment.TopStart)
                         .padding(5.dp)
                 ) {
                     Text(
-                        text = "$indexNumber • $shortBadge",
+                        text = "$indexNumber",
                         fontFamily = GoogleSansFamily,
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 10.sp,
                         color = accentColor,
                         maxLines = 1,
-                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp)
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 1.5.dp)
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = fullLabel.substringAfter("•").trim().ifBlank { fullLabel },
+                text = cleanPrimaryName,
                 fontFamily = GoogleSansFamily,
                 fontWeight = FontWeight.ExtraBold,
-                fontSize = 12.sp,
+                fontSize = 13.sp,
                 color = SeekhTextPrimary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(2.dp))
+
+            Text(
+                text = cleanSubTag,
+                fontFamily = GoogleSansFamily,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 10.5.sp,
+                color = accentColor,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center
@@ -2247,12 +2262,12 @@ fun GameVisualPreviewArtwork(
                     // 3 Floating Phonics Letter Balloons with strings & pop sparkle
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         listOf(
-                            Triple("A", Color(0xFFFF5252), (-3).dp),
-                            Triple("B", Color(0xFFFFB800), (-7).dp),
-                            Triple("S", Color(0xFF38BDF8), (-2).dp)
+                            Triple("A", Color(0xFFFF5252), (-2).dp),
+                            Triple("B", Color(0xFFFFB800), (-5).dp),
+                            Triple("S", Color(0xFF38BDF8), (-1).dp)
                         ).forEach { (ltr, col, yOff) ->
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -2262,14 +2277,14 @@ fun GameVisualPreviewArtwork(
                                     shape = CircleShape,
                                     color = col,
                                     border = BorderStroke(1.5.dp, Color.White),
-                                    modifier = Modifier.size(28.dp)
+                                    modifier = Modifier.size(24.dp)
                                 ) {
                                     Box(contentAlignment = Alignment.Center) {
                                         Text(
                                             text = ltr,
                                             fontFamily = GoogleSansFamily,
                                             fontWeight = FontWeight.ExtraBold,
-                                            fontSize = 13.sp,
+                                            fontSize = 12.sp,
                                             color = Color.White
                                         )
                                     }
@@ -2277,7 +2292,7 @@ fun GameVisualPreviewArtwork(
                                 Box(
                                     modifier = Modifier
                                         .width(1.5.dp)
-                                        .height(8.dp)
+                                        .height(6.dp)
                                         .background(Color.White.copy(alpha = 0.7f))
                                 )
                             }
@@ -2745,8 +2760,17 @@ fun SeekhBottomNavigationBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color.Transparent,
+                        SeekhSurfaceGray.copy(alpha = 0.85f),
+                        SeekhSurfaceGray
+                    )
+                )
+            )
             .navigationBarsPadding()
-            .padding(horizontal = 18.dp, vertical = 10.dp),
+            .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 10.dp),
         contentAlignment = Alignment.Center
     ) {
         val navBarShape = RoundedCornerShape(30.dp)

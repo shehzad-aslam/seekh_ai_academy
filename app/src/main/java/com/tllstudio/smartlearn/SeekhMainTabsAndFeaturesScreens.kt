@@ -221,7 +221,7 @@ fun LibraryTabScreen(
             .fillMaxSize()
             .background(SeekhSurfaceGray)
     ) {
-        CurvedGreenHeaderBackground(headerHeight = 200.dp, curveDepth = 34.dp)
+        CurvedGreenHeaderBackground(headerHeight = 252.dp, curveDepth = 38.dp)
 
         Column(
             modifier = Modifier
@@ -319,15 +319,15 @@ fun LibraryTabScreen(
                     LazyRow(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 6.dp),
-                        contentPadding = PaddingValues(horizontal = 18.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            .padding(top = 4.dp, bottom = 12.dp),
+                        contentPadding = PaddingValues(horizontal = 20.dp),
+                        horizontalArrangement = Arrangement.spacedBy(9.dp)
                     ) {
                         items(filterChips) { chip ->
                             val isSelected = selectedCategoryFilter == chip
                             val displayChipLabel = uiStrings.filterChipLabels[chip] ?: chip
                             val chipScale by androidx.compose.animation.core.animateFloatAsState(
-                                targetValue = if (isSelected) 1.06f else 1f,
+                                targetValue = if (isSelected) 1.04f else 1f,
                                 animationSpec = androidx.compose.animation.core.spring(
                                     dampingRatio = androidx.compose.animation.core.Spring.DampingRatioMediumBouncy,
                                     stiffness = androidx.compose.animation.core.Spring.StiffnessMedium
@@ -335,16 +335,16 @@ fun LibraryTabScreen(
                                 label = "chip_scale_$chip"
                             )
                             val chipBg by androidx.compose.animation.animateColorAsState(
-                                targetValue = if (isSelected) SeekhYellow500 else Color.White.copy(alpha = 0.94f),
+                                targetValue = if (isSelected) SeekhYellow500 else Color.White.copy(alpha = 0.96f),
                                 animationSpec = androidx.compose.animation.core.tween(220),
                                 label = "chip_bg_$chip"
                             )
                             Surface(
                                 modifier = Modifier
                                     .softCardShadow(
-                                        elevation = if (isSelected) 9.dp else 5.dp,
+                                        elevation = if (isSelected) 8.dp else 4.dp,
                                         shape = RoundedCornerShape(50),
-                                        spotColor = if (isSelected) Color(0x55FFB800) else Color(0x301E1B4B)
+                                        spotColor = if (isSelected) Color(0x50FFB800) else Color(0x261E1B4B)
                                     )
                                     .bouncyClick(scaleDown = 0.92f) {
                                         selectedCategoryFilter = if (isSelected && chip != "All") "All" else chip
@@ -355,17 +355,17 @@ fun LibraryTabScreen(
                                 shadowElevation = 0.dp,
                                 border = BorderStroke(
                                     1.dp,
-                                    if (isSelected) Color.White.copy(alpha = 0.6f) else Color(0xFFE2E6F7)
+                                    if (isSelected) Color.White.copy(alpha = 0.7f) else Color(0xFFE4E8F8)
                                 )
                             ) {
                                 Text(
                                     text = displayChipLabel,
                                     fontFamily = GoogleSansFamily,
                                     fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Bold,
-                                    fontSize = 12.sp,
+                                    fontSize = 12.5.sp,
                                     color = SeekhTextPrimary,
                                     modifier = Modifier.padding(
-                                        horizontal = (14 * chipScale).dp,
+                                        horizontal = (15 * chipScale).dp,
                                         vertical = 7.dp
                                     )
                                 )
@@ -578,7 +578,7 @@ fun LibraryTabScreen(
                             selectedLanguageCode = selectedLanguage.code,
                             onOpenBook = onOpenBook
                         )
-                        Spacer(modifier = Modifier.height(14.dp))
+                        Spacer(modifier = Modifier.height(22.dp))
                     }
 
                     // 1b. "Play games" Section Placed Right With the Top 3 Sections!
@@ -589,11 +589,11 @@ fun LibraryTabScreen(
                             actionLabel = uiStrings.seeAll,
                             onActionClick = { selectedCategoryFilter = "Games" }
                         )
-                        Spacer(modifier = Modifier.height(6.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
 
                         LazyRow(
                             modifier = Modifier.fillMaxWidth(),
-                            contentPadding = PaddingValues(horizontal = 18.dp),
+                            contentPadding = PaddingValues(horizontal = 20.dp),
                             horizontalArrangement = Arrangement.spacedBy(14.dp)
                         ) {
                             items(gameCatalogMeta) { (gameKey, bgCol) ->
@@ -610,7 +610,7 @@ fun LibraryTabScreen(
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(22.dp))
                     }
 
                     // 1c. Dedicated "Days of the Week (7 Days)" Interactive Flashcard Section
@@ -621,10 +621,10 @@ fun LibraryTabScreen(
                             actionLabel = uiStrings.readCta,
                             onActionClick = { onOpenBook(daysOfWeekBook) }
                         )
-                        Spacer(modifier = Modifier.height(6.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         LazyRow(
                             modifier = Modifier.fillMaxWidth(),
-                            contentPadding = PaddingValues(horizontal = 18.dp),
+                            contentPadding = PaddingValues(horizontal = 20.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             items(daysOfWeekBook.pages) { dayPage ->
@@ -640,7 +640,7 @@ fun LibraryTabScreen(
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(22.dp))
                     }
 
                     // 1d. Dedicated "Months of the Year (12 Months)" Interactive Flashcard Section
@@ -651,10 +651,10 @@ fun LibraryTabScreen(
                             actionLabel = uiStrings.readCta,
                             onActionClick = { onOpenBook(monthsOfYearBook) }
                         )
-                        Spacer(modifier = Modifier.height(6.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         LazyRow(
                             modifier = Modifier.fillMaxWidth(),
-                            contentPadding = PaddingValues(horizontal = 18.dp),
+                            contentPadding = PaddingValues(horizontal = 20.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             items(monthsOfYearBook.pages) { monthPage ->
@@ -670,7 +670,7 @@ fun LibraryTabScreen(
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(22.dp))
                     }
 
                     // 2. "Classroom & Parent assignments" Section
@@ -1398,7 +1398,7 @@ private fun LibrarySectionHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 18.dp, vertical = 4.dp),
+            .padding(horizontal = 20.dp, vertical = 2.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -1413,8 +1413,11 @@ private fun LibrarySectionHeader(
                 text = title,
                 fontFamily = GoogleSansFamily,
                 fontWeight = FontWeight.ExtraBold,
-                fontSize = 19.sp,
-                color = SeekhTextPrimary
+                fontSize = 18.5.sp,
+                color = SeekhTextPrimary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f, fill = false)
             )
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.VolumeUp,
@@ -1424,6 +1427,7 @@ private fun LibrarySectionHeader(
             )
         }
         if (!actionLabel.isNullOrBlank() && onActionClick != null) {
+            Spacer(modifier = Modifier.width(8.dp))
             Surface(
                 shape = RoundedCornerShape(50),
                 color = SeekhGreenSoft,
@@ -1433,10 +1437,10 @@ private fun LibrarySectionHeader(
                 Text(
                     text = actionLabel,
                     fontFamily = GoogleSansFamily,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.ExtraBold,
                     fontSize = 12.sp,
                     color = SeekhGreen600,
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
+                    modifier = Modifier.padding(horizontal = 13.dp, vertical = 5.dp)
                 )
             }
         }
@@ -1459,7 +1463,7 @@ private fun LibraryBooksThreeColumnRows(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 18.dp, vertical = 8.dp),
+                    .padding(horizontal = 20.dp, vertical = 7.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 for (i in 0 until 3) {
@@ -1510,19 +1514,19 @@ private fun GameShelfCard(
     val cardShape = RoundedCornerShape(24.dp)
     Surface(
         modifier = Modifier
-            .width(214.dp)
-            .height(166.dp)
+            .width(220.dp)
+            .height(172.dp)
             .softCardShadow(
-                elevation = 12.dp,
+                elevation = 11.dp,
                 shape = cardShape,
-                spotColor = containerColor.copy(alpha = 0.55f),
-                ambientColor = containerColor.copy(alpha = 0.30f)
+                spotColor = containerColor.copy(alpha = 0.50f),
+                ambientColor = containerColor.copy(alpha = 0.25f)
             )
             .bouncyClick(scaleDown = 0.94f, onClick = onClick),
         shape = cardShape,
         color = containerColor,
         shadowElevation = 0.dp,
-        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.25f))
+        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.28f))
     ) {
         Box(
             modifier = Modifier
@@ -1531,8 +1535,8 @@ private fun GameShelfCard(
                     Brush.linearGradient(
                         colors = listOf(
                             containerColor,
-                            containerColor.copy(alpha = 0.88f),
-                            Color(0x28000000)
+                            containerColor.copy(alpha = 0.90f),
+                            Color(0x22000000)
                         )
                     )
                 )
@@ -1540,7 +1544,7 @@ private fun GameShelfCard(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(14.dp),
+                    .padding(16.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(
@@ -1559,7 +1563,7 @@ private fun GameShelfCard(
                             fontSize = 10.5.sp,
                             color = Color.White,
                             maxLines = 1,
-                            modifier = Modifier.padding(horizontal = 9.dp, vertical = 3.dp)
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp)
                         )
                     }
                     Surface(
@@ -1594,7 +1598,7 @@ private fun GameShelfCard(
                     accentColor = containerColor,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(54.dp)
+                        .height(52.dp)
                 )
 
                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -1607,11 +1611,12 @@ private fun GameShelfCard(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
+                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = subtitle,
                         fontFamily = GoogleSansFamily,
                         fontSize = 11.5.sp,
-                        color = Color.White.copy(alpha = 0.90f),
+                        color = Color.White.copy(alpha = 0.92f),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
