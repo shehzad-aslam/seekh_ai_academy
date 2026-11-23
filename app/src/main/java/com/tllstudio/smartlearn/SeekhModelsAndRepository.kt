@@ -142,6 +142,18 @@ data class SpeedVehicleBadge(
     val accentColorHex: Long
 )
 
+data class WordTutorDetails(
+    val displayWord: String,
+    val cleanWord: String,
+    val phonetics: String,
+    val partOfSpeech: String,
+    val syllables: List<String>,
+    val englishMeaning: String,
+    val nativeMeaning: String,
+    val exampleUsage: String,
+    val spokenExplanation: String
+)
+
 object SeekhCatalog {
 
     val speedVehicles = listOf(
@@ -174,91 +186,237 @@ object SeekhCatalog {
     )
 
     private val wordMeaningsUrdu = mapOf(
-        "blast" to "تیز جھونکا",
+        "blast" to "تیز ہوا کا جھونکا",
         "candles" to "موم بتیاں",
-        "crashed" to "ٹکرایا",
-        "clouds" to "بادل",
+        "crashed" to "زور سے ٹکرایا",
+        "clouds" to "آسمان کے بادل",
         "thunder" to "بجلی کی گرج",
         "rain" to "بارش",
-        "ladybird" to "لیڈی برڈ کیڑا",
-        "special" to "خاص",
-        "wings" to "پَر",
-        "yellow" to "پیلا",
-        "butterfly" to "تتلی",
-        "friends" to "دوست",
-        "school" to "اسکول",
-        "painted" to "رنگ کیا",
-        "bright" to "چمکدار",
-        "caterpillar" to "کیٹرپلر",
-        "shoe" to "جوتا",
-        "spider" to "مکڑی",
-        "frog" to "مینڈک",
-        "grasshopper" to "ٹڈا",
-        "crab" to "کیکڑا",
-        "cocoon" to "خول / کوکون",
+        "ladybird" to "لیڈی برڈ (ننھا کیڑا)",
+        "special" to "خاص / منفرد",
+        "wings" to "اڑنے والے پَر",
+        "yellow" to "پیلا رنگ",
+        "butterfly" to "خوبصورت تتلی",
+        "friends" to "پیارے دوست",
+        "school" to "اسکول / مدرسہ",
+        "painted" to "رنگ کیا ہوا",
+        "bright" to "روشن اور چمکدار",
+        "caterpillar" to "کیٹرپلر (ننھا سنڈی کیڑا)",
+        "shoe" to "پہننے کا جوتا",
+        "spider" to "جالا بننے والی مکڑی",
+        "frog" to "پانی کا مینڈک",
+        "grasshopper" to "گھاس کا ٹڈا",
+        "crab" to "ساحلی کیکڑا",
+        "cocoon" to "ریشمی خول / کوکون",
         "train" to "ریل گاڑی",
         "beach" to "ساحلِ سمندر",
-        "chocolates" to "چاکلیٹ",
+        "chocolates" to "میٹھی چاکلیٹ",
         "drummers" to "ڈھول بجانے والے",
-        "sailor" to "ملاح / بحری فوجی",
-        "cupboard" to "الماری",
-        "curtain" to "پردہ",
-        "borrow" to "ادھار لینا",
-        "return" to "واپس کرنا",
-        "books" to "کتابیں",
-        "raincoat" to "برساتی کوٹ",
-        "street" to "گلی / سڑک",
-        "colors" to "رنگ",
-        "unique" to "منفرد / بے مثال",
-        "gleamed" to "چمک اٹھے",
-        "scrubbed" to "رگڑ کر دھویا",
-        "whispers" to "سرگوشی کرتا ہے",
-        "grandmother" to "دادی / نانی",
-        "grandfather" to "دادا / نانا"
+        "sailor" to "سمندری ملاح / بحریہ کا فرد",
+        "cupboard" to "لکڑی کی الماری",
+        "curtain" to "کھڑکی کا پردہ",
+        "borrow" to "پڑھنے کے لیے ادھار لینا",
+        "return" to "واپس لوٹانا",
+        "books" to "پڑھنے کی کتابیں",
+        "raincoat" to "بارش کا کوٹ",
+        "street" to "محلے کی گلی / سڑک",
+        "colors" to "خوبصورت رنگ",
+        "unique" to "بے مثال اور منفرد",
+        "gleamed" to "جگمگا اٹھے / چمکے",
+        "scrubbed" to "رگڑ کر صاف کیا",
+        "whispers" to "ہولے سے سرگوشی کرتا ہے",
+        "grandmother" to "دادی جان / نانی جان",
+        "grandfather" to "دادا جان / نانا جان",
+        "every" to "ہر ایک",
+        "morning" to "صبح کا وقت",
+        "our" to "ہمارا / ہماری",
+        "busy" to "مصروف اور چہل پہل والا",
+        "wakes" to "جاگتا ہے",
+        "hundred" to "سو (100)",
+        "inside" to "کے اندر",
+        "garden" to "پھولوں کا باغ",
+        "gate" to "بڑا دروازہ",
+        "golden" to "سنہری رنگ کا",
+        "marigolds" to "گیندے کے سنہری پھول",
+        "green" to "سبز / ہرا رنگ",
+        "leaves" to "درخت یا پودے کے پتے",
+        "shine" to "چمکتے ہیں",
+        "early" to "صبح سویرے / جلدی",
+        "sunlight" to "سورج کی دھوپ",
+        "blue" to "نیلا رنگ",
+        "red" to "سرخ / لال رنگ",
+        "white" to "سفید رنگ",
+        "sky" to "آسمان",
+        "sun" to "سورج",
+        "moon" to "چاند",
+        "stars" to "ستارے",
+        "water" to "پانی",
+        "fish" to "مچھلی",
+        "tree" to "درخت",
+        "trees" to "درخت",
+        "flower" to "پھول",
+        "flowers" to "پھول",
+        "happy" to "خوش",
+        "smile" to "مسکراہٹ",
+        "smiled" to "مسکرایا",
+        "read" to "پڑھنا",
+        "story" to "کہانی",
+        "library" to "کتب خانہ / لائبریری",
+        "teacher" to "استاد / استانی",
+        "classroom" to "کمرۂ جماعت",
+        "mother" to "امی جان",
+        "father" to "ابو جان",
+        "sister" to "بہن",
+        "brother" to "بھائی",
+        "ball" to "کھیلنے کی گیند",
+        "play" to "کھیلنا",
+        "walk" to "چلنا / سیر کرنا",
+        "walks" to "چلتا ہے",
+        "flying" to "اڑ رہا ہے",
+        "ocean" to "بڑا سمندر"
     )
 
     private val wordMeaningsHindi = mapOf(
-        "blast" to "तेज़ झोंका",
+        "blast" to "हवा का तेज़ झोंका",
         "candles" to "मोमबत्तियाँ",
-        "crashed" to "टकराया",
-        "clouds" to "बादल",
-        "thunder" to "गड़गड़ाहट",
+        "crashed" to "ज़ोर से टकराया",
+        "clouds" to "आसमान के बादल",
+        "thunder" to "बादलों की गड़गड़ाहट",
         "rain" to "बारिश",
-        "ladybird" to "लेडीबर्ड",
-        "special" to "ख़ास",
-        "wings" to "पंख",
-        "yellow" to "पीला",
-        "butterfly" to "तितली",
-        "friends" to "दोस्त",
-        "school" to "स्कूल",
+        "ladybird" to "लेडीबर्ड (नन्हा कीट)",
+        "special" to "ख़ास और अनोखा",
+        "wings" to "उड़ने वाले पंख",
+        "yellow" to "पीला रंग",
+        "butterfly" to "रंग-बिरंगी तितली",
+        "friends" to "प्यारे दोस्त",
+        "school" to "स्कूल / विद्यालय",
         "painted" to "रंगा हुआ",
-        "bright" to "चमकीला",
+        "bright" to "चमकीला और उजला",
         "caterpillar" to "कैटरपिलर",
-        "shoe" to "जूता",
-        "spider" to "मकड़ी",
-        "frog" to "मेंढक",
-        "grasshopper" to "टिड्डा",
-        "crab" to "केकड़ा",
-        "cocoon" to "कोकून",
+        "shoe" to "पहनने का जूता",
+        "spider" to "जाला बुनने वाली मकड़ी",
+        "frog" to "तालाब का मेंढक",
+        "grasshopper" to "घास का टिड्डा",
+        "crab" to "समुद्री केकड़ा",
+        "cocoon" to "रेशमी खोल / कोकून",
         "train" to "रेलगाड़ी",
         "beach" to "समुद्र तट",
-        "chocolates" to "चॉकलेट",
+        "chocolates" to "मीठी चॉकलेट",
         "drummers" to "ढोल वादक",
-        "sailor" to "नाविक",
-        "cupboard" to "अलमारी",
-        "curtain" to "पर्दा",
-        "borrow" to "उधार लेना",
-        "return" to "लौटाना",
-        "books" to "किताबें",
-        "raincoat" to "रेनकोट",
-        "street" to "गली / सड़क",
-        "colors" to "रंग",
-        "unique" to "अनोखा",
+        "sailor" to "समुद्री नाविक",
+        "cupboard" to "लकड़ी की अलमारी",
+        "curtain" to "खिड़की का पर्दा",
+        "borrow" to "पढ़ने के लिए उधार लेना",
+        "return" to "वापस लौटाना",
+        "books" to "पढ़ने की किताबें",
+        "raincoat" to "बारिश का रेनकोट",
+        "street" to "मोहल्ले की गली / सड़क",
+        "colors" to "सुंदर रंग",
+        "unique" to "अनोखा और विशेष",
         "gleamed" to "चमक उठे",
         "scrubbed" to "रगड़ कर साफ़ किया",
-        "whispers" to "फुसफुसाता है",
-        "grandmother" to "दादी / नानी",
-        "grandfather" to "दादा / नाना"
+        "whispers" to "धीमे से फुसफुसाता है",
+        "grandmother" to "दादी जी / नानी जी",
+        "grandfather" to "दादा जी / नाना जी",
+        "every" to "हर एक",
+        "morning" to "सुबह का समय",
+        "our" to "हमारा / हमारी",
+        "busy" to "व्यस्त और चहल-पहल वाला",
+        "wakes" to "जागता है",
+        "hundred" to "सौ (100)",
+        "inside" to "के अंदर",
+        "garden" to "फूलों का बग़ीचा",
+        "gate" to "बड़ा दरवाज़ा",
+        "golden" to "सुनहरे रंग का",
+        "marigolds" to "गेंदे के सुनहरे फूल",
+        "green" to "हरा रंग",
+        "leaves" to "पेड़-पौधों के पत्ते",
+        "shine" to "चमकते हैं",
+        "early" to "सुबह सवेरे",
+        "sunlight" to "सूरज की धूप",
+        "blue" to "नीला रंग",
+        "red" to "लाल रंग",
+        "white" to "सफ़ेद रंग",
+        "sky" to "आसमान",
+        "sun" to "सूरज",
+        "moon" to "चाँद",
+        "stars" to "सितारे",
+        "water" to "पानी",
+        "fish" to "मछली",
+        "tree" to "पेड़",
+        "trees" to "पेड़",
+        "flower" to "फूल",
+        "flowers" to "फूल",
+        "happy" to "ख़ुश",
+        "smile" to "मुस्कान",
+        "smiled" to "मुस्कुराया",
+        "read" to "पढ़ना",
+        "story" to "कहानी",
+        "library" to "पुस्तकालय / लाइब्रेरी",
+        "teacher" to "शिक्षक / अध्यापिका",
+        "classroom" to "कक्षा",
+        "mother" to "माँ",
+        "father" to "पिताजी",
+        "sister" to "बहन",
+        "brother" to "भाई",
+        "ball" to "खेलने की गेंद",
+        "play" to "खेलना",
+        "walk" to "चलना / सैर करना",
+        "walks" to "चलता है",
+        "flying" to "उड़ रहा है",
+        "ocean" to "विशाल समुद्र"
+    )
+
+    private val wordEnglishDefinitions = mapOf(
+        "blast" to "A sudden strong gust of wind or air.",
+        "candles" to "Wax sticks with a wick that burn to give warm light.",
+        "crashed" to "Hit or collided with something with a loud sound.",
+        "clouds" to "Fluffy white or gray shapes floating high in the sky that bring rain.",
+        "thunder" to "The loud rumbling sound heard from the sky during a storm.",
+        "rain" to "Drops of water that fall from clouds in the sky.",
+        "ladybird" to "A small round garden beetle with colorful wings and tiny spots.",
+        "special" to "Different from ordinary things in a wonderful and important way.",
+        "wings" to "The parts of a bird, butterfly, or insect used for flying.",
+        "yellow" to "A bright, sunny color like gold, lemons, and sunflowers.",
+        "butterfly" to "A graceful insect with large, colorful wings that flutters among flowers.",
+        "friends" to "People or companions you care about and enjoy spending time with.",
+        "school" to "A place where children and teachers gather to learn and read.",
+        "painted" to "Covered or decorated with colorful paint.",
+        "bright" to "Shining with lots of light or vivid, cheerful color.",
+        "caterpillar" to "A small crawling garden creature that grows up to become a butterfly.",
+        "shoe" to "Footwear worn to protect and comfort your feet when walking.",
+        "spider" to "An eight-legged creature that spins neat silken webs.",
+        "frog" to "A smooth green amphibious animal that lives near ponds and leaps high.",
+        "grasshopper" to "A green insect with long back legs for jumping high in grassy meadows.",
+        "crab" to "A sea creature with a hard shell and two claws that walks sideways on the beach.",
+        "cocoon" to "A silky protective home spun by a caterpillar before it becomes a butterfly.",
+        "train" to "Connected railway carriages that travel fast along metal tracks.",
+        "beach" to "A sandy shore beside the ocean or sea.",
+        "chocolates" to "Sweet treats made from cocoa.",
+        "drummers" to "Musicians who play lively rhythms and beats on drums.",
+        "sailor" to "A person who works on ships and sails across the ocean.",
+        "cupboard" to "A cabinet with shelves and doors used for storing things neatly.",
+        "curtain" to "A piece of cloth hung across a window or doorway.",
+        "borrow" to "To take a book or item for a short time with a promise to return it.",
+        "return" to "To give or bring something back to where it belongs.",
+        "books" to "Printed or illustrated pages bound together for reading stories and learning.",
+        "raincoat" to "A waterproof coat worn to stay dry when it rains.",
+        "street" to "A public road in a neighborhood or town with houses and shops.",
+        "colors" to "Hues like red, blue, yellow, and green that make the world vibrant.",
+        "unique" to "One of a kind; unlike anything or anyone else.",
+        "gleamed" to "Shone brightly with reflected light.",
+        "scrubbed" to "Rubbed hard to clean something thoroughly.",
+        "whispers" to "Speaks very softly and quietly using breath instead of a loud voice.",
+        "grandmother" to "The mother of your father or mother.",
+        "grandfather" to "The father of your father or mother.",
+        "morning" to "The early part of the day when the sun rises.",
+        "busy" to "Full of activity, movement, and energy.",
+        "street" to "A road in a town or city where people walk and live.",
+        "garden" to "A piece of ground where flowers, trees, and plants grow.",
+        "golden" to "Shining with a warm yellow color like gold.",
+        "marigolds" to "Bright yellow and orange garden flowers.",
+        "leaves" to "Flat green parts of plants and trees that catch sunlight.",
+        "sunlight" to "The natural light and warmth that comes from the sun."
     )
 
     fun getWordSyllablesList(rawWord: String): List<String> {
@@ -282,6 +440,12 @@ object SeekhCatalog {
             clean == "raincoat" -> listOf("rain", "coat")
             clean == "grandmother" -> listOf("grand", "moth", "er")
             clean == "grandfather" -> listOf("grand", "fa", "ther")
+            clean == "marigolds" -> listOf("mar", "i", "golds")
+            clean == "sunlight" -> listOf("sun", "light")
+            clean == "hundred" -> listOf("hun", "dred")
+            clean == "garden" -> listOf("gar", "den")
+            clean == "golden" -> listOf("gold", "en")
+            clean == "inside" -> listOf("in", "side")
             clean.length <= 4 -> listOf(clean)
             else -> clean.chunked(3)
         }
@@ -292,18 +456,88 @@ object SeekhCatalog {
     }
 
     fun getWordTooltip(rawWord: String, langCode: String): Pair<String, String> {
-        val clean = rawWord.lowercase().replace(Regex("[^a-z]"), "")
-        val syllables = getWordSyllablesList(rawWord).joinToString(" • ")
-        val meaning = when {
-            langCode.contains("ur") -> wordMeaningsUrdu[clean] ?: "تلفظ سننے کے لیے ہر حصے پر ٹیپ کریں"
-            langCode.contains("hi") -> wordMeaningsHindi[clean] ?: "उच्चारण सुनने के लिए प्रत्येक भाग पर टैप करें"
-            else -> "Tap each syllable or speaker to hear pronunciation"
-        }
-        return syllables to meaning
+        val details = getDetailedWordInfo(rawWord, "", langCode)
+        return details.syllables.joinToString(" • ") to details.nativeMeaning
     }
 
     fun getWordTranslation(rawWord: String, langCode: String): String {
-        return getWordTooltip(rawWord, langCode).second
+        return getDetailedWordInfo(rawWord, "", langCode).nativeMeaning
+    }
+
+    fun getDetailedWordInfo(rawWord: String, pageSentence: String, langCode: String): WordTutorDetails {
+        val clean = rawWord.lowercase().replace(Regex("[^a-z]"), "")
+        val display = clean.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.US) else it.toString() }.ifEmpty { rawWord }
+        val syllables = getWordSyllablesList(clean.ifEmpty { rawWord })
+        val phonetics = "/" + syllables.mapIndexed { idx, s -> if (idx == 0) s.uppercase() else s }.joinToString("-") + "/"
+
+        // Match exact vocabulary item if present in the 51 vocab items
+        val vocabMatch = vocabularyItems.firstOrNull { it.word.equals(clean, ignoreCase = true) }
+
+        val partOfSpeech = when {
+            clean in setOf("the", "a", "an", "in", "on", "at", "to", "with", "of", "for", "and", "or", "up", "by", "from", "into", "across", "under", "behind", "inside") -> "Connecting / Sight Word"
+            clean.endsWith("ing") || clean.endsWith("ed") || clean in setOf("wakes", "shine", "walks", "borrow", "return", "whispers", "play", "read", "run", "jump", "fly") -> "Action Word (Verb)"
+            clean in setOf("bright", "golden", "green", "yellow", "red", "blue", "white", "special", "unique", "busy", "early", "happy", "sunny", "cozy", "warm") -> "Describing Word (Adjective)"
+            else -> "Naming Word (Noun)"
+        }
+
+        val englishDef = wordEnglishDefinitions[clean]
+            ?: vocabMatch?.exampleSentence
+            ?: when {
+                partOfSpeech.contains("Sight Word") -> "A common connecting word used to link ideas smoothly in a sentence."
+                partOfSpeech.contains("Verb") -> "An action word describing something happening or being done in the story."
+                partOfSpeech.contains("Adjective") -> "A describing word that tells us how something looks, feels, or shines."
+                else -> "An important story word that names a person, place, object, or nature element."
+            }
+
+        val nativeMeaning = when {
+            langCode.contains("ur") -> {
+                wordMeaningsUrdu[clean]
+                    ?: vocabMatch?.urduMeaning
+                    ?: when {
+                        partOfSpeech.contains("Sight Word") -> "فقرے کو جوڑنے والا عام لفظ ($display)"
+                        partOfSpeech.contains("Verb") -> "کام یا حرکت ظاہر کرنے والا لفظ ($display)"
+                        partOfSpeech.contains("Adjective") -> "صفت یا خوبی بتانے والا لفظ ($display)"
+                        else -> "کہانی کا اہم لفظ ($display)"
+                    }
+            }
+            langCode.contains("hi") -> {
+                wordMeaningsHindi[clean]
+                    ?: vocabMatch?.hindiMeaning
+                    ?: when {
+                        partOfSpeech.contains("Sight Word") -> "वाक्य को जोड़ने वाला सामान्य शब्द ($display)"
+                        partOfSpeech.contains("Verb") -> "क्रिया या काम बताने वाला शब्द ($display)"
+                        partOfSpeech.contains("Adjective") -> "विशेषता बताने वाला शब्द ($display)"
+                        else -> "कहानी का महत्वपूर्ण शब्द ($display)"
+                    }
+            }
+            else -> englishDef
+        }
+
+        val exampleText = if (pageSentence.isNotBlank()) {
+            pageSentence
+        } else {
+            vocabMatch?.exampleSentence ?: "We read the word \"$display\" in our story."
+        }
+
+        val syllableSpoken = if (syllables.size > 1) {
+            "Syllables: ${syllables.joinToString(", ")}."
+        } else {
+            "Spelled: ${clean.toCharArray().joinToString(" ")}."
+        }
+
+        val spokenScript = "$display. $syllableSpoken $partOfSpeech. Meaning: $englishDef"
+
+        return WordTutorDetails(
+            displayWord = display,
+            cleanWord = clean.ifEmpty { rawWord },
+            phonetics = phonetics,
+            partOfSpeech = partOfSpeech,
+            syllables = syllables,
+            englishMeaning = englishDef,
+            nativeMeaning = nativeMeaning,
+            exampleUsage = exampleText,
+            spokenExplanation = spokenScript
+        )
     }
 
     // Complete Unabridged Library of 36 Long Multi-Illustration Books (12 to 17 Illustrated Pages in EVERY Story!)

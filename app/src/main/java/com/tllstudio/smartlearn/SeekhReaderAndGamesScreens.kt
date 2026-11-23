@@ -121,8 +121,8 @@ fun InteractiveStoryReaderScreen(
     var selectedTooltipPageAndWord by remember(book.id) { mutableStateOf<Pair<Int, String>?>(null) }
     var activeQuizModalPageIndex by remember(book.id) { mutableStateOf<Int?>(null) }
     var isMicActive by remember(book.id) { mutableStateOf(false) }
-    // Starts automatic word-by-word voice reading & cursor progression right when the story opens!
-    var isAutoReadingActive by remember(book.id) { mutableStateOf(true) }
+    // Mobile only speaks when user taps "🔊 Listen" (and does NOT auto-advance pages when mobile is speaking!)
+    var isAutoReadingActive by remember(book.id) { mutableStateOf(false) }
     var showBlockBookDialog by remember { mutableStateOf(false) }
     var readingMode by remember { mutableStateOf("Read aloud") } // "Read aloud" | "Listen" | "Silent"
     var showReadingModeDialog by remember { mutableStateOf(false) }
@@ -222,6 +222,7 @@ fun InteractiveStoryReaderScreen(
                     // Position the reading cursor at Word 0 (the first word) of the newly snapped page
                     setPageReadWordCount(settledPage, 0)
                     if (settledPage != pageIndex) {
+                        isAutoReadingActive = false
                         pageIndex = settledPage
                         onPageChanged(settledPage)
                     }
@@ -253,13 +254,12 @@ fun InteractiveStoryReaderScreen(
         }
     }
 
-    // Automatic Word-by-Word Voice Cursor Progression & Auto-Next-Page Snapping!
-    // As each word is spoken, the cursor moves to the next word, and as soon as the page completes, the next full-screen page snaps into view!
-    LaunchedEffect(pageIndex, isAutoReadingActive, hearLineTrigger, readingMode) {
+    // MOBILE SPEAKING MODE ("🔊 Listen"):
+    // As the mobile speaks each word, the cursor moves word-by-word across the page, and when the page finishes, it STAYS on the current page (does NOT auto-scroll to next page!).
+    LaunchedEffect(pageIndex, isAutoReadingActive, hearLineTrigger) {
         val activePgIdx = pagerState.currentPage
         if (activePgIdx !in 0 until book.pages.size) return@LaunchedEffect
-        if (readingMode == "Silent") return@LaunchedEffect
-        if (!isAutoReadingActive && hearLineTrigger == 0) return@LaunchedEffect
+        if (!isAutoReadingActive || hearLineTrigger == 0) return@LaunchedEffect
         if (isMicActive) return@LaunchedEffect
 
         val activePg = book.pages[activePgIdx]
@@ -268,12 +268,11 @@ fun InteractiveStoryReaderScreen(
 
         // Start cursor cleanly at Word 0 of this page
         setPageReadWordCount(activePgIdx, 0)
-        delay(220)
+        delay(160)
         onSpeakText(activePg.text)
 
         for (wIdx in activeWords.indices) {
-            if (!isAutoReadingActive && hearLineTrigger == 0) return@LaunchedEffect
-            if (isMicActive || pagerState.currentPage != activePgIdx) return@LaunchedEffect
+            if (!isAutoReadingActive || isMicActive || pagerState.currentPage != activePgIdx) return@LaunchedEffect
 
             // Highlight word wIdx with the bouncing star cursor
             if ((pageReadWordCounts[activePgIdx] ?: 0) < wIdx) {
@@ -300,23 +299,14 @@ fun InteractiveStoryReaderScreen(
             extraWait++
         }
 
-        // Mark all words on the page completed & award stars once!
+        // Mark all words on the page completed, award stars once, and STAY on this page ("agr mobile bol rha ho tu next page auto na aya")!
         setPageReadWordCount(activePgIdx, activeWords.size)
         awardPageStarsOnce(activePgIdx, 10)
-
-        // As soon as the page completes, automatically slide & snap to the next full-screen page!
-        delay(360)
-        if (pagerState.currentPage == activePgIdx) {
-            if (activePgIdx < book.pages.size - 1) {
-                pagerState.animateScrollToPage(activePgIdx + 1)
-            } else {
-                isAutoReadingActive = false
-                pagerState.animateScrollToPage(book.pages.size)
-            }
-        }
+        isAutoReadingActive = false
     }
 
-    // Live Microphone Voice Reading Flow: as the user speaks, cursor moves word-by-word, and as soon as the page completes, the next page snaps in!
+    // USER SPEAKING MODE ("🎤 Speak"):
+    // When WE are speaking into the microphone, the cursor moves word-by-word, and as soon as the page completes, the next page comes up AUTOMATICALLY ("agr hm bol rha ho tu next page auto aa jya")!
     LaunchedEffect(isMicActive, pageIndex) {
         val activePgIdx = pagerState.currentPage
         if (isMicActive && activePgIdx in 0 until book.pages.size) {
@@ -506,27 +496,28 @@ fun InteractiveStoryReaderScreen(
                     val pageReadCount = pageReadWordCounts[pIdx] ?: 0
                     val pageMasteredWords = masteredPracticeWordsByPage[pIdx] ?: emptySet()
                     val isCurrentActivePage = pagerState.currentPage == pIdx
-                    val activeTooltipWordOnThisPage = if (selectedTooltipPageAndWord?.first == pIdx) {
-                        selectedTooltipPageAndWord?.second
-                    } else null
+                    val textScrollState = rememberScrollState()
 
-                    // FULL-SCREEN PAGE CANVAS (No Card border, no card background, pure full-screen illustration + interactive words!)
+                    // FULL-SCREEN PAGE CANVAS (No Card border, no card background, pure full-screen illustration + complete unclipped interactive words!)
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(Color.White)
-                            .padding(start = 22.dp, end = 22.dp, top = 12.dp, bottom = 92.dp),
+                            .padding(start = 18.dp, end = 18.dp, top = 8.dp, bottom = 104.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // Top Half of Full Screen: Clean Large Story Illustration
+                        // Top 37% of Full Screen: Clean Story Illustration
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .weight(0.46f)
-                                .clip(RoundedCornerShape(22.dp))
+                                .weight(0.37f)
+                                .clip(RoundedCornerShape(20.dp))
                                 .background(SeekhSurfaceGray)
                                 .clickable {
                                     pageIndex = pIdx
+                                    isMicActive = false
+                                    onStopListening()
+                                    isAutoReadingActive = true
                                     hearLineTrigger++
                                 }
                         ) {
@@ -538,19 +529,20 @@ fun InteractiveStoryReaderScreen(
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(22.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
 
-                        // Bottom Half of Full Screen: Word-by-Word Interactive Story Text directly on the full-screen canvas!
+                        // Bottom 63% of Full Screen: 100% Complete Unclipped Interactive Story Text + Bilingual Subtitle!
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .weight(0.54f),
+                                .weight(0.63f)
+                                .verticalScroll(textScrollState),
                             verticalArrangement = Arrangement.Top
                         ) {
                             FlowRow(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.Start,
-                                verticalArrangement = Arrangement.spacedBy(10.dp)
+                                verticalArrangement = Arrangement.spacedBy(2.dp)
                             ) {
                                 pageWords.forEachIndexed { wIdx, rawWord ->
                                     val cleanWord = rawWord.lowercase().replace(Regex("[^a-z]"), "")
@@ -566,11 +558,11 @@ fun InteractiveStoryReaderScreen(
                                     }
                                     val wordColor by animateColorAsState(
                                         targetValue = targetWordColor,
-                                        animationSpec = tween(220),
+                                        animationSpec = tween(200),
                                         label = "word_col_${pIdx}_$wIdx"
                                     )
                                     val wordScale by animateFloatAsState(
-                                        targetValue = if (isCurrentActiveWord) 1.08f else 1f,
+                                        targetValue = if (isCurrentActiveWord) 1.07f else 1f,
                                         animationSpec = spring(
                                             dampingRatio = Spring.DampingRatioMediumBouncy,
                                             stiffness = Spring.StiffnessMedium
@@ -580,67 +572,67 @@ fun InteractiveStoryReaderScreen(
 
                                     Column(
                                         modifier = Modifier
-                                            .padding(end = 9.dp)
+                                            .padding(end = 7.dp)
                                             .scale(wordScale)
                                             .clip(RoundedCornerShape(10.dp))
                                             .background(
-                                                if (isCurrentActiveWord) SeekhGreenSoft.copy(alpha = 0.65f) else Color.Transparent
+                                                if (isCurrentActiveWord) SeekhGreenSoft.copy(alpha = 0.72f) else Color.Transparent
                                             )
                                             .bouncyClick {
                                                 pageIndex = pIdx
                                                 isAutoReadingActive = false
-                                                selectedTooltipPageAndWord = pIdx to cleanWord.ifEmpty { rawWord }
-                                                onSpeakText(cleanWord.ifEmpty { rawWord })
+                                                isMicActive = false
+                                                onStopListening()
+                                                val details = SeekhCatalog.getDetailedWordInfo(rawWord, page.text, selectedLanguageCode)
+                                                selectedTooltipPageAndWord = pIdx to rawWord
+                                                // Speak complete word details out loud (word + syllables + part of speech + meaning!)
+                                                onSpeakText(details.spokenExplanation)
                                                 if (wIdx >= pageReadCount) {
                                                     val nextCount = wIdx + 1
                                                     setPageReadWordCount(pIdx, nextCount)
                                                     if (nextCount >= pageWords.size) {
                                                         awardPageStarsOnce(pIdx, 10)
-                                                        coroutineScope.launch {
-                                                            delay(360)
-                                                            pagerState.animateScrollToPage((pIdx + 1).coerceAtMost(book.pages.size))
-                                                        }
                                                     }
                                                 }
                                             }
-                                            .padding(horizontal = 4.dp, vertical = 2.dp),
+                                            .padding(horizontal = 4.dp, vertical = 1.dp),
                                         horizontalAlignment = Alignment.CenterHorizontally
                                     ) {
                                         Text(
                                             text = rawWord,
                                             fontFamily = GoogleSansFamily,
-                                            fontWeight = if (isCurrentActiveWord) FontWeight.Bold else FontWeight.Normal,
-                                            fontSize = 29.sp,
-                                            lineHeight = 38.sp,
+                                            fontWeight = if (isCurrentActiveWord) FontWeight.Bold else FontWeight.Medium,
+                                            fontSize = 23.sp,
+                                            lineHeight = 30.sp,
                                             color = wordColor
                                         )
 
                                         // Dotted Red (or Green when mastered) Underline for Practice Words
                                         if (isPracticeWord) {
                                             val dotColor = if (isMasteredPractice) SeekhGreenMint else SeekhCoralRed
-                                            val approxWidth = (rawWord.length * 15).coerceIn(34, 130).dp
+                                            val approxWidth = (rawWord.length * 12).coerceIn(28, 110).dp
                                             Canvas(
                                                 modifier = Modifier
                                                     .width(approxWidth)
-                                                    .height(6.dp)
+                                                    .height(5.dp)
                                             ) {
                                                 drawLine(
                                                     color = dotColor,
                                                     start = Offset(0f, size.height / 2f),
                                                     end = Offset(size.width, size.height / 2f),
-                                                    strokeWidth = 3.dp.toPx(),
-                                                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(6f, 8f), 0f)
+                                                    strokeWidth = 2.5.dp.toPx(),
+                                                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(5f, 7f), 0f)
                                                 )
                                             }
                                         } else {
-                                            Spacer(modifier = Modifier.height(6.dp))
+                                            Spacer(modifier = Modifier.height(5.dp))
                                         }
 
                                         // Moving Pointer under the current active word to read
                                         if (isCurrentActiveWord) {
                                             val pointerBounce by rememberInfiniteTransition(label = "ptr_$pIdx").animateFloat(
                                                 initialValue = 0f,
-                                                targetValue = 5f,
+                                                targetValue = 4f,
                                                 animationSpec = infiniteRepeatable(
                                                     animation = tween(520),
                                                     repeatMode = RepeatMode.Reverse
@@ -649,17 +641,17 @@ fun InteractiveStoryReaderScreen(
                                             )
                                             CustomMagicPointerIcon(
                                                 modifier = Modifier
-                                                    .size(22.dp)
+                                                    .size(18.dp)
                                                     .offset(y = pointerBounce.dp)
                                             )
                                         } else {
-                                            Spacer(modifier = Modifier.height(22.dp))
+                                            Spacer(modifier = Modifier.height(18.dp))
                                         }
                                     }
                                 }
                             }
 
-                            // Clean Bilingual Translation Line directly on full screen (no card box!)
+                            // Clean Bilingual Translation Line directly on full screen (no card box, 100% visible!)
                             val bilingualSentence = when {
                                 selectedLanguageCode.contains("ur") -> page.urduTranslation
                                 selectedLanguageCode.contains("hi") -> page.hindiTranslation
@@ -667,129 +659,26 @@ fun InteractiveStoryReaderScreen(
                                 else -> ""
                             }
                             if (bilingualSentence.isNotBlank()) {
-                                Spacer(modifier = Modifier.height(10.dp))
+                                Spacer(modifier = Modifier.height(6.dp))
                                 Text(
                                     text = bilingualSentence,
                                     fontFamily = GoogleSansFamily,
                                     fontWeight = FontWeight.Normal,
-                                    fontSize = 16.sp,
-                                    lineHeight = 24.sp,
+                                    fontSize = 15.5.sp,
+                                    lineHeight = 23.sp,
                                     color = SeekhTextSecondary,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
                                             pageIndex = pIdx
+                                            isMicActive = false
+                                            onStopListening()
+                                            isAutoReadingActive = true
                                             hearLineTrigger++
                                         }
                                 )
                             }
-
-                            // Interactive Word Tutor Popover (when a word is tapped)
-                            AnimatedVisibility(visible = activeTooltipWordOnThisPage != null) {
-                                val word = activeTooltipWordOnThisPage ?: ""
-                                val syllablesList = remember(word) { SeekhCatalog.getWordSyllablesList(word) }
-                                val wordMeaning = remember(word, selectedLanguageCode) {
-                                    SeekhCatalog.getWordTranslation(word, selectedLanguageCode)
-                                }
-
-                                Surface(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 10.dp),
-                                    shape = RoundedCornerShape(18.dp),
-                                    color = SeekhBlueSoft,
-                                    border = BorderStroke(1.5.dp, SeekhBlue500)
-                                ) {
-                                    Column(modifier = Modifier.padding(12.dp)) {
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.SpaceBetween
-                                        ) {
-                                            Column(modifier = Modifier.weight(1f)) {
-                                                Text(
-                                                    text = word,
-                                                    fontFamily = GoogleSansFamily,
-                                                    fontWeight = FontWeight.Bold,
-                                                    fontSize = 19.sp,
-                                                    color = SeekhTextPrimary
-                                                )
-                                                Text(
-                                                    text = "Meaning: $wordMeaning",
-                                                    fontFamily = GoogleSansFamily,
-                                                    fontWeight = FontWeight.Medium,
-                                                    fontSize = 13.sp,
-                                                    color = SeekhGreen600
-                                                )
-                                            }
-
-                                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                                FilledTonalIconButton(
-                                                    onClick = { onSpeakText(word) }
-                                                ) {
-                                                    Icon(
-                                                        imageVector = Icons.AutoMirrored.Filled.VolumeUp,
-                                                        contentDescription = "Hear word",
-                                                        tint = SeekhBlue600
-                                                    )
-                                                }
-                                                Button(
-                                                    onClick = {
-                                                        val wordKey = word.lowercase()
-                                                        val alreadyMastered = pageMasteredWords.contains(wordKey)
-                                                        masteredPracticeWordsByPage = masteredPracticeWordsByPage + (pIdx to (pageMasteredWords + wordKey))
-                                                        if (!alreadyMastered) {
-                                                            starBurstTrigger++
-                                                            onAwardStars(10)
-                                                        }
-                                                        onSpeakText("Awesome! You mastered the word $word!")
-                                                        selectedTooltipPageAndWord = null
-                                                    },
-                                                    shape = RoundedCornerShape(50),
-                                                    colors = ButtonDefaults.buttonColors(containerColor = SeekhGreen500),
-                                                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
-                                                ) {
-                                                    Text(
-                                                        text = "🎤 Say It",
-                                                        fontFamily = GoogleSansFamily,
-                                                        fontWeight = FontWeight.Bold,
-                                                        fontSize = 13.sp,
-                                                        color = Color.White
-                                                    )
-                                                }
-                                            }
-                                        }
-
-                                        Spacer(modifier = Modifier.height(8.dp))
-
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                        ) {
-                                            syllablesList.forEachIndexed { sIdx, syl ->
-                                                Surface(
-                                                    shape = RoundedCornerShape(10.dp),
-                                                    color = Color.White,
-                                                    border = BorderStroke(1.dp, SeekhBlue500),
-                                                    modifier = Modifier.clickable {
-                                                        onPlayPhoneme(sIdx * 3)
-                                                        onSpeakText(syl)
-                                                    }
-                                                ) {
-                                                    Text(
-                                                        text = syl,
-                                                        fontFamily = GoogleSansFamily,
-                                                        fontWeight = FontWeight.Bold,
-                                                        fontSize = 15.sp,
-                                                        color = SeekhBlue600,
-                                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            Spacer(modifier = Modifier.height(12.dp))
                         }
                     }
                 } else {
@@ -863,6 +752,232 @@ fun InteractiveStoryReaderScreen(
                                 fontSize = 16.sp,
                                 color = Color.White
                             )
+                        }
+                    }
+                }
+            }
+        }
+
+        // Floating Complete Word Tutor Overlay Card (appears cleanly above the bottom dock whenever any word is clicked!)
+        val activeWordPair = selectedTooltipPageAndWord
+        if (activeWordPair != null) {
+            val wordPgIdx = activeWordPair.first
+            val clickedRawWord = activeWordPair.second
+            val pageForWord = book.pages.getOrElse(wordPgIdx) { currentPage }
+            val wordDetails = remember(clickedRawWord, pageForWord.text, selectedLanguageCode) {
+                SeekhCatalog.getDetailedWordInfo(clickedRawWord, pageForWord.text, selectedLanguageCode)
+            }
+            val pageMasteredWords = masteredPracticeWordsByPage[wordPgIdx] ?: emptySet()
+
+            Surface(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .navigationBarsPadding()
+                    .padding(start = 14.dp, end = 14.dp, bottom = 104.dp)
+                    .fillMaxWidth()
+                    .shadow(14.dp, RoundedCornerShape(24.dp)),
+                shape = RoundedCornerShape(24.dp),
+                color = Color.White,
+                border = BorderStroke(2.dp, SeekhBlue500)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    // Header Row: Word + Phonetics + Part of Speech + Hear All + Practice Say It + Close
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Text(
+                                    text = wordDetails.displayWord,
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 22.sp,
+                                    color = SeekhTextPrimary
+                                )
+                                Surface(
+                                    shape = RoundedCornerShape(50),
+                                    color = SeekhBlueSoft
+                                ) {
+                                    Text(
+                                        text = wordDetails.partOfSpeech,
+                                        fontFamily = GoogleSansFamily,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 11.sp,
+                                        color = SeekhBlue600,
+                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                                    )
+                                }
+                            }
+                            Text(
+                                text = "Pronunciation: ${wordDetails.phonetics}",
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 12.sp,
+                                color = SeekhTextSecondary
+                            )
+                        }
+
+                        IconButton(
+                            onClick = { selectedTooltipPageAndWord = null },
+                            modifier = Modifier.size(30.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Close word tutor",
+                                tint = SeekhTextSecondary
+                            )
+                        }
+                    }
+
+                    // Interactive Syllable Breakdown Chips (Tap any syllable to hear it!)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = "Syllables:",
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp,
+                            color = SeekhTextSecondary
+                        )
+                        wordDetails.syllables.forEachIndexed { sIdx, syl ->
+                            Surface(
+                                shape = RoundedCornerShape(10.dp),
+                                color = SeekhBlueSoft,
+                                border = BorderStroke(1.dp, SeekhBlue500),
+                                modifier = Modifier.bouncyClick {
+                                    onPlayPhoneme(sIdx * 3)
+                                    onSpeakText(syl)
+                                }
+                            ) {
+                                Text(
+                                    text = syl,
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 14.sp,
+                                    color = SeekhBlue600,
+                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    // Complete English Explanation & Native Urdu/Hindi Meaning Box
+                    Surface(
+                        shape = RoundedCornerShape(14.dp),
+                        color = SeekhSurfaceGray,
+                        border = BorderStroke(1.dp, SeekhBorderGray),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(10.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(
+                                text = "Meaning: ${wordDetails.englishMeaning}",
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 13.sp,
+                                lineHeight = 18.sp,
+                                color = SeekhTextPrimary
+                            )
+                            Text(
+                                text = "ترجمہ / अर्थ: ${wordDetails.nativeMeaning}",
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 13.5.sp,
+                                lineHeight = 19.sp,
+                                color = SeekhGreen600
+                            )
+                        }
+                    }
+
+                    // Action Buttons: "🔊 Hear Explanation" & "🎤 Say Word (+10 ⭐)"
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Surface(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(42.dp)
+                                .bouncyClick {
+                                    onSpeakText(wordDetails.spokenExplanation)
+                                },
+                            shape = RoundedCornerShape(50),
+                            color = SeekhBlue600
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.VolumeUp,
+                                    contentDescription = "Hear word explanation",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = "Hear Details",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 13.sp,
+                                    color = Color.White
+                                )
+                            }
+                        }
+
+                        Surface(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(42.dp)
+                                .bouncyClick {
+                                    val wordKey = wordDetails.cleanWord.lowercase()
+                                    val alreadyMastered = pageMasteredWords.contains(wordKey)
+                                    masteredPracticeWordsByPage = masteredPracticeWordsByPage + (wordPgIdx to (pageMasteredWords + wordKey))
+                                    if (!alreadyMastered) {
+                                        starBurstTrigger++
+                                        onAwardStars(10)
+                                    }
+                                    onSpeakText("Great job! You practiced the word ${wordDetails.displayWord}!")
+                                    selectedTooltipPageAndWord = null
+                                },
+                            shape = RoundedCornerShape(50),
+                            color = SeekhGreenMint
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Mic,
+                                    contentDescription = "Say word",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = "Say It (+10 ⭐)",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 13.sp,
+                                    color = Color.White
+                                )
+                            }
                         }
                     }
                 }
