@@ -40,6 +40,7 @@ fun LibraryTabScreen(
     profile: LearnerProfile,
     selectedLanguage: LearningLanguageOption,
     accountState: SignedInAccountState = SignedInAccountState(),
+    readingGroups: List<ReadingGroup> = emptyList(),
     turnedInAssignmentIds: Set<String> = emptySet(),
     downloadedCloudBookIds: Set<String>,
     downloadingBookIds: Set<String>,
@@ -59,12 +60,8 @@ fun LibraryTabScreen(
     var selectedCategoryFilter by remember { mutableStateOf("All") }
     var bookToDeleteConfirm by remember { mutableStateOf<StoryBook?>(null) }
 
-    val filterChips = remember(accountState.isSignedIn) {
-        if (accountState.isSignedIn) {
-            listOf("All", "Level 1", "Level 2", "Level 3", "Level 4", "Phonics", "Series", "Classroom", "My stories")
-        } else {
-            listOf("All", "Level 1", "Level 2", "Level 3", "Level 4", "Phonics", "Series")
-        }
+    val filterChips = remember {
+        listOf("All", "Games", "Classroom", "Level 1", "Level 2", "Level 3", "Level 4", "Phonics", "Series", "My stories")
     }
 
     // Sub-state BackHandler when searching or filtering
@@ -85,8 +82,23 @@ fun LibraryTabScreen(
     val nonHeroBooks = remember(books, heroBook) {
         books.filterNot { it.id == heroBook.id }
     }
-    val classroomBooks = remember(books) {
-        books.filter { it.bookSource == "CLASSROOM" || it.assignedByTeacher.isNotBlank() }
+    val groupAssignedLabels = remember(readingGroups) {
+        buildMap<String, String> {
+            readingGroups.forEach { g ->
+                g.assignedBookIds.forEach { bId ->
+                    put(bId, "${g.adminName} • ${g.name}")
+                }
+            }
+        }
+    }
+    val classroomBooks = remember(books, groupAssignedLabels, accountState.isSignedIn) {
+        books.filter { b ->
+            groupAssignedLabels.containsKey(b.id) ||
+                (accountState.isSignedIn && (b.bookSource == "CLASSROOM" || b.assignedByTeacher.isNotBlank()))
+        }.map { b ->
+            val groupLabel = groupAssignedLabels[b.id]
+            if (groupLabel != null) b.copy(assignedByTeacher = "Assigned by $groupLabel") else b
+        }
     }
     val phonicsBooks = remember(books) {
         books.filter { it.bookType == "DECODABLE" || it.phonicsSkillTag.isNotBlank() }
@@ -110,7 +122,7 @@ fun LibraryTabScreen(
     }
 
     // Filtered books when user uses Search or selects a specific category filter chip
-    val filteredBooks = remember(books, searchQuery, selectedCategoryFilter) {
+    val filteredBooks = remember(books, searchQuery, selectedCategoryFilter, groupAssignedLabels) {
         books.filter { b ->
             val matchesQuery = searchQuery.isBlank() ||
                 b.title.contains(searchQuery, ignoreCase = true) ||
@@ -125,7 +137,7 @@ fun LibraryTabScreen(
                 "Level 4" -> b.level == 4
                 "Phonics" -> b.bookType == "DECODABLE" || b.phonicsSkillTag.isNotBlank()
                 "Series" -> b.bookType == "SERIES" || b.seriesTag.isNotBlank()
-                "Classroom" -> b.bookSource == "CLASSROOM" || b.assignedByTeacher.isNotBlank()
+                "Classroom" -> groupAssignedLabels.containsKey(b.id) || b.bookSource == "CLASSROOM" || b.assignedByTeacher.isNotBlank()
                 "My stories" -> b.isAiGenerated || b.bookType == "CYOC"
                 else -> true
             }
@@ -249,8 +261,137 @@ fun LibraryTabScreen(
                     }
                 }
 
-                // If user has active search query or category filter != "All", show the filtered results cleanly
-                if (searchQuery.isNotBlank() || selectedCategoryFilter != "All") {
+                // If user selects "Games" filter chip, show the dedicated Word Games Arcade Hub!
+                if (selectedCategoryFilter == "Games") {
+                    item {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 18.dp, vertical = 4.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Word Games Arcade (4)",
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 20.sp,
+                                color = SeekhTextPrimary
+                            )
+                            Surface(
+                                shape = RoundedCornerShape(50),
+                                color = SeekhGreenSoft
+                            ) {
+                                Text(
+                                    text = "Played: ${profile.gamesPlayedCount}",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 12.sp,
+                                    color = SeekhGreen600,
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        val arcadeGames = listOf(
+                            listOf("Jumbled Words", "Unscramble letters with smart hints & bilingual clues", "a • p • p • l • e • s", "+20 ⭐", "JUMBLE") to SeekhJumblePurple,
+                            listOf("Pop The Balloons", "Pop rising phonics sound balloons before time runs out", "🎈 S • B • M • SH", "+30 ⭐", "BALLOON") to Color(0xFF00838F),
+                            listOf("Speed Reading", "30-second fluency challenge to unlock speed vehicles", "⏱ 30 sec WPM", "+25 ⭐", "SPEED") to Color(0xFFF57F17),
+                            listOf("Word Meanings", "9 illustrated picture vocabulary themes to master", "🎨 9 Themes", "+15 ⭐", "VOCAB") to SeekhVocabDarkGreen
+                        )
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 18.dp),
+                            verticalArrangement = Arrangement.spacedBy(14.dp)
+                        ) {
+                            arcadeGames.forEach { (info, bgCol) ->
+                                Surface(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .bouncyClick { onOpenGame(info[4]) },
+                                    shape = RoundedCornerShape(24.dp),
+                                    color = bgCol,
+                                    shadowElevation = 6.dp
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(18.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Row(
+                                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Surface(
+                                                    shape = RoundedCornerShape(50),
+                                                    color = Color.White.copy(alpha = 0.22f)
+                                                ) {
+                                                    Text(
+                                                        text = info[2],
+                                                        fontFamily = GoogleSansFamily,
+                                                        fontWeight = FontWeight.Bold,
+                                                        fontSize = 11.sp,
+                                                        color = Color.White,
+                                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                                                    )
+                                                }
+                                                Surface(
+                                                    shape = RoundedCornerShape(50),
+                                                    color = SeekhYellow500
+                                                ) {
+                                                    Text(
+                                                        text = info[3],
+                                                        fontFamily = GoogleSansFamily,
+                                                        fontWeight = FontWeight.ExtraBold,
+                                                        fontSize = 11.sp,
+                                                        color = SeekhTextPrimary,
+                                                        modifier = Modifier.padding(horizontal = 9.dp, vertical = 3.dp)
+                                                    )
+                                                }
+                                            }
+                                            Spacer(modifier = Modifier.height(10.dp))
+                                            Text(
+                                                text = info[0],
+                                                fontFamily = GoogleSansFamily,
+                                                fontWeight = FontWeight.ExtraBold,
+                                                fontSize = 20.sp,
+                                                color = Color.White
+                                            )
+                                            Spacer(modifier = Modifier.height(2.dp))
+                                            Text(
+                                                text = info[1],
+                                                fontFamily = GoogleSansFamily,
+                                                fontSize = 13.sp,
+                                                color = Color.White.copy(alpha = 0.9f)
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Surface(
+                                            shape = RoundedCornerShape(50),
+                                            color = Color.White
+                                        ) {
+                                            Text(
+                                                text = "Play ▶",
+                                                fontFamily = GoogleSansFamily,
+                                                fontWeight = FontWeight.ExtraBold,
+                                                fontSize = 13.sp,
+                                                color = bgCol,
+                                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else if (searchQuery.isNotBlank() || selectedCategoryFilter != "All") {
                     item {
                         Spacer(modifier = Modifier.height(8.dp))
                         LibrarySectionHeader(
@@ -315,12 +456,12 @@ fun LibraryTabScreen(
                         Spacer(modifier = Modifier.height(18.dp))
                     }
 
-                    // 2. Signed-In "Classroom assignments" Section (BOOK_SOURCE_CLASSROOM_TEACHER / RA_AUDIT_EVENT_ATTACHMENT_BOOK_OPENED)
-                    if (accountState.isSignedIn && classroomBooks.isNotEmpty()) {
+                    // 2. "Classroom & Parent assignments" Section (Always shown when a Teacher/Parent assigned stories in Reading Groups OR signed-in!)
+                    if (classroomBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Classroom assignments",
-                                onSpeak = { onSpeakText("Classroom assignments from your teacher") }
+                                title = "Assigned homework (${classroomBooks.size})",
+                                onSpeak = { onSpeakText("Assigned stories from your teacher or parent") }
                             )
                             Spacer(modifier = Modifier.height(6.dp))
                             LazyRow(
@@ -363,10 +504,34 @@ fun LibraryTabScreen(
 
                     // 4. "Play games" Section (seekh: play_games — Jumbled Words, Pop The Balloons, Speed Reading, Word Meanings)
                     item {
-                        LibrarySectionHeader(
-                            title = "Play games",
-                            onSpeak = { onSpeakText("Play games") }
-                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(end = 18.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(modifier = Modifier.weight(1f)) {
+                                LibrarySectionHeader(
+                                    title = "Play games",
+                                    onSpeak = { onSpeakText("Play games") }
+                                )
+                            }
+                            Surface(
+                                shape = RoundedCornerShape(50),
+                                color = SeekhGreenSoft,
+                                modifier = Modifier.bouncyClick { selectedCategoryFilter = "Games" }
+                            ) {
+                                Text(
+                                    text = "All 4 Games →",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 12.sp,
+                                    color = SeekhGreen600,
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
+                                )
+                            }
+                        }
                         Spacer(modifier = Modifier.height(8.dp))
 
                         LazyRow(
@@ -380,6 +545,7 @@ fun LibraryTabScreen(
                                     subtitle = "Unscramble letters",
                                     containerColor = SeekhJumblePurple,
                                     badgeText = "a • p • p • l • e • s",
+                                    rewardText = "+20 ⭐",
                                     onClick = { onOpenGame("JUMBLE") }
                                 )
                             }
@@ -389,6 +555,7 @@ fun LibraryTabScreen(
                                     subtitle = "Phonics & sounds",
                                     containerColor = Color(0xFF00838F),
                                     badgeText = "🎈 S • B • M",
+                                    rewardText = "+30 ⭐",
                                     onClick = { onOpenGame("BALLOON") }
                                 )
                             }
@@ -398,6 +565,7 @@ fun LibraryTabScreen(
                                     subtitle = "30s reading speed",
                                     containerColor = Color(0xFFF57F17),
                                     badgeText = "⏱ 30 sec WPM",
+                                    rewardText = "+25 ⭐",
                                     onClick = { onOpenGame("SPEED") }
                                 )
                             }
@@ -407,6 +575,7 @@ fun LibraryTabScreen(
                                     subtitle = "9 illustrated themes",
                                     containerColor = SeekhVocabDarkGreen,
                                     badgeText = "🎨 9 Themes",
+                                    rewardText = "+15 ⭐",
                                     onClick = { onOpenGame("VOCAB") }
                                 )
                             }
@@ -947,16 +1116,17 @@ private fun GameShelfCard(
     subtitle: String,
     containerColor: Color,
     badgeText: String,
+    rewardText: String = "+15 ⭐",
     onClick: () -> Unit
 ) {
     Surface(
         modifier = Modifier
-            .width(168.dp)
-            .height(118.dp)
-            .clickable { onClick() },
-        shape = RoundedCornerShape(20.dp),
+            .width(178.dp)
+            .height(124.dp)
+            .bouncyClick(scaleDown = 0.94f, onClick = onClick),
+        shape = RoundedCornerShape(22.dp),
         color = containerColor,
-        shadowElevation = 5.dp
+        shadowElevation = 6.dp
     ) {
         Column(
             modifier = Modifier
@@ -964,24 +1134,44 @@ private fun GameShelfCard(
                 .padding(14.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Surface(
-                shape = RoundedCornerShape(50),
-                color = Color.White.copy(alpha = 0.22f)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = badgeText,
-                    fontFamily = GoogleSansFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 11.sp,
-                    color = Color.White,
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                )
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = Color.White.copy(alpha = 0.22f)
+                ) {
+                    Text(
+                        text = badgeText,
+                        fontFamily = GoogleSansFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 10.sp,
+                        color = Color.White,
+                        maxLines = 1,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = SeekhYellow500
+                ) {
+                    Text(
+                        text = rewardText,
+                        fontFamily = GoogleSansFamily,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 10.sp,
+                        color = SeekhTextPrimary,
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp)
+                    )
+                }
             }
             Column {
                 Text(
                     text = title,
                     fontFamily = GoogleSansFamily,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.ExtraBold,
                     fontSize = 16.sp,
                     color = Color.White,
                     maxLines = 1,
@@ -991,7 +1181,7 @@ private fun GameShelfCard(
                     text = subtitle,
                     fontFamily = GoogleSansFamily,
                     fontSize = 12.sp,
-                    color = Color.White.copy(alpha = 0.88f),
+                    color = Color.White.copy(alpha = 0.90f),
                     maxLines = 1
                 )
             }
@@ -1332,7 +1522,8 @@ private fun PrizeMedallionItem(
     }
 }
 
-// 3. Exact Reference Activity Tab Screen (res/S2.xml + res/SG.xml + res/tL.xml + res/_m.xml + res/hn.xml + res/8O.xml + Guided Create/Join Reading Group Wizards!)
+// 3. Exact Reference Activity Tab Screen (with 3-Role Parent / Teacher / Student Hub, Live Homework Assignment & Turn-In, Family Profiles Coach & Classroom Admin!)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ActivityTabScreen(
     profile: LearnerProfile,
@@ -1344,14 +1535,17 @@ fun ActivityTabScreen(
     onStarClick: () -> Unit,
     onOpenBook: (StoryBook) -> Unit,
     onSwitchToLibraryTab: () -> Unit = {},
+    onSelectProfile: (String) -> Unit = {},
     onUpdateDailyGoal: (Int) -> Unit,
     onCreateReadingGroup: (String, String) -> Unit,
     onJoinReadingGroup: (String) -> Unit,
+    onJoinReadingGroupForProfile: (String, LearnerProfile) -> Unit = { code, _ -> onJoinReadingGroup(code) },
     onUpdateReadingGroup: (ReadingGroup) -> Unit,
     onDeleteReadingGroup: (String) -> Unit,
     onSpeakText: (String) -> Unit
 ) {
     var selectedWeekTab by remember { mutableStateOf("This week") } // "This week" | "Last week" (res/S2.xml)
+    var selectedHubRole by remember { mutableStateOf("Student") } // "Student" | "Parent" | "Teacher"
     var showCreateGroupWizard by remember { mutableStateOf(false) }
     var showJoinGroupWizard by remember { mutableStateOf(false) }
     var showAllCompletedBooks by remember { mutableStateOf(false) }
@@ -1896,13 +2090,20 @@ fun ActivityTabScreen(
                     }
                 }
 
-                // 4. "Your reading groups" Section matching res/SG.xml & res/8O.xml (Divider Header + 3-Slide Teacher Intro Carousel + Create/Join Wizards + Active Groups List)
+                // 4. "Parent, Teacher & Student Hub" & "Your reading groups" Section (3-Role Switcher: Student Homework | Parent Coach | Teacher Classroom Admin)
                 item {
+                    val assignedBookIdsSet = remember(readingGroups) {
+                        readingGroups.flatMap { it.assignedBookIds }.toSet()
+                    }
+                    val assignedBooksList = remember(allBooks, assignedBookIdsSet) {
+                        allBooks.filter { assignedBookIdsSet.contains(it.id) }
+                    }
+
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        // Divider Header matching res/SG.xml lines 25-52 ("Your reading groups")
+                        // Divider Header ("Your reading groups & classroom")
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
@@ -1919,84 +2120,526 @@ fun ActivityTabScreen(
                             HorizontalDivider(modifier = Modifier.weight(1f), color = SeekhBorderGray)
                         }
 
-                        // 3-Slide Intro Carousel matching res/SG.xml ViewPager2 & user_group_create_intro_1..3
-                        val introSlides = listOf(
-                            "Discover a new way to help children learn language.",
-                            "You can create reading group and invite multiple children to join.",
-                            "You’ll be able to monitor each child’s reading activity and speed to improve their reading."
-                        )
+                        // 3-Role Switcher Pill Bar: Student | Parent | Teacher
                         Surface(
-                            shape = RoundedCornerShape(22.dp),
+                            shape = RoundedCornerShape(50),
                             color = Color.White,
                             shadowElevation = 3.dp,
+                            border = BorderStroke(1.dp, SeekhBorderGray),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Column(
-                                modifier = Modifier.padding(18.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(4.dp),
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
                             ) {
-                                Text(
-                                    text = introSlides[groupIntroPage % introSlides.size],
-                                    fontFamily = GoogleSansFamily,
-                                    fontWeight = FontWeight.Medium,
-                                    fontSize = 14.sp,
-                                    lineHeight = 20.sp,
-                                    color = SeekhTextPrimary,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.clickable {
-                                        groupIntroPage = (groupIntroPage + 1) % introSlides.size
-                                    }
-                                )
-                                Spacer(modifier = Modifier.height(10.dp))
-                                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                                    introSlides.indices.forEach { idx ->
-                                        Box(
-                                            modifier = Modifier
-                                                .size(if (idx == groupIntroPage) 18.dp else 7.dp, 7.dp)
-                                                .clip(RoundedCornerShape(50))
-                                                .background(if (idx == groupIntroPage) SeekhGreen500 else SeekhBorderGray)
-                                                .clickable { groupIntroPage = idx }
+                                listOf(
+                                    "Student" to "👨‍🎓 Student",
+                                    "Parent" to "👨‍👩‍👧 Parent",
+                                    "Teacher" to "👩‍🏫 Teacher"
+                                ).forEach { (roleKey, roleLabel) ->
+                                    val isSelectedRole = selectedHubRole == roleKey
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .clip(RoundedCornerShape(50))
+                                            .background(if (isSelectedRole) SeekhGreen500 else Color.Transparent)
+                                            .bouncyClick {
+                                                selectedHubRole = roleKey
+                                                onSpeakText("$roleKey view")
+                                            }
+                                            .padding(vertical = 9.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = roleLabel,
+                                            fontFamily = GoogleSansFamily,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 13.sp,
+                                            color = if (isSelectedRole) Color.White else SeekhTextSecondary
                                         )
                                     }
                                 }
-                                Spacer(modifier = Modifier.height(14.dp))
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            }
+                        }
+
+                        when (selectedHubRole) {
+                            "Student" -> {
+                                // STUDENT FLOW: My Assigned Homework Checklist + Join Classroom by Invite Code
+                                Surface(
+                                    shape = RoundedCornerShape(22.dp),
+                                    color = Color.White,
+                                    shadowElevation = 4.dp,
+                                    modifier = Modifier.fillMaxWidth()
                                 ) {
-                                    OutlinedButton(
-                                        onClick = { showJoinGroupWizard = true },
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .height(44.dp),
-                                        shape = RoundedCornerShape(50),
-                                        border = BorderStroke(1.5.dp, SeekhGreen500)
+                                    Column(
+                                        modifier = Modifier.padding(18.dp),
+                                        verticalArrangement = Arrangement.spacedBy(12.dp)
                                     ) {
-                                        Text(
-                                            text = "Join group",
-                                            fontFamily = GoogleSansFamily,
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 13.sp,
-                                            color = SeekhGreen500
-                                        )
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Column(modifier = Modifier.weight(1f)) {
+                                                Text(
+                                                    text = "${profile.name}'s Assigned Homework",
+                                                    fontFamily = GoogleSansFamily,
+                                                    fontWeight = FontWeight.ExtraBold,
+                                                    fontSize = 17.sp,
+                                                    color = SeekhTextPrimary
+                                                )
+                                                val doneHomework = assignedBooksList.count { profile.completedBookIds.contains(it.id) }
+                                                Text(
+                                                    text = if (assignedBooksList.isEmpty()) {
+                                                        "Join a teacher group or ask a parent to assign stories"
+                                                    } else {
+                                                        "Completed $doneHomework of ${assignedBooksList.size} assigned stories"
+                                                    },
+                                                    fontFamily = GoogleSansFamily,
+                                                    fontSize = 12.sp,
+                                                    color = SeekhGreen600
+                                                )
+                                            }
+                                            OutlinedButton(
+                                                onClick = { showJoinGroupWizard = true },
+                                                shape = RoundedCornerShape(50),
+                                                border = BorderStroke(1.5.dp, SeekhGreen500),
+                                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                                            ) {
+                                                Text(
+                                                    text = "🔑 Join Code",
+                                                    fontFamily = GoogleSansFamily,
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 12.sp,
+                                                    color = SeekhGreen600
+                                                )
+                                            }
+                                        }
+
+                                        if (assignedBooksList.isNotEmpty()) {
+                                            val doneCount = assignedBooksList.count { profile.completedBookIds.contains(it.id) }
+                                            val hwProg = (doneCount.toFloat() / assignedBooksList.size.coerceAtLeast(1).toFloat()).coerceIn(0.05f, 1f)
+                                            LinearProgressIndicator(
+                                                progress = { hwProg },
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .height(7.dp)
+                                                    .clip(RoundedCornerShape(50)),
+                                                color = if (doneCount == assignedBooksList.size) SeekhGreenMint else SeekhGreen500,
+                                                trackColor = SeekhGreen100
+                                            )
+
+                                            assignedBooksList.forEach { hwBook ->
+                                                val isDone = profile.completedBookIds.contains(hwBook.id)
+                                                val groupOwner = readingGroups.firstOrNull { it.assignedBookIds.contains(hwBook.id) }
+                                                Surface(
+                                                    shape = RoundedCornerShape(16.dp),
+                                                    color = if (isDone) SeekhGreenSoft else SeekhSurfaceGray,
+                                                    border = BorderStroke(1.dp, if (isDone) SeekhGreen500 else SeekhBorderGray),
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .bouncyClick { onOpenBook(hwBook) }
+                                                ) {
+                                                    Row(
+                                                        modifier = Modifier
+                                                            .fillMaxWidth()
+                                                            .padding(12.dp),
+                                                        verticalAlignment = Alignment.CenterVertically,
+                                                        horizontalArrangement = Arrangement.SpaceBetween
+                                                    ) {
+                                                        Row(
+                                                            modifier = Modifier.weight(1f),
+                                                            verticalAlignment = Alignment.CenterVertically,
+                                                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                                        ) {
+                                                            Box(
+                                                                modifier = Modifier
+                                                                    .size(50.dp)
+                                                                    .clip(RoundedCornerShape(12.dp))
+                                                            ) {
+                                                                AssetWebpImage(
+                                                                    assetPath = hwBook.coverAssetPath,
+                                                                    contentDescription = hwBook.title,
+                                                                    modifier = Modifier.fillMaxSize(),
+                                                                    contentScale = ContentScale.Crop
+                                                                )
+                                                            }
+                                                            Column {
+                                                                Text(
+                                                                    text = hwBook.title,
+                                                                    fontFamily = GoogleSansFamily,
+                                                                    fontWeight = FontWeight.Bold,
+                                                                    fontSize = 14.sp,
+                                                                    color = SeekhTextPrimary,
+                                                                    maxLines = 1,
+                                                                    overflow = TextOverflow.Ellipsis
+                                                                )
+                                                                Text(
+                                                                    text = if (groupOwner != null) {
+                                                                        "From ${groupOwner.adminName} (${groupOwner.name}) • Lvl ${hwBook.level}"
+                                                                    } else {
+                                                                        "Level ${hwBook.level} Story"
+                                                                    },
+                                                                    fontFamily = GoogleSansFamily,
+                                                                    fontSize = 11.sp,
+                                                                    color = SeekhTextSecondary
+                                                                )
+                                                            }
+                                                        }
+
+                                                        Surface(
+                                                            shape = RoundedCornerShape(50),
+                                                            color = if (isDone) SeekhGreenMint else SeekhGreen500
+                                                        ) {
+                                                            Text(
+                                                                text = if (isDone) "Turned in ✓" else "Read ▶",
+                                                                fontFamily = GoogleSansFamily,
+                                                                fontWeight = FontWeight.Bold,
+                                                                fontSize = 11.sp,
+                                                                color = Color.White,
+                                                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            Surface(
+                                                shape = RoundedCornerShape(16.dp),
+                                                color = SeekhSurfaceGray,
+                                                modifier = Modifier.fillMaxWidth()
+                                            ) {
+                                                Column(
+                                                    modifier = Modifier.padding(16.dp),
+                                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                                ) {
+                                                    Text(
+                                                        text = "No active homework assignments yet.",
+                                                        fontFamily = GoogleSansFamily,
+                                                        fontWeight = FontWeight.Bold,
+                                                        fontSize = 14.sp,
+                                                        color = SeekhTextPrimary
+                                                    )
+                                                    Text(
+                                                        text = "Enter a class invite code from your teacher, or switch to Parent / Teacher tab to assign stories!",
+                                                        fontFamily = GoogleSansFamily,
+                                                        fontSize = 12.sp,
+                                                        color = SeekhTextSecondary,
+                                                        textAlign = TextAlign.Center
+                                                    )
+                                                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                                        Button(
+                                                            onClick = { showJoinGroupWizard = true },
+                                                            shape = RoundedCornerShape(50),
+                                                            colors = ButtonDefaults.buttonColors(containerColor = SeekhGreen500)
+                                                        ) {
+                                                            Text("Join group", fontFamily = GoogleSansFamily, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                                                        }
+                                                        OutlinedButton(
+                                                            onClick = { selectedHubRole = "Parent" },
+                                                            shape = RoundedCornerShape(50)
+                                                        ) {
+                                                            Text("Parent Assign →", fontFamily = GoogleSansFamily, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
-                                    Button(
-                                        onClick = { showCreateGroupWizard = true },
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .height(44.dp),
-                                        shape = RoundedCornerShape(50),
-                                        colors = ButtonDefaults.buttonColors(containerColor = SeekhGreen500)
+                                }
+                            }
+
+                            "Parent" -> {
+                                // PARENT FLOW: Family Children Progress Comparison + 1-Tap Parent Homework Assigner
+                                Surface(
+                                    shape = RoundedCornerShape(22.dp),
+                                    color = Color.White,
+                                    shadowElevation = 4.dp,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Column(
+                                        modifier = Modifier.padding(18.dp),
+                                        verticalArrangement = Arrangement.spacedBy(12.dp)
                                     ) {
                                         Text(
-                                            text = "Create reading group",
+                                            text = "👨‍👩‍👧 Family Profiles Progress (${allProfiles.size})",
+                                            fontFamily = GoogleSansFamily,
+                                            fontWeight = FontWeight.ExtraBold,
+                                            fontSize = 17.sp,
+                                            color = SeekhTextPrimary
+                                        )
+                                        Text(
+                                            text = "Monitor every child on this device, switch active learner, or assign daily homework stories:",
+                                            fontFamily = GoogleSansFamily,
+                                            fontSize = 12.sp,
+                                            color = SeekhTextSecondary
+                                        )
+
+                                        allProfiles.forEach { childProf ->
+                                            val isCurrent = childProf.id == profile.id
+                                            val goalReached = childProf.minutesReadToday >= childProf.dailyGoalMinutes
+                                            Surface(
+                                                shape = RoundedCornerShape(16.dp),
+                                                color = if (isCurrent) SeekhGreenSoft else SeekhSurfaceGray,
+                                                border = BorderStroke(1.5.dp, if (isCurrent) SeekhGreen500 else SeekhBorderGray),
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .bouncyClick {
+                                                        if (!isCurrent) onSelectProfile(childProf.id)
+                                                    }
+                                            ) {
+                                                Row(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(12.dp),
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.SpaceBetween
+                                                ) {
+                                                    Row(
+                                                        verticalAlignment = Alignment.CenterVertically,
+                                                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                                        modifier = Modifier.weight(1f)
+                                                    ) {
+                                                        ProfileAvatarCircle(
+                                                            avatarIndex = childProf.avatarIndex,
+                                                            size = 44.dp,
+                                                            borderWidth = 1.5.dp,
+                                                            borderColor = if (isCurrent) SeekhGreen500 else SeekhBorderGray
+                                                        )
+                                                        Column {
+                                                            Row(
+                                                                verticalAlignment = Alignment.CenterVertically,
+                                                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                                            ) {
+                                                                Text(
+                                                                    text = childProf.name,
+                                                                    fontFamily = GoogleSansFamily,
+                                                                    fontWeight = FontWeight.Bold,
+                                                                    fontSize = 15.sp,
+                                                                    color = SeekhTextPrimary
+                                                                )
+                                                                if (isCurrent) {
+                                                                    Surface(
+                                                                        shape = RoundedCornerShape(50),
+                                                                        color = SeekhGreen500
+                                                                    ) {
+                                                                        Text(
+                                                                            text = "Active",
+                                                                            fontFamily = GoogleSansFamily,
+                                                                            fontWeight = FontWeight.Bold,
+                                                                            fontSize = 10.sp,
+                                                                            color = Color.White,
+                                                                            modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp)
+                                                                        )
+                                                                    }
+                                                                }
+                                                            }
+                                                            Text(
+                                                                text = "Today: ${childProf.minutesReadToday}/${childProf.dailyGoalMinutes}m • ${childProf.completedBookIds.size} stories • ${childProf.gamesPlayedCount} games",
+                                                                fontFamily = GoogleSansFamily,
+                                                                fontSize = 11.sp,
+                                                                color = if (goalReached) SeekhGreen600 else SeekhTextSecondary
+                                                            )
+                                                        }
+                                                    }
+                                                    Column(horizontalAlignment = Alignment.End) {
+                                                        Text(
+                                                            text = "${childProf.stars} ⭐",
+                                                            fontFamily = GoogleSansFamily,
+                                                            fontWeight = FontWeight.ExtraBold,
+                                                            fontSize = 14.sp,
+                                                            color = SeekhGreen600
+                                                        )
+                                                        Text(
+                                                            text = "${childProf.wordsPerMinute} wpm",
+                                                            fontFamily = GoogleSansFamily,
+                                                            fontSize = 11.sp,
+                                                            color = SeekhBlue600
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        HorizontalDivider(color = SeekhBorderGray)
+
+                                        // Quick Parent Story Assigner
+                                        Text(
+                                            text = "📚 Assign Daily Stories to ${profile.name}",
                                             fontFamily = GoogleSansFamily,
                                             fontWeight = FontWeight.Bold,
-                                            fontSize = 13.sp,
-                                            color = Color.White,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis
+                                            fontSize = 15.sp,
+                                            color = SeekhTextPrimary
                                         )
+                                        val parentGroup = readingGroups.firstOrNull()
+                                        allBooks.take(4).forEach { bookItem ->
+                                            val isAssigned = assignedBookIdsSet.contains(bookItem.id)
+                                            val isCompletedByChild = profile.completedBookIds.contains(bookItem.id)
+                                            Surface(
+                                                shape = RoundedCornerShape(14.dp),
+                                                color = SeekhSurfaceGray,
+                                                border = BorderStroke(1.dp, if (isAssigned) SeekhGreen500 else SeekhBorderGray),
+                                                modifier = Modifier.fillMaxWidth()
+                                            ) {
+                                                Row(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(10.dp),
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.SpaceBetween
+                                                ) {
+                                                    Row(
+                                                        modifier = Modifier.weight(1f),
+                                                        verticalAlignment = Alignment.CenterVertically,
+                                                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                                    ) {
+                                                        Box(
+                                                            modifier = Modifier
+                                                                .size(42.dp)
+                                                                .clip(RoundedCornerShape(10.dp))
+                                                        ) {
+                                                            AssetWebpImage(
+                                                                assetPath = bookItem.coverAssetPath,
+                                                                contentDescription = bookItem.title,
+                                                                modifier = Modifier.fillMaxSize(),
+                                                                contentScale = ContentScale.Crop
+                                                            )
+                                                        }
+                                                        Column {
+                                                            Text(
+                                                                text = bookItem.title,
+                                                                fontFamily = GoogleSansFamily,
+                                                                fontWeight = FontWeight.Bold,
+                                                                fontSize = 13.sp,
+                                                                color = SeekhTextPrimary,
+                                                                maxLines = 1,
+                                                                overflow = TextOverflow.Ellipsis
+                                                            )
+                                                            Text(
+                                                                text = if (isCompletedByChild) "Level ${bookItem.level} • Completed ✓" else "Level ${bookItem.level} Story",
+                                                                fontFamily = GoogleSansFamily,
+                                                                fontSize = 11.sp,
+                                                                color = if (isCompletedByChild) SeekhGreen600 else SeekhTextSecondary
+                                                            )
+                                                        }
+                                                    }
+                                                    Surface(
+                                                        shape = RoundedCornerShape(50),
+                                                        color = if (isAssigned) SeekhGreen500 else Color.White,
+                                                        border = BorderStroke(1.dp, SeekhGreen500),
+                                                        modifier = Modifier.bouncyClick {
+                                                            if (parentGroup != null) {
+                                                                val updatedIds = if (parentGroup.assignedBookIds.contains(bookItem.id)) {
+                                                                    parentGroup.assignedBookIds - bookItem.id
+                                                                } else {
+                                                                    parentGroup.assignedBookIds + bookItem.id
+                                                                }
+                                                                onUpdateReadingGroup(parentGroup.copy(assignedBookIds = updatedIds))
+                                                            } else {
+                                                                onCreateReadingGroup("Family Reading Plan", "Parent Coach")
+                                                            }
+                                                        }
+                                                    ) {
+                                                        Text(
+                                                            text = if (isAssigned) "Assigned ✓" else "+ Assign",
+                                                            fontFamily = GoogleSansFamily,
+                                                            fontWeight = FontWeight.Bold,
+                                                            fontSize = 11.sp,
+                                                            color = if (isAssigned) Color.White else SeekhGreen600,
+                                                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            else -> {
+                                // TEACHER FLOW: 3-Slide Intro Carousel + Create / Join Reading Group Wizards
+                                val introSlides = listOf(
+                                    "Discover a new way to help children learn language.",
+                                    "You can create reading group and invite multiple children to join.",
+                                    "You’ll be able to monitor each child’s reading activity and speed to improve their reading."
+                                )
+                                Surface(
+                                    shape = RoundedCornerShape(22.dp),
+                                    color = Color.White,
+                                    shadowElevation = 3.dp,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Column(
+                                        modifier = Modifier.padding(18.dp),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text(
+                                            text = introSlides[groupIntroPage % introSlides.size],
+                                            fontFamily = GoogleSansFamily,
+                                            fontWeight = FontWeight.Medium,
+                                            fontSize = 14.sp,
+                                            lineHeight = 20.sp,
+                                            color = SeekhTextPrimary,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.clickable {
+                                                groupIntroPage = (groupIntroPage + 1) % introSlides.size
+                                            }
+                                        )
+                                        Spacer(modifier = Modifier.height(10.dp))
+                                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                            introSlides.indices.forEach { idx ->
+                                                Box(
+                                                    modifier = Modifier
+                                                        .size(if (idx == groupIntroPage) 18.dp else 7.dp, 7.dp)
+                                                        .clip(RoundedCornerShape(50))
+                                                        .background(if (idx == groupIntroPage) SeekhGreen500 else SeekhBorderGray)
+                                                        .clickable { groupIntroPage = idx }
+                                                )
+                                            }
+                                        }
+                                        Spacer(modifier = Modifier.height(14.dp))
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                        ) {
+                                            OutlinedButton(
+                                                onClick = { showJoinGroupWizard = true },
+                                                modifier = Modifier
+                                                    .weight(1f)
+                                                    .height(44.dp),
+                                                shape = RoundedCornerShape(50),
+                                                border = BorderStroke(1.5.dp, SeekhGreen500)
+                                            ) {
+                                                Text(
+                                                    text = "Join group",
+                                                    fontFamily = GoogleSansFamily,
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 13.sp,
+                                                    color = SeekhGreen500
+                                                )
+                                            }
+                                            Button(
+                                                onClick = { showCreateGroupWizard = true },
+                                                modifier = Modifier
+                                                    .weight(1f)
+                                                    .height(44.dp),
+                                                shape = RoundedCornerShape(50),
+                                                colors = ButtonDefaults.buttonColors(containerColor = SeekhGreen500)
+                                            ) {
+                                                Text(
+                                                    text = "Create reading group",
+                                                    fontFamily = GoogleSansFamily,
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 13.sp,
+                                                    color = Color.White,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis
+                                                )
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -2004,7 +2647,7 @@ fun ActivityTabScreen(
                     }
                 }
 
-                // Active Reading Group Cards (tapping opens the 3-Tab Reading Group Classroom Admin Screen res/_b.xml)
+                // Active Reading Group Cards (tapping opens the 3-Tab Reading Group Classroom Admin Screen)
                 items(readingGroups) { group ->
                     Surface(
                         shape = RoundedCornerShape(22.dp),
@@ -2012,7 +2655,7 @@ fun ActivityTabScreen(
                         shadowElevation = 4.dp,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable {
+                            .bouncyClick {
                                 selectedGroupForAdmin = group
                                 onSpeakText("Opening ${group.name} reading group.")
                             }
@@ -2032,9 +2675,9 @@ fun ActivityTabScreen(
                                         color = SeekhTextPrimary
                                     )
                                     Text(
-                                        text = "Teacher / Admin: ${group.adminName} • ${group.languageTitle}",
+                                        text = "Admin: ${group.adminName} • Code: ${group.inviteCode} • ${group.assignedBookIds.size} homework stories",
                                         fontFamily = GoogleSansFamily,
-                                        fontSize = 13.sp,
+                                        fontSize = 12.sp,
                                         color = SeekhTextSecondary
                                     )
                                 }
@@ -2043,7 +2686,7 @@ fun ActivityTabScreen(
                                     color = SeekhGreenSoft
                                 ) {
                                     Text(
-                                        text = "View activity",
+                                        text = "Manage →",
                                         fontFamily = GoogleSansFamily,
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 12.sp,
@@ -2065,7 +2708,7 @@ fun ActivityTabScreen(
 
                             Spacer(modifier = Modifier.height(8.dp))
 
-                            group.members.take(3).forEach { member ->
+                            group.members.take(4).forEach { member ->
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -2083,13 +2726,21 @@ fun ActivityTabScreen(
                                             borderWidth = 1.dp,
                                             borderColor = SeekhBorderGray
                                         )
-                                        Text(
-                                            text = member.name,
-                                            fontFamily = GoogleSansFamily,
-                                            fontWeight = FontWeight.Medium,
-                                            fontSize = 15.sp,
-                                            color = SeekhTextPrimary
-                                        )
+                                        Column {
+                                            Text(
+                                                text = member.name,
+                                                fontFamily = GoogleSansFamily,
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 14.sp,
+                                                color = SeekhTextPrimary
+                                            )
+                                            Text(
+                                                text = "${member.storiesRead} stories • ${member.gamesPlayed} games • ${member.stars} ⭐",
+                                                fontFamily = GoogleSansFamily,
+                                                fontSize = 11.sp,
+                                                color = SeekhTextSecondary
+                                            )
+                                        }
                                     }
                                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                         Text(
@@ -2116,10 +2767,12 @@ fun ActivityTabScreen(
         }
     }
 
-    // 3-Tab Reading Group Classroom Admin Screen (res/_b.xml: Activity | Popular stories | Settings)
+    // 3-Tab Reading Group Classroom Admin Screen (Students Roster | Homework Assigner | Settings & Invite)
     selectedGroupForAdmin?.let { activeGroup ->
+        val latestGroup = readingGroups.firstOrNull { it.id == activeGroup.id } ?: activeGroup
         ReadingGroupAdminDashboardDialog(
-            group = activeGroup,
+            group = latestGroup,
+            allProfiles = allProfiles,
             allBooks = allBooks,
             onOpenBook = { book ->
                 selectedGroupForAdmin = null
@@ -2138,7 +2791,7 @@ fun ActivityTabScreen(
         )
     }
 
-    // Multi-Step "Create reading group" Guided Wizard (HybridUserGroupCreateOobeActivity -> Profile -> Verify -> Language -> Name -> Confirmation)
+    // Multi-Step "Create reading group" Guided Wizard
     if (showCreateGroupWizard) {
         CreateReadingGroupWizardDialog(
             profiles = allProfiles,
@@ -2151,21 +2804,21 @@ fun ActivityTabScreen(
         )
     }
 
-    // Multi-Step "Join a reading group" Guided Wizard (HybridUserGroupJoinOobeActivity -> Profile -> Verify -> Confirmation)
+    // Multi-Step "Join a reading group" Guided Wizard
     if (showJoinGroupWizard) {
         JoinReadingGroupWizardDialog(
             profiles = allProfiles,
             activeProfile = profile,
             onDismiss = { showJoinGroupWizard = false },
-            onGroupJoined = { inviteCode ->
-                onJoinReadingGroup(inviteCode)
+            onGroupJoined = { inviteCode, chosenProfile ->
+                onJoinReadingGroupForProfile(inviteCode, chosenProfile)
                 showJoinGroupWizard = false
             }
         )
     }
 }
 
-// 3b. Authentic 5-Step "Create reading group" Guided Wizard (matching HybridUserGroupCreateOobeActivity & string_values.txt lines 912-980)
+// 3b. Authentic 5-Step "Create reading group" Guided Wizard (with Real Interactive Adult Math Gate in Step 3!)
 @Composable
 fun CreateReadingGroupWizardDialog(
     profiles: List<LearnerProfile>,
@@ -2173,10 +2826,11 @@ fun CreateReadingGroupWizardDialog(
     onDismiss: () -> Unit,
     onGroupCreated: (String, String) -> Unit
 ) {
-    var step by remember { mutableIntStateOf(1) } // 1: Intro & Privacy, 2: Select Admin Profile, 3: Adult Verify, 4: Select Language, 5: Name Group & Confirmation
+    var step by remember { mutableIntStateOf(1) } // 1: Intro & Privacy, 2: Select Admin Profile, 3: Adult Verify Math Gate, 4: Select Language, 5: Name Group & Confirmation
     var selectedAdminProfile by remember { mutableStateOf(activeProfile) }
     var selectedLang by remember { mutableStateOf(SeekhCatalog.supportedLanguages.first()) }
     var groupName by remember { mutableStateOf("") }
+    var selectedMathAnswer by remember { mutableIntStateOf(24) }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -2196,7 +2850,6 @@ fun CreateReadingGroupWizardDialog(
                     .padding(22.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
-                // Top step header
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -2223,7 +2876,6 @@ fun CreateReadingGroupWizardDialog(
 
                 when (step) {
                     1 -> {
-                        // Step 1: Intro & Privacy Explainer (user_group_create_intro_4..6 + user_group_create_privacy_1..3)
                         Text(
                             text = "Your privacy is important to us.",
                             fontFamily = GoogleSansFamily,
@@ -2240,7 +2892,6 @@ fun CreateReadingGroupWizardDialog(
                         )
                     }
                     2 -> {
-                        // Step 2: Select Admin Profile (user_group_create_select_profile_text)
                         Text(
                             text = "Select your profile",
                             fontFamily = GoogleSansFamily,
@@ -2282,44 +2933,70 @@ fun CreateReadingGroupWizardDialog(
                         }
                     }
                     3 -> {
-                        // Step 3: Adult Teacher Verification (user_group_create_verify_text)
                         Text(
-                            text = "Verify to create reading group",
+                            text = "Adult Teacher / Parent Gate",
                             fontFamily = GoogleSansFamily,
                             fontWeight = FontWeight.ExtraBold,
                             fontSize = 20.sp,
                             color = SeekhTextPrimary
                         )
                         Text(
-                            text = "Please verify that you are an adult and can manage the reading group as an admin or teacher.",
+                            text = "Please solve this adult verification check to manage the reading group as a teacher or parent: What is 6 × 4?",
                             fontFamily = GoogleSansFamily,
                             fontSize = 14.sp,
                             lineHeight = 20.sp,
                             color = SeekhTextSecondary
                         )
-                        Surface(
-                            shape = RoundedCornerShape(16.dp),
-                            color = SeekhGreenSoft,
-                            modifier = Modifier.fillMaxWidth()
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            Row(
-                                modifier = Modifier.padding(14.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            listOf(18, 24, 28, 32).forEach { ans ->
+                                val isChosen = selectedMathAnswer == ans
+                                Surface(
+                                    shape = RoundedCornerShape(14.dp),
+                                    color = if (isChosen) SeekhGreen500 else SeekhSurfaceGray,
+                                    border = BorderStroke(1.dp, if (isChosen) SeekhGreen500 else SeekhBorderGray),
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .bouncyClick { selectedMathAnswer = ans }
+                                ) {
+                                    Text(
+                                        text = "$ans",
+                                        fontFamily = GoogleSansFamily,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        fontSize = 16.sp,
+                                        color = if (isChosen) Color.White else SeekhTextPrimary,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.padding(vertical = 10.dp)
+                                    )
+                                }
+                            }
+                        }
+                        if (selectedMathAnswer == 24) {
+                            Surface(
+                                shape = RoundedCornerShape(16.dp),
+                                color = SeekhGreenSoft,
+                                modifier = Modifier.fillMaxWidth()
                             ) {
-                                Icon(imageVector = Icons.Default.VerifiedUser, contentDescription = null, tint = SeekhGreen600)
-                                Text(
-                                    text = "Adult Teacher / Parent Verified (${selectedAdminProfile.name})",
-                                    fontFamily = GoogleSansFamily,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 14.sp,
-                                    color = SeekhGreen900
-                                )
+                                Row(
+                                    modifier = Modifier.padding(14.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                ) {
+                                    Icon(imageVector = Icons.Default.VerifiedUser, contentDescription = null, tint = SeekhGreen600)
+                                    Text(
+                                        text = "Adult Teacher / Parent Verified (${selectedAdminProfile.name})",
+                                        fontFamily = GoogleSansFamily,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 14.sp,
+                                        color = SeekhGreen900
+                                    )
+                                }
                             }
                         }
                     }
                     4 -> {
-                        // Step 4: Select Group Language (user_group_language_selection_text)
                         Text(
                             text = "Select the language of stories for the reading group",
                             fontFamily = GoogleSansFamily,
@@ -2371,7 +3048,6 @@ fun CreateReadingGroupWizardDialog(
                         }
                     }
                     else -> {
-                        // Step 5: Name Reading Group & Confirmation (user_group_set_name_text + user_group_create_confirmation_text)
                         Text(
                             text = "Name your reading group",
                             fontFamily = GoogleSansFamily,
@@ -2398,6 +3074,7 @@ fun CreateReadingGroupWizardDialog(
 
                 Button(
                     onClick = {
+                        if (step == 3 && selectedMathAnswer != 24) return@Button
                         if (step < 5) {
                             step++
                         } else {
@@ -2427,17 +3104,18 @@ fun CreateReadingGroupWizardDialog(
     }
 }
 
-// 3c. Authentic 3-Step "Join a reading group" Guided Wizard (matching HybridUserGroupJoinOobeActivity & string_values.txt lines 985-1039)
+// 3c. Authentic 3-Step "Join a reading group" Guided Wizard (Passes chosen Student Profile + Adult Verification!)
 @Composable
 fun JoinReadingGroupWizardDialog(
     profiles: List<LearnerProfile>,
     activeProfile: LearnerProfile,
     onDismiss: () -> Unit,
-    onGroupJoined: (String) -> Unit
+    onGroupJoined: (String, LearnerProfile) -> Unit
 ) {
     var step by remember { mutableIntStateOf(1) } // 1: Enter Code & Intro, 2: Select Child Profile & Privacy, 3: Adult Verify & Go to group now
     var inviteCode by remember { mutableStateOf("SEEKH-305") }
     var selectedChildProfile by remember { mutableStateOf(activeProfile) }
+    var selectedMathAnswer by remember { mutableIntStateOf(15) }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -2491,7 +3169,7 @@ fun JoinReadingGroupWizardDialog(
                             color = SeekhTextPrimary
                         )
                         Text(
-                            text = "• Reading group is created by teacher / admin where multiple children can read stories.\n• The teacher / admin sets the language for the reading group.\n• They can follow your child’s progress to help improve their reading.",
+                            text = "• Reading group is created by teacher / admin where multiple children can read stories.\n• The teacher / admin sets the language and assigns homework stories.\n• They can follow your child’s progress to help improve their reading.",
                             fontFamily = GoogleSansFamily,
                             fontSize = 14.sp,
                             lineHeight = 20.sp,
@@ -2500,7 +3178,7 @@ fun JoinReadingGroupWizardDialog(
                         OutlinedTextField(
                             value = inviteCode,
                             onValueChange = { inviteCode = it },
-                            label = { Text("Enter code here", fontFamily = GoogleSansFamily) },
+                            label = { Text("Enter invite code (e.g. SEEKH-305)", fontFamily = GoogleSansFamily) },
                             singleLine = true,
                             shape = RoundedCornerShape(14.dp),
                             modifier = Modifier.fillMaxWidth()
@@ -2536,40 +3214,75 @@ fun JoinReadingGroupWizardDialog(
                                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                                 ) {
                                     ProfileAvatarCircle(avatarIndex = p.avatarIndex, size = 44.dp)
-                                    Text(
-                                        text = p.name,
-                                        fontFamily = GoogleSansFamily,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 15.sp,
-                                        color = SeekhTextPrimary
-                                    )
+                                    Column {
+                                        Text(
+                                            text = p.name,
+                                            fontFamily = GoogleSansFamily,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 15.sp,
+                                            color = SeekhTextPrimary
+                                        )
+                                        Text(
+                                            text = "${p.completedBookIds.size} stories read • ${p.stars} ⭐",
+                                            fontFamily = GoogleSansFamily,
+                                            fontSize = 12.sp,
+                                            color = SeekhGreen600
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
                     else -> {
                         Text(
-                            text = "Verify & Confirm",
+                            text = "Parent / Adult Verification",
                             fontFamily = GoogleSansFamily,
                             fontWeight = FontWeight.ExtraBold,
                             fontSize = 20.sp,
                             color = SeekhTextPrimary
                         )
                         Text(
-                            text = "Please verify that you are an adult who can make the decision for ${selectedChildProfile.name} to join this reading group (${inviteCode.uppercase()}).",
+                            text = "Please verify that you are an adult authorizing ${selectedChildProfile.name} to join group (${inviteCode.uppercase()}): What is 5 × 3?",
                             fontFamily = GoogleSansFamily,
                             fontSize = 14.sp,
                             color = SeekhTextSecondary
                         )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            listOf(12, 15, 18, 20).forEach { ans ->
+                                val isChosen = selectedMathAnswer == ans
+                                Surface(
+                                    shape = RoundedCornerShape(14.dp),
+                                    color = if (isChosen) SeekhGreen500 else SeekhSurfaceGray,
+                                    border = BorderStroke(1.dp, if (isChosen) SeekhGreen500 else SeekhBorderGray),
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .bouncyClick { selectedMathAnswer = ans }
+                                ) {
+                                    Text(
+                                        text = "$ans",
+                                        fontFamily = GoogleSansFamily,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        fontSize = 16.sp,
+                                        color = if (isChosen) Color.White else SeekhTextPrimary,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.padding(vertical = 10.dp)
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
 
                 Button(
                     onClick = {
+                        if (step == 3 && selectedMathAnswer != 15) return@Button
                         if (step < 3) {
                             step++
                         } else {
-                            onGroupJoined(inviteCode.trim().ifEmpty { "SEEKH-305" })
+                            onGroupJoined(inviteCode.trim().ifEmpty { "SEEKH-305" }, selectedChildProfile)
                         }
                     },
                     modifier = Modifier
@@ -2590,10 +3303,12 @@ fun JoinReadingGroupWizardDialog(
     }
 }
 
-// 3d. Reading Group 3-Tab Classroom Admin Dashboard (res/_b.xml: Activity | Popular stories | Settings + Member removal & Story Activity detail)
+// 3d. Reading Group 3-Tab Classroom Admin Dashboard (Students Roster & Detailed Report | Homework Assigner | Settings & Invite)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ReadingGroupAdminDashboardDialog(
     group: ReadingGroup,
+    allProfiles: List<LearnerProfile>,
     allBooks: List<StoryBook>,
     onOpenBook: (StoryBook) -> Unit,
     onUpdateGroup: (ReadingGroup) -> Unit,
@@ -2601,12 +3316,21 @@ private fun ReadingGroupAdminDashboardDialog(
     onSpeakText: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val tabs = listOf("Activity", "Popular stories", "Settings")
-    var selectedTab by remember { mutableStateOf("Activity") }
-    var metricFilter by remember { mutableStateOf("Overall activity") } // Overall activity | Reading | Speed (res/kc.xml)
+    val tabs = listOf("Students", "Homework", "Settings")
+    var selectedTab by remember { mutableStateOf("Students") }
+    var metricFilter by remember { mutableStateOf("Overall activity") } // Overall activity | Reading | Speed
+    var selectedStudentReport by remember { mutableStateOf<GroupMemberStat?>(null) }
     var editedName by remember(group.name) { mutableStateOf(group.name) }
     var newStudentName by remember { mutableStateOf("") }
     var linkCopiedBanner by remember { mutableStateOf(false) }
+
+    val unEnrolledDeviceProfiles = remember(allProfiles, group.members) {
+        allProfiles.filter { p ->
+            group.members.none { m ->
+                (m.profileId.isNotBlank() && m.profileId == p.id) || m.name.equals(p.name, ignoreCase = true)
+            }
+        }
+    }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -2615,18 +3339,18 @@ private fun ReadingGroupAdminDashboardDialog(
         Surface(
             modifier = Modifier
                 .fillMaxWidth(0.95f)
-                .fillMaxHeight(0.88f),
+                .fillMaxHeight(0.90f),
             shape = RoundedCornerShape(24.dp),
             color = Color.White,
             shadowElevation = 10.dp
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
-                // Top Header
+                // Top Header with Invite Code Badge
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(SeekhGreen500)
-                        .padding(horizontal = 18.dp, vertical = 16.dp)
+                        .padding(horizontal = 18.dp, vertical = 14.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -2637,15 +3361,16 @@ private fun ReadingGroupAdminDashboardDialog(
                             Text(
                                 text = group.name,
                                 fontFamily = GoogleSansFamily,
-                                fontWeight = FontWeight.Bold,
+                                fontWeight = FontWeight.ExtraBold,
                                 fontSize = 20.sp,
                                 color = Color.White
                             )
                             Text(
-                                text = "${group.adminName} • ${group.languageTitle} • Created ${group.createdDate}",
+                                text = "Teacher: ${group.adminName} • Invite Code: ${group.inviteCode}",
                                 fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.Medium,
                                 fontSize = 12.sp,
-                                color = Color.White.copy(alpha = 0.9f)
+                                color = Color.White.copy(alpha = 0.92f)
                             )
                         }
                         IconButton(onClick = onDismiss) {
@@ -2658,7 +3383,7 @@ private fun ReadingGroupAdminDashboardDialog(
                     }
                 }
 
-                // 3 Tabs Bar (Activity | Popular stories | Settings from res/_b.xml)
+                // 3 Tabs Bar (Students | Homework | Settings)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -2668,22 +3393,28 @@ private fun ReadingGroupAdminDashboardDialog(
                 ) {
                     tabs.forEach { tab ->
                         val active = selectedTab == tab
+                        val label = when (tab) {
+                            "Students" -> "Students (${group.members.size})"
+                            "Homework" -> "Homework (${group.assignedBookIds.size})"
+                            else -> "Settings"
+                        }
                         Surface(
                             shape = RoundedCornerShape(50),
                             color = if (active) SeekhGreen500 else Color.White,
                             border = BorderStroke(1.dp, if (active) SeekhGreen500 else SeekhBorderGray),
                             modifier = Modifier
                                 .weight(1f)
-                                .clickable { selectedTab = tab }
+                                .bouncyClick { selectedTab = tab }
                         ) {
                             Text(
-                                text = tab,
+                                text = label,
                                 fontFamily = GoogleSansFamily,
                                 fontWeight = if (active) FontWeight.Bold else FontWeight.Medium,
-                                fontSize = 13.sp,
+                                fontSize = 12.sp,
                                 color = if (active) Color.White else SeekhTextPrimary,
                                 textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(vertical = 8.dp)
+                                maxLines = 1,
+                                modifier = Modifier.padding(vertical = 8.dp, horizontal = 4.dp)
                             )
                         }
                     }
@@ -2696,11 +3427,11 @@ private fun ReadingGroupAdminDashboardDialog(
                         .fillMaxWidth()
                         .verticalScroll(rememberScrollState())
                         .padding(18.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     when (selectedTab) {
-                        "Activity" -> {
-                            // Metric Filter Chips (from res/kc.xml: Overall activity | Reading | Speed)
+                        "Students" -> {
+                            // Metric Filter Chips (Overall activity | Reading | Speed)
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -2726,97 +3457,115 @@ private fun ReadingGroupAdminDashboardDialog(
                             }
 
                             Text(
-                                text = when (metricFilter) {
-                                    "Reading" -> "Children reading"
-                                    "Speed" -> "Average reading speed this week. In words per minute (wpm)"
-                                    else -> "Children reading and playing games"
-                                },
+                                text = "Tap any student to view their detailed homework & reading speed report:",
                                 fontFamily = GoogleSansFamily,
                                 fontSize = 12.sp,
                                 color = SeekhTextSecondary
                             )
 
-                            Text(
-                                text = "Active children (${group.members.count { it.isActiveThisWeek }}/${group.members.size})",
-                                fontFamily = GoogleSansFamily,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp,
-                                color = SeekhGreen600
-                            )
-
                             group.members.forEachIndexed { index, member ->
                                 val vehicle = SeekhCatalog.getVehicleForWpm(member.speedWpm)
+                                val isExpanded = selectedStudentReport?.name == member.name
+                                val hwDoneCount = group.assignedBookIds.count { member.completedBookIds.contains(it) }
+
                                 Surface(
                                     shape = RoundedCornerShape(16.dp),
-                                    color = SeekhSurfaceGray,
-                                    border = BorderStroke(1.dp, SeekhBorderGray),
-                                    modifier = Modifier.fillMaxWidth()
+                                    color = if (isExpanded) SeekhGreenSoft else SeekhSurfaceGray,
+                                    border = BorderStroke(if (isExpanded) 1.5.dp else 1.dp, if (isExpanded) SeekhGreen500 else SeekhBorderGray),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .bouncyClick {
+                                            selectedStudentReport = if (isExpanded) null else member
+                                        }
                                 ) {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(12.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.SpaceBetween
-                                    ) {
+                                    Column(modifier = Modifier.padding(12.dp)) {
                                         Row(
+                                            modifier = Modifier.fillMaxWidth(),
                                             verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                            horizontalArrangement = Arrangement.SpaceBetween
                                         ) {
-                                            Text(
-                                                text = "#${index + 1}",
-                                                fontFamily = GoogleSansFamily,
-                                                fontWeight = FontWeight.Bold,
-                                                fontSize = 14.sp,
-                                                color = SeekhGreen600
-                                            )
-                                            ProfileAvatarCircle(
-                                                avatarIndex = member.avatarIndex,
-                                                size = 40.dp,
-                                                borderWidth = 1.dp,
-                                                borderColor = SeekhGreen500
-                                            )
-                                            Column {
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                                modifier = Modifier.weight(1f)
+                                            ) {
                                                 Text(
-                                                    text = member.name,
+                                                    text = "#${index + 1}",
                                                     fontFamily = GoogleSansFamily,
                                                     fontWeight = FontWeight.Bold,
+                                                    fontSize = 14.sp,
+                                                    color = SeekhGreen600
+                                                )
+                                                ProfileAvatarCircle(
+                                                    avatarIndex = member.avatarIndex,
+                                                    size = 42.dp,
+                                                    borderWidth = 1.dp,
+                                                    borderColor = SeekhGreen500
+                                                )
+                                                Column {
+                                                    Text(
+                                                        text = member.name,
+                                                        fontFamily = GoogleSansFamily,
+                                                        fontWeight = FontWeight.Bold,
+                                                        fontSize = 15.sp,
+                                                        color = SeekhTextPrimary
+                                                    )
+                                                    Text(
+                                                        text = when (metricFilter) {
+                                                            "Reading" -> "${member.storiesRead} stories • Homework: $hwDoneCount/${group.assignedBookIds.size}"
+                                                            "Speed" -> "${vehicle.name} ${vehicle.emoji} • ${member.stars} ⭐"
+                                                            else -> "Stories (${member.storiesRead}) • Games (${member.gamesPlayed}) • HW ($hwDoneCount/${group.assignedBookIds.size})"
+                                                        },
+                                                        fontFamily = GoogleSansFamily,
+                                                        fontSize = 11.sp,
+                                                        color = SeekhTextSecondary
+                                                    )
+                                                }
+                                            }
+
+                                            Column(horizontalAlignment = Alignment.End) {
+                                                Text(
+                                                    text = if (metricFilter == "Speed") "${member.speedWpm} wpm" else "${member.minutesThisWeek} min",
+                                                    fontFamily = GoogleSansFamily,
+                                                    fontWeight = FontWeight.ExtraBold,
                                                     fontSize = 15.sp,
-                                                    color = SeekhTextPrimary
+                                                    color = SeekhGreen600
                                                 )
                                                 Text(
-                                                    text = when (metricFilter) {
-                                                        "Reading" -> "${member.storiesRead} stories • Last active: ${member.lastActiveLabel}"
-                                                        "Speed" -> "${vehicle.name} ${vehicle.emoji}"
-                                                        else -> "Reading (${member.storiesRead}) • Game (${member.gamesPlayed})"
-                                                    },
+                                                    text = if (metricFilter == "Speed") "${member.minutesThisWeek} min" else "${member.speedWpm} wpm",
                                                     fontFamily = GoogleSansFamily,
-                                                    fontSize = 12.sp,
-                                                    color = SeekhTextSecondary
+                                                    fontSize = 11.sp,
+                                                    color = SeekhBlue600
                                                 )
                                             }
                                         }
 
-                                        Column(horizontalAlignment = Alignment.End) {
+                                        // Expanded Student Progress Report Card
+                                        if (isExpanded) {
+                                            Spacer(modifier = Modifier.height(10.dp))
+                                            HorizontalDivider(color = SeekhGreen500.copy(alpha = 0.25f))
+                                            Spacer(modifier = Modifier.height(8.dp))
                                             Text(
-                                                text = if (metricFilter == "Speed") "${member.speedWpm} wpm" else "${member.minutesThisWeek} min",
+                                                text = "📊 ${member.name}'s Classroom Report Card",
                                                 fontFamily = GoogleSansFamily,
-                                                fontWeight = FontWeight.Bold,
-                                                fontSize = 15.sp,
-                                                color = SeekhGreen600
+                                                fontWeight = FontWeight.ExtraBold,
+                                                fontSize = 13.sp,
+                                                color = SeekhGreen900
                                             )
+                                            Spacer(modifier = Modifier.height(4.dp))
                                             Text(
-                                                text = if (metricFilter == "Speed") "${member.minutesThisWeek} min" else "${member.speedWpm} wpm",
+                                                text = "• Speed Rank: ${vehicle.emoji} ${vehicle.name} (${member.speedWpm} WPM)\n• Total Stars: ${member.stars} ⭐ • Games Played: ${member.gamesPlayed}\n• Homework Completed: $hwDoneCount of ${group.assignedBookIds.size} assigned stories",
                                                 fontFamily = GoogleSansFamily,
-                                                fontSize = 11.sp,
-                                                color = SeekhBlue600
+                                                fontSize = 12.sp,
+                                                lineHeight = 18.sp,
+                                                color = SeekhTextPrimary
                                             )
                                         }
                                     }
                                 }
                             }
 
-                            // Add Student to Classroom in Real Time
+                            // 1-Tap Enroll Device Profiles + Clean Manual Student Addition (Starts at real 0 stats, never fake numbers!)
                             Surface(
                                 shape = RoundedCornerShape(16.dp),
                                 color = SeekhGreenSoft,
@@ -2833,6 +3582,53 @@ private fun ReadingGroupAdminDashboardDialog(
                                         fontSize = 14.sp,
                                         color = SeekhGreen900
                                     )
+
+                                    if (unEnrolledDeviceProfiles.isNotEmpty()) {
+                                        Text(
+                                            text = "Quick-enroll child profiles on this device (Live Synced):",
+                                            fontFamily = GoogleSansFamily,
+                                            fontSize = 12.sp,
+                                            color = SeekhGreen600
+                                        )
+                                        FlowRow(
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                                        ) {
+                                            unEnrolledDeviceProfiles.forEach { devProf ->
+                                                Surface(
+                                                    shape = RoundedCornerShape(50),
+                                                    color = Color.White,
+                                                    border = BorderStroke(1.dp, SeekhGreen500),
+                                                    modifier = Modifier.bouncyClick {
+                                                        val newMember = GroupMemberStat(
+                                                            profileId = devProf.id,
+                                                            name = devProf.name,
+                                                            avatarIndex = devProf.avatarIndex,
+                                                            minutesThisWeek = devProf.weeklyMinutes.sum().coerceAtLeast(devProf.minutesReadToday),
+                                                            storiesRead = devProf.completedBookIds.size,
+                                                            gamesPlayed = devProf.gamesPlayedCount,
+                                                            speedWpm = devProf.wordsPerMinute,
+                                                            stars = devProf.stars,
+                                                            completedBookIds = devProf.completedBookIds,
+                                                            isActiveThisWeek = true
+                                                        )
+                                                        onUpdateGroup(group.copy(members = group.members + newMember))
+                                                        onSpeakText("${devProf.name} enrolled in ${group.name}!")
+                                                    }
+                                                ) {
+                                                    Text(
+                                                        text = "+ Enroll ${devProf.name}",
+                                                        fontFamily = GoogleSansFamily,
+                                                        fontWeight = FontWeight.Bold,
+                                                        fontSize = 12.sp,
+                                                        color = SeekhGreen600,
+                                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -2841,7 +3637,7 @@ private fun ReadingGroupAdminDashboardDialog(
                                         OutlinedTextField(
                                             value = newStudentName,
                                             onValueChange = { newStudentName = it },
-                                            placeholder = { Text("Student name", fontFamily = GoogleSansFamily, fontSize = 13.sp) },
+                                            placeholder = { Text("New student name", fontFamily = GoogleSansFamily, fontSize = 13.sp) },
                                             singleLine = true,
                                             shape = RoundedCornerShape(12.dp),
                                             modifier = Modifier.weight(1f)
@@ -2852,13 +3648,16 @@ private fun ReadingGroupAdminDashboardDialog(
                                                 val added = GroupMemberStat(
                                                     name = sName,
                                                     avatarIndex = (group.members.size % 12) + 1,
-                                                    minutesThisWeek = (45..95).random(),
-                                                    storiesRead = (4..11).random(),
-                                                    speedWpm = (52..82).random(),
-                                                    isActiveThisWeek = true
+                                                    minutesThisWeek = 0,
+                                                    storiesRead = 0,
+                                                    gamesPlayed = 0,
+                                                    speedWpm = 0,
+                                                    stars = 0,
+                                                    isActiveThisWeek = false,
+                                                    lastActiveLabel = "Just enrolled"
                                                 )
                                                 onUpdateGroup(group.copy(members = group.members + added))
-                                                onSpeakText("$sName added to ${group.name}!")
+                                                onSpeakText("$sName enrolled in ${group.name} starting at zero progress!")
                                                 newStudentName = ""
                                             },
                                             shape = RoundedCornerShape(50),
@@ -2871,26 +3670,30 @@ private fun ReadingGroupAdminDashboardDialog(
                             }
                         }
 
-                        "Popular stories" -> {
-                            // Matching res/Fk.xml ("Popular stories in this reading group" + "Reading this week (X/Y)")
+                        "Homework" -> {
+                            // Teacher & Parent Story Homework Assigner Tab
                             Text(
-                                text = "Popular stories in this reading group",
+                                text = "Assign stories to students in ${group.name}",
                                 fontFamily = GoogleSansFamily,
-                                fontWeight = FontWeight.Bold,
+                                fontWeight = FontWeight.ExtraBold,
                                 fontSize = 16.sp,
                                 color = SeekhTextPrimary
                             )
+                            Text(
+                                text = "Assigned stories appear immediately in the Student's Library & Activity Homework checklist:",
+                                fontFamily = GoogleSansFamily,
+                                fontSize = 12.sp,
+                                color = SeekhTextSecondary
+                            )
 
-                            val popularBooks = allBooks.take(6)
-                            popularBooks.forEachIndexed { idx, book ->
-                                val activeReaders = (group.members.size - (idx % 2)).coerceAtLeast(1)
+                            allBooks.forEach { book ->
+                                val isAssigned = group.assignedBookIds.contains(book.id)
+                                val completedByStudents = group.members.count { it.completedBookIds.contains(book.id) }
                                 Surface(
                                     shape = RoundedCornerShape(16.dp),
-                                    color = SeekhSurfaceGray,
-                                    border = BorderStroke(1.dp, SeekhBorderGray),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable { onOpenBook(book) }
+                                    color = if (isAssigned) SeekhGreenSoft else SeekhSurfaceGray,
+                                    border = BorderStroke(1.dp, if (isAssigned) SeekhGreen500 else SeekhBorderGray),
+                                    modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Row(
                                         modifier = Modifier
@@ -2900,13 +3703,15 @@ private fun ReadingGroupAdminDashboardDialog(
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
                                         Row(
-                                            modifier = Modifier.weight(1f),
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .clickable { onOpenBook(book) },
                                             verticalAlignment = Alignment.CenterVertically,
                                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                                         ) {
                                             Box(
                                                 modifier = Modifier
-                                                    .size(56.dp)
+                                                    .size(54.dp)
                                                     .clip(RoundedCornerShape(12.dp))
                                             ) {
                                                 AssetWebpImage(
@@ -2921,29 +3726,52 @@ private fun ReadingGroupAdminDashboardDialog(
                                                     text = book.title,
                                                     fontFamily = GoogleSansFamily,
                                                     fontWeight = FontWeight.Bold,
-                                                    fontSize = 15.sp,
-                                                    color = SeekhTextPrimary
+                                                    fontSize = 14.sp,
+                                                    color = SeekhTextPrimary,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis
                                                 )
                                                 Text(
-                                                    text = "Reading this week ($activeReaders/${group.members.size})",
+                                                    text = "Level ${book.level} • Completed by $completedByStudents/${group.members.size} students",
                                                     fontFamily = GoogleSansFamily,
-                                                    fontSize = 12.sp,
-                                                    color = SeekhGreen600
+                                                    fontSize = 11.sp,
+                                                    color = if (isAssigned) SeekhGreen600 else SeekhTextSecondary
                                                 )
                                             }
                                         }
-                                        Icon(
-                                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                            contentDescription = "Read",
-                                            tint = SeekhGreen500
-                                        )
+
+                                        Surface(
+                                            shape = RoundedCornerShape(50),
+                                            color = if (isAssigned) SeekhGreen500 else Color.White,
+                                            border = BorderStroke(1.5.dp, SeekhGreen500),
+                                            modifier = Modifier.bouncyClick {
+                                                val updatedAssigned = if (isAssigned) {
+                                                    group.assignedBookIds - book.id
+                                                } else {
+                                                    group.assignedBookIds + book.id
+                                                }
+                                                onUpdateGroup(group.copy(assignedBookIds = updatedAssigned))
+                                                onSpeakText(
+                                                    if (isAssigned) "Removed ${book.title} from homework."
+                                                    else "Assigned ${book.title} to ${group.name}!"
+                                                )
+                                            }
+                                        ) {
+                                            Text(
+                                                text = if (isAssigned) "Assigned ✓" else "+ Assign",
+                                                fontFamily = GoogleSansFamily,
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 12.sp,
+                                                color = if (isAssigned) Color.White else SeekhGreen600,
+                                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp)
+                                            )
+                                        }
                                     }
                                 }
                             }
                         }
 
                         "Settings" -> {
-                            // Matching res/Ns.xml ("Reading group", "Created by", "Language", "Date you created this group", "Members in this group", "Invite children", "Copy invitation link", "Edit group name", "Delete group")
                             Surface(
                                 shape = RoundedCornerShape(16.dp),
                                 color = SeekhSurfaceGray,
@@ -2956,13 +3784,13 @@ private fun ReadingGroupAdminDashboardDialog(
                                 ) {
                                     Text("Reading group: ${group.name}", fontFamily = GoogleSansFamily, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                                     Text("Teacher / Admin: ${group.adminName}", fontFamily = GoogleSansFamily, fontSize = 13.sp, color = SeekhTextSecondary)
+                                    Text("Invite Code: ${group.inviteCode}", fontFamily = GoogleSansFamily, fontWeight = FontWeight.Bold, fontSize = 13.sp, color = SeekhGreen600)
                                     Text("Language: ${group.languageTitle}", fontFamily = GoogleSansFamily, fontSize = 13.sp, color = SeekhTextSecondary)
-                                    Text("Date you created this group: ${group.createdDate}", fontFamily = GoogleSansFamily, fontSize = 13.sp, color = SeekhTextSecondary)
+                                    Text("Date created: ${group.createdDate}", fontFamily = GoogleSansFamily, fontSize = 13.sp, color = SeekhTextSecondary)
                                     Text("Members in this group: ${group.members.size}", fontFamily = GoogleSansFamily, fontSize = 13.sp, color = SeekhTextSecondary)
                                 }
                             }
 
-                            // Members list with remove option (remove_group_member)
                             Text(
                                 text = "Members in this group (Tap remove icon to remove member)",
                                 fontFamily = GoogleSansFamily,
@@ -3004,7 +3832,6 @@ private fun ReadingGroupAdminDashboardDialog(
                                 }
                             }
 
-                            // Invite children & Copy invitation link (fragment_settings_invite_children_action & fragment_settings_copy_invitation_link_action)
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -3012,7 +3839,7 @@ private fun ReadingGroupAdminDashboardDialog(
                                 Button(
                                     onClick = {
                                         linkCopiedBanner = true
-                                        onSpeakText("Invitation link has been copied successfully! Code: ${group.inviteCode}")
+                                        onSpeakText("Invitation code ${group.inviteCode} copied!")
                                     },
                                     modifier = Modifier.weight(1f),
                                     shape = RoundedCornerShape(50),
@@ -3020,7 +3847,7 @@ private fun ReadingGroupAdminDashboardDialog(
                                 ) {
                                     Icon(imageVector = Icons.Default.PersonAdd, contentDescription = null, modifier = Modifier.size(16.dp))
                                     Spacer(modifier = Modifier.width(6.dp))
-                                    Text("Invite children", fontFamily = GoogleSansFamily, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                                    Text("Invite (${group.inviteCode})", fontFamily = GoogleSansFamily, fontWeight = FontWeight.Bold, fontSize = 12.sp)
                                 }
                                 OutlinedButton(
                                     onClick = {
@@ -3040,7 +3867,6 @@ private fun ReadingGroupAdminDashboardDialog(
                                 }
                             }
 
-                            // Edit group name (fragment_settings_edit_group_action)
                             Text(
                                 text = "Edit group name",
                                 fontFamily = GoogleSansFamily,
@@ -3076,7 +3902,6 @@ private fun ReadingGroupAdminDashboardDialog(
 
                             HorizontalDivider(color = SeekhBorderGray)
 
-                            // Delete group / Leave reading group (fragment_settings_delete_group_action)
                             OutlinedButton(
                                 onClick = {
                                     onSpeakText("Reading group ${group.name} deleted.")

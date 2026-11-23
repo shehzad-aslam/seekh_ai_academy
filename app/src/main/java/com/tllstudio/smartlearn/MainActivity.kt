@@ -212,6 +212,11 @@ fun SeekhRootApp(
         }
         profiles = updatedList
         repository.saveProfiles(updatedList)
+        if (readingGroups.isNotEmpty()) {
+            val syncedGroups = repository.syncReadingGroupsWithProfiles(readingGroups, updatedList)
+            readingGroups = syncedGroups
+            repository.saveReadingGroups(syncedGroups)
+        }
     }
 
     fun recordReadingTimeAndProgress(
@@ -664,6 +669,7 @@ fun SeekhRootApp(
                                     profile = activeProfile,
                                     selectedLanguage = selectedLanguage,
                                     accountState = accountState,
+                                    readingGroups = readingGroups,
                                     turnedInAssignmentIds = turnedInAssignmentIds,
                                     downloadedCloudBookIds = downloadedCloudBookIds,
                                     downloadingBookIds = downloadingBookIds,
@@ -752,6 +758,11 @@ fun SeekhRootApp(
                                         voiceEngine.playTapSound()
                                         selectedMainTab = MainTab.LIBRARY
                                     },
+                                    onSelectProfile = { chosenProfId ->
+                                        activeProfileId = chosenProfId
+                                        repository.setActiveProfileId(chosenProfId)
+                                        voiceEngine.playSuccessChime()
+                                    },
                                     onUpdateDailyGoal = { newGoal ->
                                         voiceEngine.playSuccessChime()
                                         updateActiveProfile { p -> p.copy(dailyGoalMinutes = newGoal) }
@@ -767,14 +778,19 @@ fun SeekhRootApp(
                                             createdDate = "Nov 2026",
                                             members = listOf(
                                                 GroupMemberStat(
+                                                    profileId = activeProfile.id,
                                                     name = activeProfile.name,
                                                     avatarIndex = activeProfile.avatarIndex,
-                                                    minutesThisWeek = activeProfile.weeklyMinutes.sum(),
+                                                    minutesThisWeek = activeProfile.weeklyMinutes.sum().coerceAtLeast(activeProfile.minutesReadToday),
                                                     storiesRead = activeProfile.completedBookIds.size,
+                                                    gamesPlayed = activeProfile.gamesPlayedCount,
                                                     speedWpm = activeProfile.wordsPerMinute,
+                                                    stars = activeProfile.stars,
+                                                    completedBookIds = activeProfile.completedBookIds,
                                                     isActiveThisWeek = true
                                                 )
-                                            )
+                                            ),
+                                            assignedBookIds = listOf("sw_13916", "book_rained_fish")
                                         )
                                         val updated = listOf(newGroup) + readingGroups
                                         readingGroups = updated
@@ -783,31 +799,101 @@ fun SeekhRootApp(
                                         voiceEngine.speak("Reading group $gName created! Share code $code with students.")
                                     },
                                     onJoinReadingGroup = { code ->
-                                        val joinedGroup = ReadingGroup(
-                                            id = "rg_join_${System.currentTimeMillis()}",
-                                            name = "Joined Group (${code.uppercase()})",
-                                            adminName = "Partner Teacher",
-                                            languageTitle = selectedLanguage.title,
-                                            inviteCode = code.uppercase(),
-                                            createdDate = "Nov 2026",
-                                            members = listOf(
-                                                GroupMemberStat(
+                                        val cleanCode = code.trim().uppercase()
+                                        val existingGroup = readingGroups.firstOrNull { it.inviteCode.equals(cleanCode, ignoreCase = true) }
+                                        if (existingGroup != null) {
+                                            val alreadyIn = existingGroup.members.any { it.profileId == activeProfile.id || it.name.equals(activeProfile.name, ignoreCase = true) }
+                                            if (!alreadyIn) {
+                                                val newMember = GroupMemberStat(
+                                                    profileId = activeProfile.id,
                                                     name = activeProfile.name,
                                                     avatarIndex = activeProfile.avatarIndex,
-                                                    minutesThisWeek = activeProfile.weeklyMinutes.sum(),
+                                                    minutesThisWeek = activeProfile.weeklyMinutes.sum().coerceAtLeast(activeProfile.minutesReadToday),
                                                     storiesRead = activeProfile.completedBookIds.size,
+                                                    gamesPlayed = activeProfile.gamesPlayedCount,
                                                     speedWpm = activeProfile.wordsPerMinute,
+                                                    stars = activeProfile.stars,
+                                                    completedBookIds = activeProfile.completedBookIds,
                                                     isActiveThisWeek = true
+                                                )
+                                                val updated = readingGroups.map {
+                                                    if (it.id == existingGroup.id) it.copy(members = it.members + newMember) else it
+                                                }
+                                                readingGroups = updated
+                                                repository.saveReadingGroups(updated)
+                                            }
+                                        } else {
+                                            val joinedGroup = ReadingGroup(
+                                                id = "rg_join_${System.currentTimeMillis()}",
+                                                name = "Classroom ($cleanCode)",
+                                                adminName = "Classroom Teacher",
+                                                languageTitle = selectedLanguage.title,
+                                                inviteCode = cleanCode,
+                                                createdDate = "Nov 2026",
+                                                members = listOf(
+                                                    GroupMemberStat(
+                                                        profileId = activeProfile.id,
+                                                        name = activeProfile.name,
+                                                        avatarIndex = activeProfile.avatarIndex,
+                                                        minutesThisWeek = activeProfile.weeklyMinutes.sum().coerceAtLeast(activeProfile.minutesReadToday),
+                                                        storiesRead = activeProfile.completedBookIds.size,
+                                                        gamesPlayed = activeProfile.gamesPlayedCount,
+                                                        speedWpm = activeProfile.wordsPerMinute,
+                                                        stars = activeProfile.stars,
+                                                        completedBookIds = activeProfile.completedBookIds,
+                                                        isActiveThisWeek = true
+                                                    )
                                                 ),
-                                                GroupMemberStat(name = "Amina", avatarIndex = 4, minutesThisWeek = 78, storiesRead = 9, speedWpm = 64, isActiveThisWeek = true),
-                                                GroupMemberStat(name = "Bilal", avatarIndex = 7, minutesThisWeek = 65, storiesRead = 7, speedWpm = 58, isActiveThisWeek = true)
+                                                assignedBookIds = listOf("sw_13916", "book_rained_fish")
                                             )
-                                        )
-                                        val updated = listOf(joinedGroup) + readingGroups
-                                        readingGroups = updated
-                                        repository.saveReadingGroups(updated)
+                                            val updated = listOf(joinedGroup) + readingGroups
+                                            readingGroups = updated
+                                            repository.saveReadingGroups(updated)
+                                        }
                                         voiceEngine.playSuccessChime()
-                                        voiceEngine.speak("Successfully joined reading group $code!")
+                                        voiceEngine.speak("Successfully joined reading group $cleanCode!")
+                                    },
+                                    onJoinReadingGroupForProfile = { code, chosenChild ->
+                                        val cleanCode = code.trim().uppercase()
+                                        val existingGroup = readingGroups.firstOrNull { it.inviteCode.equals(cleanCode, ignoreCase = true) }
+                                        val childMember = GroupMemberStat(
+                                            profileId = chosenChild.id,
+                                            name = chosenChild.name,
+                                            avatarIndex = chosenChild.avatarIndex,
+                                            minutesThisWeek = chosenChild.weeklyMinutes.sum().coerceAtLeast(chosenChild.minutesReadToday),
+                                            storiesRead = chosenChild.completedBookIds.size,
+                                            gamesPlayed = chosenChild.gamesPlayedCount,
+                                            speedWpm = chosenChild.wordsPerMinute,
+                                            stars = chosenChild.stars,
+                                            completedBookIds = chosenChild.completedBookIds,
+                                            isActiveThisWeek = true
+                                        )
+                                        if (existingGroup != null) {
+                                            val alreadyIn = existingGroup.members.any { it.profileId == chosenChild.id || it.name.equals(chosenChild.name, ignoreCase = true) }
+                                            if (!alreadyIn) {
+                                                val updated = readingGroups.map {
+                                                    if (it.id == existingGroup.id) it.copy(members = it.members + childMember) else it
+                                                }
+                                                readingGroups = updated
+                                                repository.saveReadingGroups(updated)
+                                            }
+                                        } else {
+                                            val joinedGroup = ReadingGroup(
+                                                id = "rg_join_${System.currentTimeMillis()}",
+                                                name = "Classroom ($cleanCode)",
+                                                adminName = "Classroom Teacher",
+                                                languageTitle = selectedLanguage.title,
+                                                inviteCode = cleanCode,
+                                                createdDate = "Nov 2026",
+                                                members = listOf(childMember),
+                                                assignedBookIds = listOf("sw_13916", "book_rained_fish")
+                                            )
+                                            val updated = listOf(joinedGroup) + readingGroups
+                                            readingGroups = updated
+                                            repository.saveReadingGroups(updated)
+                                        }
+                                        voiceEngine.playSuccessChime()
+                                        voiceEngine.speak("${chosenChild.name} joined reading group $cleanCode!")
                                     },
                                     onUpdateReadingGroup = { updatedGroup ->
                                         voiceEngine.playSuccessChime()
@@ -895,7 +981,8 @@ fun SeekhRootApp(
                         } else {
                             voiceEngine.speak("Awesome reading ${activeProfile.name}! You finished reading ${completedBook.title} again!")
                         }
-                        if (completedBook.bookSource == "CLASSROOM" || completedBook.assignedByTeacher.isNotBlank()) {
+                        val isGroupHomework = readingGroups.any { it.assignedBookIds.contains(completedBook.id) }
+                        if (isGroupHomework || completedBook.bookSource == "CLASSROOM" || completedBook.assignedByTeacher.isNotBlank()) {
                             repository.markAssignmentTurnedIn(completedBook.id)
                             turnedInAssignmentIds = repository.getTurnedInAssignmentIds()
                         }
@@ -987,6 +1074,11 @@ fun SeekhRootApp(
                     buddyMood = buddyMood,
                     onSpeakText = { voiceEngine.speak(it) },
                     onAwardStars = { awardStarsToActiveProfile(it, isFromGame = true) },
+                    onUpdateWpm = { achievedWpm ->
+                        updateActiveProfile { p ->
+                            p.copy(wordsPerMinute = if (p.wordsPerMinute == 0) achievedWpm else maxOf(p.wordsPerMinute, achievedWpm))
+                        }
+                    },
                     onBack = {
                         navigateBack()
                     }

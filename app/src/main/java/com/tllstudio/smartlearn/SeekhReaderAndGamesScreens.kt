@@ -1672,7 +1672,8 @@ private fun ThreeStepProgressIndicator(
     }
 }
 
-// 2. Play Store Screenshot #3: Jumbled Words Game Screen (res/GC.xml — with ThreeStepProgressView, Speaker Icon beside Tiles, Wrong-Letter Red Undo Indicator & Flying Stars!)
+// 2. Jumbled Words Game Screen (with Clue & Bilingual Meaning Card, Smart Hint Button, Responsive Dynamic Tile Widths, 3-Word Round Celebration & Zero Duplicate Stars!)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun JumbledWordsGameScreen(
     profile: LearnerProfile,
@@ -1683,13 +1684,12 @@ fun JumbledWordsGameScreen(
     onAwardStars: (Int) -> Unit,
     onBack: () -> Unit
 ) {
-    // Show "Choose a level" screen when toggled from top bar or after game over, while starting directly on Easy "apples" so deep-link JUMBLE matches Play Store Screenshot #3 immediately
     var showLevelPicker by remember { mutableStateOf(false) }
     var isHardLevel by remember { mutableStateOf(false) }
 
     BackHandler {
         if (showLevelPicker) {
-            onBack()
+            showLevelPicker = false
         } else {
             onBack()
         }
@@ -1705,7 +1705,7 @@ fun JumbledWordsGameScreen(
                 showLevelPicker = false
             },
             onSpeakText = onSpeakText,
-            onBack = onBack
+            onBack = { showLevelPicker = false }
         )
         return
     }
@@ -1715,46 +1715,87 @@ fun JumbledWordsGameScreen(
         list.ifEmpty { SeekhCatalog.jumbleChallenges }
     }
     var challengeIdx by remember(isHardLevel) { mutableIntStateOf(0) }
+    var wordsSolvedInSet by remember(isHardLevel) { mutableIntStateOf(0) }
+    var showSetCompleteBanner by remember(isHardLevel) { mutableStateOf(false) }
     val challenge = filteredChallenges[challengeIdx % filteredChallenges.size]
     val targetWord = challenge.word.lowercase()
+    val urduMeaning = remember(targetWord) { SeekhCatalog.getWordTranslation(targetWord, "en_ur") }
 
     data class LetterTile(val id: Int, val char: Char)
 
-    // On challengeIdx == 0 ("apples" Easy), start with 'a', 'p' placed and 's','l','e','p' in top pool to match Play Store Screenshot #3 1:1
     var placedTiles by remember(challengeIdx, isHardLevel) {
-        if (challengeIdx == 0 && !isHardLevel && targetWord == "apples") {
-            mutableStateOf(listOf(LetterTile(0, 'a'), LetterTile(1, 'p')))
-        } else {
-            mutableStateOf(emptyList())
-        }
+        mutableStateOf(emptyList<LetterTile>())
     }
 
     var poolTiles by remember(challengeIdx, isHardLevel) {
-        if (challengeIdx == 0 && !isHardLevel && targetWord == "apples") {
-            mutableStateOf(
-                listOf(
-                    LetterTile(2, 's'),
-                    LetterTile(3, 'l'),
-                    LetterTile(4, 'e'),
-                    LetterTile(5, 'p')
-                )
-            )
-        } else {
-            val chars = targetWord.mapIndexed { idx, c -> LetterTile(idx, c) }.shuffled()
-            mutableStateOf(chars)
+        val rawTiles = targetWord.mapIndexed { idx, c -> LetterTile(idx, c) }
+        var shuffled = rawTiles.shuffled()
+        if (shuffled.map { it.char }.joinToString("") == targetWord && rawTiles.size > 1) {
+            shuffled = rawTiles.reversed()
         }
+        mutableStateOf(shuffled)
     }
 
     var hasWrongLastTile by remember(challengeIdx, isHardLevel) { mutableStateOf(false) }
     var isWordSolved by remember(challengeIdx, isHardLevel) { mutableStateOf(false) }
     var starBurstTrigger by remember { mutableIntStateOf(0) }
 
-    // Auto-advance to next word 1.5s after solving
+    // Speak the target word & hint automatically when each round begins
+    LaunchedEffect(challengeIdx, isHardLevel) {
+        onSpeakText("Unscramble the letters to spell: ${challenge.word}. ${challenge.hint}")
+    }
+
+    // Auto-advance to next word (or show 3-word set celebration) 1.4s after solving
     LaunchedEffect(isWordSolved) {
         if (isWordSolved) {
-            delay(1500)
-            challengeIdx++
+            delay(1400)
+            val nextSetCount = wordsSolvedInSet + 1
+            if (nextSetCount >= 3) {
+                wordsSolvedInSet = 3
+                showSetCompleteBanner = true
+            } else {
+                wordsSolvedInSet = nextSetCount
+                challengeIdx++
+            }
         }
+    }
+
+    // Helper for Smart Hint Button: places the next correct letter automatically
+    val useSmartHint: () -> Unit = {
+        if (!isWordSolved) {
+            var currentPlaced = placedTiles
+            var currentPool = poolTiles
+            if (hasWrongLastTile && currentPlaced.isNotEmpty()) {
+                val lastWrong = currentPlaced.last()
+                currentPlaced = currentPlaced.dropLast(1)
+                currentPool = currentPool + lastWrong
+                hasWrongLastTile = false
+            }
+            val nextSlotIdx = currentPlaced.size
+            val neededChar = targetWord.getOrNull(nextSlotIdx)
+            val matchingTile = currentPool.firstOrNull { it.char == neededChar }
+            if (matchingTile != null) {
+                onPlayPhoneme(matchingTile.char.code)
+                val newPlaced = currentPlaced + matchingTile
+                placedTiles = newPlaced
+                poolTiles = currentPool.filterNot { it.id == matchingTile.id }
+                if (newPlaced.size == targetWord.length) {
+                    isWordSolved = true
+                    starBurstTrigger++
+                    onAwardStars(20)
+                    onSpeakText("Excellent! You spelled ${challenge.word} correctly!")
+                } else {
+                    onSpeakText("Hint: starts with ${newPlaced.map { it.char }.joinToString("")}")
+                }
+            }
+        }
+    }
+
+    val adaptiveSlotWidth = remember(targetWord.length) {
+        (312 / targetWord.length.coerceAtLeast(4)).coerceIn(36, 52).dp
+    }
+    val adaptiveSlotHeight = remember(targetWord.length) {
+        if (targetWord.length >= 8) 48.dp else 56.dp
     }
 
     Box(
@@ -1762,11 +1803,11 @@ fun JumbledWordsGameScreen(
             .fillMaxSize()
             .background(SeekhJumblePurple)
     ) {
-        // Curved two-tone purple wave in the lower half matching Play Store Screenshot #3
+        // Curved two-tone purple wave in the lower half
         Canvas(modifier = Modifier.fillMaxSize()) {
             val w = size.width
             val h = size.height
-            val waveY = h * 0.60f
+            val waveY = h * 0.58f
             val path = Path().apply {
                 moveTo(0f, waveY)
                 quadraticTo(w * 0.5f, waveY + 46.dp.toPx(), w, waveY - 12.dp.toPx())
@@ -1785,7 +1826,7 @@ fun JumbledWordsGameScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // Top Bar matching res/GC.xml (Back arrow, ThreeStepProgressView, Level pill to open Choose a level, Star Counter Pill, Profile Avatar)
+            // Top Bar (Back arrow, ThreeStepProgressView, Level pill, Star Counter Pill, Profile Avatar)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -1802,7 +1843,7 @@ fun JumbledWordsGameScreen(
                     )
                 }
 
-                ThreeStepProgressIndicator(currentStep = challengeIdx)
+                ThreeStepProgressIndicator(currentStep = wordsSolvedInSet.coerceIn(0, 2))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -1811,7 +1852,7 @@ fun JumbledWordsGameScreen(
                     Surface(
                         shape = RoundedCornerShape(50),
                         color = Color(0x38000000),
-                        modifier = Modifier.clickable { showLevelPicker = true }
+                        modifier = Modifier.bouncyClick { showLevelPicker = true }
                     ) {
                         Text(
                             text = if (isHardLevel) "Hard ▾" else "Easy ▾",
@@ -1829,56 +1870,194 @@ fun JumbledWordsGameScreen(
                     )
                     ProfileAvatarCircle(
                         avatarIndex = profile.avatarIndex,
-                        size = 42.dp,
+                        size = 40.dp,
                         borderWidth = 2.dp,
                         borderColor = Color.White
                     )
                 }
             }
 
-            // Center-Upper Pool of White Letter Tiles + Speaker Button matching res/GC.xml lines 74-95 ([s] [l] [e] [p] + Speaker Icon)
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(18.dp)
+            // Clue & Bilingual Meaning Prompt Card + Smart Hint Button
+            Surface(
+                shape = RoundedCornerShape(22.dp),
+                color = Color.White.copy(alpha = 0.16f),
+                border = BorderStroke(1.dp, Color.White.copy(alpha = 0.32f)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 18.dp)
             ) {
-                if (isWordSolved) {
-                    Text(
-                        text = "Well done! +20 ⭐",
-                        fontFamily = GoogleSansFamily,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 26.sp,
-                        color = SeekhYellow500
-                    )
-                }
-
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Surface(
+                                shape = RoundedCornerShape(50),
+                                color = SeekhYellow500
+                            ) {
+                                Text(
+                                    text = "${challenge.category} • ${targetWord.length} letters",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 11.sp,
+                                    color = SeekhTextPrimary,
+                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp)
+                                )
+                            }
+                            if (urduMeaning.isNotBlank() && !urduMeaning.startsWith("A word")) {
+                                Text(
+                                    text = urduMeaning,
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 13.sp,
+                                    color = SeekhYellow500
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = "Clue: ${challenge.hint}",
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp,
+                            color = Color.White
+                        )
+                    }
+
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        // Hear Word Button
+                        Surface(
+                            modifier = Modifier
+                                .size(42.dp)
+                                .bouncyClick {
+                                    onSpeakText("Spell the word: ${challenge.word}. ${challenge.hint}")
+                                },
+                            shape = CircleShape,
+                            color = Color.White.copy(alpha = 0.24f)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.VolumeUp,
+                                    contentDescription = "Hear word",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
+                        }
+
+                        // Smart Hint Button (places next correct letter)
+                        Surface(
+                            modifier = Modifier
+                                .height(42.dp)
+                                .bouncyClick { useSmartHint() },
+                            shape = RoundedCornerShape(50),
+                            color = SeekhYellow500
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Lightbulb,
+                                    contentDescription = "Hint",
+                                    tint = SeekhTextPrimary,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Text(
+                                    text = "Hint",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 12.sp,
+                                    color = SeekhTextPrimary
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Center Pool of White Letter Tiles (FlowRow so long Hard words never overflow!)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.padding(horizontal = 16.dp)
+            ) {
+                if (isWordSolved) {
+                    Surface(
+                        shape = RoundedCornerShape(50),
+                        color = SeekhGreenMint,
+                        shadowElevation = 4.dp
+                    ) {
+                        Text(
+                            text = "Awesome! \"${challenge.word.uppercase()}\" +20 ⭐",
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 18.sp,
+                            color = Color.White,
+                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
+                        )
+                    }
+                } else if (hasWrongLastTile) {
+                    Surface(
+                        shape = RoundedCornerShape(50),
+                        color = SeekhCoralRed
+                    ) {
+                        Text(
+                            text = "Oops! Tap the red letter or Pick another tile",
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp,
+                            color = Color.White,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
+                        )
+                    }
+                } else {
+                    Text(
+                        text = "Tap letters in order to spell the word",
+                        fontFamily = GoogleSansFamily,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 14.sp,
+                        color = Color.White.copy(alpha = 0.85f)
+                    )
+                }
+
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     poolTiles.forEach { tile ->
                         Surface(
                             modifier = Modifier
                                 .padding(horizontal = 5.dp)
-                                .size(width = 62.dp, height = 66.dp)
+                                .size(width = 58.dp, height = 62.dp)
                                 .shadow(6.dp, RoundedCornerShape(14.dp))
-                                .clickable {
+                                .bouncyClick {
+                                    if (isWordSolved) return@bouncyClick
+                                    var currentPlaced = placedTiles
+                                    var currentPool = poolTiles
                                     if (hasWrongLastTile) {
-                                        val lastWrong = placedTiles.lastOrNull()
+                                        val lastWrong = currentPlaced.lastOrNull()
                                         if (lastWrong != null) {
-                                            placedTiles = placedTiles.dropLast(1)
-                                            poolTiles = poolTiles + lastWrong
+                                            currentPlaced = currentPlaced.dropLast(1)
+                                            currentPool = currentPool + lastWrong
                                         }
                                         hasWrongLastTile = false
                                     }
                                     onPlayPhoneme(tile.char.code)
-                                    val nextSlotIndex = placedTiles.size
+                                    val nextSlotIndex = currentPlaced.size
                                     val expectedChar = targetWord.getOrNull(nextSlotIndex)
-                                    val newPlaced = placedTiles + tile
+                                    val newPlaced = currentPlaced + tile
                                     placedTiles = newPlaced
-                                    poolTiles = poolTiles.filterNot { it.id == tile.id }
+                                    poolTiles = currentPool.filterNot { it.id == tile.id }
 
                                     if (expectedChar == tile.char) {
                                         hasWrongLastTile = false
@@ -1891,7 +2070,7 @@ fun JumbledWordsGameScreen(
                                     } else {
                                         hasWrongLastTile = true
                                         onPlayErrorTone()
-                                        onSpeakText("These two letters cannot come together here. Tap undo to try another letter!")
+                                        onSpeakText("Try another letter here!")
                                     }
                                 },
                             shape = RoundedCornerShape(14.dp),
@@ -1901,48 +2080,27 @@ fun JumbledWordsGameScreen(
                                 Text(
                                     text = tile.char.toString(),
                                     fontFamily = GoogleSansFamily,
-                                    fontWeight = FontWeight.Medium,
-                                    fontSize = 28.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 26.sp,
                                     color = SeekhJumbleDarkPurple
                                 )
                             }
                         }
                     }
-
-                    // Speaker Icon Button beside letter pool (matching res/GC.xml @0x7f0a0510)
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Surface(
-                        modifier = Modifier
-                            .size(46.dp)
-                            .clickable {
-                                onSpeakText("Spell the word: ${challenge.word}. ${challenge.hint}")
-                            },
-                        shape = CircleShape,
-                        color = Color.White.copy(alpha = 0.22f)
-                    ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.VolumeUp,
-                                contentDescription = "Hear word",
-                                tint = Color.White,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                    }
                 }
             }
 
-            // Lower Answer Slots Row with Green Checkmark / Red Undo Indicator (res/GC.xml lines 102-128)
+            // Lower Answer Slots Row with Responsive Widths + Clear / Skip Controls
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 110.dp),
+                    .padding(bottom = 96.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
+                        .padding(horizontal = 8.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.Bottom
                 ) {
@@ -1952,19 +2110,19 @@ fun JumbledWordsGameScreen(
                         val isWrongTile = isLastPlaced && hasWrongLastTile
 
                         Column(
-                            modifier = Modifier.padding(horizontal = 4.dp),
+                            modifier = Modifier.padding(horizontal = 3.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             if (isLastPlaced) {
                                 Box(
                                     modifier = Modifier
-                                        .padding(bottom = 8.dp)
-                                        .size(34.dp)
+                                        .padding(bottom = 6.dp)
+                                        .size(30.dp)
                                         .shadow(3.dp, CircleShape)
                                         .clip(CircleShape)
                                         .background(if (isWrongTile) SeekhCoralRed else SeekhGreenMint)
                                         .border(2.dp, Color.White, CircleShape)
-                                        .clickable {
+                                        .bouncyClick {
                                             if (placedTile != null && !isWordSolved) {
                                                 placedTiles = placedTiles.dropLast(1)
                                                 poolTiles = poolTiles + placedTile
@@ -1977,19 +2135,19 @@ fun JumbledWordsGameScreen(
                                         imageVector = if (isWrongTile) Icons.AutoMirrored.Filled.Undo else Icons.Default.Check,
                                         contentDescription = if (isWrongTile) "Undo Letter" else "Correct Letter",
                                         tint = Color.White,
-                                        modifier = Modifier.size(20.dp)
+                                        modifier = Modifier.size(18.dp)
                                     )
                                 }
                             } else {
-                                Spacer(modifier = Modifier.height(42.dp))
+                                Spacer(modifier = Modifier.height(36.dp))
                             }
 
                             if (placedTile != null) {
                                 Surface(
                                     modifier = Modifier
-                                        .size(width = 50.dp, height = 56.dp)
+                                        .size(width = adaptiveSlotWidth, height = adaptiveSlotHeight)
                                         .shadow(4.dp, RoundedCornerShape(10.dp))
-                                        .clickable {
+                                        .bouncyClick {
                                             if (!isWordSolved && slotIdx == placedTiles.size - 1) {
                                                 placedTiles = placedTiles.dropLast(1)
                                                 poolTiles = poolTiles + placedTile
@@ -2003,8 +2161,8 @@ fun JumbledWordsGameScreen(
                                         Text(
                                             text = placedTile.char.toString(),
                                             fontFamily = GoogleSansFamily,
-                                            fontWeight = FontWeight.Medium,
-                                            fontSize = 24.sp,
+                                            fontWeight = FontWeight.ExtraBold,
+                                            fontSize = if (targetWord.length >= 8) 20.sp else 23.sp,
                                             color = if (isWrongTile) Color.White else SeekhJumbleDarkPurple
                                         )
                                     }
@@ -2012,7 +2170,7 @@ fun JumbledWordsGameScreen(
                             } else {
                                 Box(
                                     modifier = Modifier
-                                        .size(width = 50.dp, height = 56.dp)
+                                        .size(width = adaptiveSlotWidth, height = adaptiveSlotHeight)
                                         .clip(RoundedCornerShape(10.dp))
                                         .background(SeekhJumbleSlotPurple)
                                 ) {
@@ -2032,6 +2190,129 @@ fun JumbledWordsGameScreen(
                         }
                     }
                 }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                // Quick Clear & Next Word Row
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (placedTiles.isNotEmpty() && !isWordSolved) {
+                        Surface(
+                            modifier = Modifier.bouncyClick {
+                                poolTiles = (poolTiles + placedTiles).shuffled()
+                                placedTiles = emptyList()
+                                hasWrongLastTile = false
+                            },
+                            shape = RoundedCornerShape(50),
+                            color = Color.White.copy(alpha = 0.20f)
+                        ) {
+                            Text(
+                                text = "↺ Reset Letters",
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp,
+                                color = Color.White,
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp)
+                            )
+                        }
+                    }
+                    Surface(
+                        modifier = Modifier.bouncyClick {
+                            if (!isWordSolved) {
+                                challengeIdx++
+                            }
+                        },
+                        shape = RoundedCornerShape(50),
+                        color = Color.White.copy(alpha = 0.16f)
+                    ) {
+                        Text(
+                            text = "Skip Word →",
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp,
+                            color = Color.White.copy(alpha = 0.92f),
+                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp)
+                        )
+                    }
+                }
+            }
+        }
+
+        // 3-Word Set Completion Celebration Modal Overlay
+        if (showSetCompleteBanner) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0x99000000)),
+                contentAlignment = Alignment.Center
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(28.dp),
+                    color = Color.White,
+                    shadowElevation = 12.dp,
+                    modifier = Modifier
+                        .fillMaxWidth(0.88f)
+                        .padding(16.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            repeat(3) { GoldenStarIcon(size = 36.dp) }
+                        }
+                        Text(
+                            text = "3 / 3 Words Spelled!",
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 24.sp,
+                            color = SeekhTextPrimary
+                        )
+                        Text(
+                            text = "You earned +60 Golden Stars in Jumbled Words (${if (isHardLevel) "Hard" else "Easy"} Level)!",
+                            fontFamily = GoogleSansFamily,
+                            fontSize = 14.sp,
+                            color = SeekhTextSecondary,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Button(
+                            onClick = {
+                                showSetCompleteBanner = false
+                                wordsSolvedInSet = 0
+                                challengeIdx++
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp),
+                            shape = RoundedCornerShape(50),
+                            colors = ButtonDefaults.buttonColors(containerColor = SeekhGreen500)
+                        ) {
+                            Text("Play Next 3 Words →", fontFamily = GoogleSansFamily, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                        }
+                        OutlinedButton(
+                            onClick = {
+                                showSetCompleteBanner = false
+                                wordsSolvedInSet = 0
+                                isHardLevel = !isHardLevel
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(46.dp),
+                            shape = RoundedCornerShape(50)
+                        ) {
+                            Text(
+                                text = if (isHardLevel) "Switch to Easy Level" else "Try Hard Level ⭐",
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.Bold,
+                                color = SeekhJumblePurple
+                            )
+                        }
+                    }
+                }
             }
         }
 
@@ -2040,8 +2321,8 @@ fun JumbledWordsGameScreen(
         FloatingReadingBuddy(
             mood = buddyMood,
             speechBubbleText = if (hasWrongLastTile) "Tap undo ↶" else null,
-            onClick = { onSpeakText("Spell the word: ${challenge.word}") },
-            size = 82.dp,
+            onClick = { onSpeakText("Spell the word: ${challenge.word}. ${challenge.hint}") },
+            size = 78.dp,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .navigationBarsPadding()
@@ -2050,7 +2331,7 @@ fun JumbledWordsGameScreen(
     }
 }
 
-// 3. Pop The Balloons Phonics Game Screen (res/D-.xml — Compact Top Timer ProgressBar + 60 FPS Rising 3D Glossy Balloons + Flying Stars!)
+// 3. Pop The Balloons Phonics Game Screen (with Phonics Example Banner, Pause/Resume, Non-Cluttered Pop Effect & Round Cleared Celebration!)
 @Composable
 fun PopTheBalloonsGameScreen(
     profile: LearnerProfile,
@@ -2064,9 +2345,14 @@ fun PopTheBalloonsGameScreen(
 ) {
     var showLevelPicker by remember { mutableStateOf(false) }
     var isHardLevel by remember { mutableStateOf(false) }
+    var isPaused by remember { mutableStateOf(false) }
 
     BackHandler {
-        onBack()
+        if (showLevelPicker) {
+            showLevelPicker = false
+        } else {
+            onBack()
+        }
     }
 
     if (showLevelPicker) {
@@ -2079,17 +2365,31 @@ fun PopTheBalloonsGameScreen(
                 showLevelPicker = false
             },
             onSpeakText = onSpeakText,
-            onBack = onBack
+            onBack = { showLevelPicker = false }
         )
         return
     }
 
-    val easyTargets = listOf("S", "B", "M", "P", "T", "C")
-    val hardTargets = listOf("SH", "CH", "TH", "FL", "ST", "TR")
+    val easyTargets = listOf(
+        "S" to "Sun ☀️",
+        "B" to "Ball ⚽",
+        "M" to "Mango 🥭",
+        "P" to "Parrot 🦜",
+        "T" to "Train 🚂",
+        "C" to "Cat 🐱"
+    )
+    val hardTargets = listOf(
+        "SH" to "Ship 🚢",
+        "CH" to "Chair 🪑",
+        "TH" to "Thumb 👍",
+        "FL" to "Flower 🌸",
+        "ST" to "Star ⭐",
+        "TR" to "Tree 🌳"
+    )
     val targets = if (isHardLevel) hardTargets else easyTargets
 
     var roundIdx by remember(isHardLevel) { mutableIntStateOf(0) }
-    val targetLetter = targets[roundIdx % targets.size]
+    val (targetLetter, targetExample) = targets[roundIdx % targets.size]
 
     data class FloatingBalloonState(
         val id: Int,
@@ -2114,9 +2414,9 @@ fun PopTheBalloonsGameScreen(
     var balloons by remember(roundIdx, isHardLevel) {
         val distractors = if (isHardLevel) listOf("BR", "CL", "GR") else listOf("K", "D", "R")
         val letters = listOf(targetLetter, distractors[0], targetLetter, distractors[1], targetLetter, distractors[2])
-        val xPositions = listOf(0.08f, 0.56f, 0.30f, 0.64f, 0.16f, 0.72f)
-        val initialYs = listOf(0.18f, 0.25f, 0.50f, 0.58f, 0.80f, 0.88f)
-        val speeds = listOf(0.0055f, 0.0068f, 0.0050f, 0.0062f, 0.0058f, 0.0065f)
+        val xPositions = listOf(0.06f, 0.38f, 0.70f, 0.14f, 0.46f, 0.72f)
+        val initialYs = listOf(0.20f, 0.36f, 0.24f, 0.64f, 0.78f, 0.68f)
+        val speeds = listOf(0.0048f, 0.0056f, 0.0046f, 0.0054f, 0.0050f, 0.0058f)
         mutableStateOf(
             letters.mapIndexed { idx, l ->
                 FloatingBalloonState(
@@ -2133,34 +2433,39 @@ fun PopTheBalloonsGameScreen(
 
     var poppedCorrectCount by remember(roundIdx, isHardLevel) { mutableIntStateOf(0) }
     var timeRemainingSec by remember(roundIdx, isHardLevel) { mutableIntStateOf(25) }
-    var showPenaltyFlash by remember { mutableStateOf(false) }
     var starBurstTrigger by remember { mutableIntStateOf(0) }
 
-    // Continuous 60fps upward floating loop for balloons
-    LaunchedEffect(roundIdx, isHardLevel, poppedCorrectCount) {
+    // Continuous 60fps upward floating loop for balloons (respects isPaused)
+    LaunchedEffect(roundIdx, isHardLevel, poppedCorrectCount, isPaused) {
         while (poppedCorrectCount < 3 && timeRemainingSec > 0) {
             delay(32)
-            balloons = balloons.map { b ->
-                if (b.isPopped) b
-                else {
-                    val nextY = b.yFraction - b.speedPerTick
-                    if (nextY < -0.15f) b.copy(yFraction = 1.05f, isWrongTapped = false)
-                    else b.copy(yFraction = nextY)
+            if (!isPaused) {
+                balloons = balloons.map { b ->
+                    if (b.isPopped) b
+                    else {
+                        val nextY = b.yFraction - b.speedPerTick
+                        if (nextY < -0.15f) b.copy(yFraction = 1.02f, isWrongTapped = false)
+                        else b.copy(yFraction = nextY)
+                    }
                 }
             }
         }
         if (poppedCorrectCount >= 3) {
-            delay(1300)
+            delay(1500)
             roundIdx++
         }
     }
 
-    // Countdown timer loop
-    LaunchedEffect(roundIdx, isHardLevel) {
-        onSpeakText("Pop the balloons with the sound $targetLetter!")
+    // Countdown timer loop (respects isPaused)
+    LaunchedEffect(roundIdx, isHardLevel, isPaused) {
+        if (!isPaused && timeRemainingSec == 25) {
+            onSpeakText("Pop 3 balloons with the sound $targetLetter, as in $targetExample!")
+        }
         while (timeRemainingSec > 0 && poppedCorrectCount < 3) {
             delay(1000)
-            timeRemainingSec = (timeRemainingSec - 1).coerceAtLeast(0)
+            if (!isPaused) {
+                timeRemainingSec = (timeRemainingSec - 1).coerceAtLeast(0)
+            }
         }
     }
 
@@ -2173,9 +2478,9 @@ fun PopTheBalloonsGameScreen(
                 )
             )
     ) {
-        // Soft Floating White Clouds Canvas Background (matching res/D-.xml bg_clouds)
+        // Soft Floating White Clouds Canvas Background
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val cloudColor = Color.White.copy(alpha = 0.75f)
+            val cloudColor = Color.White.copy(alpha = 0.78f)
             drawCircle(cloudColor, radius = 55.dp.toPx(), center = Offset(size.width * 0.2f, size.height * 0.22f))
             drawCircle(cloudColor, radius = 70.dp.toPx(), center = Offset(size.width * 0.32f, size.height * 0.21f))
             drawCircle(cloudColor, radius = 50.dp.toPx(), center = Offset(size.width * 0.78f, size.height * 0.38f))
@@ -2190,13 +2495,13 @@ fun PopTheBalloonsGameScreen(
                 .navigationBarsPadding(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Exact Reference Top Bar matching res/D-.xml lines 43-128 (Back button, RelativeLayout with Timer ProgressBar + Target Sound Pill + Penalty text, Star Counter Pill)
+            // Top Bar (Back button, Timer Bar + Target Pill, Pause button, Level selector, Star Counter Pill)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp, vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 IconButton(onClick = onBack) {
                     Icon(
@@ -2207,7 +2512,6 @@ fun PopTheBalloonsGameScreen(
                     )
                 }
 
-                // Center Timer ProgressBar + Target Sound Pill (res/D-.xml lines 61-118)
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -2227,36 +2531,54 @@ fun PopTheBalloonsGameScreen(
                         shape = RoundedCornerShape(50),
                         color = SeekhBalloonDarkBlue,
                         shadowElevation = 3.dp,
-                        modifier = Modifier.clickable {
-                            onSpeakText("Pop the balloons with the sound $targetLetter!")
+                        modifier = Modifier.bouncyClick {
+                            onSpeakText("Pop the balloons with the sound $targetLetter, as in $targetExample!")
                         }
                     ) {
                         Row(
-                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 5.dp),
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            horizontalArrangement = Arrangement.spacedBy(5.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.VolumeUp,
                                 contentDescription = null,
                                 tint = Color.White,
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(15.dp)
                             )
                             Text(
-                                text = "\"$targetLetter\" (${poppedCorrectCount}/3)",
+                                text = "\"$targetLetter\" ($poppedCorrectCount/3) • ${timeRemainingSec}s",
                                 fontFamily = GoogleSansFamily,
                                 fontWeight = FontWeight.ExtraBold,
-                                fontSize = 14.sp,
+                                fontSize = 13.sp,
                                 color = Color.White
                             )
                         }
                     }
                 }
 
+                // Pause / Resume Icon Button
+                Surface(
+                    shape = CircleShape,
+                    color = SeekhBalloonDarkBlue.copy(alpha = 0.14f),
+                    modifier = Modifier
+                        .size(34.dp)
+                        .bouncyClick { isPaused = !isPaused }
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = if (isPaused) Icons.Default.PlayArrow else Icons.Default.Pause,
+                            contentDescription = if (isPaused) "Resume" else "Pause",
+                            tint = SeekhBalloonDarkBlue,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+
                 Surface(
                     shape = RoundedCornerShape(50),
                     color = SeekhBalloonDarkBlue.copy(alpha = 0.14f),
-                    modifier = Modifier.clickable { showLevelPicker = true }
+                    modifier = Modifier.bouncyClick { showLevelPicker = true }
                 ) {
                     Text(
                         text = if (isHardLevel) "Hard ▾" else "Easy ▾",
@@ -2275,7 +2597,40 @@ fun PopTheBalloonsGameScreen(
                 )
             }
 
-            // Continuous Rising Balloon Arena (res/D-.xml BalloonGameView)
+            // Target Phonics Sound & Example Word Helper Strip
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = Color.White.copy(alpha = 0.88f),
+                border = BorderStroke(1.dp, SeekhBalloonDarkBlue.copy(alpha = 0.2f)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 18.dp, vertical = 2.dp)
+                    .bouncyClick {
+                        onSpeakText("Find and pop 3 balloons with the sound $targetLetter, like in $targetExample!")
+                    }
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Target sound: \"$targetLetter\" as in $targetExample",
+                        fontFamily = GoogleSansFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = SeekhBalloonDarkBlue
+                    )
+                    ThreeStepProgressIndicator(
+                        currentStep = (poppedCorrectCount - 1).coerceAtLeast(0),
+                        totalSteps = 3,
+                        activeColor = if (poppedCorrectCount > 0) SeekhGreenMint else Color.LightGray,
+                        inactiveColor = SeekhBorderGray
+                    )
+                }
+            }
+
+            // Continuous Rising Balloon Arena
             BoxWithConstraints(
                 modifier = Modifier
                     .weight(1f)
@@ -2286,25 +2641,40 @@ fun PopTheBalloonsGameScreen(
                 val arenaH = maxHeight
 
                 if (timeRemainingSec == 0 && poppedCorrectCount < 3) {
-                    // Game Over Overlay (res/D-.xml @0x7f0a0201 "Game over!")
-                    Column(
-                        modifier = Modifier.align(Alignment.Center),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    Surface(
+                        shape = RoundedCornerShape(26.dp),
+                        color = Color.White,
+                        shadowElevation = 10.dp,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(24.dp)
                     ) {
-                        Text(
-                            text = "Game over!",
-                            fontFamily = GoogleSansFamily,
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 36.sp,
-                            color = SeekhBalloonDarkBlue
-                        )
-                        Spacer(modifier = Modifier.height(14.dp))
-                        Button(
-                            onClick = { roundIdx++ },
-                            shape = RoundedCornerShape(50),
-                            colors = ButtonDefaults.buttonColors(containerColor = SeekhGreen500)
+                        Column(
+                            modifier = Modifier.padding(24.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text("Play Again", fontFamily = GoogleSansFamily, fontWeight = FontWeight.Bold)
+                            Text(
+                                text = "Time's up!",
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 30.sp,
+                                color = SeekhBalloonDarkBlue
+                            )
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = "You popped $poppedCorrectCount of 3 \"$targetLetter\" balloons.",
+                                fontFamily = GoogleSansFamily,
+                                fontSize = 14.sp,
+                                color = SeekhTextSecondary
+                            )
+                            Spacer(modifier = Modifier.height(14.dp))
+                            Button(
+                                onClick = { roundIdx++ },
+                                shape = RoundedCornerShape(50),
+                                colors = ButtonDefaults.buttonColors(containerColor = SeekhGreen500)
+                            ) {
+                                Text("Try Next Sound →", fontFamily = GoogleSansFamily, fontWeight = FontWeight.Bold)
+                            }
                         }
                     }
                 } else {
@@ -2312,107 +2682,124 @@ fun PopTheBalloonsGameScreen(
                         val xPos = arenaW * b.xFraction
                         val yPos = arenaH * b.yFraction
 
-                        Box(
+                        if (!b.isPopped) {
+                            Box(
+                                modifier = Modifier
+                                    .offset(x = xPos, y = yPos)
+                                    .size(width = 96.dp, height = 136.dp)
+                                    .clickable {
+                                        if (isPaused || poppedCorrectCount >= 3) return@clickable
+                                        if (b.letter == targetLetter) {
+                                            onPlayBalloonPop()
+                                            balloons = balloons.map {
+                                                if (it.id == b.id) it.copy(isPopped = true) else it
+                                            }
+                                            val nextCount = poppedCorrectCount + 1
+                                            poppedCorrectCount = nextCount
+                                            starBurstTrigger++
+                                            onAwardStars(10)
+                                            if (nextCount >= 3) {
+                                                onSpeakText("Fantastic! You popped all 3 $targetLetter balloons!")
+                                            }
+                                        } else {
+                                            onPlayErrorTone()
+                                            timeRemainingSec = (timeRemainingSec - 2).coerceAtLeast(1)
+                                            balloons = balloons.map {
+                                                if (it.id == b.id) it.copy(isWrongTapped = true) else it
+                                            }
+                                            onSpeakText("That is ${b.letter}. Look for $targetLetter!")
+                                        }
+                                    },
+                                contentAlignment = Alignment.TopCenter
+                            ) {
+                                Canvas(modifier = Modifier.fillMaxSize()) {
+                                    val bw = 86.dp.toPx()
+                                    val bh = 98.dp.toPx()
+                                    val left = (size.width - bw) / 2f
+                                    drawOval(
+                                        color = b.color,
+                                        topLeft = Offset(left, 0f),
+                                        size = Size(bw, bh)
+                                    )
+                                    drawOval(
+                                        color = Color.White.copy(alpha = 0.35f),
+                                        topLeft = Offset(left + bw * 0.18f, bh * 0.14f),
+                                        size = Size(bw * 0.22f, bh * 0.32f)
+                                    )
+                                    val knotPath = Path().apply {
+                                        moveTo(size.width / 2f, bh - 2f)
+                                        lineTo(size.width / 2f - 7.dp.toPx(), bh + 8.dp.toPx())
+                                        lineTo(size.width / 2f + 7.dp.toPx(), bh + 8.dp.toPx())
+                                        close()
+                                    }
+                                    drawPath(knotPath, color = b.color)
+                                    drawLine(
+                                        color = SeekhBalloonDarkBlue.copy(alpha = 0.55f),
+                                        start = Offset(size.width / 2f, bh + 8.dp.toPx()),
+                                        end = Offset(size.width / 2f, size.height),
+                                        strokeWidth = 2.dp.toPx()
+                                    )
+                                }
+
+                                Text(
+                                    text = b.letter,
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 30.sp,
+                                    color = Color.White,
+                                    modifier = Modifier.padding(top = 26.dp)
+                                )
+
+                                if (b.isWrongTapped) {
+                                    Surface(
+                                        shape = CircleShape,
+                                        color = SeekhCoralRed,
+                                        modifier = Modifier
+                                            .align(Alignment.TopEnd)
+                                            .size(28.dp)
+                                    ) {
+                                        Box(contentAlignment = Alignment.Center) {
+                                            Text("-2s", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Celebratory Banner when all 3 target balloons are popped!
+                    if (poppedCorrectCount >= 3) {
+                        Surface(
+                            shape = RoundedCornerShape(24.dp),
+                            color = Color.White,
+                            shadowElevation = 10.dp,
+                            border = BorderStroke(2.dp, SeekhGreenMint),
                             modifier = Modifier
-                                .offset(x = xPos, y = yPos)
-                                .size(width = 96.dp, height = 136.dp),
-                            contentAlignment = Alignment.TopCenter
+                                .align(Alignment.Center)
+                                .padding(24.dp)
                         ) {
-                            if (!b.isPopped) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .clickable {
-                                            if (b.letter == targetLetter) {
-                                                onPlayBalloonPop()
-                                                balloons = balloons.map {
-                                                    if (it.id == b.id) it.copy(isPopped = true) else it
-                                                }
-                                                val nextCount = poppedCorrectCount + 1
-                                                poppedCorrectCount = nextCount
-                                                starBurstTrigger++
-                                                onAwardStars(10)
-                                                if (nextCount >= 3) {
-                                                    onSpeakText("Fantastic! You popped all the $targetLetter balloons!")
-                                                }
-                                            } else {
-                                                onPlayErrorTone()
-                                                showPenaltyFlash = true
-                                                timeRemainingSec = (timeRemainingSec - 2).coerceAtLeast(1)
-                                                balloons = balloons.map {
-                                                    if (it.id == b.id) it.copy(isWrongTapped = true) else it
-                                                }
-                                                onSpeakText("Look for $targetLetter!")
-                                            }
-                                        },
-                                    contentAlignment = Alignment.TopCenter
-                                ) {
-                                    Canvas(modifier = Modifier.fillMaxSize()) {
-                                        val bw = 86.dp.toPx()
-                                        val bh = 98.dp.toPx()
-                                        val left = (size.width - bw) / 2f
-                                        drawOval(
-                                            color = b.color,
-                                            topLeft = Offset(left, 0f),
-                                            size = Size(bw, bh)
-                                        )
-                                        drawOval(
-                                            color = Color.White.copy(alpha = 0.35f),
-                                            topLeft = Offset(left + bw * 0.18f, bh * 0.14f),
-                                            size = Size(bw * 0.22f, bh * 0.32f)
-                                        )
-                                        val knotPath = Path().apply {
-                                            moveTo(size.width / 2f, bh - 2f)
-                                            lineTo(size.width / 2f - 7.dp.toPx(), bh + 8.dp.toPx())
-                                            lineTo(size.width / 2f + 7.dp.toPx(), bh + 8.dp.toPx())
-                                            close()
-                                        }
-                                        drawPath(knotPath, color = b.color)
-                                        drawLine(
-                                            color = SeekhBalloonDarkBlue.copy(alpha = 0.55f),
-                                            start = Offset(size.width / 2f, bh + 8.dp.toPx()),
-                                            end = Offset(size.width / 2f, size.height),
-                                            strokeWidth = 2.dp.toPx()
-                                        )
-                                    }
-
-                                    Text(
-                                        text = b.letter,
-                                        fontFamily = GoogleSansFamily,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        fontSize = 30.sp,
-                                        color = Color.White,
-                                        modifier = Modifier.padding(top = 26.dp)
-                                    )
-
-                                    if (b.isWrongTapped) {
-                                        Surface(
-                                            shape = CircleShape,
-                                            color = SeekhCoralRed,
-                                            modifier = Modifier
-                                                .align(Alignment.TopEnd)
-                                                .size(28.dp)
-                                        ) {
-                                            Box(contentAlignment = Alignment.Center) {
-                                                Text("-2s", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                                            }
-                                        }
-                                    }
+                            Column(
+                                modifier = Modifier.padding(horizontal = 24.dp, vertical = 18.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    repeat(3) { GoldenStarIcon(size = 32.dp) }
                                 }
-                            } else {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    modifier = Modifier.padding(top = 24.dp)
-                                ) {
-                                    GoldenStarIcon(size = 44.dp)
-                                    Text(
-                                        text = "+10",
-                                        fontFamily = GoogleSansFamily,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 14.sp,
-                                        color = SeekhBalloonDarkBlue
-                                    )
-                                }
+                                Spacer(modifier = Modifier.height(6.dp))
+                                Text(
+                                    text = "3 / 3 \"$targetLetter\" Balloons Popped!",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 20.sp,
+                                    color = SeekhBalloonDarkBlue
+                                )
+                                Text(
+                                    text = "+30 Golden Stars • Next sound loading...",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 13.sp,
+                                    color = SeekhGreen600
+                                )
                             }
                         }
                     }
@@ -2424,9 +2811,9 @@ fun PopTheBalloonsGameScreen(
 
         FloatingReadingBuddy(
             mood = buddyMood,
-            speechBubbleText = "Pop \"$targetLetter\" balloons!",
-            onClick = { onSpeakText("Tap all the balloons that make the sound $targetLetter!") },
-            size = 80.dp,
+            speechBubbleText = "Pop \"$targetLetter\" ($targetExample)!",
+            onClick = { onSpeakText("Tap all the balloons that make the sound $targetLetter, as in $targetExample!") },
+            size = 78.dp,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .navigationBarsPadding()
@@ -2435,13 +2822,14 @@ fun PopTheBalloonsGameScreen(
     }
 }
 
-// 4. Exact Reference Speed Reading Game Screen (HybridSpeechGameActivity — res/96.xml: "Get ready" -> Large 44sp Word + Bottom Circular Timer ProgressBar + "Game over!" with "%d wpm" & Speed Vehicle!)
+// 4. Speed Reading Game Screen (User-Controlled "✓ I Read It!" / Optional Mic Mode — NO Unsolicited Auto-Advancing Free Stars!)
 @Composable
 fun SpeedReadingGameScreen(
     profile: LearnerProfile,
     buddyMood: BuddyMood,
     onSpeakText: (String) -> Unit,
     onAwardStars: (Int) -> Unit,
+    onUpdateWpm: (Int) -> Unit = {},
     onBack: () -> Unit
 ) {
     BackHandler {
@@ -2451,22 +2839,28 @@ fun SpeedReadingGameScreen(
     val speedWords = listOf(
         "butterfly", "yellow", "morning", "friend", "train",
         "rainbow", "clouds", "school", "library", "thunder",
-        "sparkle", "garden", "raincoat", "chocolates", "drummer"
+        "sparkle", "garden", "raincoat", "chocolates", "drummer",
+        "adventure", "sunshine", "bicycle", "umbrella", "treasure"
     )
     var wordIdx by remember { mutableIntStateOf(0) }
     var wordsReadCount by remember { mutableIntStateOf(0) }
     var secondsLeft by remember { mutableIntStateOf(30) }
     var isRunning by remember { mutableStateOf(true) }
+    var isAutoVoiceMicOn by remember { mutableStateOf(false) }
     var starBurstTrigger by remember { mutableIntStateOf(0) }
+
+    val currentWord = speedWords[wordIdx % speedWords.size]
+    val elapsedSec = (30 - secondsLeft).coerceAtLeast(1)
+    val liveWpm = ((wordsReadCount * 60) / elapsedSec).coerceIn(0, 120)
 
     LaunchedEffect(isRunning) {
         if (isRunning) {
-            onSpeakText("Read 30 seconds to know your reading speed! Read out loud or tap the word.")
+            onSpeakText("Read each word out loud and tap 'I Read It' to test your 30 second reading speed!")
             while (secondsLeft > 0 && isRunning) {
                 delay(1000)
                 secondsLeft--
-                // Automatically advance word every 2.5s when voice reading on emulator
-                if (secondsLeft % 3 == 0 && secondsLeft > 0) {
+                // Only auto-advance if user explicitly enabled Auto-Voice Mic mode!
+                if (isAutoVoiceMicOn && secondsLeft % 2 == 0 && secondsLeft > 0) {
                     wordsReadCount++
                     wordIdx++
                     starBurstTrigger++
@@ -2475,15 +2869,29 @@ fun SpeedReadingGameScreen(
             }
             if (secondsLeft == 0) {
                 isRunning = false
-                starBurstTrigger++
-                onAwardStars(30)
-                val finalWpm = (wordsReadCount * 4).coerceAtLeast(54)
-                onSpeakText("Game over! Your reading speed is $finalWpm words per minute!")
+                isAutoVoiceMicOn = false
+                if (wordsReadCount > 0) {
+                    val achievedWpm = (wordsReadCount * 4).coerceIn(28, 110)
+                    starBurstTrigger++
+                    onAwardStars(25)
+                    onUpdateWpm(achievedWpm)
+                    onSpeakText("Time's up! You read $wordsReadCount words with a reading speed of $achievedWpm words per minute!")
+                } else {
+                    onSpeakText("Time's up! Tap Play Again and press 'I Read It' after reading each word.")
+                }
             }
         }
     }
 
-    val currentWord = speedWords[wordIdx % speedWords.size]
+    val markCurrentWordRead: () -> Unit = {
+        if (isRunning) {
+            wordsReadCount++
+            wordIdx++
+            starBurstTrigger++
+            onAwardStars(5)
+            onSpeakText(speedWords[wordIdx % speedWords.size])
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -2506,7 +2914,7 @@ fun SpeedReadingGameScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // Top Bar matching res/96.xml (Back arrow on Left, Star Counter Pill + Profile Avatar on Right)
+            // Top Bar (Back arrow on Left, Auto-Voice Mic Toggle + Star Counter Pill + Profile Avatar on Right)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -2525,8 +2933,39 @@ fun SpeedReadingGameScreen(
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+                    if (isRunning) {
+                        Surface(
+                            shape = RoundedCornerShape(50),
+                            color = if (isAutoVoiceMicOn) SeekhGreen500 else Color.White.copy(alpha = 0.85f),
+                            border = BorderStroke(1.dp, if (isAutoVoiceMicOn) SeekhGreen500 else SeekhSpeedBrown.copy(alpha = 0.3f)),
+                            modifier = Modifier.bouncyClick {
+                                isAutoVoiceMicOn = !isAutoVoiceMicOn
+                            }
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Icon(
+                                    imageVector = if (isAutoVoiceMicOn) Icons.Default.Mic else Icons.Default.MicNone,
+                                    contentDescription = "Voice Mic",
+                                    tint = if (isAutoVoiceMicOn) Color.White else SeekhSpeedBrown,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Text(
+                                    text = if (isAutoVoiceMicOn) "Voice: ON" else "Tap Mode",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 12.sp,
+                                    color = if (isAutoVoiceMicOn) Color.White else SeekhSpeedBrown
+                                )
+                            }
+                        }
+                    }
+
                     StarCounterPill(
                         stars = profile.stars,
                         backgroundColor = SeekhSpeedBrown,
@@ -2534,86 +2973,216 @@ fun SpeedReadingGameScreen(
                     )
                     ProfileAvatarCircle(
                         avatarIndex = profile.avatarIndex,
-                        size = 42.dp,
+                        size = 40.dp,
                         borderWidth = 2.dp,
                         borderColor = Color.White
                     )
                 }
             }
 
-            // Center Word Display matching res/96.xml lines 61-79 (@0x7f0a012c "Get ready" / @0x7f0a012b 44sp word / @0x7f0a0201 "Game over!")
+            // Center Interactive Word Card & Fluency Controls
             Surface(
                 shape = RoundedCornerShape(28.dp),
                 color = Color.White,
                 shadowElevation = 10.dp,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 28.dp)
-                    .clickable {
-                        if (isRunning) {
-                            wordsReadCount++
-                            wordIdx++
-                            starBurstTrigger++
-                            onAwardStars(5)
-                            onSpeakText(speedWords[wordIdx % speedWords.size])
-                        }
-                    }
+                    .padding(horizontal = 22.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 32.dp),
+                    modifier = Modifier.padding(horizontal = 22.dp, vertical = 24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     if (isRunning) {
+                        // Live Words Read & WPM Strip
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Surface(
+                                shape = RoundedCornerShape(50),
+                                color = SeekhGreenSoft
+                            ) {
+                                Text(
+                                    text = "Words Read: $wordsReadCount",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 12.sp,
+                                    color = SeekhGreen600,
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
+                                )
+                            }
+                            Surface(
+                                shape = RoundedCornerShape(50),
+                                color = SeekhBlueSoft
+                            ) {
+                                Text(
+                                    text = "Pace: $liveWpm wpm",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 12.sp,
+                                    color = SeekhBlue600,
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
                         Text(
-                            text = if (secondsLeft >= 28) "Get ready" else "Read out loud",
+                            text = "Read out loud, then tap below:",
                             fontFamily = GoogleSansFamily,
                             fontWeight = FontWeight.Medium,
-                            fontSize = 16.sp,
+                            fontSize = 14.sp,
                             color = SeekhTextSecondary
                         )
-                        Spacer(modifier = Modifier.height(14.dp))
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        // Tap word to mark read or hear pronunciation
                         Text(
                             text = currentWord,
                             fontFamily = GoogleSansFamily,
                             fontWeight = FontWeight.ExtraBold,
-                            fontSize = 44.sp,
+                            fontSize = 42.sp,
                             color = SeekhSpeedBrown,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.bouncyClick { markCurrentWordRead() }
                         )
+
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = SeekhCatalog.getWordSyllables(currentWord),
-                            fontFamily = GoogleSansFamily,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 17.sp,
-                            color = SeekhTextSecondary
-                        )
+
+                        // Clickable Phonetic Syllables + Hear Word Button
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                text = SeekhCatalog.getWordSyllables(currentWord),
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp,
+                                color = SeekhTextSecondary
+                            )
+                            Surface(
+                                shape = CircleShape,
+                                color = SeekhSurfaceGray,
+                                modifier = Modifier
+                                    .size(34.dp)
+                                    .bouncyClick { onSpeakText(currentWord) }
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.VolumeUp,
+                                        contentDescription = "Hear word",
+                                        tint = SeekhSpeedBrown,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(22.dp))
+
+                        // Action Buttons: Skip Word vs "✓ I Read It! (+5 ⭐)"
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            OutlinedButton(
+                                onClick = {
+                                    if (isRunning) {
+                                        wordIdx++
+                                        onSpeakText(speedWords[wordIdx % speedWords.size])
+                                    }
+                                },
+                                modifier = Modifier.height(48.dp),
+                                shape = RoundedCornerShape(50),
+                                border = BorderStroke(1.5.dp, SeekhBorderGray)
+                            ) {
+                                Text(
+                                    text = "Skip →",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    color = SeekhTextSecondary
+                                )
+                            }
+
+                            Button(
+                                onClick = { markCurrentWordRead() },
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(50.dp),
+                                shape = RoundedCornerShape(50),
+                                colors = ButtonDefaults.buttonColors(containerColor = SeekhGreen500)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.CheckCircle,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "I Read It! (+5 ⭐)",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 15.sp
+                                )
+                            }
+                        }
                     } else {
-                        val finalWpm = (wordsReadCount * 4).coerceAtLeast(54)
+                        val finalWpm = if (wordsReadCount == 0) 0 else (wordsReadCount * 4).coerceIn(28, 110)
                         val vehicle = SeekhCatalog.getVehicleForWpm(finalWpm)
                         Text(
-                            text = "Game over!",
+                            text = if (wordsReadCount > 0) "Awesome Reading!" else "Round Finished",
                             fontFamily = GoogleSansFamily,
                             fontWeight = FontWeight.ExtraBold,
-                            fontSize = 26.sp,
+                            fontSize = 24.sp,
                             color = SeekhTextPrimary
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = "$wordsReadCount words read in 30 seconds",
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 14.sp,
+                            color = SeekhTextSecondary
                         )
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
                             text = "$finalWpm wpm",
                             fontFamily = GoogleSansFamily,
                             fontWeight = FontWeight.ExtraBold,
-                            fontSize = 42.sp,
+                            fontSize = 40.sp,
                             color = SeekhSpeedBrown
                         )
-                        Text(
-                            text = "${vehicle.emoji} ${vehicle.name}",
-                            fontFamily = GoogleSansFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp,
-                            color = SeekhGreen600
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Surface(
+                            shape = RoundedCornerShape(16.dp),
+                            color = SeekhGreenSoft,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "${vehicle.emoji} ${vehicle.name}",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 17.sp,
+                                    color = SeekhGreen600
+                                )
+                                Text(
+                                    text = vehicle.description,
+                                    fontFamily = GoogleSansFamily,
+                                    fontSize = 12.sp,
+                                    color = SeekhTextSecondary
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
                         Button(
                             onClick = {
                                 secondsLeft = 30
@@ -2621,20 +3190,23 @@ fun SpeedReadingGameScreen(
                                 wordIdx++
                                 isRunning = true
                             },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(48.dp),
                             shape = RoundedCornerShape(50),
                             colors = ButtonDefaults.buttonColors(containerColor = SeekhGreen500)
                         ) {
-                            Text("Play Again", fontFamily = GoogleSansFamily, fontWeight = FontWeight.Bold)
+                            Text("Play Again", fontFamily = GoogleSansFamily, fontWeight = FontWeight.Bold, fontSize = 15.sp)
                         }
                     }
                 }
             }
 
-            // Bottom Circular Countdown Timer FrameLayout matching res/96.xml lines 80-108 (@0x7f0a00b8: @0x7f0a0498 seconds text + @0x7f0a0497 ProgressBar)
+            // Bottom Circular Countdown Timer
             Box(
                 modifier = Modifier
-                    .padding(bottom = 36.dp)
-                    .size(84.dp)
+                    .padding(bottom = 28.dp)
+                    .size(82.dp)
                     .shadow(6.dp, CircleShape)
                     .clip(CircleShape)
                     .background(Color.White),
@@ -2651,7 +3223,7 @@ fun SpeedReadingGameScreen(
                     text = "${secondsLeft}s",
                     fontFamily = GoogleSansFamily,
                     fontWeight = FontWeight.ExtraBold,
-                    fontSize = 22.sp,
+                    fontSize = 21.sp,
                     color = SeekhSpeedBrown
                 )
             }
@@ -2661,9 +3233,9 @@ fun SpeedReadingGameScreen(
 
         FloatingReadingBuddy(
             mood = if (isRunning) BuddyMood.LISTENING else buddyMood,
-            speechBubbleText = if (isRunning) "Listening..." else null,
+            speechBubbleText = if (isAutoVoiceMicOn) "Listening..." else null,
             onClick = { onSpeakText(currentWord) },
-            size = 80.dp,
+            size = 78.dp,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .navigationBarsPadding()
@@ -2672,7 +3244,7 @@ fun SpeedReadingGameScreen(
     }
 }
 
-// 5. Exact Reference "Word Meanings" Game Screen (HybridGameCategorySelectorActivity 9-Theme Selector res/LF.xml + res/8Q.xml + res/d7.xml -> HybridVocabularyGameActivity res/pr.xml with Automatic Next-Word Progression!)
+// 5. "Word Meanings" Vocabulary Game Screen (9-Theme Selector Hub -> 2x2 Picture Match where word labels reveal on tap + Smart Hint + Zero Duplicate Star Farming!)
 @Composable
 fun VocabularyBuilderGameScreen(
     profile: LearnerProfile,
@@ -2682,8 +3254,7 @@ fun VocabularyBuilderGameScreen(
     onAwardStars: (Int) -> Unit,
     onBack: () -> Unit
 ) {
-    // null = showing the 9-Theme Category Selector Screen (HybridGameCategorySelectorActivity); non-null = playing that theme in res/pr.xml!
-    var selectedTheme by remember { mutableStateOf<String?>("Color") }
+    var selectedTheme by remember { mutableStateOf<String?>(null) }
     var quizRound by remember(selectedTheme) { mutableIntStateOf(0) }
     var starBurstTrigger by remember { mutableIntStateOf(0) }
 
@@ -2695,10 +3266,10 @@ fun VocabularyBuilderGameScreen(
         }
     }
 
-    // 1. 9-Theme Category Selector Screen (HybridGameCategorySelectorActivity: res/LF.xml + res/8Q.xml + res/d7.xml)
+    // 1. 9-Theme Category Selector Hub
     if (selectedTheme == null) {
         LaunchedEffect(Unit) {
-            onSpeakText("Word Meanings. Choose a theme to play!")
+            onSpeakText("Word Meanings. Choose one of the 9 illustrated themes to start!")
         }
 
         Box(
@@ -2706,7 +3277,7 @@ fun VocabularyBuilderGameScreen(
                 .fillMaxSize()
                 .background(SeekhSurfaceGray)
         ) {
-            CurvedGreenHeaderBackground(headerHeight = 185.dp, curveDepth = 30.dp)
+            CurvedGreenHeaderBackground(headerHeight = 195.dp, curveDepth = 30.dp)
 
             Column(
                 modifier = Modifier
@@ -2714,7 +3285,6 @@ fun VocabularyBuilderGameScreen(
                     .statusBarsPadding()
                     .navigationBarsPadding()
             ) {
-                // Toolbar matching res/LF.xml
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -2730,13 +3300,21 @@ fun VocabularyBuilderGameScreen(
                             modifier = Modifier.size(28.dp)
                         )
                     }
-                    Text(
-                        text = "Word Meanings",
-                        fontFamily = GoogleSansFamily,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 21.sp,
-                        color = Color.White
-                    )
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "Word Meanings",
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 21.sp,
+                            color = Color.White
+                        )
+                        Text(
+                            text = "Pick an illustrated theme to play",
+                            fontFamily = GoogleSansFamily,
+                            fontSize = 12.sp,
+                            color = Color.White.copy(alpha = 0.9f)
+                        )
+                    }
                     StarCounterPill(
                         stars = profile.stars,
                         backgroundColor = Color.White.copy(alpha = 0.22f),
@@ -2744,7 +3322,6 @@ fun VocabularyBuilderGameScreen(
                     )
                 }
 
-                // 2-Column RecyclerView Grid of all 9 Official Word Themes (res/8Q.xml + res/d7.xml: Body parts, Color, Seasons, Shapes, Numbers, Expressions, Actions, Places, Vehicles)
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     modifier = Modifier
@@ -2755,11 +3332,14 @@ fun VocabularyBuilderGameScreen(
                     verticalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
                     items(SeekhCatalog.wordMeaningsThemes) { (themeName, iconSvg) ->
+                        val count = remember(themeName) {
+                            SeekhCatalog.vocabularyItems.count { it.category.equals(themeName, ignoreCase = true) }.coerceAtLeast(4)
+                        }
                         Surface(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(132.dp)
-                                .clickable {
+                                .height(142.dp)
+                                .bouncyClick {
                                     selectedTheme = themeName
                                 },
                             shape = RoundedCornerShape(22.dp),
@@ -2777,17 +3357,25 @@ fun VocabularyBuilderGameScreen(
                                 AssetSvgImage(
                                     assetPath = iconSvg,
                                     contentDescription = themeName,
-                                    modifier = Modifier.size(64.dp),
+                                    modifier = Modifier.size(62.dp),
                                     targetPx = 192
                                 )
-                                Text(
-                                    text = themeName,
-                                    fontFamily = GoogleSansFamily,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 15.sp,
-                                    color = SeekhTextPrimary,
-                                    maxLines = 1
-                                )
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text(
+                                        text = themeName,
+                                        fontFamily = GoogleSansFamily,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 15.sp,
+                                        color = SeekhTextPrimary,
+                                        maxLines = 1
+                                    )
+                                    Text(
+                                        text = "$count words • +15 ⭐",
+                                        fontFamily = GoogleSansFamily,
+                                        fontSize = 11.sp,
+                                        color = SeekhGreen600
+                                    )
+                                }
                             }
                         }
                     }
@@ -2797,7 +3385,7 @@ fun VocabularyBuilderGameScreen(
         return
     }
 
-    // 2. Active "Word Meanings" Gameplay Screen matching res/pr.xml!
+    // 2. Active "Word Meanings" Gameplay Screen
     val themeWords = remember(selectedTheme) {
         val filtered = SeekhCatalog.vocabularyItems.filter {
             it.category.equals(selectedTheme, ignoreCase = true)
@@ -2814,17 +3402,16 @@ fun VocabularyBuilderGameScreen(
             .take(3)
         (distractors + quizTarget).shuffled()
     }
-    var answeredWord by remember(quizRound, selectedTheme) { mutableStateOf<String?>(null) }
+    var tappedWords by remember(quizRound, selectedTheme) { mutableStateOf(emptySet<String>()) }
     var isSolvedCorrectly by remember(quizRound, selectedTheme) { mutableStateOf(false) }
 
     LaunchedEffect(selectedTheme, quizRound) {
-        onSpeakText("${quizTarget.word}. ${quizTarget.exampleSentence}")
+        onSpeakText("Find the picture for: ${quizTarget.word}. ${quizTarget.exampleSentence}")
     }
 
-    // Automatic next-word progression 1.2s after tapping the correct picture (zero extra "Next Vocabulary Word" button!)
     LaunchedEffect(isSolvedCorrectly) {
         if (isSolvedCorrectly) {
-            delay(1200)
+            delay(1300)
             quizRound++
         }
     }
@@ -2846,7 +3433,6 @@ fun VocabularyBuilderGameScreen(
                 .statusBarsPadding()
                 .navigationBarsPadding()
         ) {
-            // Top Bar matching res/pr.xml lines 15-42 (Back arrow, FlexboxLayout ThreeStepProgressIndicator, Theme button, Star Counter Pill)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -2872,7 +3458,7 @@ fun VocabularyBuilderGameScreen(
                     Surface(
                         shape = RoundedCornerShape(50),
                         color = Color.White.copy(alpha = 0.20f),
-                        modifier = Modifier.clickable { selectedTheme = null }
+                        modifier = Modifier.bouncyClick { selectedTheme = null }
                     ) {
                         Text(
                             text = "${selectedTheme ?: "Themes"} ▾",
@@ -2891,13 +3477,12 @@ fun VocabularyBuilderGameScreen(
                 }
             }
 
-            // Heading "Word Meanings" matching res/pr.xml line 48 (@0x7f120326 = "Word Meanings")
             Text(
-                text = "Word Meanings",
+                text = "Tap the picture that matches the word",
                 fontFamily = GoogleSansFamily,
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 22.sp,
-                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp,
+                color = Color.White.copy(alpha = 0.92f),
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(bottom = 8.dp)
@@ -2910,14 +3495,14 @@ fun VocabularyBuilderGameScreen(
                     .padding(horizontal = 18.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Target Word Prompt Card matching res/pr.xml lines 61-100 (@0x7f0a036d: @0x7f120328 "Word", 44sp word @0x7f0a036c, definition @0x7f0a036a)
+                // Target Word Prompt Card
                 Surface(
                     shape = RoundedCornerShape(22.dp),
                     color = Color.White,
                     shadowElevation = 6.dp,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable {
+                        .bouncyClick {
                             onSpeakText("${quizTarget.word}. ${quizTarget.exampleSentence}")
                         }
                 ) {
@@ -2930,10 +3515,11 @@ fun VocabularyBuilderGameScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Word (${selectedTheme})",
+                                text = "Theme: $selectedTheme • Round ${(quizRound % themeWords.size) + 1}/${themeWords.size}",
                                 fontFamily = GoogleSansFamily,
-                                fontSize = 13.sp,
-                                color = SeekhTextSecondary
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp,
+                                color = SeekhGreen600
                             )
                             Text(
                                 text = "${quizTarget.word} (${quizTarget.phonetics})",
@@ -2952,7 +3538,7 @@ fun VocabularyBuilderGameScreen(
                                 fontFamily = GoogleSansFamily,
                                 fontSize = 13.sp,
                                 color = SeekhTextSecondary,
-                                maxLines = 1,
+                                maxLines = 2,
                                 overflow = TextOverflow.Ellipsis
                             )
                         }
@@ -2974,7 +3560,7 @@ fun VocabularyBuilderGameScreen(
 
                 Spacer(modifier = Modifier.height(14.dp))
 
-                // 2x2 Grid of 4 Illustrated SVG Choices (Automatic advance when correct picture is tapped!)
+                // 2x2 Grid of 4 Illustrated SVG Choices (Word label stays hidden until tapped so it's a real vocabulary challenge!)
                 val pairs = shuffledChoices.chunked(2)
                 pairs.forEach { rowItems ->
                     Row(
@@ -2984,10 +3570,10 @@ fun VocabularyBuilderGameScreen(
                         horizontalArrangement = Arrangement.spacedBy(14.dp)
                     ) {
                         rowItems.forEach { item ->
-                            val isSelected = answeredWord == item.word
+                            val wasTapped = tappedWords.contains(item.word)
                             val isCorrect = item.word == quizTarget.word
                             val borderColor = when {
-                                !isSelected -> SeekhBorderGray
+                                !wasTapped -> SeekhBorderGray
                                 isCorrect -> SeekhGreenMint
                                 else -> SeekhCoralRed
                             }
@@ -2996,8 +3582,9 @@ fun VocabularyBuilderGameScreen(
                                 modifier = Modifier
                                     .weight(1f)
                                     .height(175.dp)
-                                    .clickable {
-                                        answeredWord = item.word
+                                    .bouncyClick {
+                                        if (isSolvedCorrectly) return@bouncyClick
+                                        tappedWords = tappedWords + item.word
                                         if (isCorrect) {
                                             isSolvedCorrectly = true
                                             starBurstTrigger++
@@ -3008,9 +3595,13 @@ fun VocabularyBuilderGameScreen(
                                         }
                                     },
                                 shape = RoundedCornerShape(22.dp),
-                                color = Color.White,
+                                color = when {
+                                    wasTapped && isCorrect -> SeekhGreenSoft
+                                    wasTapped && !isCorrect -> Color(0xFFFFF1F2)
+                                    else -> Color.White
+                                },
                                 shadowElevation = 4.dp,
-                                border = BorderStroke(if (isSelected) 3.dp else 1.dp, borderColor)
+                                border = BorderStroke(if (wasTapped) 3.dp else 1.dp, borderColor)
                             ) {
                                 Column(
                                     modifier = Modifier
@@ -3022,17 +3613,27 @@ fun VocabularyBuilderGameScreen(
                                     AssetSvgImage(
                                         assetPath = item.svgAssetPath,
                                         contentDescription = item.word,
-                                        modifier = Modifier.size(102.dp),
+                                        modifier = Modifier.size(104.dp),
                                         targetPx = 256
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
-                                    Text(
-                                        text = item.word,
-                                        fontFamily = GoogleSansFamily,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 16.sp,
-                                        color = SeekhTextPrimary
-                                    )
+                                    if (wasTapped || isSolvedCorrectly) {
+                                        Text(
+                                            text = if (isCorrect) "✓ ${item.word}" else "✗ ${item.word}",
+                                            fontFamily = GoogleSansFamily,
+                                            fontWeight = FontWeight.ExtraBold,
+                                            fontSize = 15.sp,
+                                            color = if (isCorrect) SeekhGreen600 else SeekhCoralRed
+                                        )
+                                    } else {
+                                        Text(
+                                            text = "Tap to choose",
+                                            fontFamily = GoogleSansFamily,
+                                            fontWeight = FontWeight.Medium,
+                                            fontSize = 12.sp,
+                                            color = SeekhTextSecondary
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -3049,7 +3650,7 @@ fun VocabularyBuilderGameScreen(
             onClick = {
                 onSpeakText("Tap the picture for ${quizTarget.word}!")
             },
-            size = 80.dp,
+            size = 78.dp,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .navigationBarsPadding()

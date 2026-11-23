@@ -108,12 +108,15 @@ data class JumbleWordChallenge(
 )
 
 data class GroupMemberStat(
+    val profileId: String = "",
     val name: String,
     val avatarIndex: Int,
     val minutesThisWeek: Int,
     val storiesRead: Int,
-    val gamesPlayed: Int = 5,
+    val gamesPlayed: Int = 0,
     val speedWpm: Int,
+    val stars: Int = 0,
+    val completedBookIds: Set<String> = emptySet(),
     val isActiveThisWeek: Boolean,
     val lastActiveLabel: String = "Today"
 )
@@ -126,6 +129,7 @@ data class ReadingGroup(
     val inviteCode: String,
     val createdDate: String,
     val members: List<GroupMemberStat>,
+    val assignedBookIds: List<String> = listOf("sw_13916", "book_rained_fish"),
     val popularBookIds: List<String> = listOf("sw_13916", "book_rained_fish", "sw_37273", "sw_44485")
 )
 
@@ -1075,19 +1079,26 @@ class SeekhRepository(context: Context) {
                 val members = mutableListOf<GroupMemberStat>()
                 for (j in 0 until mArr.length()) {
                     val mo = mArr.getJSONObject(j)
+                    val completedRaw = mo.optString("completedBookIds", "")
+                    val completedSet = completedRaw.split(",").filter { it.isNotBlank() }.toSet()
                     members.add(
                         GroupMemberStat(
+                            profileId = mo.optString("profileId", ""),
                             name = mo.getString("name"),
                             avatarIndex = mo.optInt("avatarIndex", 1),
                             minutesThisWeek = mo.optInt("minutesThisWeek", 0),
                             storiesRead = mo.optInt("storiesRead", 0),
                             gamesPlayed = mo.optInt("gamesPlayed", 0),
                             speedWpm = mo.optInt("speedWpm", 0),
+                            stars = mo.optInt("stars", 0),
+                            completedBookIds = completedSet,
                             isActiveThisWeek = mo.optBoolean("isActiveThisWeek", true),
                             lastActiveLabel = mo.optString("lastActiveLabel", "Today")
                         )
                     )
                 }
+                val assignedRaw = o.optString("assignedBookIds", "sw_13916,book_rained_fish")
+                val assignedList = assignedRaw.split(",").filter { it.isNotBlank() }
                 list.add(
                     ReadingGroup(
                         id = o.getString("id"),
@@ -1096,7 +1107,8 @@ class SeekhRepository(context: Context) {
                         languageTitle = o.getString("languageTitle"),
                         inviteCode = o.getString("inviteCode"),
                         createdDate = o.getString("createdDate"),
-                        members = members
+                        members = members,
+                        assignedBookIds = assignedList
                     )
                 )
             }
@@ -1116,15 +1128,19 @@ class SeekhRepository(context: Context) {
             o.put("languageTitle", g.languageTitle)
             o.put("inviteCode", g.inviteCode)
             o.put("createdDate", g.createdDate)
+            o.put("assignedBookIds", g.assignedBookIds.joinToString(","))
             val mArr = JSONArray()
             g.members.forEach { m ->
                 val mo = JSONObject()
+                mo.put("profileId", m.profileId)
                 mo.put("name", m.name)
                 mo.put("avatarIndex", m.avatarIndex)
                 mo.put("minutesThisWeek", m.minutesThisWeek)
                 mo.put("storiesRead", m.storiesRead)
                 mo.put("gamesPlayed", m.gamesPlayed)
                 mo.put("speedWpm", m.speedWpm)
+                mo.put("stars", m.stars)
+                mo.put("completedBookIds", m.completedBookIds.joinToString(","))
                 mo.put("isActiveThisWeek", m.isActiveThisWeek)
                 mo.put("lastActiveLabel", m.lastActiveLabel)
                 mArr.put(mo)
@@ -1133,5 +1149,38 @@ class SeekhRepository(context: Context) {
             arr.put(o)
         }
         prefs.edit().putString("reading_groups_json_v3_real", arr.toString()).apply()
+    }
+
+    fun syncReadingGroupsWithProfiles(
+        groups: List<ReadingGroup>,
+        profiles: List<LearnerProfile>
+    ): List<ReadingGroup> {
+        if (groups.isEmpty() || profiles.isEmpty()) return groups
+        return groups.map { group ->
+            val syncedMembers = group.members.map { member ->
+                val matchedProfile = profiles.firstOrNull { p ->
+                    (member.profileId.isNotBlank() && p.id == member.profileId) ||
+                        p.name.equals(member.name, ignoreCase = true)
+                }
+                if (matchedProfile != null) {
+                    val weekMins = matchedProfile.weeklyMinutes.sum().coerceAtLeast(matchedProfile.minutesReadToday)
+                    member.copy(
+                        profileId = matchedProfile.id,
+                        name = matchedProfile.name,
+                        avatarIndex = matchedProfile.avatarIndex,
+                        minutesThisWeek = weekMins,
+                        storiesRead = matchedProfile.completedBookIds.size,
+                        gamesPlayed = matchedProfile.gamesPlayedCount,
+                        speedWpm = matchedProfile.wordsPerMinute,
+                        stars = matchedProfile.stars,
+                        completedBookIds = matchedProfile.completedBookIds,
+                        isActiveThisWeek = weekMins > 0 || matchedProfile.completedBookIds.isNotEmpty() || matchedProfile.gamesPlayedCount > 0 || matchedProfile.stars > 0
+                    )
+                } else {
+                    member
+                }
+            }
+            group.copy(members = syncedMembers)
+        }
     }
 }
