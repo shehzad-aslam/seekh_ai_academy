@@ -1406,34 +1406,26 @@ fun StoryBookCard(
 
             Spacer(modifier = Modifier.height(6.dp))
 
-            // Clean Soft Pastel Level Pill & Page Count Row right below thumbnail (keeps thumbnail 100% clean!)
+            // Clean Soft Pastel Level Pill right below thumbnail
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 2.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Surface(
                     shape = RoundedCornerShape(50),
                     color = levelBgColor
                 ) {
                     Text(
-                        text = "Lvl ${book.level}",
+                        text = "Level ${book.level}",
                         fontFamily = GoogleSansFamily,
-                        fontWeight = FontWeight.ExtraBold,
+                        fontWeight = FontWeight.Bold,
                         fontSize = 9.5.sp,
                         color = levelTextColor,
                         modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp)
                     )
                 }
-                Text(
-                    text = "${book.pages.size}p",
-                    fontFamily = GoogleSansFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 9.5.sp,
-                    color = SeekhTextSecondary
-                )
             }
 
             Spacer(modifier = Modifier.height(4.dp))
@@ -1619,10 +1611,10 @@ fun FeaturedStoryHeroCard(
                             )
                         }
                         Text(
-                            text = "• ${book.pages.size} Pages • ${book.categoryTag}",
+                            text = "Story of the day",
                             fontFamily = GoogleSansFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 11.5.sp,
                             color = SeekhTextSecondary,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis

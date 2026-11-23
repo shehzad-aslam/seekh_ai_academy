@@ -273,7 +273,17 @@ object SeekhCatalog {
         "walk" to "چلنا / سیر کرنا",
         "walks" to "چلتا ہے",
         "flying" to "اڑ رہا ہے",
-        "ocean" to "بڑا سمندر"
+        "ocean" to "بڑا سمندر",
+        "apples" to "میٹھے سیب",
+        "apple" to "میٹھا سیب",
+        "friend" to "پیارا دوست",
+        "rainbow" to "قوسِ قزح",
+        "sparkle" to "چمک دمک",
+        "sunshine" to "سورج کی روشنی",
+        "bicycle" to "سائیکل",
+        "umbrella" to "چھتری",
+        "treasure" to "خزانہ",
+        "drummer" to "ڈھول بجانے والا"
     )
 
     private val wordMeaningsHindi = mapOf(
@@ -364,7 +374,17 @@ object SeekhCatalog {
         "walk" to "चलना / सैर करना",
         "walks" to "चलता है",
         "flying" to "उड़ रहा है",
-        "ocean" to "विशाल समुद्र"
+        "ocean" to "विशाल समुद्र",
+        "apples" to "मीठे सेब",
+        "apple" to "मीठा सेब",
+        "friend" to "प्यारा दोस्त",
+        "rainbow" to "इंद्रधनुष",
+        "sparkle" to "चमक",
+        "sunshine" to "सूरज की धूप",
+        "bicycle" to "साइकिल",
+        "umbrella" to "छाता",
+        "treasure" to "ख़ज़ाना",
+        "drummer" to "ढोल वादक"
     )
 
     private val wordEnglishDefinitions = mapOf(
@@ -494,20 +514,20 @@ object SeekhCatalog {
                 wordMeaningsUrdu[clean]
                     ?: vocabMatch?.urduMeaning
                     ?: when {
-                        partOfSpeech.contains("Sight Word") -> "فقرے کو جوڑنے والا عام لفظ ($display)"
-                        partOfSpeech.contains("Verb") -> "کام یا حرکت ظاہر کرنے والا لفظ ($display)"
-                        partOfSpeech.contains("Adjective") -> "صفت یا خوبی بتانے والا لفظ ($display)"
-                        else -> "کہانی کا اہم لفظ ($display)"
+                        partOfSpeech.contains("Sight Word") -> "فقرے کو جوڑنے والا عام لفظ"
+                        partOfSpeech.contains("Verb") -> "کام یا حرکت ظاہر کرنے والا لفظ"
+                        partOfSpeech.contains("Adjective") -> "صفت یا خوبی بتانے والا لفظ"
+                        else -> "کہانی کا اہم لفظ"
                     }
             }
             langCode.contains("hi") -> {
                 wordMeaningsHindi[clean]
                     ?: vocabMatch?.hindiMeaning
                     ?: when {
-                        partOfSpeech.contains("Sight Word") -> "वाक्य को जोड़ने वाला सामान्य शब्द ($display)"
-                        partOfSpeech.contains("Verb") -> "क्रिया या काम बताने वाला शब्द ($display)"
-                        partOfSpeech.contains("Adjective") -> "विशेषता बताने वाला शब्द ($display)"
-                        else -> "कहानी का महत्वपूर्ण शब्द ($display)"
+                        partOfSpeech.contains("Sight Word") -> "वाक्य को जोड़ने वाला सामान्य शब्द"
+                        partOfSpeech.contains("Verb") -> "क्रिया या काम बताने वाला शब्द"
+                        partOfSpeech.contains("Adjective") -> "विशेषता बताने वाला शब्द"
+                        else -> "कहानी का महत्वपूर्ण शब्द"
                     }
             }
             else -> englishDef

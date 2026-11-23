@@ -339,7 +339,7 @@ fun LibraryTabScreen(
                     }
                 }
 
-                // If user selects "Games" filter chip, show the dedicated 10 Kids Learning Games Arcade Hub!
+                // If user selects "Games" filter chip, show the dedicated 10 Kids Learning Games Hub!
                 if (selectedCategoryFilter == "Games") {
                     item {
                         Spacer(modifier = Modifier.height(8.dp))
@@ -351,7 +351,7 @@ fun LibraryTabScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Kids Learning Games (10)",
+                                text = "Play games",
                                 fontFamily = GoogleSansFamily,
                                 fontWeight = FontWeight.ExtraBold,
                                 fontSize = 20.sp,
@@ -374,16 +374,16 @@ fun LibraryTabScreen(
                         Spacer(modifier = Modifier.height(10.dp))
 
                         val arcadeGames = listOf(
-                            listOf("Jumbled Words", "Unscramble letters with smart hints & bilingual clues", "a • p • p • l • e • s", "+20 ⭐", "JUMBLE") to SeekhJumblePurple,
-                            listOf("Pop The Balloons", "Pop rising phonics sound balloons before time runs out", "🎈 S • B • M • SH", "+30 ⭐", "BALLOON") to Color(0xFF00838F),
-                            listOf("Sentence Builder", "Tap scrambled word tiles in order to build story sentences", "🧩 Build Sentence", "+25 ⭐", "SENTENCE") to Color(0xFF1E40AF),
-                            listOf("Rhyming Words", "Match phonics rhyme families (-AIN, -ALL, -IGHT, -OOK)", "🎵 Rhyme Match", "+25 ⭐", "RHYME") to Color(0xFFBE185D),
-                            listOf("Missing Phonics Sound", "Fill in the missing vowel or digraph sound in story words", "🔤 Fill Blank", "+20 ⭐", "MISSING_SOUND") to Color(0xFF0F766E),
-                            listOf("Listen & Pick", "Ear-training audio game: hear Noor's voice clue & pick the picture", "🔊 Ear Training", "+25 ⭐", "LISTEN_FIND") to Color(0xFF4338CA),
-                            listOf("Opposite Words", "Learn core English antonyms (Big/Small, Day/Night, Hot/Cold)", "⚖️ Antonyms", "+25 ⭐", "OPPOSITES") to Color(0xFFD97706),
-                            listOf("Count, Numbers & Math", "Interactive kids counting, numbers & story addition fun", "🔢 123 & Math", "+30 ⭐", "COUNT_COLOR") to Color(0xFF047857),
-                            listOf("Speed Reading", "30-second fluency challenge to unlock speed vehicles", "⏱ 30 sec WPM", "+25 ⭐", "SPEED") to Color(0xFFF57F17),
-                            listOf("Word Meanings", "9 illustrated picture vocabulary themes to master", "🎨 9 Themes", "+15 ⭐", "VOCAB") to SeekhVocabDarkGreen
+                            listOf("Jumbled Words", "Unscramble letters to spell words", "Spelling", "JUMBLE") to SeekhJumblePurple,
+                            listOf("Pop The Balloons", "Pop rising phonics sound balloons", "Phonics", "BALLOON") to Color(0xFF00838F),
+                            listOf("Sentence Builder", "Arrange words in order to build sentences", "Sentences", "SENTENCE") to Color(0xFF1E40AF),
+                            listOf("Rhyming Words", "Match words with the same ending sound", "Rhyming", "RHYME") to Color(0xFFBE185D),
+                            listOf("Missing Letters", "Choose the missing letters in story words", "Letters", "MISSING_SOUND") to Color(0xFF0F766E),
+                            listOf("Listen & Find", "Listen to the voice clue and select the picture", "Listening", "LISTEN_FIND") to Color(0xFF4338CA),
+                            listOf("Opposite Words", "Match words with opposite meanings", "Vocabulary", "OPPOSITES") to Color(0xFFD97706),
+                            listOf("Count & Numbers", "Count items and solve simple story math", "Numbers", "COUNT_COLOR") to Color(0xFF047857),
+                            listOf("Speed Reading", "30-second reading fluency challenge", "Fluency", "SPEED") to Color(0xFFF57F17),
+                            listOf("Word Meanings", "Learn picture vocabulary across 9 themes", "Pictures", "VOCAB") to SeekhVocabDarkGreen
                         )
 
                         Column(
@@ -396,7 +396,7 @@ fun LibraryTabScreen(
                                 Surface(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .bouncyClick { onOpenGame(info[4]) },
+                                        .bouncyClick { onOpenGame(info[3]) },
                                     shape = RoundedCornerShape(24.dp),
                                     color = bgCol,
                                     shadowElevation = 6.dp
@@ -409,38 +409,20 @@ fun LibraryTabScreen(
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
                                         Column(modifier = Modifier.weight(1f)) {
-                                            Row(
-                                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                                verticalAlignment = Alignment.CenterVertically
+                                            Surface(
+                                                shape = RoundedCornerShape(50),
+                                                color = Color.White.copy(alpha = 0.22f)
                                             ) {
-                                                Surface(
-                                                    shape = RoundedCornerShape(50),
-                                                    color = Color.White.copy(alpha = 0.22f)
-                                                ) {
-                                                    Text(
-                                                        text = info[2],
-                                                        fontFamily = GoogleSansFamily,
-                                                        fontWeight = FontWeight.Bold,
-                                                        fontSize = 11.sp,
-                                                        color = Color.White,
-                                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                                                    )
-                                                }
-                                                Surface(
-                                                    shape = RoundedCornerShape(50),
-                                                    color = SeekhYellow500
-                                                ) {
-                                                    Text(
-                                                        text = info[3],
-                                                        fontFamily = GoogleSansFamily,
-                                                        fontWeight = FontWeight.ExtraBold,
-                                                        fontSize = 11.sp,
-                                                        color = SeekhTextPrimary,
-                                                        modifier = Modifier.padding(horizontal = 9.dp, vertical = 3.dp)
-                                                    )
-                                                }
+                                                Text(
+                                                    text = info[2],
+                                                    fontFamily = GoogleSansFamily,
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 11.sp,
+                                                    color = Color.White,
+                                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                                                )
                                             }
-                                            Spacer(modifier = Modifier.height(10.dp))
+                                            Spacer(modifier = Modifier.height(8.dp))
                                             Text(
                                                 text = info[0],
                                                 fontFamily = GoogleSansFamily,
@@ -462,12 +444,12 @@ fun LibraryTabScreen(
                                             color = Color.White
                                         ) {
                                             Text(
-                                                text = "Play ▶",
+                                                text = "Play",
                                                 fontFamily = GoogleSansFamily,
                                                 fontWeight = FontWeight.ExtraBold,
                                                 fontSize = 13.sp,
                                                 color = bgCol,
-                                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+                                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                                             )
                                         }
                                     }
@@ -540,11 +522,11 @@ fun LibraryTabScreen(
                         Spacer(modifier = Modifier.height(18.dp))
                     }
 
-                    // 2. "Classroom & Parent assignments" Section (Always shown when a Teacher/Parent assigned stories in Reading Groups OR signed-in!)
+                    // 2. "Classroom & Parent assignments" Section
                     if (classroomBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Assigned homework (${classroomBooks.size})",
+                                title = "Assigned homework",
                                 onSpeak = { onSpeakText("Assigned stories from your teacher or parent") }
                             )
                             Spacer(modifier = Modifier.height(6.dp))
@@ -566,13 +548,13 @@ fun LibraryTabScreen(
                         }
                     }
 
-                    // 2b. "New & Daily Drops" Section (Fresh highlighted daily stories)
+                    // 2b. "Recommended stories" Section
                     if (dailyDropBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "New & Daily stories (${dailyDropBooks.size})",
-                                onSpeak = { onSpeakText("New and daily recommended stories") },
-                                actionLabel = "See all (${dailyDropBooks.size}) →",
+                                title = "Recommended stories",
+                                onSpeak = { onSpeakText("Recommended stories") },
+                                actionLabel = "See all",
                                 onActionClick = { selectedCategoryFilter = "New & Daily" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -592,9 +574,9 @@ fun LibraryTabScreen(
                     if (level1Books.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Level 1 stories (${level1Books.size})",
+                                title = "Level 1 stories",
                                 onSpeak = { onSpeakText("Level 1 stories") },
-                                actionLabel = "See all (${level1Books.size}) →",
+                                actionLabel = "See all",
                                 onActionClick = { selectedCategoryFilter = "Level 1" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -610,12 +592,12 @@ fun LibraryTabScreen(
                         }
                     }
 
-                    // 4. "Play games" Section (10 Kids Learning Games!)
+                    // 4. "Play games" Section (10 Kids Learning Games — Clean, Emoji-Free Cards)
                     item {
                         LibrarySectionHeader(
-                            title = "Kids Learning Games (10)",
-                            onSpeak = { onSpeakText("Play 10 kids learning games") },
-                            actionLabel = "All 10 Games →",
+                            title = "Play games",
+                            onSpeak = { onSpeakText("Play games") },
+                            actionLabel = "See all",
                             onActionClick = { selectedCategoryFilter = "Games" }
                         )
                         Spacer(modifier = Modifier.height(8.dp))
@@ -630,8 +612,7 @@ fun LibraryTabScreen(
                                     title = "Jumbled Words",
                                     subtitle = "Unscramble letters",
                                     containerColor = SeekhJumblePurple,
-                                    badgeText = "a • p • p • l • e • s",
-                                    rewardText = "+20 ⭐",
+                                    badgeText = "Spelling",
                                     onClick = { onOpenGame("JUMBLE") }
                                 )
                             }
@@ -640,8 +621,7 @@ fun LibraryTabScreen(
                                     title = "Pop The Balloons",
                                     subtitle = "Phonics & sounds",
                                     containerColor = Color(0xFF00838F),
-                                    badgeText = "🎈 S • B • M",
-                                    rewardText = "+30 ⭐",
+                                    badgeText = "Phonics",
                                     onClick = { onOpenGame("BALLOON") }
                                 )
                             }
@@ -650,78 +630,70 @@ fun LibraryTabScreen(
                                     title = "Sentence Builder",
                                     subtitle = "Build story sentences",
                                     containerColor = Color(0xFF1E40AF),
-                                    badgeText = "🧩 Word Order",
-                                    rewardText = "+25 ⭐",
+                                    badgeText = "Sentences",
                                     onClick = { onOpenGame("SENTENCE") }
                                 )
                             }
                             item {
                                 GameShelfCard(
                                     title = "Rhyming Words",
-                                    subtitle = "Match rhyme families",
+                                    subtitle = "Match ending sounds",
                                     containerColor = Color(0xFFBE185D),
-                                    badgeText = "🎵 -AIN • -ALL",
-                                    rewardText = "+25 ⭐",
+                                    badgeText = "Rhyming",
                                     onClick = { onOpenGame("RHYME") }
                                 )
                             }
                             item {
                                 GameShelfCard(
-                                    title = "Missing Sound",
-                                    subtitle = "Fill phonics blanks",
+                                    title = "Missing Letters",
+                                    subtitle = "Complete the word",
                                     containerColor = Color(0xFF0F766E),
-                                    badgeText = "🔤 Vowels & Blends",
-                                    rewardText = "+20 ⭐",
+                                    badgeText = "Letters",
                                     onClick = { onOpenGame("MISSING_SOUND") }
                                 )
                             }
                             item {
                                 GameShelfCard(
-                                    title = "Listen & Pick",
-                                    subtitle = "Audio ear training",
+                                    title = "Listen & Find",
+                                    subtitle = "Audio picture match",
                                     containerColor = Color(0xFF4338CA),
-                                    badgeText = "🔊 Hear & Match",
-                                    rewardText = "+25 ⭐",
+                                    badgeText = "Listening",
                                     onClick = { onOpenGame("LISTEN_FIND") }
                                 )
                             }
                             item {
                                 GameShelfCard(
                                     title = "Opposite Words",
-                                    subtitle = "Learn antonyms",
+                                    subtitle = "Match opposite words",
                                     containerColor = Color(0xFFD97706),
-                                    badgeText = "⚖️ Big ↔ Small",
-                                    rewardText = "+25 ⭐",
+                                    badgeText = "Vocabulary",
                                     onClick = { onOpenGame("OPPOSITES") }
                                 )
                             }
                             item {
                                 GameShelfCard(
                                     title = "Count & Numbers",
-                                    subtitle = "123 & story math",
+                                    subtitle = "Counting & story math",
                                     containerColor = Color(0xFF047857),
-                                    badgeText = "🔢 Count Objects",
-                                    rewardText = "+30 ⭐",
+                                    badgeText = "Numbers",
                                     onClick = { onOpenGame("COUNT_COLOR") }
                                 )
                             }
                             item {
                                 GameShelfCard(
                                     title = "Speed Reading",
-                                    subtitle = "30s reading speed",
+                                    subtitle = "30s reading challenge",
                                     containerColor = Color(0xFFF57F17),
-                                    badgeText = "⏱ 30 sec WPM",
-                                    rewardText = "+25 ⭐",
+                                    badgeText = "Fluency",
                                     onClick = { onOpenGame("SPEED") }
                                 )
                             }
                             item {
                                 GameShelfCard(
                                     title = "Word Meanings",
-                                    subtitle = "9 illustrated themes",
+                                    subtitle = "9 picture themes",
                                     containerColor = SeekhVocabDarkGreen,
-                                    badgeText = "🎨 9 Themes",
-                                    rewardText = "+15 ⭐",
+                                    badgeText = "Pictures",
                                     onClick = { onOpenGame("VOCAB") }
                                 )
                             }
@@ -733,9 +705,9 @@ fun LibraryTabScreen(
                     if (animalsNatureBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Animals & Nature (${animalsNatureBooks.size})",
+                                title = "Animals & Nature",
                                 onSpeak = { onSpeakText("Animals and nature stories") },
-                                actionLabel = "See all (${animalsNatureBooks.size}) →",
+                                actionLabel = "See all",
                                 onActionClick = { selectedCategoryFilter = "Animals & Nature" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -755,9 +727,9 @@ fun LibraryTabScreen(
                     if (schoolKindnessBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "School & Kindness (${schoolKindnessBooks.size})",
-                                onSpeak = { onSpeakText("School, classroom, and kindness stories") },
-                                actionLabel = "See all (${schoolKindnessBooks.size}) →",
+                                title = "School & Kindness",
+                                onSpeak = { onSpeakText("School and kindness stories") },
+                                actionLabel = "See all",
                                 onActionClick = { selectedCategoryFilter = "School & Kindness" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -773,13 +745,13 @@ fun LibraryTabScreen(
                         }
                     }
 
-                    // 5. "Phonics & Decodable stories" Section (BOOK_TYPE_DECODABLE / phonicSkillGroupsInfo)
+                    // 5. "Phonics stories" Section
                     if (phonicsBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Phonics & Decodable stories (${phonicsBooks.size})",
-                                onSpeak = { onSpeakText("Phonics and decodable skill stories") },
-                                actionLabel = "See all (${phonicsBooks.size}) →",
+                                title = "Phonics stories",
+                                onSpeak = { onSpeakText("Phonics stories") },
+                                actionLabel = "See all",
                                 onActionClick = { selectedCategoryFilter = "Phonics" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -795,13 +767,13 @@ fun LibraryTabScreen(
                         }
                     }
 
-                    // 6. "Level 2 stories" Section (PROMPT_STORIES_OF_LEVEL_2)
+                    // 6. "Level 2 stories" Section
                     if (level2Books.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Level 2 stories (${level2Books.size})",
+                                title = "Level 2 stories",
                                 onSpeak = { onSpeakText("Level 2 stories") },
-                                actionLabel = "See all (${level2Books.size}) →",
+                                actionLabel = "See all",
                                 onActionClick = { selectedCategoryFilter = "Level 2" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -821,9 +793,9 @@ fun LibraryTabScreen(
                     if (familyFriendsBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Family & Friends (${familyFriendsBooks.size})",
+                                title = "Family & Friends",
                                 onSpeak = { onSpeakText("Family and friends stories") },
-                                actionLabel = "See all (${familyFriendsBooks.size}) →",
+                                actionLabel = "See all",
                                 onActionClick = { selectedCategoryFilter = "Family & Friends" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -839,13 +811,13 @@ fun LibraryTabScreen(
                         }
                     }
 
-                    // 6c. "Numbers, Colors & Rhymes" Category Shelf
+                    // 6c. "Numbers & Rhymes" Category Shelf
                     if (numbersRhymesBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Numbers, Colors & Rhymes (${numbersRhymesBooks.size})",
-                                onSpeak = { onSpeakText("Numbers, counting, colors, and rhymes stories") },
-                                actionLabel = "See all (${numbersRhymesBooks.size}) →",
+                                title = "Numbers & Rhymes",
+                                onSpeak = { onSpeakText("Numbers and rhymes stories") },
+                                actionLabel = "See all",
                                 onActionClick = { selectedCategoryFilter = "Numbers & Rhymes" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -861,13 +833,13 @@ fun LibraryTabScreen(
                         }
                     }
 
-                    // 7. "Story Series" Section (BOOK_SHOWN_SERIES / PROMPT_UNLOCK_SERIES_BOOK_TOMORROW)
+                    // 7. "Story Series" Section
                     if (seriesBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Story Series (${seriesBooks.size})",
-                                onSpeak = { onSpeakText("Multi-chapter story series") },
-                                actionLabel = "See all (${seriesBooks.size}) →",
+                                title = "Story Series",
+                                onSpeak = { onSpeakText("Story series") },
+                                actionLabel = "See all",
                                 onActionClick = { selectedCategoryFilter = "Series" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -883,13 +855,13 @@ fun LibraryTabScreen(
                         }
                     }
 
-                    // 8. "Level 3 stories" Section (PROMPT_STORIES_OF_LEVEL_3)
+                    // 8. "Level 3 stories" Section
                     if (level3Books.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Level 3 stories (${level3Books.size})",
+                                title = "Level 3 stories",
                                 onSpeak = { onSpeakText("Level 3 stories") },
-                                actionLabel = "See all (${level3Books.size}) →",
+                                actionLabel = "See all",
                                 onActionClick = { selectedCategoryFilter = "Level 3" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -909,9 +881,9 @@ fun LibraryTabScreen(
                     if (adventureTravelBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Adventure & Travel (${adventureTravelBooks.size})",
+                                title = "Adventure & Travel",
                                 onSpeak = { onSpeakText("Adventure and travel stories") },
-                                actionLabel = "See all (${adventureTravelBooks.size}) →",
+                                actionLabel = "See all",
                                 onActionClick = { selectedCategoryFilter = "Adventure & Travel" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -931,9 +903,9 @@ fun LibraryTabScreen(
                     if (scienceWeatherBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Science & Weather (${scienceWeatherBooks.size})",
-                                onSpeak = { onSpeakText("Science, nature, and weather stories") },
-                                actionLabel = "See all (${scienceWeatherBooks.size}) →",
+                                title = "Science & Weather",
+                                onSpeak = { onSpeakText("Science and weather stories") },
+                                actionLabel = "See all",
                                 onActionClick = { selectedCategoryFilter = "Science & Weather" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -949,13 +921,13 @@ fun LibraryTabScreen(
                         }
                     }
 
-                    // 9. "Level 4 stories" Section (PROMPT_STORIES_OF_LEVEL_4)
+                    // 9. "Level 4 stories" Section
                     if (level4Books.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Level 4 stories (${level4Books.size})",
+                                title = "Level 4 stories",
                                 onSpeak = { onSpeakText("Level 4 stories") },
-                                actionLabel = "See all (${level4Books.size}) →",
+                                actionLabel = "See all",
                                 onActionClick = { selectedCategoryFilter = "Level 4" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -975,9 +947,9 @@ fun LibraryTabScreen(
                     if (bedtimeFolktaleBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Bedtime & Folktales (${bedtimeFolktaleBooks.size})",
+                                title = "Bedtime & Folktales",
                                 onSpeak = { onSpeakText("Bedtime and folktale stories") },
-                                actionLabel = "See all (${bedtimeFolktaleBooks.size}) →",
+                                actionLabel = "See all",
                                 onActionClick = { selectedCategoryFilter = "Bedtime & Folktales" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -993,30 +965,12 @@ fun LibraryTabScreen(
                         }
                     }
 
-                    // 9c. Complete Library Catalog Shelf ("All Stories (${books.size})") so every single story in the 105-story library is accessible directly by scrolling!
-                    item {
-                        LibrarySectionHeader(
-                            title = "Complete Story Catalog (${books.size})",
-                            onSpeak = { onSpeakText("Complete catalog of ${books.size} illustrated stories") }
-                        )
-                        LibraryBooksThreeColumnRows(
-                            sectionBooks = nonHeroBooks,
-                            profile = profile,
-                            selectedLanguageCode = selectedLanguage.code,
-                            downloadedCloudBookIds = downloadedCloudBookIds,
-                            downloadingBookIds = downloadingBookIds,
-                            onDownloadCloudBook = onDownloadCloudBook,
-                            onOpenBook = onOpenBook
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-
-                    // 10. Signed-In "Create your own story & My stories" Section (BOOK_SOURCE_CYOC / LUMOS_ADD_STORY_TAB_CLICKED / MY_BOOK_CONTENT_MENU_CLICKED)
+                    // 10. Signed-In "Create your own story & My stories" Section
                     if (accountState.isSignedIn) {
                         item {
                             LibrarySectionHeader(
                                 title = "Create your own story",
-                                onSpeak = { onSpeakText("Create your own story with AI Story Studio") }
+                                onSpeak = { onSpeakText("Create your own story") }
                             )
                             Spacer(modifier = Modifier.height(6.dp))
                             CreateYourOwnStoryBannerCard(
@@ -1361,14 +1315,14 @@ private fun CreateYourOwnStoryBannerCard(
                 }
                 Column {
                     Text(
-                        text = "AI Story Studio • Create a Story",
+                        text = "Create your own story",
                         fontFamily = GoogleSansFamily,
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 15.sp,
                         color = Color.White
                     )
                     Text(
-                        text = "Pick a character & adventure to generate a new story",
+                        text = "Pick a character and adventure to write a story",
                         fontFamily = GoogleSansFamily,
                         fontSize = 12.sp,
                         color = Color.White.copy(alpha = 0.90f)
@@ -1380,7 +1334,7 @@ private fun CreateYourOwnStoryBannerCard(
                 color = SeekhYellow500
             ) {
                 Text(
-                    text = "+ Create",
+                    text = "Create",
                     fontFamily = GoogleSansFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
@@ -1507,25 +1461,24 @@ private fun GameShelfCard(
     subtitle: String,
     containerColor: Color,
     badgeText: String,
-    rewardText: String = "+15 ⭐",
     onClick: () -> Unit
 ) {
     val cardShape = RoundedCornerShape(24.dp)
     Surface(
         modifier = Modifier
             .width(184.dp)
-            .height(132.dp)
+            .height(126.dp)
             .softCardShadow(
-                elevation = 14.dp,
+                elevation = 12.dp,
                 shape = cardShape,
-                spotColor = containerColor.copy(alpha = 0.60f),
-                ambientColor = containerColor.copy(alpha = 0.35f)
+                spotColor = containerColor.copy(alpha = 0.55f),
+                ambientColor = containerColor.copy(alpha = 0.30f)
             )
             .bouncyClick(scaleDown = 0.94f, onClick = onClick),
         shape = cardShape,
         color = containerColor,
         shadowElevation = 0.dp,
-        border = BorderStroke(1.2.dp, Color.White.copy(alpha = 0.28f))
+        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.25f))
     ) {
         Box(
             modifier = Modifier
@@ -1534,13 +1487,12 @@ private fun GameShelfCard(
                     Brush.linearGradient(
                         colors = listOf(
                             containerColor,
-                            containerColor.copy(alpha = 0.85f),
-                            Color(0x33000000)
+                            containerColor.copy(alpha = 0.88f),
+                            Color(0x28000000)
                         )
                     )
                 )
         ) {
-            // Decorative Soft Glass Orb Accent in top-right corner
             Box(
                 modifier = Modifier
                     .size(72.dp)
@@ -1556,39 +1508,19 @@ private fun GameShelfCard(
                     .padding(14.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = Color.White.copy(alpha = 0.22f)
                 ) {
-                    Surface(
-                        shape = RoundedCornerShape(50),
-                        color = Color.White.copy(alpha = 0.24f),
-                        border = BorderStroke(0.8.dp, Color.White.copy(alpha = 0.3f))
-                    ) {
-                        Text(
-                            text = badgeText,
-                            fontFamily = GoogleSansFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 10.sp,
-                            color = Color.White,
-                            maxLines = 1,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                        )
-                    }
-                    Surface(
-                        shape = RoundedCornerShape(50),
-                        color = SeekhYellow500
-                    ) {
-                        Text(
-                            text = rewardText,
-                            fontFamily = GoogleSansFamily,
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 10.sp,
-                            color = SeekhTextPrimary,
-                            modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp)
-                        )
-                    }
+                    Text(
+                        text = badgeText,
+                        fontFamily = GoogleSansFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 10.5.sp,
+                        color = Color.White,
+                        maxLines = 1,
+                        modifier = Modifier.padding(horizontal = 9.dp, vertical = 3.dp)
+                    )
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -4735,7 +4667,7 @@ fun SeekhNavigationDrawerContent(
             DrawerMenuItem(
                 icon = Icons.Default.AutoAwesome,
                 title = "Create your own story",
-                subtitle = "Generate custom stories in AI Story Studio",
+                subtitle = "Write and customize your own stories",
                 onClick = {
                     onCloseDrawer()
                     onAiStoryStudioClick()
@@ -4926,7 +4858,7 @@ fun AiStoryCreatorDialog(
                 }
                 Column {
                     Text(
-                        text = "AI Story Studio",
+                        text = "Create a story",
                         fontFamily = GoogleSansFamily,
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 20.sp,
@@ -5053,8 +4985,8 @@ fun AiStoryCreatorDialog(
                         title = title,
                         nativeTitleUrdu = "$selectedHero کی نئی کہانی",
                         nativeTitleHindi = "$selectedHero की नई कहानी",
-                        author = "AI Story Studio • You",
-                        illustrator = "Seekh AI Illustrator",
+                        author = "Created by You",
+                        illustrator = "Story Illustrator",
                         publisher = "My Created Stories",
                         level = selectedLevel,
                         coverAssetPath = "books/sw_13916/image_5.webp",
@@ -5090,7 +5022,7 @@ fun AiStoryCreatorDialog(
                 shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.buttonColors(containerColor = SeekhGreen500)
             ) {
-                Text("Generate Story ✨", fontFamily = GoogleSansFamily, fontWeight = FontWeight.Bold)
+                Text("Create story", fontFamily = GoogleSansFamily, fontWeight = FontWeight.Bold)
             }
         },
         dismissButton = {
