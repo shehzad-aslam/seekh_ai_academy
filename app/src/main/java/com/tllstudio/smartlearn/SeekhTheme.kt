@@ -1326,6 +1326,13 @@ fun StoryBookCard(
             horizontalAlignment = Alignment.Start
         ) {
             // Pure Flat-Clean Thumbnail Box (Zero 3D spine, zero dark scrim, zero inner shadow!)
+            val cleanCoverPath = remember(book.id, book.coverAssetPath) {
+                if (book.bookType == "ALPHABET") {
+                    book.pages.firstOrNull()?.imageAssetPath ?: book.coverAssetPath
+                } else {
+                    book.coverAssetPath
+                }
+            }
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -1334,7 +1341,7 @@ fun StoryBookCard(
                     .background(SeekhSurfaceGray)
             ) {
                 AssetWebpImage(
-                    assetPath = book.coverAssetPath,
+                    assetPath = cleanCoverPath,
                     contentDescription = book.title,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
@@ -1390,35 +1397,27 @@ fun StoryBookCard(
                     }
                 }
 
-                // Alphabet Letter Tiles Strip on cover if this is a Basic Alphabets Book
+                // Clean minimal corner badge if this is a Basic Alphabets Book (no dark bar covering the illustration!)
                 if (book.alphabetBadgeLetters.isNotBlank()) {
-                    val letters = remember(book.alphabetBadgeLetters) {
-                        book.alphabetBadgeLetters.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }.take(4)
+                    val badgeLabel = remember(book.alphabetBadgeLetters) {
+                        book.alphabetBadgeLetters.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }.take(2).joinToString(" ")
                     }
-                    Row(
+                    Surface(
                         modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .fillMaxWidth()
-                            .background(Color(0xD91E1B4B))
-                            .padding(horizontal = 4.dp, vertical = 4.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically
+                            .padding(6.dp)
+                            .align(Alignment.TopStart),
+                        shape = RoundedCornerShape(8.dp),
+                        color = Color.White.copy(alpha = 0.94f),
+                        border = BorderStroke(1.dp, SeekhGreen100)
                     ) {
-                        letters.forEach { ltr ->
-                            Surface(
-                                shape = RoundedCornerShape(6.dp),
-                                color = SeekhYellow500
-                            ) {
-                                Text(
-                                    text = ltr,
-                                    fontFamily = GoogleSansFamily,
-                                    fontWeight = FontWeight.ExtraBold,
-                                    fontSize = 11.sp,
-                                    color = SeekhTextPrimary,
-                                    modifier = Modifier.padding(horizontal = 5.dp, vertical = 1.dp)
-                                )
-                            }
-                        }
+                        Text(
+                            text = badgeLabel,
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 10.5.sp,
+                            color = SeekhGreen600,
+                            modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp)
+                        )
                     }
                 }
             }
@@ -1579,105 +1578,187 @@ fun FeaturedStoryHeroCard(
         SeekhCatalog.getBookSecondaryTitle(book, selectedLanguageCode)
     }
     val isAlphabetBook = book.bookType == "ALPHABET" || book.alphabetBadgeLetters.isNotBlank()
-    val heroShape = RoundedCornerShape(26.dp)
+    val firstPagePreviewPath = remember(book.id, book.coverAssetPath, isAlphabetBook) {
+        if (isAlphabetBook && book.pages.isNotEmpty()) book.pages.first().imageAssetPath else book.coverAssetPath
+    }
+    val heroShape = RoundedCornerShape(24.dp)
 
     Surface(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 18.dp)
             .softCardShadow(
-                elevation = 12.dp,
+                elevation = 10.dp,
                 shape = heroShape,
-                spotColor = Color(0x363B28B0),
-                ambientColor = Color(0x1E1E1B4B)
+                spotColor = Color(0x263B28B0),
+                ambientColor = Color(0x161E1B4B)
             )
             .bouncyClick(scaleDown = 0.97f, onClick = onClick),
         shape = heroShape,
         color = Color.White,
         shadowElevation = 0.dp,
-        border = BorderStroke(1.2.dp, if (isAlphabetBook) SeekhGreen100 else Color(0xFFE8ECF7))
+        border = BorderStroke(1.2.dp, Color(0xFFE6EBF5))
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            // Cover Illustration + Prominent Alphabet Letter Tiles Showcase when displaying the Basic Alphabets Book!
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(176.dp)
-                    .padding(start = 10.dp, end = 10.dp, top = 10.dp)
-                    .clip(RoundedCornerShape(18.dp))
-            ) {
-                AssetWebpImage(
-                    assetPath = book.coverAssetPath,
-                    contentDescription = primaryTitle,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-
-                if (isAlphabetBook) {
-                    val letters = remember(book.alphabetBadgeLetters) {
-                        book.alphabetBadgeLetters.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }.take(4)
-                    }
-                    val cardColors = remember {
-                        listOf(
-                            Color(0xFFFFB800) to Color(0xFF1E1B4B),
-                            Color(0xFF5E4AE3) to Color.White,
-                            Color(0xFF10B981) to Color.White,
-                            Color(0xFFF43F5E) to Color.White
-                        )
-                    }
-                    Row(
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .fillMaxWidth()
-                            .background(
-                                Brush.verticalGradient(
-                                    listOf(Color.Transparent, Color(0xCC1E1B4B))
-                                )
+            if (isAlphabetBook) {
+                val letters = remember(book.alphabetBadgeLetters) {
+                    book.alphabetBadgeLetters.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }.take(4)
+                }
+                val tilePalettes = remember {
+                    listOf(
+                        Triple(Color(0xFFFFF8E1), Color(0xFFFFD54F), Color(0xFFB45309)),
+                        Triple(Color(0xFFEDE9FE), Color(0xFFC4B5FD), Color(0xFF5E4AE3)),
+                        Triple(Color(0xFFECFDF5), Color(0xFF6EE7B7), Color(0xFF047857)),
+                        Triple(Color(0xFFFFF1F2), Color(0xFFFDA4AF), Color(0xFFBE123C))
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 12.dp, end = 12.dp, top = 12.dp)
+                        .clip(RoundedCornerShape(18.dp))
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(Color(0xFFF7F5FF), Color(0xFFFFFDF7))
                             )
-                            .padding(horizontal = 12.dp, vertical = 10.dp),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
-                        verticalAlignment = Alignment.CenterVertically
+                        )
+                        .border(1.dp, Color(0xFFEDE9FE), RoundedCornerShape(18.dp))
+                        .padding(horizontal = 14.dp, vertical = 12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        letters.forEachIndexed { idx, ltr ->
-                            val (bg, fg) = cardColors[idx % cardColors.size]
-                            Surface(
-                                shape = RoundedCornerShape(14.dp),
-                                color = bg,
-                                border = BorderStroke(2.dp, Color.White),
-                                shadowElevation = 4.dp,
-                                modifier = Modifier.size(width = 52.dp, height = 48.dp)
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
-                                Box(contentAlignment = Alignment.Center) {
+                                Surface(
+                                    shape = RoundedCornerShape(50),
+                                    color = Color.White,
+                                    border = BorderStroke(1.dp, Color(0xFFE2DEFA))
+                                ) {
                                     Text(
-                                        text = ltr,
+                                        text = uiStrings.alphabetBookTag,
                                         fontFamily = GoogleSansFamily,
                                         fontWeight = FontWeight.ExtraBold,
-                                        fontSize = 22.sp,
-                                        color = fg
+                                        fontSize = 11.sp,
+                                        color = SeekhGreen600,
+                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp)
                                     )
+                                }
+                                Text(
+                                    text = "${uiStrings.levelPrefix} ${book.level}",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 11.sp,
+                                    color = SeekhTextSecondary
+                                )
+                            }
+
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                letters.forEachIndexed { idx, ltr ->
+                                    val (bg, borderCol, fg) = tilePalettes[idx % tilePalettes.size]
+                                    Surface(
+                                        shape = RoundedCornerShape(12.dp),
+                                        color = bg,
+                                        border = BorderStroke(1.4.dp, borderCol),
+                                        modifier = Modifier.size(width = 44.dp, height = 44.dp)
+                                    ) {
+                                        Box(contentAlignment = Alignment.Center) {
+                                            Text(
+                                                text = ltr,
+                                                fontFamily = GoogleSansFamily,
+                                                fontWeight = FontWeight.ExtraBold,
+                                                fontSize = 19.sp,
+                                                color = fg
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        Surface(
+                            shape = RoundedCornerShape(16.dp),
+                            color = Color.White,
+                            border = BorderStroke(1.5.dp, Color(0xFFE8ECF7)),
+                            shadowElevation = 2.dp,
+                            modifier = Modifier.size(92.dp)
+                        ) {
+                            AssetWebpImage(
+                                assetPath = firstPagePreviewPath,
+                                contentDescription = primaryTitle,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(RoundedCornerShape(15.dp)),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                    }
+
+                    if (isCompleted) {
+                        Box(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .align(Alignment.TopEnd)
+                                .clip(CircleShape)
+                                .background(SeekhGreenMint)
+                                .border(1.8.dp, Color.White, CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = "Completed",
+                                tint = Color.White,
+                                modifier = Modifier.size(14.dp)
+                            )
+                        }
                     }
                 }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(166.dp)
+                        .padding(start = 10.dp, end = 10.dp, top = 10.dp)
+                        .clip(RoundedCornerShape(18.dp))
+                ) {
+                    AssetWebpImage(
+                        assetPath = book.coverAssetPath,
+                        contentDescription = primaryTitle,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
 
-                if (isCompleted) {
-                    Box(
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .size(28.dp)
-                            .align(Alignment.TopEnd)
-                            .clip(CircleShape)
-                            .background(SeekhGreenMint)
-                            .border(2.dp, Color.White, CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = "Completed",
-                            tint = Color.White,
-                            modifier = Modifier.size(16.dp)
-                        )
+                    if (isCompleted) {
+                        Box(
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .size(28.dp)
+                                .align(Alignment.TopEnd)
+                                .clip(CircleShape)
+                                .background(SeekhGreenMint)
+                                .border(2.dp, Color.White, CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = "Completed",
+                                tint = Color.White,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -1690,45 +1771,47 @@ fun FeaturedStoryHeroCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Surface(
-                            shape = RoundedCornerShape(50),
-                            color = if (isAlphabetBook) Color(0xFFFFF8E1) else SeekhGreenSoft,
-                            border = if (isAlphabetBook) BorderStroke(1.dp, SeekhYellow500) else null
+                    if (!isAlphabetBook) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
+                            Surface(
+                                shape = RoundedCornerShape(50),
+                                color = SeekhGreenSoft
+                            ) {
+                                Text(
+                                    text = "${uiStrings.levelPrefix} ${book.level}",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 10.5.sp,
+                                    color = SeekhGreen600,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                )
+                            }
                             Text(
-                                text = "${uiStrings.levelPrefix} ${book.level}",
+                                text = uiStrings.storyOfTheDayTag,
                                 fontFamily = GoogleSansFamily,
-                                fontWeight = FontWeight.ExtraBold,
-                                fontSize = 10.5.sp,
-                                color = if (isAlphabetBook) Color(0xFFB45309) else SeekhGreen600,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 11.5.sp,
+                                color = SeekhTextSecondary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
-                        Text(
-                            text = if (isAlphabetBook) uiStrings.alphabetBookTag else uiStrings.storyOfTheDayTag,
-                            fontFamily = GoogleSansFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 11.5.sp,
-                            color = if (isAlphabetBook) SeekhGreen600 else SeekhTextSecondary,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                        Spacer(modifier = Modifier.height(3.dp))
                     }
-                    Spacer(modifier = Modifier.height(3.dp))
                     Text(
                         text = primaryTitle,
                         fontFamily = GoogleSansFamily,
                         fontWeight = FontWeight.ExtraBold,
-                        fontSize = 18.sp,
+                        fontSize = 17.5.sp,
                         color = SeekhTextPrimary,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                     if (secondarySub.isNotBlank()) {
+                        Spacer(modifier = Modifier.height(1.dp))
                         Text(
                             text = secondarySub,
                             fontFamily = GoogleSansFamily,
