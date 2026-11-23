@@ -404,7 +404,8 @@ fun InteractiveStoryReaderScreen(
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        modifier = Modifier.weight(1f)
                     ) {
                         IconButton(onClick = {
                             onStopListening()
@@ -417,12 +418,27 @@ fun InteractiveStoryReaderScreen(
                                 modifier = Modifier.size(26.dp)
                             )
                         }
+                        Surface(
+                            shape = RoundedCornerShape(50),
+                            color = SeekhGreenSoft
+                        ) {
+                            Text(
+                                text = "${(pageIndex + 1).coerceAtMost(book.pages.size)} / ${book.pages.size}",
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 12.sp,
+                                color = SeekhGreen600,
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                            )
+                        }
                         Text(
-                            text = "${(pageIndex + 1).coerceAtMost(book.pages.size)} / ${book.pages.size}",
+                            text = book.title,
                             fontFamily = GoogleSansFamily,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 13.sp,
-                            color = SeekhTextSecondary
+                            fontSize = 14.sp,
+                            color = SeekhTextPrimary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
 
@@ -430,44 +446,6 @@ fun InteractiveStoryReaderScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        // Reading Mode Dropdown Pill (Read aloud | Listen | Silent)
-                        Surface(
-                            modifier = Modifier.bouncyClick { showReadingModeDialog = true },
-                            shape = RoundedCornerShape(50),
-                            color = SeekhSurfaceGray,
-                            border = BorderStroke(1.dp, SeekhBorderGray)
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 9.dp, vertical = 5.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                Icon(
-                                    imageVector = when (readingMode) {
-                                        "Listen" -> Icons.AutoMirrored.Filled.VolumeUp
-                                        "Silent" -> Icons.Default.Visibility
-                                        else -> Icons.Default.Mic
-                                    },
-                                    contentDescription = "Reading mode",
-                                    tint = SeekhGreen500,
-                                    modifier = Modifier.size(14.dp)
-                                )
-                                Text(
-                                    text = readingMode,
-                                    fontFamily = GoogleSansFamily,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 11.sp,
-                                    color = SeekhTextPrimary
-                                )
-                                Icon(
-                                    imageVector = Icons.Default.ArrowDropDown,
-                                    contentDescription = null,
-                                    tint = SeekhTextSecondary,
-                                    modifier = Modifier.size(14.dp)
-                                )
-                            }
-                        }
-
                         StarCounterPill(
                             stars = profile.stars,
                             backgroundColor = SeekhGreenSoft,
@@ -894,137 +872,222 @@ fun InteractiveStoryReaderScreen(
         // Flying Stars Animation Overlay (StarAnimationHolderView)
         FlyingStarsOverlay(triggerCount = starBurstTrigger)
 
-        // Bottom-Left Clean Microphone Button + Auto-Read Cursor Toggle Pill (plus Bonus Quiz chip if the current page has a quiz)
-        Row(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .navigationBarsPadding()
-                .padding(start = 20.dp, bottom = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Surface(
+        // Crystal-Clear 2-Button Voice Control Dock at Bottom-Left:
+        //   1. "🔊 Listen (Hear Story)" -> Blue Speaker Button to listen to the story word-by-word
+        //   2. "🎤 Speak (Read Yourself)" -> Green Microphone Button to speak into the mic yourself
+        if (pagerState.currentPage < book.pages.size) {
+            Column(
                 modifier = Modifier
-                    .size(54.dp)
-                    .bouncyClick(scaleDown = 0.88f) {
-                        val nextMic = !isMicActive
-                        isMicActive = nextMic
-                        if (nextMic) {
-                            isAutoReadingActive = false
-                            voiceEngine?.stopSpeaking()
-                        } else {
-                            onStopListening()
-                        }
-                    },
-                shape = CircleShape,
-                color = if (isMicActive) SeekhGreenMint else Color.White,
-                shadowElevation = 6.dp,
-                border = BorderStroke(1.5.dp, if (isMicActive) SeekhGreenMint else SeekhGreen500)
+                    .align(Alignment.BottomStart)
+                    .navigationBarsPadding()
+                    .padding(start = 16.dp, end = 98.dp, bottom = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = if (isMicActive) Icons.Default.Mic else Icons.Default.MicNone,
-                        contentDescription = "Voice Mic",
-                        tint = if (isMicActive) Color.White else SeekhGreen500,
-                        modifier = Modifier.size(26.dp)
-                    )
-                }
-            }
-
-            if (pagerState.currentPage < book.pages.size) {
-                Surface(
-                    modifier = Modifier
-                        .height(44.dp)
-                        .bouncyClick(scaleDown = 0.90f) {
-                            if (isAutoReadingActive) {
-                                isAutoReadingActive = false
-                                voiceEngine?.stopSpeaking()
-                            } else {
-                                isMicActive = false
-                                onStopListening()
-                                isAutoReadingActive = true
-                                hearLineTrigger++
-                            }
-                        },
-                    shape = RoundedCornerShape(50),
-                    color = if (isAutoReadingActive) SeekhGreen500 else Color.White,
-                    border = BorderStroke(1.dp, SeekhGreen500),
-                    shadowElevation = 4.dp
+                // Live Mode Helper Strip + Optional Quiz Chip
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 14.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Icon(
-                            imageVector = if (isAutoReadingActive) Icons.Default.Pause else Icons.Default.PlayArrow,
-                            contentDescription = "Toggle Auto Read",
-                            tint = if (isAutoReadingActive) Color.White else SeekhGreen600,
-                            modifier = Modifier.size(18.dp)
+                    Surface(
+                        shape = RoundedCornerShape(50),
+                        color = when {
+                            isMicActive -> Color(0xFFECFDF5)
+                            isAutoReadingActive -> SeekhBlueSoft
+                            else -> SeekhSurfaceGray
+                        },
+                        border = BorderStroke(
+                            1.dp,
+                            when {
+                                isMicActive -> SeekhGreenMint.copy(alpha = 0.5f)
+                                isAutoReadingActive -> SeekhBlue500.copy(alpha = 0.5f)
+                                else -> SeekhBorderGray
+                            }
                         )
+                    ) {
                         Text(
-                            text = if (isAutoReadingActive) "Reading..." else "Read Page",
+                            text = when {
+                                isMicActive -> "🎤 Speak Mode: Read the highlighted word aloud"
+                                isAutoReadingActive -> "🔊 Listen Mode: AI reading word by word"
+                                else -> "Tap 🔊 Listen to hear, or 🎤 Speak to read yourself"
+                            },
                             fontFamily = GoogleSansFamily,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 13.sp,
-                            color = if (isAutoReadingActive) Color.White else SeekhGreen600
+                            fontSize = 11.sp,
+                            color = when {
+                                isMicActive -> SeekhVocabDarkGreen
+                                isAutoReadingActive -> SeekhBlue600
+                                else -> SeekhTextSecondary
+                            },
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
                         )
                     }
-                }
-            }
 
-            if (pagerState.currentPage < book.pages.size && currentPage.quiz != null) {
-                val isQuizSolved = rewardedQuizPageIndices.contains(pageIndex)
-                Surface(
-                    modifier = Modifier
-                        .height(44.dp)
-                        .bouncyClick(scaleDown = 0.90f) {
-                            isAutoReadingActive = false
-                            voiceEngine?.stopSpeaking()
-                            activeQuizModalPageIndex = pageIndex
-                            onSpeakText(currentPage.quiz.question)
-                        },
-                    shape = RoundedCornerShape(50),
-                    color = if (isQuizSolved) SeekhGreenMint else SeekhGreenSoft,
-                    border = BorderStroke(1.dp, SeekhGreen500),
-                    shadowElevation = 4.dp
+                    if (currentPage.quiz != null) {
+                        val isQuizSolved = rewardedQuizPageIndices.contains(pageIndex)
+                        Surface(
+                            modifier = Modifier.bouncyClick(scaleDown = 0.90f) {
+                                isAutoReadingActive = false
+                                voiceEngine?.stopSpeaking()
+                                activeQuizModalPageIndex = pageIndex
+                                onSpeakText(currentPage.quiz.question)
+                            },
+                            shape = RoundedCornerShape(50),
+                            color = if (isQuizSolved) SeekhGreenMint else SeekhGreenSoft,
+                            border = BorderStroke(1.dp, SeekhGreen500)
+                        ) {
+                            Text(
+                                text = if (isQuizSolved) "Quiz ✓" else "💡 Quiz",
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 11.sp,
+                                color = if (isQuizSolved) Color.White else SeekhGreen600,
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                            )
+                        }
+                    }
+                }
+
+                // Side-by-Side Clearly Labeled "🔊 Listen" & "🎤 Speak" Buttons
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 14.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    // BUTTON 1: FOR LISTENING TO THE STORY (Sunna k lia)
+                    Surface(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(54.dp)
+                            .bouncyClick(scaleDown = 0.92f) {
+                                if (isAutoReadingActive) {
+                                    isAutoReadingActive = false
+                                    voiceEngine?.stopSpeaking()
+                                } else {
+                                    isMicActive = false
+                                    onStopListening()
+                                    isAutoReadingActive = true
+                                    hearLineTrigger++
+                                }
+                            },
+                        shape = RoundedCornerShape(18.dp),
+                        color = if (isAutoReadingActive) SeekhBlue600 else SeekhBlueSoft,
+                        border = BorderStroke(1.5.dp, SeekhBlue600),
+                        shadowElevation = if (isAutoReadingActive) 6.dp else 2.dp
                     ) {
-                        Text(
-                            text = if (isQuizSolved) "Quiz Done ✓" else "💡 Quiz (+20 ⭐)",
-                            fontFamily = GoogleSansFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 13.sp,
-                            color = if (isQuizSolved) Color.White else SeekhGreen600
-                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = if (isAutoReadingActive) Icons.Default.PauseCircleFilled else Icons.AutoMirrored.Filled.VolumeUp,
+                                contentDescription = "Listen to Story",
+                                tint = if (isAutoReadingActive) Color.White else SeekhBlue600,
+                                modifier = Modifier.size(22.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Column {
+                                Text(
+                                    text = if (isAutoReadingActive) "Listening..." else "Listen",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 14.sp,
+                                    lineHeight = 16.sp,
+                                    color = if (isAutoReadingActive) Color.White else SeekhBlue600
+                                )
+                                Text(
+                                    text = if (isAutoReadingActive) "Tap to Pause" else "Hear Story",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.Medium,
+                                    fontSize = 10.sp,
+                                    lineHeight = 12.sp,
+                                    color = if (isAutoReadingActive) Color.White.copy(alpha = 0.88f) else SeekhBlue600.copy(alpha = 0.8f)
+                                )
+                            }
+                        }
+                    }
+
+                    // BUTTON 2: FOR SPEAKING YOURSELF (Khud bolna k lia)
+                    Surface(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(54.dp)
+                            .bouncyClick(scaleDown = 0.92f) {
+                                val nextMic = !isMicActive
+                                isMicActive = nextMic
+                                if (nextMic) {
+                                    isAutoReadingActive = false
+                                    voiceEngine?.stopSpeaking()
+                                } else {
+                                    onStopListening()
+                                }
+                            },
+                        shape = RoundedCornerShape(18.dp),
+                        color = if (isMicActive) SeekhGreenMint else Color(0xFFECFDF5),
+                        border = BorderStroke(1.5.dp, SeekhGreenMint),
+                        shadowElevation = if (isMicActive) 6.dp else 2.dp
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = if (isMicActive) Icons.Default.StopCircle else Icons.Default.Mic,
+                                contentDescription = "Speak Yourself",
+                                tint = if (isMicActive) Color.White else SeekhVocabDarkGreen,
+                                modifier = Modifier.size(22.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Column {
+                                Text(
+                                    text = if (isMicActive) "Speaking..." else "Speak",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 14.sp,
+                                    lineHeight = 16.sp,
+                                    color = if (isMicActive) Color.White else SeekhVocabDarkGreen
+                                )
+                                Text(
+                                    text = if (isMicActive) "Tap to Stop" else "Read Yourself",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.Medium,
+                                    fontSize = 10.sp,
+                                    lineHeight = 12.sp,
+                                    color = if (isMicActive) Color.White.copy(alpha = 0.88f) else SeekhVocabDarkGreen.copy(alpha = 0.8f)
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
 
-        // Bottom-Right AI Reading Buddy (Tapping speaks the currently visible page line with word-by-word cursor highlight!)
+        // Bottom-Right AI Reading Buddy (Tapping also replays / listens to the current page!)
         FloatingReadingBuddy(
             mood = when {
                 isMicActive -> BuddyMood.LISTENING
                 isAutoReadingActive -> BuddyMood.SPEAKING
                 else -> buddyMood
             },
-            speechBubbleText = if (isMicActive) "Speak now..." else null,
+            speechBubbleText = null,
             onClick = {
                 isMicActive = false
                 onStopListening()
                 isAutoReadingActive = true
                 hearLineTrigger++
             },
-            size = 78.dp,
+            size = 74.dp,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .navigationBarsPadding()
-                .padding(end = 14.dp, bottom = 10.dp)
+                .padding(end = 12.dp, bottom = 12.dp)
         )
     }
 
