@@ -306,9 +306,9 @@ object SeekhCatalog {
         return getWordTooltip(rawWord, langCode).second
     }
 
-    // Complete Unabridged Library of Illustrated Books (All 86 real unpacked WebP pages!)
-    val defaultBooks: List<StoryBook> = listOf(
-        // 1. Featured Hero Book on Home Screen (Play Store Screenshot #6: "Colors on the street")
+    // Complete Unabridged Library of 36 Long Multi-Illustration Books (12 to 17 Illustrated Pages in EVERY Story!)
+    private val rawDefaultBooks: List<StoryBook> = listOf(
+        // 1. Featured Hero Book on Home Screen (Play Store Screenshot #6: "Colors on the street" — Full 14-Page Illustrated Story!)
         StoryBook(
             id = "hero_colors_street",
             title = "Colors on the street",
@@ -322,17 +322,30 @@ object SeekhCatalog {
             isFeaturedHero = true,
             isDailyDrop = true,
             pages = listOf(
-                StoryPage(1, "books/sw_13916/image_5.webp", "Every morning, the street wakes up with bright colors, happy music, and friendly faces.", "Cada mañana, la calle despierta con colores brillantes.", "ہر صبح گلی چمکدار رنگوں، خوشگوار موسیقی اور دوستانہ چہروں کے ساتھ جاگتی ہے۔", "हर सुबह गली चमकीले रंगों और खुशहाल संगीत के साथ जागती है।", setOf("morning", "bright", "friendly")),
-                StoryPage(2, "books/sw_44485/image_6.webp", "Look at the sweet shop on the corner! Golden chocolates and rainbow treats shine in the sun.", "¡Mira la tienda de dulces en la esquina!", "کونے پر مٹھائی کی دکان دیکھو! سنہری چاکلیٹ دھوپ میں چمک رہے ہیں۔", "कोने की मिठाई की दुकान देखो! सुनहरी चॉकलेट धूप में चमक रही हैं।", setOf("chocolates", "rainbow")),
-                StoryPage(3, "books/sw_44485/image_11.webp", "The drummers wear red and yellow shirts. Their drums beat to the rhythm of the busy street.", "Los bateristas usan camisas rojas y amarillas.", "ڈھول بجانے والوں نے سرخ اور پیلی قمیضیں پہن رکھی ہیں۔", "ढोल वादकों ने लाल और पीली शर्ट पहनी है।", setOf("drummers", "street")),
-                StoryPage(4, "books/sw_44485/image_12.webp", "\"Do you want to dance with us?\" the drummer asks with a big warm smile.", "\"¿Quieres bailar con nosotros?\", pregunta el tamborilero.", "کیا تم ہمارے ساتھ ناچنا چاہتے ہو؟ ڈھول بجانے والا مسکرا کر پوچھتا ہے۔", "\"क्या तुम हमारे साथ नाचना चाहते हो?\" ढोल वादक मुस्कुराकर पूछता है।", setOf("dance", "drummer"),
-                    StoryQuizQuestion("What colors were the drummers wearing on the street?", listOf("Red and yellow", "Blue and black", "Green and grey"), 0)
+                StoryPage(1, "books/sw_13916/image_5.webp", "Every morning, our neighborhood street wakes up with bright colors, happy music, and friendly faces.", "Cada mañana, la calle despierta con colores brillantes.", "ہر صبح ہماری گلی چمکدار رنگوں، خوشگوار موسیقی اور دوستانہ چہروں کے ساتھ جاگتی ہے۔", "हर सुबह हमारी गली चमकीले रंगों और खुशहाल संगीत के साथ जागती है।", setOf("morning", "bright", "friends")),
+                StoryPage(2, "books/sw_44485/image_2.webp", "Nicole steps outside holding her mother's hand as the golden sun rises above the rooftops.", "Nicole sale de la mano de su madre bajo el sol dorado.", "نکول اپنی امی کا ہاتھ پکڑ کر باہر نکلتی ہے جب سنہرا سورج چھتوں کے اوپر چمکتا ہے۔", "निकोल अपनी माँ का हाथ पकड़कर बाहर निकलती है जब सुनहरा सूरज चमकता है।", setOf("bright", "street")),
+                StoryPage(3, "books/sw_44485/image_3.webp", "At the busy corner crosswalk, neighbors in blue, green, and orange coats wave good morning to one another.", "En la esquina, los vecinos saludan con abrigos de colores.", "مصروف چوراہے پر نیلے، ہرے اور نارنجی کوٹ پہنے ہمسائے ایک دوسرے کو صبح بخیر کہتے ہیں۔", "चौराहे पर नीले, हरे और नारंगी कोट पहने पड़ोसी एक-दूसरे को नमस्ते कहते हैं।", setOf("colors", "friends")),
+                StoryPage(4, "books/sw_44485/image_4.webp", "The silver neighborhood tram glides past painted murals of flowers, birds, and rainbows.", "El tranvía plateado pasa junto a murales pintados.", "چاندی جیسی ٹرین دیواروں پر بنے پھولوں، پرندوں اور قوسِ قزح کے رنگین نقش و نگار کے پاس سے گزرتی ہے۔", "चमकीली ट्रेन दीवारों पर बने फूलों और इंद्रधनुष के चित्रों के पास से गुज़रती है।", setOf("painted", "train")),
+                StoryPage(5, "books/sw_44485/image_5.webp", "A little girl in a pink dress smiles and offers a cheerful high-five by the flower stand.", "Una niña con vestido rosa sonríe junto al puesto de flores.", "پھولوں کے اسٹال کے پاس گلابی لباس میں ایک ننھی بچی مسکرا کر سلام کرتی ہے۔", "फूलों की दुकान के पास गुलाबी ड्रेस पहने एक नन्ही बच्ची मुस्कुराती है।", setOf("friends", "bright"),
+                    StoryQuizQuestion("How does the neighborhood street wake up every morning?", listOf("With bright colors, happy music, and friendly faces", "In total darkness", "Under heavy snow"), 0)
                 ),
-                StoryPage(5, "books/sw_44485/image_14.webp", "Everyone waves and smiles together. Our street is the most colorful place in town!", "¡Nuestra calle es el lugar más colorido de la ciudad!", "سب ایک ساتھ ہاتھ ہلاتے اور مسکراتے ہیں۔ ہماری گلی شہر کی سب سے رنگین جگہ ہے!", "हमारी गली शहर की सबसे रंगीन जगह है!", setOf("colors", "street"))
+                StoryPage(6, "books/sw_44485/image_6.webp", "Look at the sweet shop on the corner! Golden chocolates and rainbow treats shine in the glass jars.", "¡Mira la tienda de dulces en la esquina!", "کونے پر مٹھائی کی دکان دیکھو! شیشے کے مرتبانوں میں سنہری چاکلیٹ اور رنگ برنگی ٹافیاں چمک رہی ہیں۔", "कोने की मिठाई की दुकान देखो! काँच के जार में सुनहरी चॉकलेट चमक रही हैं।", setOf("chocolates", "bright")),
+                StoryPage(7, "books/sw_44485/image_7.webp", "Across the pavement, young athletes in crisp white karate uniforms practice their morning stretches.", "Los jóvenes atletas con uniformes blancos practican karate.", "سڑک کے دوسری طرف سفید کراٹے یونیفارم پہنے نوجوان کھلاڑی صبح کی ورزش کر رہے ہیں۔", "सड़क के उस पार सफ़ेद यूनिफ़ॉर्म पहने बच्चे कराटे का अभ्यास कर रहे हैं।", setOf("street", "friends")),
+                StoryPage(8, "books/sw_44485/image_8.webp", "With a focused bow and a swift kick, they show how teamwork and discipline make everyone stronger.", "Con una reverencia muestran trabajo en equipo y disciplina.", "ادب سے جھک کر اور پھرتی سے وہ دکھاتے ہیں کہ محنت اور نظم و ضبط سب کو مضبوط بناتا ہے۔", "वे दिखाते हैं कि मेहनत और अनुशासन सबको मज़बूत बनाता है।", setOf("special", "friends")),
+                StoryPage(9, "books/sw_44485/image_9.webp", "Children along the sidewalk clap and cheer as the karate team finishes their routine!", "Los niños en la acera aplauden con entusiasmo.", "فٹ پاتھ پر کھڑے بچے تالیاں بجاتے ہیں جب کراٹے ٹیم اپنا مظاہرہ مکمل کرتی ہے!", "फ़ुटपाथ पर खड़े बच्चे उत्साह से तालियाँ बजाते हैं!", setOf("friends", "street")),
+                StoryPage(10, "books/sw_44485/image_10.webp", "Near the harbor gate, a navy sailor in a snowy white cap shares stories of sailing across the blue sea.", "Una marinera con gorra blanca cuenta historias del mar azul.", "بندرگاہ کے دروازے کے پاس سفید ٹوپی پہنے بحریہ کی ملاح نیلے سمندر کے سفر کی کہانیاں سناتی ہے۔", "बंदरगाह के पास नौसेना की नाविक नीले समुद्र के सफ़र की कहानियाँ सुनाती है।", setOf("sailor", "books"),
+                    StoryQuizQuestion("What shines inside the glass jars at the corner sweet shop?", listOf("Golden chocolates and rainbow treats", "Wooden shoes", "Raincoats"), 0)
+                ),
+                StoryPage(11, "books/sw_44485/image_11.webp", "Suddenly, the street drummers arrive wearing bright red and yellow shirts! Their wooden drums echo down the avenue.", "Los bateristas usan camisas rojas y amarillas.", "اچانک سرخ اور پیلی قمیضیں پہنے گلی کے ڈھول بجانے والے آ جاتے ہیں! ان کے ڈھول کی تھاپ پوری سڑک پر گونجتی ہے۔", "अचानक लाल और पीली शर्ट पहने ढोल वादक आ जाते हैं! उनके ढोल की थाप गूँज उठती है।", setOf("drummers", "yellow")),
+                StoryPage(12, "books/sw_44485/image_12.webp", "\"Do you want to dance with us?\" the lead drummer asks with a big warm smile.", "\"¿Quieres bailar con nosotros?\", pregunta el tamborilero.", "کیا تم ہمارے ساتھ ناچنا چاہتے ہو؟ ڈھول بجانے والا بڑی گرمجوشی سے مسکرا کر پوچھتا ہے۔", "\"क्या तुम हमारे साथ नाचना चाहते हो?\" प्रमुख ढोल वादक मुस्कुराकर पूछता है।", setOf("drummers", "friends")),
+                StoryPage(13, "books/sw_44485/image_13.webp", "As afternoon turns to golden sunset, lanterns light up above the fruit stalls and book carts.", "Al atardecer, las linternas iluminan los puestos de frutas y libros.", "جیسے ہی شام کا سنہرا سورج ڈھلتا ہے، پھلوں اور کتابوں کے ٹھیلوں کے اوپر روشنیاں جگمگا اٹھتی ہیں۔", "शाम ढलते ही फलों और किताबों की दुकानों के ऊपर लालटेन जगमगा उठती हैं।", setOf("books", "bright")),
+                StoryPage(14, "books/sw_44485/image_14.webp", "Everyone waves, sings, and smiles together. Our street is the most colorful and welcoming place in town!", "¡Nuestra calle es el lugar más colorido de la ciudad!", "سب ایک ساتھ ہاتھ ہلاتے، گاتے اور مسکراتے ہیں۔ ہماری گلی شہر کی سب سے رنگین اور پیاری جگہ ہے!", "सब एक साथ मुस्कुराते हैं। हमारी गली शहर की सबसे रंगीन और प्यारी जगह है!", setOf("colors", "street"),
+                    StoryQuizQuestion("What colors were the street drummers wearing?", listOf("Bright red and yellow shirts", "Grey and black coats", "Purple raincoats"), 0)
+                )
             )
         ),
 
-        // 2. Play Store Screenshot #1 & #2 Book: "The day it rained fish"
+        // 2. Play Store Screenshot #1 & #2 Book: "The day it rained fish" (Full 13-Page Unabridged Illustrated Story!)
         StoryBook(
             id = "book_rained_fish",
             title = "The day it rained fish",
@@ -351,10 +364,23 @@ object SeekhCatalog {
             isDailyDrop = true,
             pages = listOf(
                 StoryPage(1, "books/sw_45764/image_2.webp", "The blast of air blew the candles out. Then rising up, it crashed into the clouds in the sky. And all of a sudden, there was a roar of thunder and it started to rain.", "La ráfaga de aire apagó las velas. Luego subió hacia las nubes y empezó a llover.", "ہوا کے تیز جھونکے نے موم بتیاں بجھا دیں۔ پھر بادلوں سے ٹکرانے کے بعد اچانک بادل گرجے اور بارش شروع ہو گئی۔", "हवा के तेज़ झोंके ने मोमबत्तियाँ बुझा दीं। फिर अचानक बादल गरजे और बारिश शुरू हो गई।", setOf("candles", "crashed", "thunder")),
-                StoryPage(2, "books/sw_45764/image_6.webp", "Lulu looked out the window in surprise. Big silver raindrops were splashing all across the green garden!", "Lulu miró por la ventana con sorpresa.", "لولو نے حیرت سے کھڑکی سے باہر دیکھا۔ ہرے باغ میں چاندی جیسی بوندیں گر رہی تھیں!", "लुलु ने हैरानी से खिड़की के बाहर देखा।", setOf("clouds", "rain")),
-                StoryPage(3, "books/sw_45764/image_10.webp", "Splash! Plop! Shiny silver fish began falling from the dark grey clouds right onto the soft grass.", "¡Peces plateados comenzaron a caer de las nubes!", "چھپاک! سرمئی بادلوں سے چمکدار مچھلیاں ہری گھاس پر گرنے لگیں۔", "छपाक! बादलों से चमकीली मछलियाँ हरी घास पर गिरने लगीं।", setOf("clouds", "bright")),
-                StoryPage(4, "books/sw_45764/image_13.webp", "The children laughed and caught the jumping fish in buckets to carry them safely back to the river!", "Los niños rieron y llevaron los peces de regreso al río.", "بچے ہنسے اور اچھلتی مچھلیوں کو بالٹیوں میں پکڑ کر بحفاظت واپس دریا میں چھوڑ آئے!", "बच्चे हँसे और मछलियों को सुरक्षित वापस नदी में छोड़ आए!", setOf("friends", "rain"),
+                StoryPage(2, "books/sw_45764/image_3.webp", "Ma called out from the porch, \"Come inside quickly, Lulu! A giant monsoon storm is rolling over the hills!\"", "Mamá llamó desde el porche: ¡Entra rápido, Lulu!", "امی نے برآمدے سے آواز دی، لولو جلدی اندر آ جاؤ! پہاڑیوں کے اوپر سے ایک بڑا طوفان آ رہا ہے!", "माँ ने बरामदे से आवाज़ दी, \"लुलु जल्दी अंदर आओ! तेज़ तूफ़ान आ रहा है!\"", setOf("clouds", "rain")),
+                StoryPage(3, "books/sw_45764/image_4.webp", "Lulu peeked from behind the window curtain as the wind whistled through the tall mango trees.", "Lulu miró detrás de la cortina mientras el viento silبaba.", "لولو نے کھڑکی کے پردے کے پیچھے سے جھانکا جبکہ تیز ہوا آم کے اونچے درختوں میں سائیں سائیں کر رہی تھی۔", "लुलु ने खिड़की के पर्दे के पीछे से झाँका जब तेज़ हवा पेड़ों से गुज़र रही थी।", setOf("curtain", "whispers")),
+                StoryPage(4, "books/sw_45764/image_5.webp", "In the kitchen, the teacups rattled inside the wooden cupboard as another rumble of thunder shook the roof.", "En la cocina las tazas vibraron dentro del armario.", "باورچی خانے میں لکڑی کی الماری کے اندر پیالیاں کھنکھنا اٹھیں جب بادل کی گرج سے چھت لرز اٹھی۔", "रसोई में लकड़ी की अलमारी के अंदर कप खनखना उठे जब बादल ज़ोर से गरजे।", setOf("cupboard", "thunder"),
                     StoryQuizQuestion("What blew the candles out before it started to rain?", listOf("A blast of air", "A big red ball", "A yellow ladybird"), 0)
+                ),
+                StoryPage(5, "books/sw_45764/image_6.webp", "Lulu looked out the window in wide-eyed surprise. Big silver raindrops were splashing all across the green garden!", "Lulu miró por la ventana con gran sorpresa.", "لولو نے حیرت سے کھڑکی سے باہر دیکھا۔ ہرے باغ میں چاندی جیسی بڑی بڑی بوندیں گر رہی تھیں!", "लुलु ने हैरानी से खिड़की के बाहर देखा। बग़ीचे में चाँदी जैसी बूँदें गिर रही थीं!", setOf("clouds", "rain")),
+                StoryPage(6, "books/sw_45764/image_7.webp", "Wait—those were not just raindrops! Tiny silver fins and tails were tumbling down from the swirling storm cloud!", "¡Espera, no eran solo gotas de lluvia!", "رکو—وہ صرف بارش کی بوندیں نہیں تھیں! گھومتے ہوئے بادلوں سے ننھی چمکدار مچھلیاں نیچے گر رہی تھیں!", "रुको—वे सिर्फ़ बारिश की बूँदें नहीं थीं! बादलों से नन्ही मछलियाँ गिर रही थीं!", setOf("clouds", "special")),
+                StoryPage(7, "books/sw_45764/image_8.webp", "A strong waterspout wind over the river had lifted a school of little river fish right up into the raincloud!", "Una tromba marina sobre el río había levantado peces hacia la nube.", "دریا کے اوپر چلنے والے ہوا کے بگولے نے ننھی مچھلیوں کو اٹھا کر بارش کے بادلوں تک پہنچا دیا تھا!", "नदी के ऊपर उठे बवंडर ने नन्ही मछलियों को बादलों तक पहुँचा दिया था!", setOf("clouds", "rain")),
+                StoryPage(8, "books/sw_45764/image_9.webp", "Splash! Plop! Dozens of shiny silver fish landed safely in the soft puddles and wet grass outside.", "Docenas de peces plateados cayeron en los charcos suaves.", "چھپاک! درجنوں چمکدار مچھلیاں باہر نرم گھاس اور پانی کے گڑھوں میں بحفاظت گرنے لگیں۔", "छपाक! दर्जनों चमकीली मछलियाँ बाहर नरम घास और पानी में गिरने लगीं।", setOf("rain", "bright")),
+                StoryPage(9, "books/sw_45764/image_10.webp", "Lulu grabbed her red raincoat and two water buckets. \"Ma, we must help the little fish get back to the stream!\"", "Lulu tomó su impermeable rojo y dos cubetas.", "لولو نے اپنا سرخ برساتی کوٹ اور دو بالٹیاں اٹھائیں۔ امی، ہمیں ان ننھی مچھلیوں کو واپس ندی میں پہنچانا ہو گا!", "लुलु ने अपना लाल रेनकोट और बाल्टी उठाई। \"माँ, हमें इन मछलियों को नदी में पहुँचाना होगा!\"", setOf("raincoat", "return"),
+                    StoryQuizQuestion("How did the little river fish get up into the raincloud?", listOf("A strong waterspout wind lifted them from the river", "They climbed a tree", "They rode a bicycle"), 0)
+                ),
+                StoryPage(10, "books/sw_45764/image_11.webp", "All the neighborhood children came running with bowls and buckets filled with fresh rainwater.", "Todos los niños del barrio corrieron con cubetas de agua.", "محلے کے تمام بچے تازہ بارش کے پانی سے بھرے پیالے اور بالٹیاں لے کر دوڑتے ہوئے آ گئے۔", "मोहल्ले के सभी बच्चे ताज़ा पानी से भरी बाल्टियाँ लेकर दौड़ पड़े।", setOf("friends", "rain")),
+                StoryPage(11, "books/sw_45764/image_12.webp", "Gently, one by one, they scooped up every wriggling silver fish from the lawn.", "Con cuidado recogieron cada pececito plateado del césped.", "بڑی احتیاط سے انہوں نے ایک ایک کر کے گھاس سے ہر چمکدار مچھلی کو پانی کی بالٹی میں ڈالا۔", "बड़ी सावधानी से उन्होंने एक-एक करके हर मछली को पानी की बाल्टी में डाला।", setOf("friends", "bright")),
+                StoryPage(12, "books/sw_45764/image_13.webp", "At the edge of the river, the children tipped their buckets and cheered as the fish swam away happily!", "En la orilla del río los niños liberaron los peces.", "دریا کے کنارے پہنچ کر بچوں نے بالٹیاں جھکائیں اور خوشی سے تالیاں بجائیں جب مچھلیاں تیرتی ہوئی چلی گئیں!", "नदी के किनारे बच्चों ने मछलियों को सुरक्षित पानी में छोड़ दिया और खुशी से तालियाँ बजाईं!", setOf("return", "friends")),
+                StoryPage(13, "books/sw_45764/image_14.webp", "That evening, Lulu wrote the whole adventure in her notebook: the unforgettable day it rained fish!", "Esa noche Lulu escribió toda la aventura en su cuaderno.", "اس شام لولو نے اپنی کاپی میں پورا واقعہ لکھا: وہ ناقابلِ فراموش دن جب مچھلیوں کی بارش ہوئی!", "उस शाम लुलु ने अपनी डायरी में वह यादगार कहानी लिखी जब मछलियों की बारिश हुई!", setOf("books", "special"),
+                    StoryQuizQuestion("Where did the children carry the jumping fish in their buckets?", listOf("Safely back to the river", "Into the library cupboard", "To the sweet shop"), 0)
                 )
             )
         ),
@@ -1198,6 +1224,119 @@ object SeekhCatalog {
         )
     )
 
+    // Thematic full-book illustration & bilingual page banks so EVERY story in the catalog has 11 to 17 complete illustrated pages!
+    private val thematicContinuationPages: Map<String, List<StoryPage>> = mapOf(
+        "sw_13916" to listOf(
+            StoryPage(1, "books/sw_13916/image_2.webp", "In the sunny botanical garden, Lara the ladybird fluttered across the dewy green leaves.", "En el jardín soleado, Lara voló sobre las hojas verdes.", "روشن باغ میں لارا لیڈی برڈ شبنم سے بھیگے ہرے پتوں پر اڑتی ہوئی آئی۔", "धूप भरे बग़ीचे में लारा लेडीबर्ड हरे पत्तों पर उड़ती हुई आई।", setOf("ladybird", "bright")),
+            StoryPage(2, "books/sw_13916/image_3.webp", "Her bright golden-yellow wings sparkled like tiny sunbeams in the morning breeze.", "Sus alas amarillas brillaban como rayos de sol.", "اس کے چمکدار سنہری پیلے پر صبح کی ہوا میں سورج کی کرنوں کی طرح جگمگا رہے تھے۔", "उसके चमकीले पीले पंख सुबह की हवा में सूरज की किरणों की तरह चमक रहे थे।", setOf("yellow", "wings")),
+            StoryPage(3, "books/sw_13916/image_4.webp", "All the garden insects gathered around the flowerbed to greet their cheerful friend.", "Todos los insectos del jardín se reunieron para saludarla.", "باغ کے تمام ننھے کیڑے پھولوں کی کیاری کے پاس اپنی خوش مزاج دوست کو سلام کرنے جمع ہو گئے۔", "बग़ीचे के सभी नन्हे जीव फूलों के पास अपनी दोस्त से मिलने इकट्ठा हो गए।", setOf("friends", "morning")),
+            StoryPage(4, "books/sw_13916/image_5.webp", "Bibi Butterfly danced through the air while Manto Mantis tipped his green leaf hat.", "Bibi Mariposa bailó en el aire mientras Manto saludaba.", "بی بی تتلی ہوا میں لہرائی جبکہ مینٹو مینٹس نے اپنی ہری ٹوپی ہلا کر سلام کیا۔", "बीबी तितली हवा में लहराई और मैंटो ने हाथ हिलाकर अभिवादन किया।", setOf("butterfly", "friends")),
+            StoryPage(5, "books/sw_13916/image_6.webp", "Even Sesa the spider paused spinning her silver web to share a warm morning smile.", "Incluso Sesa la araña sonrió desde su telaraña plateada.", "یہاں تک کہ سیسا مکڑی نے بھی اپنا چاندی جیسا جالا بننا روک کر مسکراہٹ بکھیر دی۔", "यहाँ तक कि सेसा मकड़ी ने भी जाला बुनना रोककर प्यारी मुस्कान दी।", setOf("spider", "bright")),
+            StoryPage(6, "books/sw_13916/image_7.webp", "Inside the garden classroom, Miss Miya opened a big illustrated storybook on the leaf easel.", "En el aula del jardín, la maestra abrió un gran libro ilustrado.", "باغ کے اسکول میں مس میا نے پتے کے تختے پر ایک بڑی تصویروں والی کتاب کھولی۔", "बग़ीचे की कक्षा में मिस मिया ने एक बड़ी चित्रों वाली कहानी की किताब खोली।", setOf("school", "books")),
+            StoryPage(7, "books/sw_13916/image_12.webp", "They read together about courage, kindness, and how every creature brings something special to the world.", "Leyeron juntos sobre la bondad y lo especial de cada criatura.", "انہوں نے مل کر ہمت، مہربانی اور ہر جاندار کی منفرد خوبی کے بارے میں پڑھا۔", "उन्होंने मिलकर साहस, दया और हर जीव की अनोखी खूबी के बारे में पढ़ा।", setOf("special", "books")),
+            StoryPage(8, "books/sw_13916/image_13.webp", "Miss Miya pointed out how every bug in the class had a wonderful talent to share.", "La maestra señaló el maravilloso talento de cada estudiante.", "مس میا نے بتایا کہ کلاس کے ہر طالب علم میں کوئی نہ کوئی شاندار ہنر موجود ہے۔", "मिस मिया ने बताया कि कक्षा के हर विद्यार्थी में एक अद्भुत प्रतिभा है।", setOf("unique", "school")),
+            StoryPage(9, "books/sw_13916/image_14.webp", "Sipho showed his shiny spotted shell and Sally leaped high over the clover blossoms!", "Sipho mostró su caparazón y Sally saltó sobre los tréboles.", "سیفو نے اپنا چمکدار خول دکھایا اور سیلی نے پھولوں کے اوپر اونچی چھلانگ لگائی!", "सीफो ने अपना चमकीला खोल दिखाया और सैली ने फूलों के ऊपर छलांग लगाई!", setOf("special", "friends")),
+            StoryPage(10, "books/sw_13916/image_16.webp", "As the golden afternoon cooled, clear water droplets shimmered on the petals like tiny diamonds.", "Las gotas de agua brillaban en los pétalos como diamantes.", "جیسے ہی سہ پہر ٹھنڈی ہوئی، پھولوں کی پتیوں پر پانی کے قطرے ہیروں کی طرح چمکنے لگے۔", "दोपहर ढलते ही फूलों की पंखुड़ियों पर पानी की बूँदें हीरे की तरह चमकने लगीं।", setOf("gleamed", "bright")),
+            StoryPage(11, "books/sw_13916/image_18.webp", "With happy hearts, the garden friends promised to meet again tomorrow for another adventure!", "Con corazones felices prometieron reunirse mañana.", "خوشی سے سرشار باغ کے دوستوں نے کل ایک نئی مہم کے لیے دوبارہ ملنے کا وعدہ کیا!", "खुशी से भरे दोस्तों ने कल एक नए सफ़र के लिए फिर मिलने का वादा किया!", setOf("friends", "yellow"))
+        ),
+        "sw_37273" to listOf(
+            StoryPage(1, "books/sw_37273/image_2.webp", "Along the winding garden trail, little Caterpillar set out on a sunny morning walk.", "Por el sendero del jardín, la pequeña oruga salió a caminar.", "باغ کی بل کھاتی پگڈنڈی پر ننھی کیٹرپلر روشن صبح کی سیر کے لیے نکلی۔", "बग़ीचे की पगडंडी पर नन्ही कैटरपिलर सुबह की सैर के लिए निकली।", setOf("caterpillar", "morning")),
+            StoryPage(2, "books/sw_37273/image_3.webp", "First she visited Spider, who was busy polishing her eight tiny shoes on a twig.", "Primero visitó a la araña que limpiaba sus ocho zapatitos.", "سب سے پہلے وہ مکڑی کے پاس گئی جو شاخ پر بیٹھی اپنے آٹھ ننھے جوتے چمکا رہی تھی۔", "सबसे पहले वह मकड़ी के पास गई जो टहनी पर अपने आठ नन्हे जूते साफ़ कर रही थी।", setOf("spider", "shoe")),
+            StoryPage(3, "books/sw_37273/image_4.webp", "Next she strolled past tall golden daisies swaying gently in the warm breeze.", "Luego caminó junto a altas margaritas doradas.", "پھر وہ سنہری پھولوں کے پاس سے گزری جو گرم ہوا میں ہولے ہولے جھوم رہے تھے۔", "फिर वह सुनहरे फूलों के पास से गुज़री जो हवा में झूम रहे थे।", setOf("caterpillar", "bright")),
+            StoryPage(4, "books/sw_37273/image_5.webp", "By the sparkling blue pond, green Frog was practicing his high diving jumps.", "Junto al estanque azul, la rana verde practicaba sus saltos.", "چمکتے نیلے تالاب کے کنارے ہرا مینڈک اپنی اونچی چھلانگوں کی مشق کر رہا تھا۔", "नीले तालाब के किनारे हरा मेंढक अपनी ऊँची छलांग का अभ्यास कर रहा था।", setOf("frog", "bright")),
+            StoryPage(5, "books/sw_37273/image_6.webp", "Splash! Frog landed on a wide lily pad and waved both webbed feet cheerfully.", "La rana aterrizó en un nenúfar y saludó con alegría.", "چھپاک! مینڈک کنول کے بڑے پتے پر اترا اور خوشی سے ہاتھ ہلایا۔", "छपाक! मेंढक कमल के पत्ते पर उतरा और खुशी से हाथ हिलाया।", setOf("frog", "friends")),
+            StoryPage(6, "books/sw_37273/image_7.webp", "In the tall meadow grass, Grasshopper tuned his legs to chirp a merry daytime song.", "En la hierba alta, el saltamontes cantó una canción alegre.", "لمبی گھاس میں ٹڈے نے اپنی ٹانگوں سے دوپہر کا خوشگوار گیت چھیڑا۔", "लंबी घास में टिड्डे ने दोपहर का मधुर गीत सुनाया।", setOf("grasshopper", "friends")),
+            StoryPage(7, "books/sw_37273/image_8.webp", "Grasshopper bounced from blade to blade, showing how high he could leap into the air!", "El saltamontes saltó de hoja en hoja muy alto.", "ٹڈا ایک گھاس کی پتی سے دوسری پتی پر اچھلا اور دکھایا کہ وہ ہوا میں کتنا اونچا کود سکتا ہے!", "टिड्डा एक पत्ती से दूसरी पत्ती पर उछला और हवा में ऊँची छलांग लगाई!", setOf("grasshopper", "special")),
+            StoryPage(8, "books/sw_37273/image_9.webp", "Down where the garden stream met the sandy shore, red Crab was building a neat sandcastle.", "En la orilla arenosa, el cangrejo rojo construía un castillo de arena.", "جہاں باغ کی ندی ریتیلے کنارے سے ملتی تھی، وہاں سرخ کیکڑا ریت کا گھر بنا رہا تھا۔", "रेतीले किनारे पर लाल केकड़ा रेत का सुंदर घर बना रहा था।", setOf("crab", "beach")),
+            StoryPage(9, "books/sw_37273/image_10.webp", "Crab tapped his claws together and showed the smooth seashells he had collected.", "El cangrejo mostró las conchas marinas que había recogido.", "کیکڑے نے اپنے پنجے بجائے اور اپنی جمع کی ہوئی چمکدار سیپیاں دکھائیں۔", "केकड़े ने अपनी इकट्ठा की हुईं सुंदर सीपियाँ दिखाईं।", setOf("crab", "bright")),
+            StoryPage(10, "books/sw_37273/image_11.webp", "As evening approached, Caterpillar curled onto a soft emerald leaf to rest.", "Al caer la tarde, la oruga descansó sobre una hoja verde.", "شام ہوتے ہی کیٹرپلر آرام کرنے کے لیے ایک نرم ہرے پتے پر لیٹ گئی۔", "शाम होते ही कैटरपिलर आराम करने के लिए एक नरम हरे पत्ते पर लेट गई।", setOf("caterpillar", "whispers")),
+            StoryPage(11, "books/sw_37273/image_14.webp", "And soon, colorful butterfly wings carried her high above the whole blooming garden!", "Pronto, alas de mariposa la llevaron sobre todo el jardín.", "اور جلد ہی رنگین تتلی کے پروں نے اسے پورے کھلتے ہوئے باغ کے اوپر اڑا لیا!", "और जल्द ही तितली के रंगीन पंखों ने उसे पूरे बग़ीचे के ऊपर उड़ा लिया!", setOf("butterfly", "wings"))
+        ),
+        "sw_44485" to listOf(
+            StoryPage(1, "books/sw_44485/image_2.webp", "The morning sun shines brightly over the station as travelers gather for their coastal journey.", "El sol de la mañana brilla sobre la estación de tren.", "اسٹیشن پر صبح کا سورج چمک رہا ہے اور مسافر ساحلی سفر کے لیے جمع ہو رہے ہیں۔", "स्टेशन पर सुबह का सूरज चमक रहा है और यात्री सफ़र के लिए इकट्ठा हो रहे हैं।", setOf("train", "morning")),
+            StoryPage(2, "books/sw_44485/image_3.webp", "Nicole and Mom check the departure board and wait behind the yellow safety line.", "Nicole y mamá revisan el tablero de salidas en el andén.", "نکول اور امی ٹرین کا وقت دیکھتی ہیں اور پیلی حفاظتی لکیر کے پیچھے انتظار کرتی ہیں۔", "निकोल और माँ ट्रेन का समय देखती हैं और प्लेटफ़ॉर्म पर इंतज़ार करती हैं।", setOf("train", "yellow")),
+            StoryPage(3, "books/sw_44485/image_4.webp", "Whoosh! The silver train arrives on the tracks and the wide doors slide open.", "El tren plateado llega a las vías y abre sus puertas.", "شوں! چاندی جیسی ٹرین پٹری پر آ کر رکتی ہے اور اس کے چوڑے دروازے کھلتے ہیں۔", "चमकीली ट्रेन पटरी पर आकर रुकती है और उसके दरवाज़े खुलते हैं।", setOf("train", "bright")),
+            StoryPage(4, "books/sw_44485/image_5.webp", "Inside the carriage, friendly passengers wave and make room by the sunny window.", "Dentro del vagón, los pasajeros amables saludan.", "ڈبے کے اندر دوستانہ مسافر ہاتھ ہلاتے ہیں اور روشن کھڑکی کے پاس جگہ دیتے ہیں۔", "डिब्बे के अंदर यात्री मुस्कुराकर खिड़की के पास जगह देते हैं।", setOf("friends", "train")),
+            StoryPage(5, "books/sw_44485/image_6.webp", "A vendor pushes a colorful cart stacked with golden chocolates and fruit snacks.", "Un vendedor lleva un carrito con chocolates dorados.", "ایک فروش سنہری چاکلیٹ اور پھلوں سے سجی رنگین ٹرالی لے کر گزرتا ہے۔", "एक विक्रेता सुनहरी चॉकलेट और फलों की ट्रॉली लेकर आता है।", setOf("chocolates", "colors")),
+            StoryPage(6, "books/sw_44485/image_7.webp", "Across the aisle, two young karate students sit neatly in their crisp white uniforms.", "Al otro lado del pasillo, dos estudiantes de karate conversan.", "راستے کے دوسری طرف دو نوجوان کراٹے طالب علم اپنے سفید لباس میں بیٹھے ہیں۔", "दूसरी तरफ़ दो बच्चे अपनी सफ़ेद कराटे यूनिफ़ॉर्म में बैठे हैं।", setOf("friends", "school")),
+            StoryPage(7, "books/sw_44485/image_8.webp", "They stand up carefully to demonstrate a steady karate stance and a polite bow!", "Demuestran una postura de karate con mucho equilibrio.", "وہ احتیاط سے کھڑے ہو کر کراٹے کا متوازن انداز اور باادب سلام دکھاتے ہیں!", "वे खड़े होकर कराटे का संतुलित पोज़ और विनम्र प्रणाम दिखाते हैं!", setOf("special", "friends")),
+            StoryPage(8, "books/sw_44485/image_10.webp", "Further down the carriage, a navy sailor in a white cap points toward the sparkling ocean horizon.", "Una marinera señala hacia el horizonte del océano.", "ڈبے میں آگے سفید ٹوپی پہنے بحریہ کی ملاح چمکتے ہوئے سمندر کے افق کی طرف اشارہ کرتی ہے۔", "आगे बैठी नौसेना की नाविक चमकते समुद्र की ओर इशारा करती है।", setOf("sailor", "beach")),
+            StoryPage(9, "books/sw_44485/image_11.webp", "Next come the cheerful drummers in red and yellow shirts, tapping a lively beat!", "Luego llegan los bateristas con camisas rojas y amarillas.", "اس کے بعد سرخ اور پیلی قمیضوں میں خوش مزاج ڈھول بجانے والے سریلی تال بجاتے ہیں!", "फिर लाल और पीली शर्ट पहने ढोल वादक मधुर ताल बजाते हैं!", setOf("drummers", "yellow")),
+            StoryPage(10, "books/sw_44485/image_12.webp", "Everyone in the carriage claps along to the rhythm as the train rolls near the palm trees.", "Todos en el vagón aplauden al ritmo de los tambores.", "جب ٹرین کھجور کے درختوں کے پاس سے گزرتی ہے تو ڈبے میں موجود ہر شخص تال کے ساتھ تالیاں بجاتا ہے۔", "जब ट्रेन ताड़ के पेड़ों के पास से गुज़रती है, तो सब ताल के साथ तालियाँ बजाते हैं।", setOf("drummers", "train")),
+            StoryPage(11, "books/sw_44485/image_14.webp", "At last they arrive at the sunny beach station, ready for a wonderful day by the sea!", "Por fin llegan a la estación de la playa soleada.", "آخرکار وہ روشن ساحلی اسٹیشن پر پہنچ جاتے ہیں اور سمندر کے کنارے ایک یادگار دن گزارتے ہیں!", "अंत में वे समुद्र तट के स्टेशन पर पहुँच जाते हैं!", setOf("beach", "friends"))
+        ),
+        "sw_15195" to listOf(
+            StoryPage(1, "books/sw_15195/image_2.webp", "Look at this bright round red ball sitting on the green lawn.", "Mira esta pelota roja y redonda en el césped.", "ہری گھاس پر رکھی اس چمکدار گول سرخ گیند کو دیکھو۔", "हरी घास पर रखी इस चमकीली गोल लाल गेंद को देखो।", setOf("bright", "friends")),
+            StoryPage(2, "books/sw_15195/image_3.webp", "I pick up the bouncy ball and hold it firmly in both hands.", "Tomo la pelota y la sostengo en mis manos.", "میں اچھلتی ہوئی گیند کو اٹھاتا ہوں اور دونوں ہاتھوں میں مضبوطی سے پکڑتا ہوں۔", "मैं गेंद को उठाता हूँ और दोनों हाथों में पकड़ता हूँ।", setOf("friends", "bright")),
+            StoryPage(3, "books/sw_15195/image_4.webp", "Even when light raindrops fall, I wear my red raincoat and step outside to play.", "Me pongo mi impermeable rojo y salgo a jugar.", "ہلکی بونداباندی میں بھی میں اپنا سرخ برساتی کوٹ پہن کر کھیلنے باہر نکلتا ہوں۔", "हल्की बूंदाबांदी में भी मैं अपना लाल रेनकोट पहनकर खेलने निकलता हूँ।", setOf("raincoat", "rain")),
+            StoryPage(4, "books/sw_15195/image_6.webp", "I take a step forward and tap the ball gently with my shoe.", "Doy un paso adelante y pateo suavemente la pelota.", "میں ایک قدم آگے بڑھاتا ہوں اور اپنے جوتے سے گیند کو ہلکی سی کک مارتا ہوں۔", "मैं एक कदम आगे बढ़ाता हूँ और जूते से गेंद को किक मारता हूँ।", setOf("shoe", "bright")),
+            StoryPage(5, "books/sw_15195/image_7.webp", "The red ball rolls smoothly across the dewy grass toward the garden fence.", "La pelota roja rueda por la hierba hacia la cerca.", "سرخ گیند شبنم والی گھاس پر لڑھکتی ہوئی باغ کی باڑ کی طرف جاتی ہے۔", "लाल गेंद हरी घास पर लुढ़कती हुई बग़ीचे के किनारे तक जाती है।", setOf("bright", "street")),
+            StoryPage(6, "books/sw_15195/image_8.webp", "Now I kick the ball higher! It bounces above the bushes like a little red bird.", "Ahora pateo la pelota más alto sobre los arbustos.", "اب میں گیند کو اور اونچا اچھالتا ہوں! وہ جھاڑیوں کے اوپر سرخ پرندے کی طرح اڑتی ہے۔", "अब मैं गेंद को और ऊँचा उछालता हूँ! वह झाड़ियों के ऊपर उछलती है।", setOf("bright", "wings")),
+            StoryPage(7, "books/sw_15195/image_9.webp", "With one big powerful kick—Whoosh!—the ball rockets straight up toward the sky!", "Con una gran patada la pelota sube hacia el cielo.", "ایک زوردار کک کے ساتھ—شوں!—گیند سیدھی آسمان کی طرف اڑتی چلی جاتی ہے!", "एक ज़ोरदार किक के साथ गेंद सीधी आसमान की ओर उड़ती है!", setOf("crashed", "clouds")),
+            StoryPage(8, "books/sw_15195/image_11.webp", "I shade my eyes and search left and right across the whole courtyard.", "Busco a izquierda y derecha por todo el patio.", "میں آنکھوں پر ہاتھ رکھ کر پورے صحن میں دائیں بائیں تلاش کرتا ہوں۔", "मैं पूरे आँगन में बाएँ और दाएँ गेंद को ढूँढता हूँ।", setOf("street", "bright")),
+            StoryPage(9, "books/sw_15195/image_14.webp", "Look up! Way above the tallest tree branches, a tiny red dot is climbing higher!", "Mira arriba, muy por encima de las ramas más altas.", "اوپر دیکھو! سب سے اونچے درخت کی شاخوں کے بھی اوپر ایک سرخ نقطہ بلند ہو رہا ہے!", "ऊपर देखो! सबसे ऊँचे पेड़ की शाखाओं के ऊपर गेंद उड़ रही है!", setOf("clouds", "bright")),
+            StoryPage(10, "books/sw_15195/image_16.webp", "It floats past the fluffy white clouds in the wide blue sky.", "Flota más allá de las esponjosas nubes blancas.", "وہ وسیع نیلے آسمان میں نرم سفید بادلوں کے پاس سے تیرتی ہوئی گزرتی ہے۔", "वह नीले आसमान में सफ़ेद बादलों के पास से गुज़रती है।", setOf("clouds", "bright")),
+            StoryPage(11, "books/sw_15195/image_17.webp", "And in my imagination, my red ball orbits right past the glowing silver moon!", "En mi imaginación la pelota vuela junto a la luna plateada.", "اور میرے تخیل میں، میری سرخ گیند چمکتے ہوئے چاند کے گرد چکر لگا رہی ہے!", "और मेरी कल्पना में मेरी लाल गेंद चमकते चाँद के पास उड़ रही है!", setOf("clouds", "special"))
+        ),
+        "sw_15058" to listOf(
+            StoryPage(1, "books/sw_15058/image_2.webp", "Every morning I open my favorite colorful storybook full of pictures and poems.", "Cada mañana abro mi libro de cuentos favorito.", "ہر صبح میں تصویروں اور نظموں سے بھری اپنی پسندیدہ کہانی کی کتاب کھولتا ہوں۔", "हर सुबह मैं चित्रों और कविताओं से भरी अपनी पसंदीदा किताब खोलता हूँ।", setOf("books", "morning")),
+            StoryPage(2, "books/sw_15058/image_3.webp", "I walk through the house wondering who has time to listen to my new story today.", "Camino por la casa buscando a quién leerle mi cuento.", "میں گھر میں چلتے ہوئے سوچتا ہوں کہ آج میری نئی کہانی سننے کے لیے کس کے پاس وقت ہے۔", "मैं घर में सोचता हूँ कि आज मेरी नई कहानी कौन सुनेगा।", setOf("books", "friends")),
+            StoryPage(3, "books/sw_15058/image_4.webp", "In the bedroom, my baby sister is sleeping peacefully under her soft blanket.", "En el dormitorio mi hermanita duerme tranquilamente.", "کمرے میں میری ننھی بہن اپنے نرم کمبل میں پرسکون نیند سو رہی ہے۔", "कमरे में मेरी छोटी बहन अपने नरम कंबल में सो रही है।", setOf("whispers", "friends")),
+            StoryPage(4, "books/sw_15058/image_5.webp", "I tiptoe quietly to the hallway, holding my book carefully in my hands.", "Camino de puntillas hacia el pasillo con mi libro.", "میں اپنی کتاب کو احتیاط سے ہاتھوں میں پکڑے دبے پاؤں برآمدے میں آتا ہوں۔", "मैं अपनी किताब हाथ में लेकर चुपचाप बरामदे में आता हूँ।", setOf("books", "whispers")),
+            StoryPage(5, "books/sw_15058/image_6.webp", "In the kitchen, Mother and Grandmother are chopping vegetables and stirring warm soup.", "En la cocina mamá y la abuela preparan sopa caliente.", "باورچی خانے میں امی اور دادی سبزیاں کاٹ رہی ہیں اور گرم سوپ پکا رہی ہیں۔", "रसोई में माँ और दादी सब्ज़ियाँ काट रही हैं और सूप बना रही हैं।", setOf("grandmother", "friends")),
+            StoryPage(6, "books/sw_15058/image_7.webp", "I step out onto the sunny veranda and look toward the green courtyard garden.", "Salgo a la terraza soleada y miro hacia el jardín.", "میں دھوپ والے برآمدے میں نکلتا ہوں اور صحن کے ہرے باغ کی طرف دیکھتا ہوں۔", "मैं धूप वाले आँगन में निकलता हूँ और बग़ीचे की तरफ़ देखता हूँ।", setOf("bright", "books")),
+            StoryPage(7, "books/sw_15058/image_8.webp", "Outside, Father and Grandfather Farouk are watering the trees and fixing the garden fence.", "Afuera papá y el abuelo riegan los árboles del jardín.", "باہر ابو اور دادا فاروق پودوں کو پانی دے رہے ہیں اور باغ کی باڑ ٹھیک کر رہے ہیں۔", "बाहर पिताजी और दादा फ़ारूक़ पौधों को पानी दे रहे हैं।", setOf("grandfather", "friends")),
+            StoryPage(8, "books/sw_15058/image_9.webp", "So I sit on my cozy mat and read out loud to myself—and when dinner is ready, the whole family listens too!", "Me siento en mi tapete y leo en voz alta con alegría.", "تو میں اپنی چٹائی پر بیٹھ کر خود ہی بلند آواز سے پڑھتا ہوں—اور شام کو پورا خاندان شوق سے سنتا ہے!", "तो मैं अपनी चटाई पर बैठकर खुद पढ़ता हूँ—और शाम को पूरा परिवार सुनता है!", setOf("books", "grandfather"))
+        ),
+        "sw_45764" to listOf(
+            StoryPage(1, "books/sw_45764/image_2.webp", "Inside the neighborhood library, rows of colorful shelves reach all the way to the ceiling.", "Dentro de la biblioteca, los estantes llegan hasta el techo.", "محلے کی لائبریری کے اندر رنگ برنگی کتابوں کی الماریاں چھت تک پہنچی ہوئی ہیں۔", "लाइब्रेरी के अंदर रंग-बिरंगी किताबों की अलमारियाँ छत तक भरी हैं।", setOf("books", "bright")),
+            StoryPage(2, "books/sw_45764/image_3.webp", "When the wall clock chimes five o'clock, Ma calls softly, \"Lulu, it is time to head home!\"", "Cuando el reloj marca las cinco, mamá llama a Lulu.", "جب دیوار کی گھڑی پانچ بجاتی ہے تو امی پیار سے بلاتی ہیں، لولو، اب گھر چلنے کا وقت ہے!", "जब घड़ी में पाँच बजते हैं, तो माँ प्यार से बुलाती हैं, \"लुलु, अब घर चलने का समय है!\"", setOf("return", "whispers")),
+            StoryPage(3, "books/sw_45764/image_4.webp", "Ma checks under the reading sofa and peeks behind the long blue window curtain.", "Mamá busca debajo del sofá y detrás de la cortina.", "امی پڑھنے والے صوفے کے نیچے دیکھتی ہیں اور کھڑکی کے لمبے نیلے پردے کے پیچھے جھانکتی ہیں۔", "माँ सोफ़े के नीचे देखती हैं और खिड़की के पर्दे के पीछे झाँकती हैं।", setOf("curtain", "books")),
+            StoryPage(4, "books/sw_45764/image_5.webp", "She looks beside the wooden cupboard and around the storyteller's table.", "Busca junto al armario de madera y la mesa de cuentos.", "وہ لکڑی کی الماری کے پاس اور کہانیوں والی میز کے گرد تلاش کرتی ہیں۔", "वे लकड़ी की अलमारी के पास और कहानी की मेज़ کے चारों ओर देखती हैं।", setOf("cupboard", "books")),
+            StoryPage(5, "books/sw_45764/image_6.webp", "\"Where could Lulu be hiding?\" Ma wonders with a gentle smile.", "¿Dónde podría estar escondida Lulu?, se pregunta mamá.", "لولو کہاں چھپی ہو سکتی ہے؟ امی ہلکی سی مسکراہٹ کے ساتھ سوچتی ہیں۔", "\"लुलु कहाँ छिपी हो सकती है?\" माँ मुस्कुराते हुए सोचती हैं।", setOf("friends", "whispers")),
+            StoryPage(6, "books/sw_45764/image_7.webp", "Behind the picture-book corner, Lulu pops up holding her favorite illustrated story!", "Detrás del rincón de lectura, Lulu aparece con su libro favorito.", "تصویروں والی کتابوں کے کونے کے پیچھے سے لولو اپنی پسندیدہ کتاب تھامے نمودار ہوتی ہے!", "किताबों के कोने के पीछे से लुलु अपनी पसंदीदा किताब पकड़े हुए निकलती है!", setOf("books", "special")),
+            StoryPage(7, "books/sw_45764/image_8.webp", "\"I love this story about ocean animals so much!\" Lulu says, hugging the cover.", "Me encanta tanto esta historia sobre animales marinos, dice Lulu.", "مجھے سمندری جانوروں کی یہ کہانی بے حد پسند ہے! لولو کتاب کو گلے لگاتے ہوئے کہتی ہے۔", "\"मुझे समुद्री जीवों की यह कहानी बहुत पसंद है!\" लुलु कहती है।", setOf("books", "friends")),
+            StoryPage(8, "books/sw_45764/image_10.webp", "She points to a second book about stars and a third book about jungle birds.", "Señala un segundo libro sobre estrellas y un tercero sobre aves.", "وہ ستاروں والی دوسری کتاب اور جنگل کے پرندوں والی تیسری کتاب کی طرف اشارہ کرتی ہے۔", "वह तारों वाली दूसरी किताब और पक्षियों वाली तीसरी किताब दिखाती है।", setOf("books", "bright")),
+            StoryPage(9, "books/sw_45764/image_12.webp", "The librarian smiles and stamps Lulu's card so she can borrow the whole stack for the week!", "La bibliotecaria sella la tarjeta de Lulu para prestarle los libros.", "لائبریرین مسکرا کر لولو کے کارڈ پر مہر لگاتی ہے تاکہ وہ پورے ہفتے کے لیے نئی کتابیں لے جا سکے!", "लाइब्रेरियन मुस्कुराकर लुलु के कार्ड पर मुहर लगाती है!", setOf("borrow", "return", "books")),
+            StoryPage(10, "books/sw_45764/image_13.webp", "\"Hurray!\" cheers Lulu. \"When we return finished books, new adventures are always waiting!\"", "¡Hurra!, celebra Lulu. ¡Nuevas aventuras siempre nos esperan!", "واہ! لولو خوشی سے پکارتی ہے، جب ہم پڑھی ہوئی کتابیں واپس کرتے ہیں تو نئی کہانیاں ہماری منتظر ہوتی ہیں!", "\"वाह!\" लुलु खुशी से कहती है, \"किताबें लौटाने पर नई कहानियाँ मिलती हैं!\"", setOf("return", "borrow")),
+            StoryPage(11, "books/sw_45764/image_14.webp", "All evening long, Lulu and Ma read chapter after chapter together on their cozy rug.", "Toda la tarde Lulu y mamá leen capítulo tras capítulo.", "پوری شام لولو اور امی اپنے آرام دہ قالین پر بیٹھ کر ایک کے بعد ایک باب پڑھتی ہیں!", "पूरी शाम लुलु और माँ साथ बैठकर एक के बाद एक अध्याय पढ़ती हैं!", setOf("books", "friends"))
+        )
+    )
+
+    fun enrichToFullIllustratedStory(book: StoryBook): StoryBook {
+        if (book.pages.size >= 10) return book
+        val packKey = when {
+            book.coverAssetPath.contains("sw_13916") -> "sw_13916"
+            book.coverAssetPath.contains("sw_37273") -> "sw_37273"
+            book.coverAssetPath.contains("sw_44485") -> "sw_44485"
+            book.coverAssetPath.contains("sw_15195") -> "sw_15195"
+            book.coverAssetPath.contains("sw_15058") -> "sw_15058"
+            else -> "sw_45764"
+        }
+        val extraPool = thematicContinuationPages[packKey] ?: thematicContinuationPages["sw_13916"]!!
+        val existingImages = book.pages.map { it.imageAssetPath }.toSet()
+        val existingQuizzes = book.pages.mapNotNull { it.quiz }
+        val basePagesWithoutEndQuiz = book.pages.map { it.copy(quiz = null) }
+
+        val additionalPages = extraPool.filterNot { existingImages.contains(it.imageAssetPath) }
+            .ifEmpty { extraPool }
+            .take((11 - basePagesWithoutEndQuiz.size).coerceAtLeast(8))
+
+        val combined = (basePagesWithoutEndQuiz + additionalPages).mapIndexed { idx, pg ->
+            val attachQuiz = if (idx == (basePagesWithoutEndQuiz.size + additionalPages.size) - 1) {
+                existingQuizzes.lastOrNull()
+            } else if (idx == 4 && existingQuizzes.size > 1) {
+                existingQuizzes.first()
+            } else {
+                null
+            }
+            pg.copy(pageNumber = idx + 1, quiz = attachQuiz)
+        }
+        return book.copy(pages = combined)
+    }
+
+    val defaultBooks: List<StoryBook> = rawDefaultBooks.map { enrichToFullIllustratedStory(it) }
+
     // 51 Real Vocabulary Items mapped to assets/vocab/ic_vocab_*.svg
     val vocabularyItems: List<VocabularyItem> = listOf(
         // Body parts
@@ -1533,18 +1672,20 @@ class SeekhRepository(context: Context) {
                     )
                 }
                 list.add(
-                    StoryBook(
-                        id = o.getString("id"),
-                        title = o.getString("title"),
-                        nativeTitleUrdu = o.optString("nativeTitleUrdu", o.getString("title")),
-                        nativeTitleHindi = o.optString("nativeTitleHindi", o.getString("title")),
-                        author = o.optString("author", "Seekh AI Story Studio"),
-                        illustrator = "Seekh AI Illustrator",
-                        publisher = "TLL Studio AI Library",
-                        level = o.optInt("level", 2),
-                        coverAssetPath = o.getString("coverAssetPath"),
-                        pages = pages,
-                        isAiGenerated = true
+                    SeekhCatalog.enrichToFullIllustratedStory(
+                        StoryBook(
+                            id = o.getString("id"),
+                            title = o.getString("title"),
+                            nativeTitleUrdu = o.optString("nativeTitleUrdu", o.getString("title")),
+                            nativeTitleHindi = o.optString("nativeTitleHindi", o.getString("title")),
+                            author = o.optString("author", "Seekh AI Story Studio"),
+                            illustrator = "Seekh AI Illustrator",
+                            publisher = "TLL Studio AI Library",
+                            level = o.optInt("level", 2),
+                            coverAssetPath = o.getString("coverAssetPath"),
+                            pages = pages,
+                            isAiGenerated = true
+                        )
                     )
                 )
             }

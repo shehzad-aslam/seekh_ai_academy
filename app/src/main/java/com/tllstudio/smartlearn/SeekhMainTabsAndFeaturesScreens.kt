@@ -4833,7 +4833,7 @@ fun AiStoryCreatorDialog(
                             )
                         )
                     )
-                    onStoryGenerated(newStory)
+                    onStoryGenerated(SeekhCatalog.enrichToFullIllustratedStory(newStory))
                 },
                 shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.buttonColors(containerColor = SeekhGreen500)
