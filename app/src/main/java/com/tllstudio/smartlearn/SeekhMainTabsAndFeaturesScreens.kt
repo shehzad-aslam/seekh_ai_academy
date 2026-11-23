@@ -99,13 +99,23 @@ fun LibraryTabScreen(
         SeekhCatalog.getAppStrings(selectedLanguage.code)
     }
 
-    // Language-specific Basic Alphabets Book pinned at the VERY TOP of the Home screen!
+    // Language-specific Top Foundational Trio Books (1. Alphabets, 2. Days of the Week, 3. Months of the Year)
     val alphabetHeroBook = remember(selectedLanguage.code) {
         SeekhCatalog.getAlphabetBookForLanguage(selectedLanguage.code)
     }
+    val daysOfWeekBook = remember(selectedLanguage.code) {
+        SeekhCatalog.getDaysOfWeekBookForLanguage(selectedLanguage.code)
+    }
+    val monthsOfYearBook = remember(selectedLanguage.code) {
+        SeekhCatalog.getMonthsOfYearBookForLanguage(selectedLanguage.code)
+    }
+    val trioLabels = remember(selectedLanguage.code) {
+        SeekhCatalog.getTopTrioLabels(selectedLanguage.code)
+    }
     val heroBook = alphabetHeroBook
-    val booksWithAlphabet = remember(books, alphabetHeroBook) {
-        listOf(alphabetHeroBook) + books.filterNot { it.id == alphabetHeroBook.id }
+    val booksWithAlphabet = remember(books, alphabetHeroBook, daysOfWeekBook, monthsOfYearBook) {
+        val basicsIds = setOf(alphabetHeroBook.id, daysOfWeekBook.id, monthsOfYearBook.id)
+        listOf(alphabetHeroBook, daysOfWeekBook, monthsOfYearBook) + books.filterNot { basicsIds.contains(it.id) }
     }
     val nonHeroBooks = remember(books, heroBook) {
         books.filterNot { it.id == heroBook.id }
@@ -557,16 +567,110 @@ fun LibraryTabScreen(
                         }
                     }
                 } else {
-                    // 1. Pinned Top Card: Language-Specific Basic Alphabets Book (English A-Z, Urdu Alif-Be-Pe, Hindi Varnamala, Arabic, etc.)
+                    // 1. Pinned Top Trio Showcase: 1. Alphabets, 2. Days of the Week, 3. Months of the Year
                     item {
                         Spacer(modifier = Modifier.height(4.dp))
-                        FeaturedStoryHeroCard(
-                            book = heroBook,
-                            isCompleted = profile.completedBookIds.contains(heroBook.id),
+                        TopFoundationalTrioSection(
+                            alphabetBook = alphabetHeroBook,
+                            daysBook = daysOfWeekBook,
+                            monthsBook = monthsOfYearBook,
+                            completedBookIds = profile.completedBookIds,
                             selectedLanguageCode = selectedLanguage.code,
-                            onClick = { onOpenBook(heroBook) }
+                            onOpenBook = onOpenBook
                         )
-                        Spacer(modifier = Modifier.height(18.dp))
+                        Spacer(modifier = Modifier.height(14.dp))
+                    }
+
+                    // 1b. "Play games" Section Placed Right With the Top 3 Sections!
+                    item {
+                        LibrarySectionHeader(
+                            title = uiStrings.sectionPlayGames,
+                            onSpeak = { onSpeakText(uiStrings.sectionPlayGames) },
+                            actionLabel = uiStrings.seeAll,
+                            onActionClick = { selectedCategoryFilter = "Games" }
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+
+                        LazyRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentPadding = PaddingValues(horizontal = 18.dp),
+                            horizontalArrangement = Arrangement.spacedBy(14.dp)
+                        ) {
+                            items(gameCatalogMeta) { (gameKey, bgCol) ->
+                                val gInfo = uiStrings.gameInfoByKey[gameKey]
+                                    ?: Triple("Learning Game", "Play now", "Game")
+                                GameShelfCard(
+                                    gameKey = gameKey,
+                                    title = gInfo.first,
+                                    subtitle = gInfo.second,
+                                    containerColor = bgCol,
+                                    badgeText = gInfo.third,
+                                    playLabel = uiStrings.playCta,
+                                    onClick = { onOpenGame(gameKey) }
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    // 1c. Dedicated "Days of the Week (7 Days)" Interactive Flashcard Section
+                    item {
+                        LibrarySectionHeader(
+                            title = trioLabels.sectionDaysHeader,
+                            onSpeak = { onSpeakText(trioLabels.sectionDaysHeader) },
+                            actionLabel = uiStrings.readCta,
+                            onActionClick = { onOpenBook(daysOfWeekBook) }
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        LazyRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentPadding = PaddingValues(horizontal = 18.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(daysOfWeekBook.pages) { dayPage ->
+                                FoundationalPageFlashcard(
+                                    indexNumber = dayPage.pageNumber,
+                                    shortBadge = dayPage.alphabetBadgeLetters,
+                                    fullLabel = dayPage.urduTranslation,
+                                    imageAssetPath = dayPage.imageAssetPath,
+                                    accentColor = Color(0xFFD97706),
+                                    softBgColor = Color(0xFFFFFBEB),
+                                    borderColor = Color(0xFFFDE68A),
+                                    onClick = { onOpenBook(daysOfWeekBook) }
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    // 1d. Dedicated "Months of the Year (12 Months)" Interactive Flashcard Section
+                    item {
+                        LibrarySectionHeader(
+                            title = trioLabels.sectionMonthsHeader,
+                            onSpeak = { onSpeakText(trioLabels.sectionMonthsHeader) },
+                            actionLabel = uiStrings.readCta,
+                            onActionClick = { onOpenBook(monthsOfYearBook) }
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        LazyRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentPadding = PaddingValues(horizontal = 18.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(monthsOfYearBook.pages) { monthPage ->
+                                FoundationalPageFlashcard(
+                                    indexNumber = monthPage.pageNumber,
+                                    shortBadge = monthPage.alphabetBadgeLetters,
+                                    fullLabel = monthPage.urduTranslation,
+                                    imageAssetPath = monthPage.imageAssetPath,
+                                    accentColor = Color(0xFF059669),
+                                    softBgColor = Color(0xFFECFDF5),
+                                    borderColor = Color(0xFFA7F3D0),
+                                    onClick = { onOpenBook(monthsOfYearBook) }
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
 
                     // 2. "Classroom & Parent assignments" Section
@@ -617,7 +721,7 @@ fun LibraryTabScreen(
                         }
                     }
 
-                    // 3. "Level 1 stories" Section (Includes the language's Basic Alphabets Book at slot #1!)
+                    // 3. "Level 1 stories" Section (Includes the language's Basic Alphabets, Days of the Week & Months of the Year Books!)
                     if (level1Books.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
@@ -637,38 +741,6 @@ fun LibraryTabScreen(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                         }
-                    }
-
-                    // 4. "Play games" Section (10 Kids Learning Games with Visual Gameplay Previews!)
-                    item {
-                        LibrarySectionHeader(
-                            title = uiStrings.sectionPlayGames,
-                            onSpeak = { onSpeakText(uiStrings.sectionPlayGames) },
-                            actionLabel = uiStrings.seeAll,
-                            onActionClick = { selectedCategoryFilter = "Games" }
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        LazyRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentPadding = PaddingValues(horizontal = 18.dp),
-                            horizontalArrangement = Arrangement.spacedBy(14.dp)
-                        ) {
-                            items(gameCatalogMeta) { (gameKey, bgCol) ->
-                                val gInfo = uiStrings.gameInfoByKey[gameKey]
-                                    ?: Triple("Learning Game", "Play now", "Game")
-                                GameShelfCard(
-                                    gameKey = gameKey,
-                                    title = gInfo.first,
-                                    subtitle = gInfo.second,
-                                    containerColor = bgCol,
-                                    badgeText = gInfo.third,
-                                    playLabel = uiStrings.playCta,
-                                    onClick = { onOpenGame(gameKey) }
-                                )
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(18.dp))
                     }
 
                     // 4b. "Animals & Nature" Category Shelf

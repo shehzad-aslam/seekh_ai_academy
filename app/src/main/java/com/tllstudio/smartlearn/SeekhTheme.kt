@@ -1855,6 +1855,325 @@ fun FeaturedStoryHeroCard(
     }
 }
 
+// Top 3 Foundational Learning Cards Row (1. Alphabets, 2. Days of the Week, 3. Months of the Year)
+// Set together right at the very top of the Home Screen!
+@Composable
+fun TopFoundationalTrioSection(
+    alphabetBook: StoryBook,
+    daysBook: StoryBook,
+    monthsBook: StoryBook,
+    completedBookIds: Set<String>,
+    selectedLanguageCode: String,
+    onOpenBook: (StoryBook) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val uiStrings = remember(selectedLanguageCode) {
+        SeekhCatalog.getAppStrings(selectedLanguageCode)
+    }
+    val trioLabels = remember(selectedLanguageCode) {
+        SeekhCatalog.getTopTrioLabels(selectedLanguageCode)
+    }
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 18.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // 1. Alphabets Top Card
+        TopFoundationalSingleCard(
+            title = trioLabels.alphabetsTitle,
+            subtitle = trioLabels.alphabetsCountTag,
+            badgeText = alphabetBook.alphabetBadgeLetters.trim().split(Regex("\\s+")).take(3).joinToString(" "),
+            previewAssetPath = alphabetBook.pages.firstOrNull()?.imageAssetPath ?: alphabetBook.coverAssetPath,
+            headerBgColor = Color(0xFFF5F3FF),
+            headerBorderColor = Color(0xFFDDD6FE),
+            accentColor = Color(0xFF5E4AE3),
+            ctaLabel = uiStrings.readCta,
+            isCompleted = completedBookIds.contains(alphabetBook.id),
+            onClick = { onOpenBook(alphabetBook) },
+            modifier = Modifier.weight(1f)
+        )
+
+        // 2. Days of the Week Top Card
+        TopFoundationalSingleCard(
+            title = trioLabels.daysTitle,
+            subtitle = trioLabels.daysCountTag,
+            badgeText = daysBook.alphabetBadgeLetters.trim().split(Regex("\\s+")).take(2).joinToString(" • "),
+            previewAssetPath = daysBook.coverAssetPath,
+            headerBgColor = Color(0xFFFFFBEB),
+            headerBorderColor = Color(0xFFFDE68A),
+            accentColor = Color(0xFFD97706),
+            ctaLabel = uiStrings.readCta,
+            isCompleted = completedBookIds.contains(daysBook.id),
+            onClick = { onOpenBook(daysBook) },
+            modifier = Modifier.weight(1f)
+        )
+
+        // 3. Months of the Year Top Card
+        TopFoundationalSingleCard(
+            title = trioLabels.monthsTitle,
+            subtitle = trioLabels.monthsCountTag,
+            badgeText = monthsBook.alphabetBadgeLetters.trim().split(Regex("\\s+")).take(2).joinToString(" • "),
+            previewAssetPath = monthsBook.coverAssetPath,
+            headerBgColor = Color(0xFFECFDF5),
+            headerBorderColor = Color(0xFFA7F3D0),
+            accentColor = Color(0xFF059669),
+            ctaLabel = uiStrings.readCta,
+            isCompleted = completedBookIds.contains(monthsBook.id),
+            onClick = { onOpenBook(monthsBook) },
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+private fun TopFoundationalSingleCard(
+    title: String,
+    subtitle: String,
+    badgeText: String,
+    previewAssetPath: String,
+    headerBgColor: Color,
+    headerBorderColor: Color,
+    accentColor: Color,
+    ctaLabel: String,
+    isCompleted: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val cardShape = RoundedCornerShape(20.dp)
+    Surface(
+        modifier = modifier
+            .softCardShadow(
+                elevation = 8.dp,
+                shape = cardShape,
+                spotColor = accentColor.copy(alpha = 0.22f),
+                ambientColor = Color(0x141E1B4B)
+            )
+            .bouncyClick(scaleDown = 0.96f, onClick = onClick),
+        shape = cardShape,
+        color = Color.White,
+        shadowElevation = 0.dp,
+        border = BorderStroke(1.2.dp, Color(0xFFE8ECF7))
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(92.dp)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(headerBgColor)
+                    .border(1.dp, headerBorderColor, RoundedCornerShape(14.dp))
+                    .padding(6.dp)
+            ) {
+                // Clean Single-Object Illustration Frame in Center-Bottom
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = Color.White,
+                    border = BorderStroke(1.dp, Color.White),
+                    shadowElevation = 1.dp,
+                    modifier = Modifier
+                        .size(54.dp)
+                        .align(Alignment.BottomCenter)
+                ) {
+                    AssetWebpImage(
+                        assetPath = previewAssetPath,
+                        contentDescription = title,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(11.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+
+                // Clean Top Pastel Pill Badge
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = Color.White,
+                    border = BorderStroke(1.dp, headerBorderColor),
+                    modifier = Modifier.align(Alignment.TopCenter)
+                ) {
+                    Text(
+                        text = badgeText,
+                        fontFamily = GoogleSansFamily,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 9.5.sp,
+                        color = accentColor,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp)
+                    )
+                }
+
+                if (isCompleted) {
+                    Box(
+                        modifier = Modifier
+                            .size(18.dp)
+                            .align(Alignment.TopEnd)
+                            .clip(CircleShape)
+                            .background(SeekhGreenMint)
+                            .border(1.5.dp, Color.White, CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "Completed",
+                            tint = Color.White,
+                            modifier = Modifier.size(11.dp)
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(7.dp))
+
+            Text(
+                text = title,
+                fontFamily = GoogleSansFamily,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 13.sp,
+                color = SeekhTextPrimary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center
+            )
+
+            Text(
+                text = subtitle,
+                fontFamily = GoogleSansFamily,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 10.sp,
+                color = SeekhTextSecondary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Surface(
+                shape = RoundedCornerShape(50),
+                color = accentColor,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = ctaLabel,
+                        fontFamily = GoogleSansFamily,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 11.sp,
+                        color = Color.White,
+                        maxLines = 1
+                    )
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Icon(
+                        imageVector = Icons.Default.PlayArrow,
+                        contentDescription = ctaLabel,
+                        tint = Color.White,
+                        modifier = Modifier.size(13.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+// Neat & Clean Individual Day-of-Week or Month-of-Year Flashcard for Horizontal Sections
+@Composable
+fun FoundationalPageFlashcard(
+    indexNumber: Int,
+    shortBadge: String,
+    fullLabel: String,
+    imageAssetPath: String,
+    accentColor: Color,
+    softBgColor: Color,
+    borderColor: Color,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val cardShape = RoundedCornerShape(18.dp)
+    Surface(
+        modifier = modifier
+            .width(126.dp)
+            .softCardShadow(
+                elevation = 6.dp,
+                shape = cardShape,
+                spotColor = accentColor.copy(alpha = 0.18f),
+                ambientColor = Color(0x121E1B4B)
+            )
+            .bouncyClick(scaleDown = 0.96f, onClick = onClick),
+        shape = cardShape,
+        color = Color.White,
+        shadowElevation = 0.dp,
+        border = BorderStroke(1.1.dp, Color(0xFFE8ECF7))
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(82.dp)
+                    .clip(RoundedCornerShape(13.dp))
+                    .background(softBgColor)
+                    .border(1.dp, borderColor, RoundedCornerShape(13.dp))
+            ) {
+                AssetWebpImage(
+                    assetPath = imageAssetPath,
+                    contentDescription = fullLabel,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = Color.White.copy(alpha = 0.95f),
+                    border = BorderStroke(1.dp, borderColor),
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(5.dp)
+                ) {
+                    Text(
+                        text = "$indexNumber • $shortBadge",
+                        fontFamily = GoogleSansFamily,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 10.sp,
+                        color = accentColor,
+                        maxLines = 1,
+                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Text(
+                text = fullLabel.substringAfter("•").trim().ifBlank { fullLabel },
+                fontFamily = GoogleSansFamily,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 12.sp,
+                color = SeekhTextPrimary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
 // Self-Explanatory Visual Gameplay Preview Artwork for All 10 Kids Learning Games
 // Renders an unmistakable visual preview inside each Game Card so the child immediately knows what game it is at a glance!
 @Composable

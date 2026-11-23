@@ -628,13 +628,14 @@ fun InteractiveStoryReaderScreen(
                                             onSpeakText(page.alphabetBadgeLetters)
                                         }
                                 ) {
+                                    val badgeStr = page.alphabetBadgeLetters.trim()
                                     Text(
-                                        text = page.alphabetBadgeLetters.trim(),
+                                        text = badgeStr,
                                         fontFamily = GoogleSansFamily,
                                         fontWeight = FontWeight.ExtraBold,
-                                        fontSize = 32.sp,
+                                        fontSize = if (badgeStr.length > 2) 22.sp else 32.sp,
                                         color = SeekhGreen600,
-                                        modifier = Modifier.padding(horizontal = 18.dp, vertical = 6.dp)
+                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
                                     )
                                 }
                             }
@@ -669,7 +670,7 @@ fun InteractiveStoryReaderScreen(
                                         }
                                     ) {
                                         Row(
-                                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
                                             verticalAlignment = Alignment.CenterVertically,
                                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                                         ) {
@@ -677,7 +678,7 @@ fun InteractiveStoryReaderScreen(
                                                 text = singleLetter,
                                                 fontFamily = GoogleSansFamily,
                                                 fontWeight = FontWeight.ExtraBold,
-                                                fontSize = 26.sp,
+                                                fontSize = if (singleLetter.length > 2) 19.sp else 26.sp,
                                                 color = SeekhTextPrimary
                                             )
                                             Icon(

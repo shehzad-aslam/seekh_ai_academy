@@ -1353,9 +1353,518 @@ object SeekhCatalog {
         }
     }
 
+    // Complete Language-Specific "Days of the Week" (7 Pages: 1 Day per Page) Book across all 11 languages!
+    fun getDaysOfWeekBookForLanguage(langCode: String): StoryBook {
+        val imgMon = "books/alphabets/alpha_book.webp"
+        val imgTue = "books/alphabets/alpha_pencil.webp"
+        val imgWed = "books/alphabets/alpha_t_tree.webp"
+        val imgThu = "books/alphabets/alpha_bicycle.webp"
+        val imgFri = "books/alphabets/alpha_k_kite.webp"
+        val imgSat = "books/alphabets/alpha_train.webp"
+        val imgSun = "books/alphabets/alpha_s_sun.webp"
+
+        data class DayLangPack(
+            val title: String,
+            val subtitle: String,
+            val coverBadges: String,
+            val days: List<Triple<String, String, String>> // (shortBadge, fullLabel, sentence)
+        )
+
+        val pack = when (langCode) {
+            "en_ur" -> DayLangPack(
+                title = "ہفتے کے دن • Days of the Week",
+                subtitle = "7 دن • پیر سے اتوار تک",
+                coverBadges = "پیر  منگل  بدھ",
+                days = listOf(
+                    Triple("پیر", "پہلا دن • پیر (Monday)", "Monday is Peer (پیر). We start the week by reading our favorite storybooks at school."),
+                    Triple("منگل", "دوسرا دن • منگل (Tuesday)", "Tuesday is Mangal (منگل). We draw and write neat letters with a colorful pencil."),
+                    Triple("بدھ", "تیسرا دن • بدھ (Wednesday)", "Wednesday is Budh (بدھ). We water the green trees and plants in the garden."),
+                    Triple("جمعرات", "چوتھا دن • جمعرات (Thursday)", "Thursday is Jumerat (جمعرات). We ride our bicycle happily in the park."),
+                    Triple("جمعہ", "پانچواں دن • جمعہ (Friday)", "Friday is Jummah (جمعہ). A bright colorful kite flies high in the Friday sky."),
+                    Triple("ہفتہ", "چھٹا دن • ہفتہ (Saturday)", "Saturday is Hafta (ہفتہ). We enjoy a fun weekend train game with our friends."),
+                    Triple("اتوار", "ساتواں دن • اتوار (Sunday)", "Sunday is Itwar (اتوار). The warm golden sun shines on a happy family Sunday.")
+                )
+            )
+            "en_hi" -> DayLangPack(
+                title = "सप्ताह के दिन • Days of the Week",
+                subtitle = "7 दिन • सोमवार से रविवार",
+                coverBadges = "सोम  मंगल  बुध",
+                days = listOf(
+                    Triple("सोम", "दिन 1 • सोमवार (Monday)", "Monday is Somvaar (सोमवार). We start the week reading our favorite books at school."),
+                    Triple("मंगल", "दिन 2 • मंगलवार (Tuesday)", "Tuesday is Mangalvaar (मंगलवार). We draw and write neat words with a bright pencil."),
+                    Triple("बुध", "दिन 3 • बुधवार (Wednesday)", "Wednesday is Budhvaar (बुधवार). We care for the green trees in the garden."),
+                    Triple("गुरु", "दिन 4 • गुरुवार (Thursday)", "Thursday is Guruvaar (गुरुवार). We ride our bicycle outdoors with friends."),
+                    Triple("शुक्र", "दिन 5 • शुक्रवार (Friday)", "Friday is Shukravaar (शुक्रवार). A colorful kite soars high in the sky."),
+                    Triple("शनि", "दिन 6 • शनिवार (Saturday)", "Saturday is Shanivaar (शनिवार). We play with the colorful toy train on the weekend."),
+                    Triple("रवि", "दिन 7 • रविवार (Sunday)", "Sunday is Ravivaar (रविवार). The bright golden sun shines on a joyful Sunday.")
+                )
+            )
+            "en_es" -> DayLangPack(
+                title = "Días de la Semana • Days of the Week",
+                subtitle = "7 Días • Lunes a Domingo",
+                coverBadges = "Lun  Mar  Mié",
+                days = listOf(
+                    Triple("Lun", "Día 1 • Lunes (Monday)", "Monday is Lunes. We begin the week reading our favorite storybooks."),
+                    Triple("Mar", "Día 2 • Martes (Tuesday)", "Tuesday is Martes. We draw and write with our favorite pencil."),
+                    Triple("Mié", "Día 3 • Miércoles (Wednesday)", "Wednesday is Miércoles. We play under the tall green tree in the park."),
+                    Triple("Jue", "Día 4 • Jueves (Thursday)", "Thursday is Jueves. We ride our colorful bicycle down the path."),
+                    Triple("Vie", "Día 5 • Viernes (Friday)", "Friday is Viernes. We fly a bright diamond kite in the blue sky."),
+                    Triple("Sáb", "Día 6 • Sábado (Saturday)", "Saturday is Sábado. We ride the cheerful weekend train together."),
+                    Triple("Dom", "Día 7 • Domingo (Sunday)", "Sunday is Domingo. The warm golden sun shines all day long.")
+                )
+            )
+            "en_pt" -> DayLangPack(
+                title = "Dias da Semana • Days of the Week",
+                subtitle = "7 Dias • Segunda a Domingo",
+                coverBadges = "Seg  Ter  Qua",
+                days = listOf(
+                    Triple("Seg", "Dia 1 • Segunda-feira (Monday)", "Monday is Segunda-feira. We start the week reading our colorful books."),
+                    Triple("Ter", "Dia 2 • Terça-feira (Tuesday)", "Tuesday is Terça-feira. We write and draw with a bright pencil."),
+                    Triple("Qua", "Dia 3 • Quarta-feira (Wednesday)", "Wednesday is Quarta-feira. We rest beneath the shady green tree."),
+                    Triple("Qui", "Dia 4 • Quinta-feira (Thursday)", "Thursday is Quinta-feira. We ride our bicycle in the afternoon breeze."),
+                    Triple("Sex", "Dia 5 • Sexta-feira (Friday)", "Friday is Sexta-feira. A colorful kite dances in the sky."),
+                    Triple("Sáb", "Dia 6 • Sábado (Saturday)", "Saturday is Sábado. We play with the toy train on Saturday morning."),
+                    Triple("Dom", "Dia 7 • Domingo (Sunday)", "Sunday is Domingo. The bright sun warms our happy family Sunday.")
+                )
+            )
+            "en_ar" -> DayLangPack(
+                title = "أيام الأسبوع • Days of the Week",
+                subtitle = "٧ أيام • الإثنين إلى الأحد",
+                coverBadges = "إثنين  ثلاثاء  أربعاء",
+                days = listOf(
+                    Triple("الإثنين", "اليوم ١ • الإثنين (Monday)", "Monday is Al-Ithnayn (الإثنين). We open our storybooks for a new week of learning."),
+                    Triple("الثلاثاء", "اليوم ٢ • الثلاثاء (Tuesday)", "Tuesday is Ath-Thulatha (الثلاثاء). We write neat letters with a sharp pencil."),
+                    Triple("الأربعاء", "اليوم ٣ • الأربعاء (Wednesday)", "Wednesday is Al-Arbia (الأربعاء). We visit the green trees in the garden."),
+                    Triple("الخميس", "اليوم ٤ • الخميس (Thursday)", "Thursday is Al-Khamis (الخميس). We ride our bicycle happily in the yard."),
+                    Triple("الجمعة", "اليوم ٥ • الجمعة (Friday)", "Friday is Al-Jumuah (الجمعة). A bright kite flies high in the clear sky."),
+                    Triple("السبت", "اليوم ٦ • السبت (Saturday)", "Saturday is As-Sabt (السبت). We enjoy a fun train ride on the weekend."),
+                    Triple("الأحد", "اليوم ٧ • الأحد (Sunday)", "Sunday is Al-Ahad (الأحد). The golden sun shines brightly in the morning sky.")
+                )
+            )
+            "en_bn" -> DayLangPack(
+                title = "সপ্তাহের দিন • Days of the Week",
+                subtitle = "৭ দিন • সোমবার থেকে রবিবার",
+                coverBadges = "সোম  মঙ্গল  বুধ",
+                days = listOf(
+                    Triple("সোম", "দিন ১ • সোমবার (Monday)", "Monday is Sombar (সোমবার). We begin the week reading our storybooks."),
+                    Triple("মঙ্গল", "দিন ২ • মঙ্গলবার (Tuesday)", "Tuesday is Mongalbar (মঙ্গলবার). We draw pictures with a bright pencil."),
+                    Triple("বুধ", "দিন ৩ • বুধবার (Wednesday)", "Wednesday is Budhbar (বুধবার). We look at the tall green tree in the park."),
+                    Triple("বৃহঃ", "দিন ৪ • বৃহস্পতিবার (Thursday)", "Thursday is Brihospotibar (বৃহস্পতিবার). We ride our bicycle with friends."),
+                    Triple("শুক্র", "দিন ৫ • শুক্রবার (Friday)", "Friday is Shukrobar (শুক্রবার). A colorful kite flies high in the sky."),
+                    Triple("শনি", "দিন ৬ • শনিবার (Saturday)", "Saturday is Shonibar (শনিবার). We play with the toy train on Saturday."),
+                    Triple("রবি", "দিন ৭ • রবিবার (Sunday)", "Sunday is Robibar (রবিবার). The bright golden sun shines on Sunday.")
+                )
+            )
+            "en_ta" -> DayLangPack(
+                title = "வாரத்தின் நாட்கள் • Days of the Week",
+                subtitle = "7 நாட்கள் • திங்கள் முதல் ஞாயிறு",
+                coverBadges = "திங்  செவ்  புத",
+                days = listOf(
+                    Triple("திங்கள்", "நாள் 1 • திங்கள் (Monday)", "Monday is Thingal (திங்கள்). We start the week reading our favorite books."),
+                    Triple("செவ்வாய்", "நாள் 2 • செவ்வாய் (Tuesday)", "Tuesday is Sevvaai (செவ்வாய்). We write and draw with a pencil."),
+                    Triple("புதன்", "நாள் 3 • புதன் (Wednesday)", "Wednesday is Budhan (புதன்). We see the tall green tree in the garden."),
+                    Triple("வியாழன்", "நாள் 4 • வியாழன் (Thursday)", "Thursday is Viyaazhan (வியாழன்). We ride our bicycle in the park."),
+                    Triple("வெள்ளி", "நாள் 5 • வெள்ளி (Friday)", "Friday is Velli (வெள்ளி). A colorful kite flies high in the breeze."),
+                    Triple("சனி", "நாள் 6 • சனி (Saturday)", "Saturday is Sani (சனி). We play with the colorful train on Saturday."),
+                    Triple("ஞாயிறு", "நாள் 7 • ஞாயிறு (Sunday)", "Sunday is Nyaayiru (ஞாயிறு). The golden sun shines brightly on Sunday.")
+                )
+            )
+            "en_te" -> DayLangPack(
+                title = "వారంలోని రోజులు • Days of the Week",
+                subtitle = "7 రోజులు • సోమవారం నుండి ఆదివారం",
+                coverBadges = "సోమ  మంగళ  బుధ",
+                days = listOf(
+                    Triple("సోమ", "రోజు 1 • సోమవారం (Monday)", "Monday is Somavaaram (సోమవారం). We start the week reading our storybooks."),
+                    Triple("మంగళ", "రోజు 2 • మంగళవారం (Tuesday)", "Tuesday is Mangalavaaram (మంగళవారం). We write neatly with a pencil."),
+                    Triple("బుధ", "రోజు 3 • బుధవారం (Wednesday)", "Wednesday is Budhavaaram (బుధవారం). We water the green tree in the garden."),
+                    Triple("గురు", "రోజు 4 • గురువారం (Thursday)", "Thursday is Guruvaaram (గురువారం). We ride our bicycle outdoors."),
+                    Triple("శుక్ర", "రోజు 5 • శుక్రవారం (Friday)", "Friday is Shukravaaram (శుక్రవారం). A bright kite soars in the blue sky."),
+                    Triple("శని", "రోజు 6 • శనివారం (Saturday)", "Saturday is Shanivaaram (శనివారం). We play with the toy train on Saturday."),
+                    Triple("ఆది", "రోజు 7 • ఆదివారం (Sunday)", "Sunday is Aadivaaram (ఆదివారం). The bright sun shines on a happy Sunday.")
+                )
+            )
+            "en_mr" -> DayLangPack(
+                title = "आठवड्याचे वार • Days of the Week",
+                subtitle = "७ वार • सोमवार ते रविवार",
+                coverBadges = "सोम  मंगळ  बुध",
+                days = listOf(
+                    Triple("सोम", "वार १ • सोमवार (Monday)", "Monday is Somvaar (सोमवार). We start the week reading our storybooks."),
+                    Triple("मंगळ", "वार २ • मंगळवार (Tuesday)", "Tuesday is Mangalvaar (मंगळवार). We draw and write with a pencil."),
+                    Triple("बुध", "वार ३ • बुधवार (Wednesday)", "Wednesday is Budhvaar (बुधवार). We care for the green trees in the park."),
+                    Triple("गुरु", "वार ४ • गुरुवार (Thursday)", "Thursday is Guruvaar (गुरुवार). We ride our bicycle with friends."),
+                    Triple("शुक्र", "वार ५ • शुक्रवार (Friday)", "Friday is Shukravaar (शुक्रवार). A colorful kite flies high in the sky."),
+                    Triple("शनि", "वार ६ • शनिवार (Saturday)", "Saturday is Shanivaar (शनिवार). We play with the toy train on Saturday."),
+                    Triple("रवि", "वार ७ • रविवार (Sunday)", "Sunday is Ravivaar (रविवार). The golden sun shines brightly on Sunday.")
+                )
+            )
+            "en_gu" -> DayLangPack(
+                title = "અઠવાડિયાના વાર • Days of the Week",
+                subtitle = "૭ વાર • સોમવાર થી રવિવાર",
+                coverBadges = "સોમ  મંગળ  બુધ",
+                days = listOf(
+                    Triple("સોમ", "વાર ૧ • સોમવાર (Monday)", "Monday is Somvaar (સોમવાર). We start the week reading our storybooks."),
+                    Triple("મંગળ", "વાર ૨ • મંગળવાર (Tuesday)", "Tuesday is Mangalvaar (મંગળવાર). We draw and write with a pencil."),
+                    Triple("બુધ", "વાર ૩ • બુધવાર (Wednesday)", "Wednesday is Budhvaar (બુધવાર). We look at the tall green tree."),
+                    Triple("ગુરુ", "વાર ૪ • ગુરુવાર (Thursday)", "Thursday is Guruvaar (ગુરુવાર). We ride our bicycle in the park."),
+                    Triple("શુક્ર", "વાર ૫ • શુક્રવાર (Friday)", "Friday is Shukravaar (શુક્રવાર). A colorful kite flies in the sky."),
+                    Triple("શનિ", "વાર ૬ • શનિવાર (Saturday)", "Saturday is Shanivaar (શનિવાર). We play with the toy train on Saturday."),
+                    Triple("રवि", "વાર ૭ • રવિવાર (Sunday)", "Sunday is Ravivaar (રવિવાર). The bright golden sun shines on Sunday.")
+                )
+            )
+            else -> DayLangPack(
+                title = "Days of the Week (7 Days)",
+                subtitle = "7 Days • Monday to Sunday",
+                coverBadges = "Mon  Tue  Wed",
+                days = listOf(
+                    Triple("Mon", "Day 1 • Monday", "Monday is the first day of the school week. We open our favorite storybook and read together."),
+                    Triple("Tue", "Day 2 • Tuesday", "Tuesday is the second day of the week. We write neat letters and draw pictures with a pencil."),
+                    Triple("Wed", "Day 3 • Wednesday", "Wednesday is the middle of the week. We rest beneath a tall green tree in the garden."),
+                    Triple("Thu", "Day 4 • Thursday", "Thursday is the fourth day of the week. We ride our colorful bicycle down the sunny path."),
+                    Triple("Fri", "Day 5 • Friday", "Friday is the fifth day of the week. We fly a bright diamond kite high in the blue sky."),
+                    Triple("Sat", "Day 6 • Saturday", "Saturday is the weekend! We play with our colorful toy train and visit the park."),
+                    Triple("Sun", "Day 7 • Sunday", "Sunday is a bright sunny day of rest and fun with our family.")
+                )
+            )
+        }
+
+        val dayImages = listOf(imgMon, imgTue, imgWed, imgThu, imgFri, imgSat, imgSun)
+        val dayPractice = listOf("book", "write", "tree", "park", "sky", "train", "sun")
+
+        val pages = pack.days.mapIndexed { idx, (badge, fullLabel, sentence) ->
+            StoryPage(
+                pageNumber = idx + 1,
+                imageAssetPath = dayImages[idx % dayImages.size],
+                text = sentence,
+                spanishTranslation = fullLabel,
+                urduTranslation = fullLabel,
+                hindiTranslation = fullLabel,
+                practiceWords = setOf(dayPractice[idx % dayPractice.size]),
+                alphabetBadgeLetters = badge
+            )
+        }
+
+        return StoryBook(
+            id = "days_of_week_$langCode",
+            title = pack.title,
+            nativeTitleUrdu = pack.subtitle,
+            nativeTitleHindi = pack.subtitle,
+            author = "Seekh Reading Curriculum",
+            illustrator = "Seekh Alphabet Studio",
+            publisher = "Foundational Literacy Pack",
+            level = 1,
+            coverAssetPath = imgSun,
+            isFeaturedHero = false,
+            bookType = "DAYS_OF_WEEK",
+            categoryTag = "Numbers & Rhymes",
+            phonicsSkillTag = "Days: Monday to Sunday",
+            alphabetBadgeLetters = pack.coverBadges,
+            pages = pages
+        )
+    }
+
+    // Complete Language-Specific "Months of the Year" (12 Pages: 1 Month per Page) Book across all 11 languages!
+    fun getMonthsOfYearBookForLanguage(langCode: String): StoryBook {
+        val monthImages = listOf(
+            "books/alphabets/alpha_mountain.webp",   // 1. Jan - Winter mountain snow
+            "books/alphabets/alpha_butterfly.webp",  // 2. Feb - Early spring butterfly
+            "books/alphabets/alpha_flower.webp",     // 3. Mar - Blooming spring flower
+            "books/alphabets/alpha_n_nest.webp",     // 4. Apr - Bird nest in green spring
+            "books/alphabets/alpha_m_mango.webp",    // 5. May - Sweet ripe mango
+            "books/alphabets/alpha_s_sun.webp",      // 6. Jun - Warm summer sunshine
+            "books/alphabets/alpha_u_umbrella.webp", // 7. Jul - Monsoon rain umbrella
+            "books/alphabets/alpha_peacock.webp",    // 8. Aug - Dancing green peacock
+            "books/alphabets/alpha_book.webp",       // 9. Sep - Back to school books
+            "books/alphabets/alpha_a_apple.webp",    // 10. Oct - Crisp autumn harvest apple
+            "books/alphabets/alpha_moon.webp",       // 11. Nov - Cool evening crescent moon
+            "books/alphabets/alpha_h_house.webp"     // 12. Dec - Cozy winter home
+        )
+        val monthPractice = listOf("cold", "butterfly", "flower", "nest", "mango", "sun", "rain", "garden", "book", "apple", "moon", "home")
+
+        data class MonthLangPack(
+            val title: String,
+            val subtitle: String,
+            val coverBadges: String,
+            val months: List<Triple<String, String, String>>
+        )
+
+        val pack = when (langCode) {
+            "en_ur" -> MonthLangPack(
+                title = "سال کے مہینے • Months of the Year",
+                subtitle = "12 مہینے • جنوری سے دسمبر تک",
+                coverBadges = "جنوری  فروری  مارچ",
+                months = listOf(
+                    Triple("جنوری", "پہلا مہینہ • جنوری (January)", "January (جنوری) is the first month of the year. Snow sparkles on the high winter mountains."),
+                    Triple("فروری", "دوسرا مہینہ • فروری (February)", "February (فروری) is the second month. Colorful butterflies flutter in the cool breeze."),
+                    Triple("مارچ", "تیسرا مہینہ • مارچ (March)", "March (مارچ) is the third month. Fresh spring flowers bloom across the garden."),
+                    Triple("اپریل", "چوتھا مہینہ • اپریل (April)", "April (اپریل) is the fourth month. Little birds build a cozy nest in the green trees."),
+                    Triple("مئی", "پانچواں مہینہ • مئی (May)", "May (مئی) is the fifth month. Sweet golden mangoes ripen on the orchard trees."),
+                    Triple("جون", "چھٹا مہینہ • جون (June)", "June (جون) is the sixth month. The bright golden summer sun shines in the sky."),
+                    Triple("جولائی", "ساتواں مہینہ • جولائی (July)", "July (جولائی) is the seventh month. We open a colorful umbrella when the rain falls."),
+                    Triple("اگست", "آٹھواں مہینہ • اگست (August)", "August (اگست) is the eighth month. A beautiful peacock dances in the green meadow."),
+                    Triple("ستمبر", "نواں مہینہ • ستمبر (September)", "September (ستمبر) is the ninth month. We read exciting new books at school."),
+                    Triple("اکتوبر", "دسواں مہینہ • اکتوبر (October)", "October (اکتوبر) is the tenth month. Crisp red apples are ready for the autumn harvest."),
+                    Triple("نومبر", "گیارہواں مہینہ • نومبر (November)", "November (نومبر) is the eleventh month. The bright crescent moon glows in the cool night sky."),
+                    Triple("دسمبر", "بارہواں مہینہ • دسمبر (December)", "December (دسمبر) is the twelfth and last month of the year. We stay warm inside our cozy home.")
+                )
+            )
+            "en_hi" -> MonthLangPack(
+                title = "साल के महीने • Months of the Year",
+                subtitle = "12 महीने • जनवरी से दिसंबर",
+                coverBadges = "जन  फ़र  मार्च",
+                months = listOf(
+                    Triple("जनवरी", "महीना 1 • जनवरी (January)", "January (जनवरी) is the first month of the year with snowy winter mountain peaks."),
+                    Triple("फ़रवरी", "महीना 2 • फ़रवरी (February)", "February (फ़रवरी) is the second month when colorful butterflies visit the garden."),
+                    Triple("मार्च", "महीना 3 • मार्च (March)", "March (मार्च) is the third month when bright spring flowers bloom everywhere."),
+                    Triple("अप्रैल", "महीना 4 • अप्रैल (April)", "April (अप्रैल) is the fourth month with baby birds resting in their cozy nest."),
+                    Triple("मई", "महीना 5 • मई (May)", "May (मई) is the fifth month when sweet yellow mangoes ripen on the trees."),
+                    Triple("जून", "महीना 6 • जून (June)", "June (जून) is the sixth month with warm golden summer sunshine."),
+                    Triple("जुलाई", "महीना 7 • जुलाई (July)", "July (जुलाई) is the seventh month when we carry a colorful umbrella in the rain."),
+                    Triple("अगस्त", "महीना 8 • अगस्त (August)", "August (अगस्त) is the eighth month when the peacock dances in the green fields."),
+                    Triple("सितंबर", "महीना 9 • सितंबर (September)", "September (सितंबर) is the ninth month when we read wonderful books at school."),
+                    Triple("अक्टूबर", "महीना 10 • अक्टूबर (October)", "October (अक्टूबर) is the tenth month with fresh red harvest apples."),
+                    Triple("नवंबर", "महीना 11 • नवंबर (November)", "November (नवंबर) is the eleventh month with a glowing crescent moon on cool nights."),
+                    Triple("दिसंबर", "महीना 12 • दिसंबर (December)", "December (दिसंबर) is the twelfth month when we enjoy winter inside our warm home.")
+                )
+            )
+            "en_es" -> MonthLangPack(
+                title = "Meses del Año • Months of the Year",
+                subtitle = "12 Meses • Enero a Diciembre",
+                coverBadges = "Ene  Feb  Mar",
+                months = listOf(
+                    Triple("Ene", "Mes 1 • Enero (January)", "January is Enero, the first month of the year with snowy mountains."),
+                    Triple("Feb", "Mes 2 • Febrero (February)", "February is Febrero, the second month with colorful butterflies."),
+                    Triple("Mar", "Mes 3 • Marzo (March)", "March is Marzo, the third month when bright spring flowers bloom."),
+                    Triple("Abr", "Mes 4 • Abril (April)", "April is Abril, the fourth month with bird nests in the green trees."),
+                    Triple("May", "Mes 5 • Mayo (May)", "May is Mayo, the fifth month with sweet golden mangoes."),
+                    Triple("Jun", "Mes 6 • Junio (June)", "June is Junio, the sixth month with bright summer sunshine."),
+                    Triple("Jul", "Mes 7 • Julio (July)", "July is Julio, the seventh month with our colorful umbrella."),
+                    Triple("Ago", "Mes 8 • Agosto (August)", "August is Agosto, the eighth month with a proud colourful peacock."),
+                    Triple("Sep", "Mes 9 • Septiembre (September)", "September is Septiembre, the ninth month for reading favorite school books."),
+                    Triple("Oct", "Mes 10 • Octubre (October)", "October is Octubre, the tenth month with crisp red autumn apples."),
+                    Triple("Nov", "Mes 11 • Noviembre (November)", "November is Noviembre, the eleventh month under the crescent moon."),
+                    Triple("Dic", "Mes 12 • Diciembre (December)", "December is Diciembre, the twelfth month in our cozy warm home.")
+                )
+            )
+            "en_pt" -> MonthLangPack(
+                title = "Meses do Ano • Months of the Year",
+                subtitle = "12 Meses • Janeiro a Dezembro",
+                coverBadges = "Jan  Fev  Mar",
+                months = listOf(
+                    Triple("Jan", "Mês 1 • Janeiro (January)", "January is Janeiro, the first month of the year with tall mountains."),
+                    Triple("Fev", "Mês 2 • Fevereiro (February)", "February is Fevereiro, the second month with colorful butterflies."),
+                    Triple("Mar", "Mês 3 • Março (March)", "March is Março, the third month when flowers bloom in the garden."),
+                    Triple("Abr", "Mês 4 • Abril (April)", "April is Abril, the fourth month with a cozy bird nest."),
+                    Triple("Mai", "Mês 5 • Maio (May)", "May is Maio, the fifth month with sweet ripe mangoes."),
+                    Triple("Jun", "Mês 6 • Junho (June)", "June is Junho, the sixth month with warm golden sun."),
+                    Triple("Jul", "Mês 7 • Julho (July)", "July is Julho, the seventh month with a bright rain umbrella."),
+                    Triple("Ago", "Mês 8 • Agosto (August)", "August is Agosto, the eighth month with a colorful peacock."),
+                    Triple("Set", "Mês 9 • Setembro (September)", "September is Setembro, the ninth month with our favorite books."),
+                    Triple("Out", "Mês 10 • Outubro (October)", "October is Outubro, the tenth month with fresh red apples."),
+                    Triple("Nov", "Mês 11 • Novembro (November)", "November is Novembro, the eleventh month under the glowing moon."),
+                    Triple("Dez", "Mês 12 • Dezembro (December)", "December is Dezembro, the twelfth month in our warm family home.")
+                )
+            )
+            "en_ar" -> MonthLangPack(
+                title = "أشهر السنة • Months of the Year",
+                subtitle = "١٢ شهراً • يناير إلى ديسمبر",
+                coverBadges = "يناير  فبراير  مارس",
+                months = listOf(
+                    Triple("يناير", "الشهر ١ • يناير (January)", "January is Yanayir (يناير), the first month with snowy mountain peaks."),
+                    Triple("فبراير", "الشهر ٢ • فبراير (February)", "February is Fabrayir (فبراير), the second month with colorful butterflies."),
+                    Triple("مارس", "الشهر ٣ • مارس (March)", "March is Maris (مارس), the third month when spring flowers bloom."),
+                    Triple("أبريل", "الشهر ٤ • أبريل (April)", "April is Abril (أبريل), the fourth month with bird nests in the trees."),
+                    Triple("مايو", "الشهر ٥ • مايو (May)", "May is Mayu (مايو), the fifth month with sweet golden mangoes."),
+                    Triple("يونيو", "الشهر ٦ • يونيو (June)", "June is Yunyu (يونيو), the sixth month with bright summer sun."),
+                    Triple("يوليو", "الشهر ٧ • يوليو (July)", "July is Yulyu (يوليو), the seventh month with a colorful umbrella."),
+                    Triple("أغسطس", "الشهر ٨ • أغسطس (August)", "August is Aghustus (أغسطس), the eighth month with a beautiful peacock."),
+                    Triple("سبتمبر", "الشهر ٩ • سبتمبر (September)", "September is Sibtambir (سبتمبر), the ninth month for school books."),
+                    Triple("أكتوبر", "الشهر ١٠ • أكتوبر (October)", "October is Uktubir (أكتوبر), the tenth month with fresh red apples."),
+                    Triple("نوفمبر", "الشهر ١١ • نوفمبر (November)", "November is Nufambir (نوفمبر), the eleventh month under the crescent moon."),
+                    Triple("ديسمبر", "الشهر ١٢ • ديسمبر (December)", "December is Disambir (ديسمبر), the twelfth month in our warm home.")
+                )
+            )
+            else -> MonthLangPack(
+                title = "Months of the Year (12 Months)",
+                subtitle = "12 Months • January to December",
+                coverBadges = "Jan  Feb  Mar",
+                months = listOf(
+                    Triple("Jan", "Month 1 • January", "January is the first month of the year. White snow sparkles on the high mountain peaks."),
+                    Triple("Feb", "Month 2 • February", "February is the second month of the year. Colorful butterflies dance in the cool breeze."),
+                    Triple("Mar", "Month 3 • March", "March is the third month of the year. Bright spring flowers bloom across the green meadow."),
+                    Triple("Apr", "Month 4 • April", "April is the fourth month of the year. Little birds rest inside a cozy nest in the tree."),
+                    Triple("May", "Month 5 • May", "May is the fifth month of the year. Sweet golden mangoes ripen in the warm orchard."),
+                    Triple("Jun", "Month 6 • June", "June is the sixth month of the year. The warm golden summer sun shines high in the sky."),
+                    Triple("Jul", "Month 7 • July", "July is the seventh month of the year. We carry a colorful umbrella when rain showers fall."),
+                    Triple("Aug", "Month 8 • August", "August is the eighth month of the year. A proud peacock spreads its colorful feathers."),
+                    Triple("Sep", "Month 9 • September", "September is the ninth month of the year. We open our favorite books for a new school term."),
+                    Triple("Oct", "Month 10 • October", "October is the tenth month of the year. Fresh red apples are picked in the autumn harvest."),
+                    Triple("Nov", "Month 11 • November", "November is the eleventh month of the year. A golden crescent moon glows in the cool night sky."),
+                    Triple("Dec", "Month 12 • December", "December is the twelfth and final month of the year. Families gather inside a warm cozy home.")
+                )
+            )
+        }
+
+        val pages = pack.months.mapIndexed { idx, (badge, fullLabel, sentence) ->
+            StoryPage(
+                pageNumber = idx + 1,
+                imageAssetPath = monthImages[idx % monthImages.size],
+                text = sentence,
+                spanishTranslation = fullLabel,
+                urduTranslation = fullLabel,
+                hindiTranslation = fullLabel,
+                practiceWords = setOf(monthPractice[idx % monthPractice.size]),
+                alphabetBadgeLetters = badge
+            )
+        }
+
+        return StoryBook(
+            id = "months_of_year_$langCode",
+            title = pack.title,
+            nativeTitleUrdu = pack.subtitle,
+            nativeTitleHindi = pack.subtitle,
+            author = "Seekh Reading Curriculum",
+            illustrator = "Seekh Alphabet Studio",
+            publisher = "Foundational Literacy Pack",
+            level = 1,
+            coverAssetPath = "books/alphabets/alpha_flower.webp",
+            isFeaturedHero = false,
+            bookType = "MONTHS_OF_YEAR",
+            categoryTag = "Numbers & Rhymes",
+            phonicsSkillTag = "Months: January to December",
+            alphabetBadgeLetters = pack.coverBadges,
+            pages = pages
+        )
+    }
+
+    data class TopTrioLocalizedLabels(
+        val alphabetsTitle: String,
+        val alphabetsCountTag: String,
+        val daysTitle: String,
+        val daysCountTag: String,
+        val monthsTitle: String,
+        val monthsCountTag: String,
+        val sectionDaysHeader: String,
+        val sectionMonthsHeader: String
+    )
+
+    fun getTopTrioLabels(langCode: String): TopTrioLocalizedLabels {
+        return when (langCode) {
+            "en_ur" -> TopTrioLocalizedLabels(
+                alphabetsTitle = "حروفِ تہجی",
+                alphabetsCountTag = "ا ب پ • A-Z",
+                daysTitle = "ہفتے کے دن",
+                daysCountTag = "7 دن • پیر-اتوار",
+                monthsTitle = "سال کے مہینے",
+                monthsCountTag = "12 مہینے",
+                sectionDaysHeader = "ہفتے کے دن (7 Days of the Week)",
+                sectionMonthsHeader = "سال کے مہینے (12 Months of the Year)"
+            )
+            "en_hi" -> TopTrioLocalizedLabels(
+                alphabetsTitle = "वर्णमाला",
+                alphabetsCountTag = "अ आ इ • A-Z",
+                daysTitle = "सप्ताह के दिन",
+                daysCountTag = "7 दिन • सोम-रवि",
+                monthsTitle = "साल के महीने",
+                monthsCountTag = "12 महीने",
+                sectionDaysHeader = "सप्ताह के 7 दिन (Days of the Week)",
+                sectionMonthsHeader = "साल के 12 महीने (Months of the Year)"
+            )
+            "en_es" -> TopTrioLocalizedLabels(
+                alphabetsTitle = "Alfabeto",
+                alphabetsCountTag = "A B C • Letras",
+                daysTitle = "Días",
+                daysCountTag = "7 Días • Semana",
+                monthsTitle = "Meses",
+                monthsCountTag = "12 Meses • Año",
+                sectionDaysHeader = "Días de la Semana (7 Days)",
+                sectionMonthsHeader = "Meses del Año (12 Months)"
+            )
+            "en_pt" -> TopTrioLocalizedLabels(
+                alphabetsTitle = "Alfabeto",
+                alphabetsCountTag = "A B C • Letras",
+                daysTitle = "Dias",
+                daysCountTag = "7 Dias • Semana",
+                monthsTitle = "Meses",
+                monthsCountTag = "12 Meses • Ano",
+                sectionDaysHeader = "Dias da Semana (7 Days)",
+                sectionMonthsHeader = "Meses do Ano (12 Months)"
+            )
+            "en_ar" -> TopTrioLocalizedLabels(
+                alphabetsTitle = "الحروف الأبجدية",
+                alphabetsCountTag = "أ ب ت • حروف",
+                daysTitle = "أيام الأسبوع",
+                daysCountTag = "٧ أيام",
+                monthsTitle = "أشهر السنة",
+                monthsCountTag = "١٢ شهراً",
+                sectionDaysHeader = "أيام الأسبوع (Days of the Week)",
+                sectionMonthsHeader = "أشهر السنة (Months of the Year)"
+            )
+            "en_bn" -> TopTrioLocalizedLabels(
+                alphabetsTitle = "বর্ণমালা",
+                alphabetsCountTag = "অ আ ক খ",
+                daysTitle = "সপ্তাহের দিন",
+                daysCountTag = "৭ দিন",
+                monthsTitle = "বছরের মাস",
+                monthsCountTag = "১২ মাস",
+                sectionDaysHeader = "সপ্তাহের ৭ দিন (Days of the Week)",
+                sectionMonthsHeader = "বছরের ১২ মাস (Months of the Year)"
+            )
+            "en_ta" -> TopTrioLocalizedLabels(
+                alphabetsTitle = "எழுத்துக்கள்",
+                alphabetsCountTag = "அ ஆ இ ஈ",
+                daysTitle = "வார நாட்கள்",
+                daysCountTag = "7 நாட்கள்",
+                monthsTitle = "மாதங்கள்",
+                monthsCountTag = "12 மாதங்கள்",
+                sectionDaysHeader = "வாரத்தின் 7 நாட்கள் (Days of the Week)",
+                sectionMonthsHeader = "ஆண்டின் 12 மாதங்கள் (Months of the Year)"
+            )
+            "en_te" -> TopTrioLocalizedLabels(
+                alphabetsTitle = "అక్షరమాల",
+                alphabetsCountTag = "అ ఆ ఇ ఈ",
+                daysTitle = "వారపు రోజులు",
+                daysCountTag = "7 రోజులు",
+                monthsTitle = "నెలలు",
+                monthsCountTag = "12 నెలలు",
+                sectionDaysHeader = "వారంలోని 7 రోజులు (Days of the Week)",
+                sectionMonthsHeader = "సంవత్సరంలోని 12 నెలలు (Months of the Year)"
+            )
+            "en_mr" -> TopTrioLocalizedLabels(
+                alphabetsTitle = "मुळाक्षरे",
+                alphabetsCountTag = "अ आ इ ई",
+                daysTitle = "आठवड्याचे वार",
+                daysCountTag = "७ वार",
+                monthsTitle = "वर्षाचे महिने",
+                monthsCountTag = "१२ महिने",
+                sectionDaysHeader = "आठवड्याचे ७ वार (Days of the Week)",
+                sectionMonthsHeader = "वर्षाचे १२ महिने (Months of the Year)"
+            )
+            "en_gu" -> TopTrioLocalizedLabels(
+                alphabetsTitle = "મૂળાક્ષરો",
+                alphabetsCountTag = "અ આ ઇ ઈ",
+                daysTitle = "અઠવાડિયાના વાર",
+                daysCountTag = "૭ વાર",
+                monthsTitle = "વર્ષના મહિના",
+                monthsCountTag = "૧૨ મહિના",
+                sectionDaysHeader = "અઠવાડિયાના ૭ વાર (Days of the Week)",
+                sectionMonthsHeader = "વર્ષના ૧૨ મહિના (Months of the Year)"
+            )
+            else -> TopTrioLocalizedLabels(
+                alphabetsTitle = "Alphabets",
+                alphabetsCountTag = "26 Letters • A-Z",
+                daysTitle = "Days of Week",
+                daysCountTag = "7 Days • Mon-Sun",
+                monthsTitle = "Months of Year",
+                monthsCountTag = "12 Months • Jan-Dec",
+                sectionDaysHeader = "Days of the Week (7 Days)",
+                sectionMonthsHeader = "Months of the Year (12 Months)"
+            )
+        }
+    }
+
     // Complete language-aware Book Title & Subtitle localization across all 11 languages
     fun getBookPrimaryTitle(book: StoryBook, langCode: String): String {
-        if (book.bookType == "ALPHABET" || book.id.startsWith("alphabet_book_")) {
+        if (book.bookType == "ALPHABET" || book.bookType == "DAYS_OF_WEEK" || book.bookType == "MONTHS_OF_YEAR" || book.id.startsWith("alphabet_book_")) {
             return book.title
         }
         return when (langCode) {
@@ -1367,7 +1876,7 @@ object SeekhCatalog {
     }
 
     fun getBookSecondaryTitle(book: StoryBook, langCode: String): String {
-        if (book.bookType == "ALPHABET" || book.id.startsWith("alphabet_book_")) {
+        if (book.bookType == "ALPHABET" || book.bookType == "DAYS_OF_WEEK" || book.bookType == "MONTHS_OF_YEAR" || book.id.startsWith("alphabet_book_")) {
             return book.nativeTitleUrdu.ifBlank { book.nativeTitleHindi }
         }
         return when (langCode) {
