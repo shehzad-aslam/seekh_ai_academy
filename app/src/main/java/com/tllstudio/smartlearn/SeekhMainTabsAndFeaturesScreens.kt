@@ -703,13 +703,13 @@ fun LibraryTabScreen(
                     if (dailyDropBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = uiStrings.sectionRecommended,
+                                title = "${uiStrings.sectionRecommended} (${dailyDropBooks.size})",
                                 onSpeak = { onSpeakText(uiStrings.sectionRecommended) },
                                 actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "New & Daily" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = dailyDropBooks.take(9),
+                                sectionBooks = dailyDropBooks.take(18),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -725,13 +725,13 @@ fun LibraryTabScreen(
                     if (level1Books.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = uiStrings.sectionLevel1,
+                                title = "${uiStrings.sectionLevel1} (${level1Books.size})",
                                 onSpeak = { onSpeakText(uiStrings.sectionLevel1) },
                                 actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Level 1" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = level1Books.take(9),
+                                sectionBooks = level1Books.take(21),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -747,13 +747,13 @@ fun LibraryTabScreen(
                     if (animalsNatureBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = uiStrings.sectionAnimalsNature,
+                                title = "${uiStrings.sectionAnimalsNature} (${animalsNatureBooks.size})",
                                 onSpeak = { onSpeakText(uiStrings.sectionAnimalsNature) },
                                 actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Animals & Nature" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = animalsNatureBooks.take(9),
+                                sectionBooks = animalsNatureBooks.take(18),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -769,13 +769,13 @@ fun LibraryTabScreen(
                     if (schoolKindnessBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = uiStrings.sectionSchoolKindness,
+                                title = "${uiStrings.sectionSchoolKindness} (${schoolKindnessBooks.size})",
                                 onSpeak = { onSpeakText(uiStrings.sectionSchoolKindness) },
                                 actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "School & Kindness" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = schoolKindnessBooks.take(9),
+                                sectionBooks = schoolKindnessBooks.take(15),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -791,13 +791,13 @@ fun LibraryTabScreen(
                     if (phonicsBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = uiStrings.sectionPhonics,
+                                title = "${uiStrings.sectionPhonics} (${phonicsBooks.size})",
                                 onSpeak = { onSpeakText(uiStrings.sectionPhonics) },
                                 actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Phonics" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = phonicsBooks.take(9),
+                                sectionBooks = phonicsBooks.take(15),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -805,7 +805,7 @@ fun LibraryTabScreen(
                                 onDownloadCloudBook = onDownloadCloudBook,
                                 onOpenBook = onOpenBook
                             )
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
                         }
                     }
 
@@ -813,13 +813,13 @@ fun LibraryTabScreen(
                     if (level2Books.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = uiStrings.sectionLevel2,
+                                title = "${uiStrings.sectionLevel2} (${level2Books.size})",
                                 onSpeak = { onSpeakText(uiStrings.sectionLevel2) },
                                 actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Level 2" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = level2Books.take(9),
+                                sectionBooks = level2Books.take(21),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -827,7 +827,7 @@ fun LibraryTabScreen(
                                 onDownloadCloudBook = onDownloadCloudBook,
                                 onOpenBook = onOpenBook
                             )
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
                         }
                     }
 
@@ -835,13 +835,13 @@ fun LibraryTabScreen(
                     if (familyFriendsBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = uiStrings.sectionFamilyFriends,
+                                title = "${uiStrings.sectionFamilyFriends} (${familyFriendsBooks.size})",
                                 onSpeak = { onSpeakText(uiStrings.sectionFamilyFriends) },
                                 actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Family & Friends" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = familyFriendsBooks.take(9),
+                                sectionBooks = familyFriendsBooks.take(15),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -849,7 +849,7 @@ fun LibraryTabScreen(
                                 onDownloadCloudBook = onDownloadCloudBook,
                                 onOpenBook = onOpenBook
                             )
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
                         }
                     }
 
@@ -857,13 +857,13 @@ fun LibraryTabScreen(
                     if (numbersRhymesBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = uiStrings.sectionNumbersRhymes,
+                                title = "${uiStrings.sectionNumbersRhymes} (${numbersRhymesBooks.size})",
                                 onSpeak = { onSpeakText(uiStrings.sectionNumbersRhymes) },
                                 actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Numbers & Rhymes" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = numbersRhymesBooks.take(9),
+                                sectionBooks = numbersRhymesBooks.take(15),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -871,7 +871,7 @@ fun LibraryTabScreen(
                                 onDownloadCloudBook = onDownloadCloudBook,
                                 onOpenBook = onOpenBook
                             )
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
                         }
                     }
 
@@ -879,13 +879,13 @@ fun LibraryTabScreen(
                     if (seriesBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = uiStrings.sectionStorySeries,
+                                title = "${uiStrings.sectionStorySeries} (${seriesBooks.size})",
                                 onSpeak = { onSpeakText(uiStrings.sectionStorySeries) },
                                 actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Series" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = seriesBooks.take(9),
+                                sectionBooks = seriesBooks.take(15),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -893,7 +893,7 @@ fun LibraryTabScreen(
                                 onDownloadCloudBook = onDownloadCloudBook,
                                 onOpenBook = onOpenBook
                             )
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
                         }
                     }
 
@@ -901,13 +901,13 @@ fun LibraryTabScreen(
                     if (level3Books.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = uiStrings.sectionLevel3,
+                                title = "${uiStrings.sectionLevel3} (${level3Books.size})",
                                 onSpeak = { onSpeakText(uiStrings.sectionLevel3) },
                                 actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Level 3" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = level3Books.take(9),
+                                sectionBooks = level3Books.take(18),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -915,7 +915,7 @@ fun LibraryTabScreen(
                                 onDownloadCloudBook = onDownloadCloudBook,
                                 onOpenBook = onOpenBook
                             )
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
                         }
                     }
 
@@ -923,13 +923,13 @@ fun LibraryTabScreen(
                     if (adventureTravelBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = uiStrings.sectionAdventureTravel,
+                                title = "${uiStrings.sectionAdventureTravel} (${adventureTravelBooks.size})",
                                 onSpeak = { onSpeakText(uiStrings.sectionAdventureTravel) },
                                 actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Adventure & Travel" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = adventureTravelBooks.take(9),
+                                sectionBooks = adventureTravelBooks.take(15),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -937,7 +937,7 @@ fun LibraryTabScreen(
                                 onDownloadCloudBook = onDownloadCloudBook,
                                 onOpenBook = onOpenBook
                             )
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
                         }
                     }
 
@@ -945,13 +945,13 @@ fun LibraryTabScreen(
                     if (scienceWeatherBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = uiStrings.sectionScienceWeather,
+                                title = "${uiStrings.sectionScienceWeather} (${scienceWeatherBooks.size})",
                                 onSpeak = { onSpeakText(uiStrings.sectionScienceWeather) },
                                 actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Science & Weather" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = scienceWeatherBooks.take(9),
+                                sectionBooks = scienceWeatherBooks.take(15),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -959,7 +959,7 @@ fun LibraryTabScreen(
                                 onDownloadCloudBook = onDownloadCloudBook,
                                 onOpenBook = onOpenBook
                             )
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
                         }
                     }
 
@@ -967,13 +967,13 @@ fun LibraryTabScreen(
                     if (level4Books.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = uiStrings.sectionLevel4,
+                                title = "${uiStrings.sectionLevel4} (${level4Books.size})",
                                 onSpeak = { onSpeakText(uiStrings.sectionLevel4) },
                                 actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Level 4" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = level4Books.take(9),
+                                sectionBooks = level4Books.take(18),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -981,7 +981,7 @@ fun LibraryTabScreen(
                                 onDownloadCloudBook = onDownloadCloudBook,
                                 onOpenBook = onOpenBook
                             )
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
                         }
                     }
 
@@ -989,13 +989,13 @@ fun LibraryTabScreen(
                     if (bedtimeFolktaleBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = uiStrings.sectionBedtimeFolktales,
+                                title = "${uiStrings.sectionBedtimeFolktales} (${bedtimeFolktaleBooks.size})",
                                 onSpeak = { onSpeakText(uiStrings.sectionBedtimeFolktales) },
                                 actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Bedtime & Folktales" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = bedtimeFolktaleBooks.take(9),
+                                sectionBooks = bedtimeFolktaleBooks.take(15),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -1003,7 +1003,7 @@ fun LibraryTabScreen(
                                 onDownloadCloudBook = onDownloadCloudBook,
                                 onOpenBook = onOpenBook
                             )
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
                         }
                     }
 
