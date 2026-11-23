@@ -11,6 +11,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.pager.PagerDefaults
+import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -44,8 +47,8 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-// 1. Exact Reference Continuous Vertical-Scrolling Story Book Reader Flow (matching Read Along by Google!):
-//    All pages & illustrations of the story are stacked in a smooth continuous vertical scroll (Cover Card at top -> Page 1..N Illustrations + Word-by-Word Interactive Sentences + Inline Comprehension Quizzes -> Finish Story Celebration Card at bottom), with automatic smooth scrolling as each page is read!
+// 1. Exact Reference Full-Screen Snapping Vertical Pager Story Book Reader Flow (matching Read Along by Google!):
+//    Every page occupies the full screen (no card borders around pages) inside a VerticalPager so as soon as you scroll vertically, the next full-screen illustrated page slides in and snaps cleanly into place!
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun InteractiveStoryReaderScreen(
@@ -66,21 +69,20 @@ fun InteractiveStoryReaderScreen(
     onBack: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
-    // Item 0 in LazyColumn is the Cover Banner Card; Items 1..book.pages.size are the Story Pages; Item book.pages.size + 1 is the Finish Card
-    val initialScrollItem = remember(book.id, initialPageIndex) {
-        if (initialPageIndex > 0) (initialPageIndex + 1).coerceAtMost(book.pages.size) else 0
+    val startPageIdx = remember(book.id) {
+        initialPageIndex.coerceIn(0, (book.pages.size - 1).coerceAtLeast(0))
     }
-    val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = initialScrollItem)
+    // VerticalPager has book.pages.size full-screen story pages + 1 final full-screen finish page at the end
+    val totalPagerPages = (book.pages.size + 1).coerceAtLeast(2)
+    val pagerState = rememberPagerState(initialPage = startPageIdx) { totalPagerPages }
 
-    var pageIndex by remember(book.id) {
-        mutableIntStateOf(initialPageIndex.coerceIn(0, (book.pages.size - 1).coerceAtLeast(0)))
-    }
+    var pageIndex by remember(book.id) { mutableIntStateOf(startPageIdx) }
     val currentPage = book.pages.getOrElse(pageIndex) { book.pages.first() }
     val words = remember(currentPage.text) {
         currentPage.text.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
     }
 
-    // Per-page persistent state across vertical scrolling within the book (prevents reset & duplicate star farming!)
+    // Per-page persistent state across vertical paging within the book (prevents reset & duplicate star farming!)
     var pageReadWordCounts by remember(book.id) {
         mutableStateOf(
             buildMap<Int, Int> {
@@ -123,6 +125,7 @@ fun InteractiveStoryReaderScreen(
 
     // Tooltip state: (pageIndex, selectedWord)
     var selectedTooltipPageAndWord by remember(book.id) { mutableStateOf<Pair<Int, String>?>(null) }
+    var activeQuizModalPageIndex by remember(book.id) { mutableStateOf<Int?>(null) }
     var isMicActive by remember { mutableStateOf(false) }
     var showBlockBookDialog by remember { mutableStateOf(false) }
     var readingMode by remember { mutableStateOf("Read aloud") } // "Read aloud" | "Listen" | "Silent"
@@ -141,15 +144,15 @@ fun InteractiveStoryReaderScreen(
         }
     }
 
-    // Automatically track the currently visible story page as the user scrolls up and down!
-    LaunchedEffect(lazyListState) {
-        snapshotFlow { lazyListState.firstVisibleItemIndex }
-            .collect { firstItemIdx ->
-                if (firstItemIdx >= 1 && firstItemIdx <= book.pages.size) {
-                    val visiblePg = (firstItemIdx - 1).coerceIn(0, (book.pages.size - 1).coerceAtLeast(0))
-                    if (visiblePg != pageIndex) {
-                        pageIndex = visiblePg
-                        onPageChanged(visiblePg)
+    // Sync pageIndex whenever VerticalPager settles on a new full-screen page!
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }
+            .collect { settledPage ->
+                selectedTooltipPageAndWord = null
+                if (settledPage in 0 until book.pages.size) {
+                    if (settledPage != pageIndex) {
+                        pageIndex = settledPage
+                        onPageChanged(settledPage)
                     }
                 }
             }
@@ -160,6 +163,7 @@ fun InteractiveStoryReaderScreen(
         when {
             showReadingModeDialog -> showReadingModeDialog = false
             showBlockBookDialog -> showBlockBookDialog = false
+            activeQuizModalPageIndex != null -> activeQuizModalPageIndex = null
             selectedTooltipPageAndWord != null -> selectedTooltipPageAndWord = null
             showFullCelebrationScreen -> {
                 showFullCelebrationScreen = false
@@ -174,13 +178,13 @@ fun InteractiveStoryReaderScreen(
     }
 
     LaunchedEffect(book.id) {
-        onSpeakText("${book.title}. Scroll up or tap any line to read all ${book.pages.size} illustrated pages!")
+        onSpeakText(book.title)
     }
 
-    // Real-time word-by-word highlight progression when user taps Noor Buddy or "🔊 Listen" on a page
+    // Real-time word-by-word highlight progression when user taps Noor Buddy or "🔊" on a page
     LaunchedEffect(hearLineTrigger) {
         if (hearLineTrigger > 0) {
-            val activePgIdx = pageIndex
+            val activePgIdx = pagerState.currentPage.coerceIn(0, (book.pages.size - 1).coerceAtLeast(0))
             val activePg = book.pages.getOrElse(activePgIdx) { book.pages.first() }
             val activeWords = activePg.text.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
             setPageReadWordCount(activePgIdx, 0)
@@ -190,11 +194,10 @@ fun InteractiveStoryReaderScreen(
                 setPageReadWordCount(activePgIdx, i)
             }
             awardPageStarsOnce(activePgIdx, 10)
-            // Automatically smooth-scroll down to the next illustrated page when finished reading this page!
-            if (activePgIdx < book.pages.size - 1 && activePg.quiz == null) {
-                delay(400)
-                pageIndex = activePgIdx + 1
-                lazyListState.animateScrollToItem(activePgIdx + 2)
+            // Automatically snap vertically to the next full-screen page when finished reading!
+            if (activePgIdx < book.pages.size - 1) {
+                delay(420)
+                pagerState.animateScrollToPage(activePgIdx + 1)
                 if (readingMode == "Listen") {
                     hearLineTrigger++
                 }
@@ -214,14 +217,13 @@ fun InteractiveStoryReaderScreen(
                 setPageReadWordCount(activePgIdx, currentRead)
                 if (currentRead == words.size) {
                     awardPageStarsOnce(activePgIdx, 15)
-                    if (activePgIdx < book.pages.size - 1 && currentPage.quiz == null) {
+                    if (activePgIdx < book.pages.size - 1) {
                         delay(450)
-                        pageIndex = activePgIdx + 1
-                        lazyListState.animateScrollToItem(activePgIdx + 2)
+                        pagerState.animateScrollToPage(activePgIdx + 1)
                     } else {
                         isMicActive = false
                         onStopListening()
-                        onSpeakText("Well done! Scroll up to continue.")
+                        pagerState.animateScrollToPage(book.pages.size)
                     }
                 }
             }
@@ -242,7 +244,7 @@ fun InteractiveStoryReaderScreen(
                 showFullCelebrationScreen = false
                 pageIndex = 0
                 pageReadWordCounts = emptyMap()
-                coroutineScope.launch { lazyListState.scrollToItem(0) }
+                coroutineScope.launch { pagerState.scrollToPage(0) }
             },
             onBackToLibrary = {
                 showFullCelebrationScreen = false
@@ -256,7 +258,7 @@ fun InteractiveStoryReaderScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8FAFC))
+            .background(Color.White)
     ) {
         Column(
             modifier = Modifier
@@ -264,432 +266,190 @@ fun InteractiveStoryReaderScreen(
                 .statusBarsPadding()
                 .navigationBarsPadding()
         ) {
-            // Exact Reference Top Reader Bar (Back Arrow on Left, Reading Mode Dropdown + Mic Toggle + Star Counter Pill + Profile Avatar + Block Story Menu on Right)
-            Surface(
-                color = Color.White,
-                shadowElevation = 3.dp,
-                modifier = Modifier.fillMaxWidth()
+            // Exact Reference Top Reader Bar (Back Arrow + Page Indicator on Left, Reading Mode Dropdown + Star Counter Pill + Profile Avatar + Menu on Right)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White)
             ) {
-                Column(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 10.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            IconButton(onClick = {
-                                onStopListening()
-                                onBack()
-                            }) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = "Back to Library",
-                                    tint = SeekhTextPrimary,
-                                    modifier = Modifier.size(26.dp)
-                                )
-                            }
-                            Surface(
-                                shape = RoundedCornerShape(50),
-                                color = SeekhGreenSoft
-                            ) {
-                                Text(
-                                    text = "Page ${pageIndex + 1} / ${book.pages.size}",
-                                    fontFamily = GoogleSansFamily,
-                                    fontWeight = FontWeight.ExtraBold,
-                                    fontSize = 12.sp,
-                                    color = SeekhGreen600,
-                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
-                                )
-                            }
-                        }
-
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            // Reading Mode Dropdown Pill (Read aloud | Listen | Silent)
-                            Surface(
-                                modifier = Modifier.bouncyClick { showReadingModeDialog = true },
-                                shape = RoundedCornerShape(50),
-                                color = SeekhSurfaceGray,
-                                border = BorderStroke(1.dp, SeekhBorderGray)
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 9.dp, vertical = 5.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = when (readingMode) {
-                                            "Listen" -> Icons.AutoMirrored.Filled.VolumeUp
-                                            "Silent" -> Icons.Default.Visibility
-                                            else -> Icons.Default.Mic
-                                        },
-                                        contentDescription = "Reading mode",
-                                        tint = SeekhGreen500,
-                                        modifier = Modifier.size(14.dp)
-                                    )
-                                    Text(
-                                        text = readingMode,
-                                        fontFamily = GoogleSansFamily,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 11.sp,
-                                        color = SeekhTextPrimary
-                                    )
-                                    Icon(
-                                        imageVector = Icons.Default.ArrowDropDown,
-                                        contentDescription = null,
-                                        tint = SeekhTextSecondary,
-                                        modifier = Modifier.size(14.dp)
-                                    )
-                                }
-                            }
-
-                            StarCounterPill(
-                                stars = profile.stars,
-                                backgroundColor = SeekhGreenSoft,
-                                textColor = SeekhTextPrimary
+                        IconButton(onClick = {
+                            onStopListening()
+                            onBack()
+                        }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back to Library",
+                                tint = SeekhTextPrimary,
+                                modifier = Modifier.size(26.dp)
                             )
-                            ProfileAvatarCircle(
-                                avatarIndex = profile.avatarIndex,
-                                size = 36.dp,
-                                borderWidth = 1.5.dp,
-                                borderColor = SeekhGreen500
-                            )
-                            IconButton(
-                                onClick = { showBlockBookDialog = true },
-                                modifier = Modifier.size(30.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.MoreVert,
-                                    contentDescription = "Story options",
-                                    tint = SeekhTextSecondary
-                                )
-                            }
                         }
+                        Text(
+                            text = "${(pageIndex + 1).coerceAtMost(book.pages.size)} / ${book.pages.size}",
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp,
+                            color = SeekhTextSecondary
+                        )
                     }
 
-                    // Thin Animated Overall Story Progress Bar directly under top bar
-                    val totalPagesCount = book.pages.size.coerceAtLeast(1)
-                    val completedOrReached = maxOf(pageIndex + 1, rewardedPageIndices.size)
-                    val animatedStepProgress by animateFloatAsState(
-                        targetValue = (completedOrReached.toFloat() / totalPagesCount.toFloat()).coerceIn(0.06f, 1f),
-                        animationSpec = tween(360, easing = FastOutSlowInEasing),
-                        label = "reader_step_progress"
-                    )
-                    LinearProgressIndicator(
-                        progress = { animatedStepProgress },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(4.dp),
-                        color = SeekhGreen500,
-                        trackColor = SeekhBorderGray
-                    )
-                }
-            }
-
-            // CONTINUOUS VERTICAL SCROLLING STORYBOOK FEED (Cover Header + All Illustrated Pages 1..N + Inline Quizzes + Finish Celebration Card!)
-            LazyColumn(
-                state = lazyListState,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 120.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                // ITEM 0: Cover Header Card at the top of the vertical story feed
-                item(key = "cover_header") {
-                    Surface(
-                        shape = RoundedCornerShape(26.dp),
-                        color = Color.White,
-                        shadowElevation = 5.dp,
-                        border = BorderStroke(1.dp, SeekhGreen100),
-                        modifier = Modifier.fillMaxWidth()
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Column(
-                            modifier = Modifier.padding(18.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                        // Reading Mode Dropdown Pill (Read aloud | Listen | Silent)
+                        Surface(
+                            modifier = Modifier.bouncyClick { showReadingModeDialog = true },
+                            shape = RoundedCornerShape(50),
+                            color = SeekhSurfaceGray,
+                            border = BorderStroke(1.dp, SeekhBorderGray)
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(225.dp)
-                                    .shadow(4.dp, RoundedCornerShape(20.dp))
-                                    .clip(RoundedCornerShape(20.dp))
-                                    .background(SeekhSurfaceGray)
-                            ) {
-                                AssetWebpImage(
-                                    assetPath = book.coverAssetPath,
-                                    contentDescription = book.title,
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentScale = ContentScale.Crop
-                                )
-                                Surface(
-                                    shape = RoundedCornerShape(50),
-                                    color = SeekhYellow500,
-                                    modifier = Modifier
-                                        .align(Alignment.BottomEnd)
-                                        .padding(12.dp)
-                                ) {
-                                    Text(
-                                        text = "Level ${book.level} • ${book.pages.size} Pages",
-                                        fontFamily = GoogleSansFamily,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        fontSize = 12.sp,
-                                        color = SeekhTextPrimary,
-                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
-                                    )
-                                }
-                            }
-
-                            Spacer(modifier = Modifier.height(14.dp))
-
-                            Text(
-                                text = book.title,
-                                fontFamily = GoogleSansFamily,
-                                fontWeight = FontWeight.ExtraBold,
-                                fontSize = 24.sp,
-                                lineHeight = 30.sp,
-                                color = SeekhTextPrimary,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.clickable { onSpeakText(book.title) }
-                            )
-
-                            val nativeTitle = when {
-                                selectedLanguageCode.contains("ur") -> book.nativeTitleUrdu
-                                selectedLanguageCode.contains("hi") -> book.nativeTitleHindi
-                                else -> ""
-                            }
-                            if (nativeTitle.isNotBlank()) {
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = nativeTitle,
-                                    fontFamily = GoogleSansFamily,
-                                    fontWeight = FontWeight.Medium,
-                                    fontSize = 16.sp,
-                                    color = SeekhGreen600,
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(12.dp))
-
-                            // Author, Illustrator & Publisher Credits Pill Row
-                            Surface(
-                                shape = RoundedCornerShape(16.dp),
-                                color = SeekhSurfaceGray,
-                                border = BorderStroke(1.dp, SeekhBorderGray),
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Column(
-                                    modifier = Modifier.padding(12.dp),
-                                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                                    ) {
-                                        AssetSvgImage(
-                                            assetPath = "images/author.svg",
-                                            contentDescription = "Author",
-                                            modifier = Modifier.size(18.dp)
-                                        )
-                                        Text(
-                                            text = "Written by ${book.author} • Illustrated by ${book.illustrator}",
-                                            fontFamily = GoogleSansFamily,
-                                            fontWeight = FontWeight.Medium,
-                                            fontSize = 12.sp,
-                                            color = SeekhTextPrimary
-                                        )
-                                    }
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                                    ) {
-                                        AssetSvgImage(
-                                            assetPath = "images/publisher.svg",
-                                            contentDescription = "Publisher",
-                                            modifier = Modifier.size(18.dp)
-                                        )
-                                        Text(
-                                            text = "Published by ${book.publisher} • ${book.categoryTag}",
-                                            fontFamily = GoogleSansFamily,
-                                            fontSize = 12.sp,
-                                            color = SeekhTextSecondary
-                                        )
-                                    }
-                                }
-                            }
-
-                            Spacer(modifier = Modifier.height(12.dp))
-
-                            Button(
-                                onClick = {
-                                    pageIndex = 0
-                                    coroutineScope.launch {
-                                        lazyListState.animateScrollToItem(1)
-                                    }
-                                    hearLineTrigger++
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(48.dp),
-                                shape = RoundedCornerShape(50),
-                                colors = ButtonDefaults.buttonColors(containerColor = SeekhGreen500)
+                            Row(
+                                modifier = Modifier.padding(horizontal = 9.dp, vertical = 5.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
                             ) {
                                 Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.VolumeUp,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp)
+                                    imageVector = when (readingMode) {
+                                        "Listen" -> Icons.AutoMirrored.Filled.VolumeUp
+                                        "Silent" -> Icons.Default.Visibility
+                                        else -> Icons.Default.Mic
+                                    },
+                                    contentDescription = "Reading mode",
+                                    tint = SeekhGreen500,
+                                    modifier = Modifier.size(14.dp)
                                 )
-                                Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = "Start Reading & Scroll Down ↓",
+                                    text = readingMode,
                                     fontFamily = GoogleSansFamily,
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 15.sp,
-                                    color = Color.White
+                                    fontSize = 11.sp,
+                                    color = SeekhTextPrimary
+                                )
+                                Icon(
+                                    imageVector = Icons.Default.ArrowDropDown,
+                                    contentDescription = null,
+                                    tint = SeekhTextSecondary,
+                                    modifier = Modifier.size(14.dp)
                                 )
                             }
+                        }
+
+                        StarCounterPill(
+                            stars = profile.stars,
+                            backgroundColor = SeekhGreenSoft,
+                            textColor = SeekhTextPrimary
+                        )
+                        ProfileAvatarCircle(
+                            avatarIndex = profile.avatarIndex,
+                            size = 36.dp,
+                            borderWidth = 1.5.dp,
+                            borderColor = SeekhGreen500
+                        )
+                        IconButton(
+                            onClick = { showBlockBookDialog = true },
+                            modifier = Modifier.size(30.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "Story options",
+                                tint = SeekhTextSecondary
+                            )
                         }
                     }
                 }
 
-                // ITEMS 1..N: ALL ILLUSTRATED STORY PAGES IN CONTINUOUS VERTICAL SCROLL!
-                itemsIndexed(
-                    items = book.pages,
-                    key = { idx, _ -> "story_page_$idx" }
-                ) { pIdx, page ->
+                // Thin Animated Overall Story Progress Bar directly under top bar
+                val totalPagesCount = book.pages.size.coerceAtLeast(1)
+                val completedOrReached = maxOf(pageIndex + 1, rewardedPageIndices.size)
+                val animatedStepProgress by animateFloatAsState(
+                    targetValue = (completedOrReached.toFloat() / totalPagesCount.toFloat()).coerceIn(0.06f, 1f),
+                    animationSpec = tween(320, easing = FastOutSlowInEasing),
+                    label = "reader_step_progress"
+                )
+                LinearProgressIndicator(
+                    progress = { animatedStepProgress },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(3.dp),
+                    color = SeekhGreen500,
+                    trackColor = SeekhBorderGray.copy(alpha = 0.5f)
+                )
+            }
+
+            // FULL-SCREEN SNAPPING VERTICAL PAGER (No Card boxes around pages — each page fills the full screen and snaps cleanly on vertical swipe!)
+            VerticalPager(
+                state = pagerState,
+                flingBehavior = PagerDefaults.flingBehavior(state = pagerState),
+                beyondViewportPageCount = 1,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize()
+                    .background(Color.White)
+            ) { pIdx ->
+                if (pIdx < book.pages.size) {
+                    val page = book.pages[pIdx]
                     val pageWords = remember(page.text) {
                         page.text.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
                     }
                     val pageReadCount = pageReadWordCounts[pIdx] ?: 0
                     val pageMasteredWords = masteredPracticeWordsByPage[pIdx] ?: emptySet()
-                    val isCurrentActivePage = pageIndex == pIdx
-                    val isPageDone = rewardedPageIndices.contains(pIdx) || pageReadCount >= pageWords.size
+                    val isCurrentActivePage = pagerState.currentPage == pIdx
                     val activeTooltipWordOnThisPage = if (selectedTooltipPageAndWord?.first == pIdx) {
                         selectedTooltipPageAndWord?.second
                     } else null
 
-                    Surface(
-                        shape = RoundedCornerShape(26.dp),
-                        color = Color.White,
-                        shadowElevation = if (isCurrentActivePage) 7.dp else 3.dp,
-                        border = BorderStroke(
-                            width = if (isCurrentActivePage) 2.dp else 1.dp,
-                            color = when {
-                                isPageDone -> SeekhGreenMint
-                                isCurrentActivePage -> SeekhGreen500
-                                else -> SeekhBorderGray
-                            }
-                        ),
-                        modifier = Modifier.fillMaxWidth()
+                    // FULL-SCREEN PAGE CANVAS (No Card border, no card background, pure full-screen illustration + interactive words!)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.White)
+                            .padding(start = 22.dp, end = 22.dp, top = 12.dp, bottom = 92.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        // Top Half of Full Screen: Clean Large Story Illustration
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(0.46f)
+                                .clip(RoundedCornerShape(22.dp))
+                                .background(SeekhSurfaceGray)
+                                .clickable {
+                                    pageIndex = pIdx
+                                    hearLineTrigger++
+                                }
+                        ) {
+                            AssetWebpImage(
+                                assetPath = page.imageAssetPath,
+                                contentDescription = "Illustration ${pIdx + 1}",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(22.dp))
+
+                        // Bottom Half of Full Screen: Word-by-Word Interactive Story Text directly on the full-screen canvas!
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(18.dp)
+                                .weight(0.54f),
+                            verticalArrangement = Arrangement.Top
                         ) {
-                            // Top Row inside Page Card: Page Number Pill + Listen Button + Completed Badge
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    Surface(
-                                        shape = RoundedCornerShape(50),
-                                        color = if (isPageDone) SeekhGreenMint else SeekhGreenSoft
-                                    ) {
-                                        Text(
-                                            text = if (isPageDone) "Page ${pIdx + 1} / ${book.pages.size} ✓" else "Page ${pIdx + 1} / ${book.pages.size}",
-                                            fontFamily = GoogleSansFamily,
-                                            fontWeight = FontWeight.ExtraBold,
-                                            fontSize = 12.sp,
-                                            color = if (isPageDone) Color.White else SeekhGreen600,
-                                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
-                                        )
-                                    }
-                                    if (!isPageDone) {
-                                        Text(
-                                            text = "+10 ⭐",
-                                            fontFamily = GoogleSansFamily,
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 12.sp,
-                                            color = SeekhGreen600
-                                        )
-                                    }
-                                }
-
-                                Surface(
-                                    shape = RoundedCornerShape(50),
-                                    color = SeekhBlueSoft,
-                                    border = BorderStroke(1.dp, SeekhBlue500.copy(alpha = 0.4f)),
-                                    modifier = Modifier.bouncyClick {
-                                        pageIndex = pIdx
-                                        hearLineTrigger++
-                                    }
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(5.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.AutoMirrored.Filled.VolumeUp,
-                                            contentDescription = "Read this page",
-                                            tint = SeekhBlue600,
-                                            modifier = Modifier.size(16.dp)
-                                        )
-                                        Text(
-                                            text = "Read Page",
-                                            fontFamily = GoogleSansFamily,
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 12.sp,
-                                            color = SeekhBlue600
-                                        )
-                                    }
-                                }
-                            }
-
-                            Spacer(modifier = Modifier.height(12.dp))
-
-                            // Large Rounded Page Illustration Card (Play Store Screenshot #1)
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(225.dp)
-                                    .shadow(3.dp, RoundedCornerShape(18.dp))
-                                    .clip(RoundedCornerShape(18.dp))
-                                    .background(SeekhSurfaceGray)
-                                    .clickable {
-                                        pageIndex = pIdx
-                                        hearLineTrigger++
-                                    }
-                            ) {
-                                AssetWebpImage(
-                                    assetPath = page.imageAssetPath,
-                                    contentDescription = "Illustration ${pIdx + 1}",
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(18.dp))
-
-                            // Word-by-Word Interactive Story Text (Play Store Screenshot #1: blue read words + dotted red underline on practice words + moving pointer!)
                             FlowRow(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.Start,
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
                                 pageWords.forEachIndexed { wIdx, rawWord ->
                                     val cleanWord = rawWord.lowercase().replace(Regex("[^a-z]"), "")
@@ -705,11 +465,11 @@ fun InteractiveStoryReaderScreen(
                                     }
                                     val wordColor by animateColorAsState(
                                         targetValue = targetWordColor,
-                                        animationSpec = tween(240),
+                                        animationSpec = tween(220),
                                         label = "word_col_${pIdx}_$wIdx"
                                     )
                                     val wordScale by animateFloatAsState(
-                                        targetValue = if (isCurrentActiveWord) 1.07f else 1f,
+                                        targetValue = if (isCurrentActiveWord) 1.08f else 1f,
                                         animationSpec = spring(
                                             dampingRatio = Spring.DampingRatioMediumBouncy,
                                             stiffness = Spring.StiffnessMedium
@@ -719,11 +479,11 @@ fun InteractiveStoryReaderScreen(
 
                                     Column(
                                         modifier = Modifier
-                                            .padding(end = 8.dp)
+                                            .padding(end = 9.dp)
                                             .scale(wordScale)
                                             .clip(RoundedCornerShape(10.dp))
                                             .background(
-                                                if (isCurrentActiveWord) SeekhGreenSoft.copy(alpha = 0.7f) else Color.Transparent
+                                                if (isCurrentActiveWord) SeekhGreenSoft.copy(alpha = 0.65f) else Color.Transparent
                                             )
                                             .bouncyClick {
                                                 pageIndex = pIdx
@@ -734,11 +494,10 @@ fun InteractiveStoryReaderScreen(
                                                     setPageReadWordCount(pIdx, nextCount)
                                                     if (nextCount == pageWords.size) {
                                                         awardPageStarsOnce(pIdx, 10)
-                                                        if (pIdx < book.pages.size - 1 && page.quiz == null) {
+                                                        if (pIdx < book.pages.size - 1) {
                                                             coroutineScope.launch {
-                                                                delay(350)
-                                                                pageIndex = pIdx + 1
-                                                                lazyListState.animateScrollToItem(pIdx + 2)
+                                                                delay(380)
+                                                                pagerState.animateScrollToPage(pIdx + 1)
                                                             }
                                                         }
                                                     }
@@ -751,15 +510,15 @@ fun InteractiveStoryReaderScreen(
                                             text = rawWord,
                                             fontFamily = GoogleSansFamily,
                                             fontWeight = if (isCurrentActiveWord) FontWeight.Bold else FontWeight.Normal,
-                                            fontSize = 27.sp,
-                                            lineHeight = 35.sp,
+                                            fontSize = 29.sp,
+                                            lineHeight = 38.sp,
                                             color = wordColor
                                         )
 
                                         // Dotted Red (or Green when mastered) Underline for Practice Words
                                         if (isPracticeWord) {
                                             val dotColor = if (isMasteredPractice) SeekhGreenMint else SeekhCoralRed
-                                            val approxWidth = (rawWord.length * 14).coerceIn(34, 125).dp
+                                            val approxWidth = (rawWord.length * 15).coerceIn(34, 130).dp
                                             Canvas(
                                                 modifier = Modifier
                                                     .width(approxWidth)
@@ -790,17 +549,42 @@ fun InteractiveStoryReaderScreen(
                                             )
                                             CustomMagicPointerIcon(
                                                 modifier = Modifier
-                                                    .size(20.dp)
+                                                    .size(22.dp)
                                                     .offset(y = pointerBounce.dp)
                                             )
                                         } else {
-                                            Spacer(modifier = Modifier.height(20.dp))
+                                            Spacer(modifier = Modifier.height(22.dp))
                                         }
                                     }
                                 }
                             }
 
-                            // Interactive Word Tutor Popover for this page (when any word on this page is tapped)
+                            // Clean Bilingual Translation Line directly on full screen (no card box!)
+                            val bilingualSentence = when {
+                                selectedLanguageCode.contains("ur") -> page.urduTranslation
+                                selectedLanguageCode.contains("hi") -> page.hindiTranslation
+                                selectedLanguageCode.contains("es") -> page.spanishTranslation
+                                else -> ""
+                            }
+                            if (bilingualSentence.isNotBlank()) {
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Text(
+                                    text = bilingualSentence,
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = 16.sp,
+                                    lineHeight = 24.sp,
+                                    color = SeekhTextSecondary,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            pageIndex = pIdx
+                                            hearLineTrigger++
+                                        }
+                                )
+                            }
+
+                            // Interactive Word Tutor Popover (when a word is tapped)
                             AnimatedVisibility(visible = activeTooltipWordOnThisPage != null) {
                                 val word = activeTooltipWordOnThisPage ?: ""
                                 val syllablesList = remember(word) { SeekhCatalog.getWordSyllablesList(word) }
@@ -811,12 +595,12 @@ fun InteractiveStoryReaderScreen(
                                 Surface(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(top = 6.dp),
+                                        .padding(top = 10.dp),
                                     shape = RoundedCornerShape(18.dp),
                                     color = SeekhBlueSoft,
                                     border = BorderStroke(1.5.dp, SeekhBlue500)
                                 ) {
-                                    Column(modifier = Modifier.padding(14.dp)) {
+                                    Column(modifier = Modifier.padding(12.dp)) {
                                         Row(
                                             modifier = Modifier.fillMaxWidth(),
                                             verticalAlignment = Alignment.CenterVertically,
@@ -827,7 +611,7 @@ fun InteractiveStoryReaderScreen(
                                                     text = word,
                                                     fontFamily = GoogleSansFamily,
                                                     fontWeight = FontWeight.Bold,
-                                                    fontSize = 20.sp,
+                                                    fontSize = 19.sp,
                                                     color = SeekhTextPrimary
                                                 )
                                                 Text(
@@ -876,7 +660,7 @@ fun InteractiveStoryReaderScreen(
                                             }
                                         }
 
-                                        Spacer(modifier = Modifier.height(10.dp))
+                                        Spacer(modifier = Modifier.height(8.dp))
 
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
@@ -896,157 +680,10 @@ fun InteractiveStoryReaderScreen(
                                                         text = syl,
                                                         fontFamily = GoogleSansFamily,
                                                         fontWeight = FontWeight.Bold,
-                                                        fontSize = 16.sp,
-                                                        color = SeekhBlue600,
-                                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            // Bilingual Sentence Helper Strip on every page
-                            val bilingualSentence = when {
-                                selectedLanguageCode.contains("ur") -> page.urduTranslation
-                                selectedLanguageCode.contains("hi") -> page.hindiTranslation
-                                selectedLanguageCode.contains("es") -> page.spanishTranslation
-                                else -> ""
-                            }
-                            if (bilingualSentence.isNotBlank()) {
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Surface(
-                                    shape = RoundedCornerShape(14.dp),
-                                    color = SeekhSurfaceGray,
-                                    border = BorderStroke(1.dp, SeekhBorderGray),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            pageIndex = pIdx
-                                            hearLineTrigger++
-                                        }
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Translate,
-                                            contentDescription = "Translation",
-                                            tint = SeekhGreen600,
-                                            modifier = Modifier.size(18.dp)
-                                        )
-                                        Text(
-                                            text = bilingualSentence,
-                                            fontFamily = GoogleSansFamily,
-                                            fontWeight = FontWeight.Normal,
-                                            fontSize = 15.sp,
-                                            lineHeight = 22.sp,
-                                            color = SeekhTextSecondary
-                                        )
-                                    }
-                                }
-                            }
-
-                            // INLINE COMPREHENSION QUIZ QUESTION CARD (if this page has a question, right in the vertical scroll!)
-                            if (page.quiz != null) {
-                                val quiz = page.quiz
-                                val chosenOpt = quizAnswersByPage[pIdx]
-                                Spacer(modifier = Modifier.height(14.dp))
-                                Surface(
-                                    shape = RoundedCornerShape(20.dp),
-                                    color = SeekhGreenSoft,
-                                    border = BorderStroke(1.5.dp, SeekhGreen500),
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Column(modifier = Modifier.padding(16.dp)) {
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .clickable { onSpeakText(quiz.question) },
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.AutoMirrored.Filled.VolumeUp,
-                                                contentDescription = "Hear question",
-                                                tint = SeekhGreen600,
-                                                modifier = Modifier.size(22.dp)
-                                            )
-                                            Text(
-                                                text = "Question: ${quiz.question}",
-                                                fontFamily = GoogleSansFamily,
-                                                fontWeight = FontWeight.ExtraBold,
-                                                fontSize = 17.sp,
-                                                lineHeight = 22.sp,
-                                                color = SeekhTextPrimary
-                                            )
-                                        }
-
-                                        Spacer(modifier = Modifier.height(10.dp))
-
-                                        quiz.options.forEachIndexed { optIdx, optionText ->
-                                            val isChosen = chosenOpt == optIdx
-                                            val isCorrect = optIdx == quiz.correctIndex
-                                            val cardBg = when {
-                                                !isChosen -> Color.White
-                                                isCorrect -> SeekhGreenMint
-                                                else -> SeekhCoralRed
-                                            }
-                                            val textCol = if (isChosen) Color.White else SeekhTextPrimary
-
-                                            Surface(
-                                                shape = RoundedCornerShape(14.dp),
-                                                color = cardBg,
-                                                shadowElevation = 2.dp,
-                                                border = BorderStroke(1.dp, if (isChosen) cardBg else SeekhBorderGray),
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(vertical = 4.dp)
-                                                    .bouncyClick {
-                                                        quizAnswersByPage = quizAnswersByPage + (pIdx to optIdx)
-                                                        if (isCorrect) {
-                                                            if (!rewardedQuizPageIndices.contains(pIdx)) {
-                                                                rewardedQuizPageIndices = rewardedQuizPageIndices + pIdx
-                                                                starBurstTrigger++
-                                                                onAwardStars(20)
-                                                            }
-                                                            onSpeakText("Correct answer! $optionText! Well done!")
-                                                            if (pIdx < book.pages.size - 1) {
-                                                                coroutineScope.launch {
-                                                                    delay(500)
-                                                                    pageIndex = pIdx + 1
-                                                                    lazyListState.animateScrollToItem(pIdx + 2)
-                                                                }
-                                                            }
-                                                        } else {
-                                                            onSpeakText("Try again!")
-                                                        }
-                                                    }
-                                            ) {
-                                                Row(
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                                                    verticalAlignment = Alignment.CenterVertically,
-                                                    horizontalArrangement = Arrangement.SpaceBetween
-                                                ) {
-                                                    Text(
-                                                        text = optionText,
-                                                        fontFamily = GoogleSansFamily,
-                                                        fontWeight = FontWeight.Bold,
                                                         fontSize = 15.sp,
-                                                        color = textCol
+                                                        color = SeekhBlue600,
+                                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
                                                     )
-                                                    if (isChosen) {
-                                                        Icon(
-                                                            imageVector = if (isCorrect) Icons.Default.CheckCircle else Icons.Default.Refresh,
-                                                            contentDescription = null,
-                                                            tint = Color.White
-                                                        )
-                                                    }
                                                 }
                                             }
                                         }
@@ -1055,67 +692,77 @@ fun InteractiveStoryReaderScreen(
                             }
                         }
                     }
-                }
-
-                // FINAL ITEM: End-of-Story Completion & Celebration Card at the bottom of the vertical story feed
-                item(key = "story_end_celebration_card") {
-                    Surface(
-                        shape = RoundedCornerShape(26.dp),
-                        color = Color.White,
-                        shadowElevation = 6.dp,
-                        border = BorderStroke(2.dp, SeekhGreenMint),
-                        modifier = Modifier.fillMaxWidth()
+                } else {
+                    // Final Full-Screen Story End Page when user swipes up after the last page
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.White)
+                            .padding(horizontal = 28.dp, vertical = 32.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
-                        Column(
-                            modifier = Modifier.padding(22.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        Box(
+                            modifier = Modifier
+                                .size(190.dp)
+                                .clip(RoundedCornerShape(26.dp))
+                                .background(SeekhSurfaceGray)
                         ) {
-                            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                                repeat(5) { GoldenStarIcon(size = 28.dp) }
-                            }
+                            AssetWebpImage(
+                                assetPath = book.coverAssetPath,
+                                contentDescription = book.title,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(22.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            repeat(5) { GoldenStarIcon(size = 32.dp) }
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "You read \"${book.title}\"!",
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 24.sp,
+                            color = SeekhTextPrimary,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "All ${book.pages.size} pages completed • Claim your +50 Golden Stars!",
+                            fontFamily = GoogleSansFamily,
+                            fontSize = 15.sp,
+                            color = SeekhTextSecondary,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Button(
+                            onClick = {
+                                isMicActive = false
+                                onStopListening()
+                                val elapsedMin = ((System.currentTimeMillis() - startTimeMs) / 60000L).toInt().coerceAtLeast(1)
+                                val totalWords = book.pages.sumOf { it.text.split(Regex("\\s+")).size }
+                                val calcWpm = (totalWords / elapsedMin).coerceIn(54, 92)
+                                completedWpm = calcWpm
+                                onBookCompleted(book, calcWpm)
+                                showFullCelebrationScreen = true
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(54.dp),
+                            shape = RoundedCornerShape(50),
+                            colors = ButtonDefaults.buttonColors(containerColor = SeekhGreen500)
+                        ) {
+                            Icon(imageVector = Icons.Default.EmojiEvents, contentDescription = null)
+                            Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "You reached the end of \"${book.title}\"!",
+                                text = "Claim +50 Stars & Play Game 🎉",
                                 fontFamily = GoogleSansFamily,
                                 fontWeight = FontWeight.ExtraBold,
-                                fontSize = 20.sp,
-                                color = SeekhTextPrimary,
-                                textAlign = TextAlign.Center
+                                fontSize = 16.sp,
+                                color = Color.White
                             )
-                            Text(
-                                text = "All ${book.pages.size} illustrated pages completed • Tap below to claim your +50 Golden Stars trophy!",
-                                fontFamily = GoogleSansFamily,
-                                fontSize = 13.sp,
-                                color = SeekhTextSecondary,
-                                textAlign = TextAlign.Center
-                            )
-                            Button(
-                                onClick = {
-                                    isMicActive = false
-                                    onStopListening()
-                                    val elapsedMin = ((System.currentTimeMillis() - startTimeMs) / 60000L).toInt().coerceAtLeast(1)
-                                    val totalWords = book.pages.sumOf { it.text.split(Regex("\\s+")).size }
-                                    val calcWpm = (totalWords / elapsedMin).coerceIn(54, 92)
-                                    completedWpm = calcWpm
-                                    onBookCompleted(book, calcWpm)
-                                    showFullCelebrationScreen = true
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(52.dp),
-                                shape = RoundedCornerShape(50),
-                                colors = ButtonDefaults.buttonColors(containerColor = SeekhGreen500)
-                            ) {
-                                Icon(imageVector = Icons.Default.EmojiEvents, contentDescription = null)
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = "Finish Story & Claim +50 Stars 🎉",
-                                    fontFamily = GoogleSansFamily,
-                                    fontWeight = FontWeight.ExtraBold,
-                                    fontSize = 16.sp,
-                                    color = Color.White
-                                )
-                            }
                         }
                     }
                 }
@@ -1125,84 +772,18 @@ fun InteractiveStoryReaderScreen(
         // Flying Stars Animation Overlay (StarAnimationHolderView)
         FlyingStarsOverlay(triggerCount = starBurstTrigger)
 
-        // Bottom-Left Quick Scroll Up / Next Page Helper Pill + Mic Button
+        // Bottom-Left Clean Microphone Button (plus subtle Bonus Quiz chip if the current page has a quiz)
         Row(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .navigationBarsPadding()
-                .padding(start = 16.dp, bottom = 14.dp),
+                .padding(start = 20.dp, bottom = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (pageIndex > 0) {
-                Surface(
-                    modifier = Modifier
-                        .size(46.dp)
-                        .bouncyClick(scaleDown = 0.88f) {
-                            isMicActive = false
-                            onStopListening()
-                            val prevIdx = (pageIndex - 1).coerceAtLeast(0)
-                            pageIndex = prevIdx
-                            coroutineScope.launch {
-                                lazyListState.animateScrollToItem(prevIdx + 1)
-                            }
-                        },
-                    shape = CircleShape,
-                    color = Color.White,
-                    shadowElevation = 6.dp,
-                    border = BorderStroke(1.dp, SeekhBorderGray)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Default.KeyboardArrowUp,
-                            contentDescription = "Previous page",
-                            tint = SeekhTextPrimary,
-                            modifier = Modifier.size(26.dp)
-                        )
-                    }
-                }
-            }
-
             Surface(
                 modifier = Modifier
-                    .height(46.dp)
-                    .bouncyClick(scaleDown = 0.90f) {
-                        isMicActive = false
-                        onStopListening()
-                        if (pageIndex < book.pages.size - 1) {
-                            val nextIdx = pageIndex + 1
-                            pageIndex = nextIdx
-                            coroutineScope.launch {
-                                lazyListState.animateScrollToItem(nextIdx + 1)
-                            }
-                        } else {
-                            coroutineScope.launch {
-                                lazyListState.animateScrollToItem(book.pages.size + 1)
-                            }
-                        }
-                    },
-                shape = RoundedCornerShape(50),
-                color = SeekhGreen500,
-                shadowElevation = 6.dp
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Text(
-                        text = if (pageIndex < book.pages.size - 1) "Next Page ↓" else "Finish ↓",
-                        fontFamily = GoogleSansFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 13.sp,
-                        color = Color.White
-                    )
-                }
-            }
-
-            Surface(
-                modifier = Modifier
-                    .size(46.dp)
+                    .size(54.dp)
                     .bouncyClick(scaleDown = 0.88f) {
                         isMicActive = !isMicActive
                         if (!isMicActive) onStopListening()
@@ -1217,8 +798,38 @@ fun InteractiveStoryReaderScreen(
                         imageVector = if (isMicActive) Icons.Default.Mic else Icons.Default.MicNone,
                         contentDescription = "Voice Mic",
                         tint = if (isMicActive) Color.White else SeekhGreen500,
-                        modifier = Modifier.size(22.dp)
+                        modifier = Modifier.size(26.dp)
                     )
+                }
+            }
+
+            if (pagerState.currentPage < book.pages.size && currentPage.quiz != null) {
+                val isQuizSolved = rewardedQuizPageIndices.contains(pageIndex)
+                Surface(
+                    modifier = Modifier
+                        .height(44.dp)
+                        .bouncyClick(scaleDown = 0.90f) {
+                            activeQuizModalPageIndex = pageIndex
+                            onSpeakText(currentPage.quiz.question)
+                        },
+                    shape = RoundedCornerShape(50),
+                    color = if (isQuizSolved) SeekhGreenMint else SeekhGreenSoft,
+                    border = BorderStroke(1.dp, SeekhGreen500),
+                    shadowElevation = 4.dp
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 14.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text(
+                            text = if (isQuizSolved) "Quiz Done ✓" else "💡 Quiz (+20 ⭐)",
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp,
+                            color = if (isQuizSolved) Color.White else SeekhGreen600
+                        )
+                    }
                 }
             }
         }
@@ -1234,7 +845,105 @@ fun InteractiveStoryReaderScreen(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .navigationBarsPadding()
-                .padding(end = 12.dp, bottom = 10.dp)
+                .padding(end = 14.dp, bottom = 10.dp)
+        )
+    }
+
+    // Optional Quiz Dialog when user taps "💡 Quiz (+20 ⭐)" on a page
+    val quizModalIdx = activeQuizModalPageIndex
+    val modalQuiz = if (quizModalIdx != null) book.pages.getOrNull(quizModalIdx)?.quiz else null
+    if (quizModalIdx != null && modalQuiz != null) {
+        val chosenOpt = quizAnswersByPage[quizModalIdx]
+        AlertDialog(
+            onDismissRequest = { activeQuizModalPageIndex = null },
+            containerColor = Color.White,
+            shape = RoundedCornerShape(26.dp),
+            title = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.clickable { onSpeakText(modalQuiz.question) }
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.VolumeUp,
+                        contentDescription = "Hear question",
+                        tint = SeekhGreen600
+                    )
+                    Text(
+                        text = modalQuiz.question,
+                        fontFamily = GoogleSansFamily,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 18.sp,
+                        color = SeekhTextPrimary
+                    )
+                }
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    modalQuiz.options.forEachIndexed { optIdx, optionText ->
+                        val isChosen = chosenOpt == optIdx
+                        val isCorrect = optIdx == modalQuiz.correctIndex
+                        val cardBg = when {
+                            !isChosen -> SeekhSurfaceGray
+                            isCorrect -> SeekhGreenMint
+                            else -> SeekhCoralRed
+                        }
+                        val textCol = if (isChosen) Color.White else SeekhTextPrimary
+                        Surface(
+                            shape = RoundedCornerShape(14.dp),
+                            color = cardBg,
+                            border = BorderStroke(1.dp, if (isChosen) cardBg else SeekhBorderGray),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .bouncyClick {
+                                    quizAnswersByPage = quizAnswersByPage + (quizModalIdx to optIdx)
+                                    if (isCorrect) {
+                                        if (!rewardedQuizPageIndices.contains(quizModalIdx)) {
+                                            rewardedQuizPageIndices = rewardedQuizPageIndices + quizModalIdx
+                                            starBurstTrigger++
+                                            onAwardStars(20)
+                                        }
+                                        onSpeakText("Correct answer! $optionText!")
+                                        coroutineScope.launch {
+                                            delay(450)
+                                            activeQuizModalPageIndex = null
+                                        }
+                                    } else {
+                                        onSpeakText("Try again!")
+                                    }
+                                }
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = optionText,
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 15.sp,
+                                    color = textCol
+                                )
+                                if (isChosen) {
+                                    Icon(
+                                        imageVector = if (isCorrect) Icons.Default.CheckCircle else Icons.Default.Refresh,
+                                        contentDescription = null,
+                                        tint = Color.White
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { activeQuizModalPageIndex = null }) {
+                    Text("Close", fontFamily = GoogleSansFamily, fontWeight = FontWeight.Bold)
+                }
+            }
         )
     }
 
