@@ -501,7 +501,7 @@ fun InteractiveStoryReaderScreen(
                             )
                         }
                         Text(
-                            text = book.title,
+                            text = SeekhCatalog.getBookPrimaryTitle(book, selectedLanguageCode),
                             fontFamily = GoogleSansFamily,
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp,
@@ -616,13 +616,50 @@ fun InteractiveStoryReaderScreen(
 
                         Spacer(modifier = Modifier.height(10.dp))
 
-                        // Bottom 64% of Full Screen: 100% Complete Unclipped Interactive Story Text + Bilingual Subtitle!
+                        // Bottom 64% of Full Screen: Interactive Alphabet Letter Tiles (if Alphabet Book) + 100% Complete Unclipped Interactive Story Text + Bilingual Subtitle!
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .weight(0.64f),
                             verticalArrangement = Arrangement.Top
                         ) {
+                            // Interactive Alphabet Letter Cards Banner for Basic Alphabets Books!
+                            if (page.alphabetBadgeLetters.isNotBlank()) {
+                                val letterTokens = remember(page.alphabetBadgeLetters) {
+                                    page.alphabetBadgeLetters.split(Regex("\\s+")).filter { it.isNotBlank() && it != "•" }
+                                }
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 10.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    letterTokens.take(6).forEachIndexed { lIdx, ltrToken ->
+                                        Surface(
+                                            shape = RoundedCornerShape(14.dp),
+                                            color = if (lIdx % 2 == 0) SeekhGreenSoft else Color(0xFFFFF8E1),
+                                            border = BorderStroke(
+                                                1.5.dp,
+                                                if (lIdx % 2 == 0) SeekhGreen500 else SeekhYellow500
+                                            ),
+                                            modifier = Modifier.bouncyClick {
+                                                onPlayPhoneme(lIdx * 2)
+                                                onSpeakText(ltrToken)
+                                            }
+                                        ) {
+                                            Text(
+                                                text = ltrToken,
+                                                fontFamily = GoogleSansFamily,
+                                                fontWeight = FontWeight.ExtraBold,
+                                                fontSize = 24.sp,
+                                                color = SeekhTextPrimary,
+                                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+
                             FlowRow(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.Start,
@@ -735,22 +772,23 @@ fun InteractiveStoryReaderScreen(
                                 }
                             }
 
-                            // Clean Bilingual Translation Line directly on full screen (no card box, 100% visible!)
+                            // Clean Bilingual Translation / Native Alphabet Line directly on full screen
                             val bilingualSentence = when {
+                                book.bookType == "ALPHABET" -> page.urduTranslation.ifBlank { page.hindiTranslation.ifBlank { page.spanishTranslation } }
                                 selectedLanguageCode.contains("ur") -> page.urduTranslation
-                                selectedLanguageCode.contains("hi") -> page.hindiTranslation
+                                selectedLanguageCode.contains("hi") || selectedLanguageCode.contains("mr") -> page.hindiTranslation
                                 selectedLanguageCode.contains("es") -> page.spanishTranslation
-                                else -> ""
+                                else -> page.urduTranslation
                             }
                             if (bilingualSentence.isNotBlank()) {
                                 Spacer(modifier = Modifier.height(6.dp))
                                 Text(
                                     text = bilingualSentence,
                                     fontFamily = GoogleSansFamily,
-                                    fontWeight = FontWeight.Normal,
-                                    fontSize = 15.5.sp,
-                                    lineHeight = 23.sp,
-                                    color = SeekhTextSecondary,
+                                    fontWeight = FontWeight.Medium,
+                                    fontSize = if (book.bookType == "ALPHABET") 17.5.sp else 15.5.sp,
+                                    lineHeight = 24.sp,
+                                    color = if (book.bookType == "ALPHABET") SeekhGreen600 else SeekhTextSecondary,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
@@ -1189,22 +1227,29 @@ fun InteractiveStoryReaderScreen(
                                 modifier = Modifier.size(22.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
+                            val readerStrings = remember(selectedLanguageCode) {
+                                SeekhCatalog.getAppStrings(selectedLanguageCode)
+                            }
                             Column {
                                 Text(
-                                    text = if (isAutoReadingActive) "Listening..." else "Listen",
+                                    text = if (isAutoReadingActive) readerStrings.listeningButton else readerStrings.listenButton,
                                     fontFamily = GoogleSansFamily,
                                     fontWeight = FontWeight.ExtraBold,
                                     fontSize = 14.sp,
                                     lineHeight = 16.sp,
-                                    color = if (isAutoReadingActive) Color.White else SeekhBlue600
+                                    color = if (isAutoReadingActive) Color.White else SeekhBlue600,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                                 Text(
-                                    text = if (isAutoReadingActive) "Tap to Pause" else "Hear Story",
+                                    text = readerStrings.listenSubLabel,
                                     fontFamily = GoogleSansFamily,
                                     fontWeight = FontWeight.Medium,
                                     fontSize = 10.sp,
                                     lineHeight = 12.sp,
-                                    color = if (isAutoReadingActive) Color.White.copy(alpha = 0.88f) else SeekhBlue600.copy(alpha = 0.8f)
+                                    color = if (isAutoReadingActive) Color.White.copy(alpha = 0.88f) else SeekhBlue600.copy(alpha = 0.8f),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
                         }
@@ -1244,22 +1289,29 @@ fun InteractiveStoryReaderScreen(
                                 modifier = Modifier.size(22.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
+                            val readerStrings = remember(selectedLanguageCode) {
+                                SeekhCatalog.getAppStrings(selectedLanguageCode)
+                            }
                             Column {
                                 Text(
-                                    text = if (isMicActive) "Speaking..." else "Speak",
+                                    text = if (isMicActive) readerStrings.speakingButton else readerStrings.speakButton,
                                     fontFamily = GoogleSansFamily,
                                     fontWeight = FontWeight.ExtraBold,
                                     fontSize = 14.sp,
                                     lineHeight = 16.sp,
-                                    color = if (isMicActive) Color.White else SeekhVocabDarkGreen
+                                    color = if (isMicActive) Color.White else SeekhVocabDarkGreen,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                                 Text(
-                                    text = if (isMicActive) "Tap to Stop" else "Read Yourself",
+                                    text = readerStrings.speakSubLabel,
                                     fontFamily = GoogleSansFamily,
                                     fontWeight = FontWeight.Medium,
                                     fontSize = 10.sp,
                                     lineHeight = 12.sp,
-                                    color = if (isMicActive) Color.White.copy(alpha = 0.88f) else SeekhVocabDarkGreen.copy(alpha = 0.8f)
+                                    color = if (isMicActive) Color.White.copy(alpha = 0.88f) else SeekhVocabDarkGreen.copy(alpha = 0.8f),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
                         }

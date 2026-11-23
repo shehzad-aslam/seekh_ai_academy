@@ -1389,6 +1389,38 @@ fun StoryBookCard(
                         )
                     }
                 }
+
+                // Alphabet Letter Tiles Strip on cover if this is a Basic Alphabets Book
+                if (book.alphabetBadgeLetters.isNotBlank()) {
+                    val letters = remember(book.alphabetBadgeLetters) {
+                        book.alphabetBadgeLetters.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }.take(4)
+                    }
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth()
+                            .background(Color(0xD91E1B4B))
+                            .padding(horizontal = 4.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        letters.forEach { ltr ->
+                            Surface(
+                                shape = RoundedCornerShape(6.dp),
+                                color = SeekhYellow500
+                            ) {
+                                Text(
+                                    text = ltr,
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 11.sp,
+                                    color = SeekhTextPrimary,
+                                    modifier = Modifier.padding(horizontal = 5.dp, vertical = 1.dp)
+                                )
+                            }
+                        }
+                    }
+                }
             }
 
             if (progressFraction > 0f && !isCompleted) {
@@ -1406,6 +1438,16 @@ fun StoryBookCard(
 
             Spacer(modifier = Modifier.height(6.dp))
 
+            val uiStrings = remember(selectedLanguageCode) {
+                SeekhCatalog.getAppStrings(selectedLanguageCode)
+            }
+            val primaryTitle = remember(book.id, book.title, selectedLanguageCode) {
+                SeekhCatalog.getBookPrimaryTitle(book, selectedLanguageCode)
+            }
+            val secondarySub = remember(book.id, book.title, selectedLanguageCode) {
+                SeekhCatalog.getBookSecondaryTitle(book, selectedLanguageCode)
+            }
+
             // Clean Soft Pastel Level Pill right below thumbnail
             Row(
                 modifier = Modifier
@@ -1418,7 +1460,7 @@ fun StoryBookCard(
                     color = levelBgColor
                 ) {
                     Text(
-                        text = "Level ${book.level}",
+                        text = "${uiStrings.levelPrefix} ${book.level}",
                         fontFamily = GoogleSansFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 9.5.sp,
@@ -1431,7 +1473,7 @@ fun StoryBookCard(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = book.title,
+                text = primaryTitle,
                 fontFamily = GoogleSansFamily,
                 fontWeight = FontWeight.ExtraBold,
                 fontSize = 12.5.sp,
@@ -1443,15 +1485,10 @@ fun StoryBookCard(
                 modifier = Modifier.padding(horizontal = 2.dp)
             )
 
-            val nativeSub = when {
-                selectedLanguageCode.contains("ur") -> book.nativeTitleUrdu
-                selectedLanguageCode.contains("hi") -> book.nativeTitleHindi
-                else -> ""
-            }
-            if (nativeSub.isNotBlank()) {
+            if (secondarySub.isNotBlank()) {
                 Spacer(modifier = Modifier.height(1.dp))
                 Text(
-                    text = nativeSub,
+                    text = secondarySub,
                     fontFamily = GoogleSansFamily,
                     fontWeight = FontWeight.Medium,
                     fontSize = 10.5.sp,
@@ -1523,15 +1560,27 @@ fun FlyingStarsOverlay(
     }
 }
 
-// Featured Hero Story Card at the top of the Library (Clean flat-crisp cover illustration without dark scrims + soft card shadow + "Read ▶" CTA!)
+// Featured Hero Story / Basic Alphabets Card at the Very Top of the Home Screen
 @Composable
 fun FeaturedStoryHeroCard(
     book: StoryBook,
     isCompleted: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    selectedLanguageCode: String = "en_ur"
 ) {
+    val uiStrings = remember(selectedLanguageCode) {
+        SeekhCatalog.getAppStrings(selectedLanguageCode)
+    }
+    val primaryTitle = remember(book.id, book.title, selectedLanguageCode) {
+        SeekhCatalog.getBookPrimaryTitle(book, selectedLanguageCode)
+    }
+    val secondarySub = remember(book.id, book.title, selectedLanguageCode) {
+        SeekhCatalog.getBookSecondaryTitle(book, selectedLanguageCode)
+    }
+    val isAlphabetBook = book.bookType == "ALPHABET" || book.alphabetBadgeLetters.isNotBlank()
     val heroShape = RoundedCornerShape(26.dp)
+
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -1546,23 +1595,71 @@ fun FeaturedStoryHeroCard(
         shape = heroShape,
         color = Color.White,
         shadowElevation = 0.dp,
-        border = BorderStroke(1.dp, Color(0xFFE8ECF7))
+        border = BorderStroke(1.2.dp, if (isAlphabetBook) SeekhGreen100 else Color(0xFFE8ECF7))
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            // Pure Bright Cover Illustration (No dark scrims or 3D inner shadows!)
+            // Cover Illustration + Prominent Alphabet Letter Tiles Showcase when displaying the Basic Alphabets Book!
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(172.dp)
+                    .height(176.dp)
                     .padding(start = 10.dp, end = 10.dp, top = 10.dp)
                     .clip(RoundedCornerShape(18.dp))
             ) {
                 AssetWebpImage(
                     assetPath = book.coverAssetPath,
-                    contentDescription = book.title,
+                    contentDescription = primaryTitle,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
+
+                if (isAlphabetBook) {
+                    val letters = remember(book.alphabetBadgeLetters) {
+                        book.alphabetBadgeLetters.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }.take(4)
+                    }
+                    val cardColors = remember {
+                        listOf(
+                            Color(0xFFFFB800) to Color(0xFF1E1B4B),
+                            Color(0xFF5E4AE3) to Color.White,
+                            Color(0xFF10B981) to Color.White,
+                            Color(0xFFF43F5E) to Color.White
+                        )
+                    }
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth()
+                            .background(
+                                Brush.verticalGradient(
+                                    listOf(Color.Transparent, Color(0xCC1E1B4B))
+                                )
+                            )
+                            .padding(horizontal = 12.dp, vertical = 10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        letters.forEachIndexed { idx, ltr ->
+                            val (bg, fg) = cardColors[idx % cardColors.size]
+                            Surface(
+                                shape = RoundedCornerShape(14.dp),
+                                color = bg,
+                                border = BorderStroke(2.dp, Color.White),
+                                shadowElevation = 4.dp,
+                                modifier = Modifier.size(width = 52.dp, height = 48.dp)
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Text(
+                                        text = ltr,
+                                        fontFamily = GoogleSansFamily,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        fontSize = 22.sp,
+                                        color = fg
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
 
                 if (isCompleted) {
                     Box(
@@ -1599,30 +1696,31 @@ fun FeaturedStoryHeroCard(
                     ) {
                         Surface(
                             shape = RoundedCornerShape(50),
-                            color = SeekhGreenSoft
+                            color = if (isAlphabetBook) Color(0xFFFFF8E1) else SeekhGreenSoft,
+                            border = if (isAlphabetBook) BorderStroke(1.dp, SeekhYellow500) else null
                         ) {
                             Text(
-                                text = "Level ${book.level}",
+                                text = "${uiStrings.levelPrefix} ${book.level}",
                                 fontFamily = GoogleSansFamily,
                                 fontWeight = FontWeight.ExtraBold,
                                 fontSize = 10.5.sp,
-                                color = SeekhGreen600,
+                                color = if (isAlphabetBook) Color(0xFFB45309) else SeekhGreen600,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
                             )
                         }
                         Text(
-                            text = "Story of the day",
+                            text = if (isAlphabetBook) uiStrings.alphabetBookTag else uiStrings.storyOfTheDayTag,
                             fontFamily = GoogleSansFamily,
-                            fontWeight = FontWeight.Medium,
+                            fontWeight = FontWeight.Bold,
                             fontSize = 11.5.sp,
-                            color = SeekhTextSecondary,
+                            color = if (isAlphabetBook) SeekhGreen600 else SeekhTextSecondary,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     }
                     Spacer(modifier = Modifier.height(3.dp))
                     Text(
-                        text = book.title,
+                        text = primaryTitle,
                         fontFamily = GoogleSansFamily,
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 18.sp,
@@ -1630,9 +1728,9 @@ fun FeaturedStoryHeroCard(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-                    if (book.nativeTitleUrdu.isNotBlank()) {
+                    if (secondarySub.isNotBlank()) {
                         Text(
-                            text = book.nativeTitleUrdu,
+                            text = secondarySub,
                             fontFamily = GoogleSansFamily,
                             fontWeight = FontWeight.Medium,
                             fontSize = 12.sp,
@@ -1655,7 +1753,7 @@ fun FeaturedStoryHeroCard(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
-                            text = "Read",
+                            text = uiStrings.readCta,
                             fontFamily = GoogleSansFamily,
                             fontWeight = FontWeight.ExtraBold,
                             fontSize = 13.sp,
@@ -1663,10 +1761,435 @@ fun FeaturedStoryHeroCard(
                         )
                         Icon(
                             imageVector = Icons.Default.PlayArrow,
-                            contentDescription = "Read story",
+                            contentDescription = uiStrings.readCta,
                             tint = Color.White,
                             modifier = Modifier.size(16.dp)
                         )
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Self-Explanatory Visual Gameplay Preview Artwork for All 10 Kids Learning Games
+// Renders an unmistakable visual preview inside each Game Card so the child immediately knows what game it is at a glance!
+@Composable
+fun GameVisualPreviewArtwork(
+    gameKey: String,
+    accentColor: Color,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
+        color = Color.White.copy(alpha = 0.16f),
+        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.28f))
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 8.dp, vertical = 6.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            when (gameKey) {
+                "JUMBLE" -> {
+                    // Scrambled letter tiles [C] [T] [A] -> [CAT]
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
+                        listOf("C" to -8f, "T" to 7f, "A" to -5f).forEach { (ltr, deg) ->
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = Color.White,
+                                shadowElevation = 2.dp,
+                                modifier = Modifier
+                                    .size(28.dp)
+                                    .graphicsLayer { rotationZ = deg }
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Text(
+                                        text = ltr,
+                                        fontFamily = GoogleSansFamily,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        fontSize = 14.sp,
+                                        color = accentColor
+                                    )
+                                }
+                            }
+                        }
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.MenuBook,
+                            contentDescription = null,
+                            tint = SeekhYellow500,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = SeekhYellow500
+                        ) {
+                            Text(
+                                text = "CAT",
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 11.sp,
+                                color = SeekhTextPrimary,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp)
+                            )
+                        }
+                    }
+                }
+
+                "BALLOON" -> {
+                    // 3 Floating Phonics Letter Balloons with strings & pop sparkle
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        listOf(
+                            Triple("A", Color(0xFFFF5252), (-3).dp),
+                            Triple("B", Color(0xFFFFB800), (-7).dp),
+                            Triple("S", Color(0xFF38BDF8), (-2).dp)
+                        ).forEach { (ltr, col, yOff) ->
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.offset(y = yOff)
+                            ) {
+                                Surface(
+                                    shape = CircleShape,
+                                    color = col,
+                                    border = BorderStroke(1.5.dp, Color.White),
+                                    modifier = Modifier.size(28.dp)
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Text(
+                                            text = ltr,
+                                            fontFamily = GoogleSansFamily,
+                                            fontWeight = FontWeight.ExtraBold,
+                                            fontSize = 13.sp,
+                                            color = Color.White
+                                        )
+                                    }
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .width(1.5.dp)
+                                        .height(8.dp)
+                                        .background(Color.White.copy(alpha = 0.7f))
+                                )
+                            }
+                        }
+                    }
+                }
+
+                "SENTENCE" -> {
+                    // Connected word puzzle chips building a sentence: [The] + [sun] + [shines]
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        listOf(
+                            "The" to Color.White,
+                            "sun" to SeekhYellow500,
+                            "shines" to Color(0xFF34D399)
+                        ).forEach { (word, bg) ->
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = bg,
+                                shadowElevation = 2.dp
+                            ) {
+                                Text(
+                                    text = word,
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 11.sp,
+                                    color = SeekhTextPrimary,
+                                    modifier = Modifier.padding(horizontal = 7.dp, vertical = 5.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                "RHYME" -> {
+                    // Paired Rhyming Word Cards linked by sound wave icon: [CAT] ~ [HAT]
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(9.dp),
+                            color = Color.White
+                        ) {
+                            Text(
+                                text = "CAT",
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 12.sp,
+                                color = accentColor,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
+                            )
+                        }
+                        Icon(
+                            imageVector = Icons.Default.GraphicEq,
+                            contentDescription = null,
+                            tint = SeekhYellow500,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Surface(
+                            shape = RoundedCornerShape(9.dp),
+                            color = SeekhYellow500
+                        ) {
+                            Text(
+                                text = "HAT",
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 12.sp,
+                                color = SeekhTextPrimary,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
+                            )
+                        }
+                    }
+                }
+
+                "MISSING_SOUND" -> {
+                    // Word slots with glowing missing letter tile: [B] [?] [R] [D]
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        listOf("B" to false, "?" to true, "R" to false, "D" to false).forEach { (ch, isMissing) ->
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = if (isMissing) SeekhYellow500 else Color.White,
+                                border = if (isMissing) BorderStroke(1.5.dp, Color.White) else null,
+                                modifier = Modifier.size(27.dp)
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Text(
+                                        text = ch,
+                                        fontFamily = GoogleSansFamily,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        fontSize = 14.sp,
+                                        color = if (isMissing) SeekhTextPrimary else accentColor
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                "LISTEN_FIND" -> {
+                    // Speaker emitting audio waves -> Picture Frame with checkmark
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(7.dp)
+                    ) {
+                        Surface(
+                            shape = CircleShape,
+                            color = SeekhYellow500,
+                            modifier = Modifier.size(30.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.VolumeUp,
+                                    contentDescription = null,
+                                    tint = SeekhTextPrimary,
+                                    modifier = Modifier.size(17.dp)
+                                )
+                            }
+                        }
+                        Surface(
+                            shape = RoundedCornerShape(9.dp),
+                            color = Color.White,
+                            modifier = Modifier.size(width = 34.dp, height = 30.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.WbSunny,
+                                    contentDescription = null,
+                                    tint = Color(0xFFF59E0B),
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                        Surface(
+                            shape = RoundedCornerShape(9.dp),
+                            color = Color.White,
+                            border = BorderStroke(1.5.dp, SeekhGreenMint),
+                            modifier = Modifier.size(width = 34.dp, height = 30.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.Park,
+                                    contentDescription = null,
+                                    tint = SeekhGreenMint,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                "OPPOSITES" -> {
+                    // Day (Sun) <-> Night (Moon) Contrast Tiles
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(9.dp),
+                            color = Color(0xFFFFFBEB),
+                            modifier = Modifier.size(width = 36.dp, height = 30.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.WbSunny,
+                                    contentDescription = null,
+                                    tint = Color(0xFFF59E0B),
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                        Icon(
+                            imageVector = Icons.Default.SwapHoriz,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Surface(
+                            shape = RoundedCornerShape(9.dp),
+                            color = Color(0xFF1E1B4B),
+                            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.5f)),
+                            modifier = Modifier.size(width = 36.dp, height = 30.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.NightsStay,
+                                    contentDescription = null,
+                                    tint = SeekhYellow500,
+                                    modifier = Modifier.size(17.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                "COUNT_COLOR" -> {
+                    // Number blocks [1] [2] [3] with counting stars
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
+                        listOf(
+                            "1" to Color.White,
+                            "2" to SeekhYellow500,
+                            "3" to Color(0xFF6EE7B7)
+                        ).forEach { (num, bg) ->
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = bg,
+                                modifier = Modifier.size(27.dp)
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Text(
+                                        text = num,
+                                        fontFamily = GoogleSansFamily,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        fontSize = 14.sp,
+                                        color = SeekhTextPrimary
+                                    )
+                                }
+                            }
+                        }
+                        GoldenStarIcon(size = 22.dp)
+                    }
+                }
+
+                "SPEED" -> {
+                    // Stopwatch timer + 30s fluency badge
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Surface(
+                            shape = CircleShape,
+                            color = Color.White,
+                            modifier = Modifier.size(30.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.Timer,
+                                    contentDescription = null,
+                                    tint = accentColor,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = Color.White.copy(alpha = 0.92f)
+                        ) {
+                            Text(
+                                text = "30s WPM",
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 11.sp,
+                                color = SeekhTextPrimary,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
+                            )
+                        }
+                    }
+                }
+
+                else -> {
+                    // VOCAB: Picture flashcards + Word label
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = Color.White,
+                            modifier = Modifier.size(28.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.Palette,
+                                    contentDescription = null,
+                                    tint = Color(0xFFEC4899),
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                        }
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = Color.White,
+                            modifier = Modifier.size(28.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.Park,
+                                    contentDescription = null,
+                                    tint = SeekhGreenMint,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                        }
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = SeekhYellow500
+                        ) {
+                            Text(
+                                text = "A–Z",
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 11.sp,
+                                color = SeekhTextPrimary,
+                                modifier = Modifier.padding(horizontal = 7.dp, vertical = 5.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -1792,8 +2315,12 @@ enum class MainTab {
 @Composable
 fun SeekhBottomNavigationBar(
     selectedTab: MainTab,
-    onTabSelected: (MainTab) -> Unit
+    onTabSelected: (MainTab) -> Unit,
+    selectedLanguageCode: String = "en_ur"
 ) {
+    val uiStrings = remember(selectedLanguageCode) {
+        SeekhCatalog.getAppStrings(selectedLanguageCode)
+    }
     val targetTabIndex = when (selectedTab) {
         MainTab.LIBRARY -> 0f
         MainTab.PRIZES -> 1f
@@ -1840,12 +2367,12 @@ fun SeekhBottomNavigationBar(
                     .padding(horizontal = 8.dp, vertical = 6.dp)
             ) {
                 val slotWidth = maxWidth / 3f
-                val slidingOffsetX = slotWidth * animatedTabIndex
+                val slidingStartPad = (slotWidth * animatedTabIndex).coerceAtLeast(0.dp)
 
-                // Physically Gliding Liquid Pill Indicator Layer behind the 3 tab buttons!
+                // Physically Gliding Liquid Pill Indicator Layer behind the 3 tab buttons (RTL & LTR safe via padding(start)!)
                 Box(
                     modifier = Modifier
-                        .offset(x = slidingOffsetX)
+                        .padding(start = slidingStartPad)
                         .width(slotWidth)
                         .height(48.dp)
                         .padding(horizontal = 3.dp)
@@ -1895,21 +2422,21 @@ fun SeekhBottomNavigationBar(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     BottomNavTabItem(
-                        label = "Library",
+                        label = uiStrings.tabLibrary,
                         icon = Icons.AutoMirrored.Filled.MenuBook,
                         isSelected = selectedTab == MainTab.LIBRARY,
                         onClick = { onTabSelected(MainTab.LIBRARY) },
                         modifier = Modifier.weight(1f)
                     )
                     BottomNavTabItem(
-                        label = "Prizes",
+                        label = uiStrings.tabPrizes,
                         icon = Icons.Default.EmojiEvents,
                         isSelected = selectedTab == MainTab.PRIZES,
                         onClick = { onTabSelected(MainTab.PRIZES) },
                         modifier = Modifier.weight(1f)
                     )
                     BottomNavTabItem(
-                        label = "Activity",
+                        label = uiStrings.tabActivity,
                         icon = Icons.Default.Insights,
                         isSelected = selectedTab == MainTab.ACTIVITY,
                         onClick = { onTabSelected(MainTab.ACTIVITY) },

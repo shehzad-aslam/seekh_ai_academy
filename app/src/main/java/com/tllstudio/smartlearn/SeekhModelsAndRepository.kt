@@ -27,7 +27,8 @@ data class StoryPage(
     val urduTranslation: String = "",
     val hindiTranslation: String = "",
     val practiceWords: Set<String> = emptySet(),
-    val quiz: StoryQuizQuestion? = null
+    val quiz: StoryQuizQuestion? = null,
+    val alphabetBadgeLetters: String = ""
 )
 
 data class StoryBook(
@@ -45,13 +46,14 @@ data class StoryBook(
     val isAiGenerated: Boolean = false,
     val requiresDownload: Boolean = false,
     val downloadUrl: String = "",
-    val bookType: String = "LEVELED", // "LEVELED", "DECODABLE", "SERIES", "ASSESSMENT", "CYOC"
+    val bookType: String = "LEVELED", // "LEVELED", "DECODABLE", "SERIES", "ASSESSMENT", "CYOC", "ALPHABET"
     val bookSource: String = "LIBRARY", // "LIBRARY", "CLASSROOM", "PARTNER", "MY_STORY"
     val categoryTag: String = "Family & Friends", // "Animals & Nature", "Family & Friends", "Adventure & Travel", "Science & Weather", "Bedtime & Folktales"
     val phonicsSkillTag: String = "",
     val seriesTag: String = "",
     val assignedByTeacher: String = "",
-    val isDailyDrop: Boolean = false
+    val isDailyDrop: Boolean = false,
+    val alphabetBadgeLetters: String = ""
 )
 
 data class SignedInAccountState(
@@ -154,7 +156,1086 @@ data class WordTutorDetails(
     val spokenExplanation: String
 )
 
+data class SeekhAppStrings(
+    val isRtl: Boolean,
+    val tabLibrary: String,
+    val tabPrizes: String,
+    val tabActivity: String,
+    val readCta: String,
+    val playCta: String,
+    val seeAll: String,
+    val levelPrefix: String,
+    val alphabetBookTag: String,
+    val storyOfTheDayTag: String,
+    val searchPlaceholder: String,
+    val sectionAssignedHomework: String,
+    val sectionRecommended: String,
+    val sectionLevel1: String,
+    val sectionLevel2: String,
+    val sectionLevel3: String,
+    val sectionLevel4: String,
+    val sectionPlayGames: String,
+    val sectionAnimalsNature: String,
+    val sectionSchoolKindness: String,
+    val sectionPhonics: String,
+    val sectionFamilyFriends: String,
+    val sectionNumbersRhymes: String,
+    val sectionStorySeries: String,
+    val sectionAdventureTravel: String,
+    val sectionScienceWeather: String,
+    val sectionBedtimeFolktales: String,
+    val sectionCreateStory: String,
+    val sectionReadAgain: String,
+    val moreLanguagesLabel: String,
+    val listenButton: String,
+    val listeningButton: String,
+    val speakButton: String,
+    val speakingButton: String,
+    val listenSubLabel: String,
+    val speakSubLabel: String,
+    val filterChipLabels: Map<String, String>,
+    val gameInfoByKey: Map<String, Triple<String, String, String>> // gameKey -> Triple(title, subtitle, badge)
+)
+
 object SeekhCatalog {
+
+    fun isRtlLanguage(langCode: String): Boolean {
+        return langCode == "en_ur" || langCode == "en_ar"
+    }
+
+    fun getAppStrings(langCode: String): SeekhAppStrings {
+        return when (langCode) {
+            "en_ur" -> SeekhAppStrings(
+                isRtl = true,
+                tabLibrary = "لائبریری",
+                tabPrizes = "انعامات",
+                tabActivity = "سرگرمی",
+                readCta = "پڑھیں",
+                playCta = "کھیلیں",
+                seeAll = "سب دیکھیں",
+                levelPrefix = "لیول",
+                alphabetBookTag = "بنیادی حروفِ تہجی • قاعدہ",
+                storyOfTheDayTag = "آج کی خاص کتاب",
+                searchPlaceholder = "عنوان یا لیول سے کہانیاں تلاش کریں...",
+                sectionAssignedHomework = "اسکول کا ہوم ورک",
+                sectionRecommended = "تجویز کردہ کہانیاں",
+                sectionLevel1 = "لیول 1 کی کہانیاں",
+                sectionLevel2 = "لیول 2 کی کہانیاں",
+                sectionLevel3 = "لیول 3 کی کہانیاں",
+                sectionLevel4 = "لیول 4 کی کہانیاں",
+                sectionPlayGames = "تعلیمی گیمز کھیلیں",
+                sectionAnimalsNature = "جانور اور قدرت",
+                sectionSchoolKindness = "اسکول اور اچھے اخلاق",
+                sectionPhonics = "آوازیں اور حروف (Phonics)",
+                sectionFamilyFriends = "خاندان اور دوست",
+                sectionNumbersRhymes = "گنتی اور نظمیں",
+                sectionStorySeries = "کہانیوں کی سیریز",
+                sectionAdventureTravel = "سیر اور مہم جوئی",
+                sectionScienceWeather = "سائنس اور موسم",
+                sectionBedtimeFolktales = "سونے کے وقت کی کہانیاں",
+                sectionCreateStory = "اپنی کہانی خود بنائیں",
+                sectionReadAgain = "دوبارہ پڑھیں",
+                moreLanguagesLabel = "مزید زبانیں منتخب کریں",
+                listenButton = "سنیں (Listen)",
+                listeningButton = "سنا جا رہا ہے...",
+                speakButton = "بولیں (Speak)",
+                speakingButton = "آپ کی باری...",
+                listenSubLabel = "کہانی سننے کے لیے",
+                speakSubLabel = "خود پڑھنے کے لیے",
+                filterChipLabels = mapOf(
+                    "All" to "سب",
+                    "Games" to "گیمز",
+                    "New & Daily" to "نئی کہانیاں",
+                    "Level 1" to "لیول 1",
+                    "Level 2" to "لیول 2",
+                    "Level 3" to "لیول 3",
+                    "Level 4" to "لیول 4",
+                    "Animals & Nature" to "جانور اور قدرت",
+                    "Family & Friends" to "خاندان اور دوست",
+                    "School & Kindness" to "اسکول اور اخلاق",
+                    "Numbers & Rhymes" to "گنتی اور نظمیں",
+                    "Phonics" to "حروف اور آوازیں",
+                    "Adventure & Travel" to "سیر و سیاحت",
+                    "Science & Weather" to "سائنس اور موسم",
+                    "Bedtime & Folktales" to "لوک کہانیاں",
+                    "Series" to "سیریز",
+                    "Classroom" to "کلاس روم",
+                    "My stories" to "میری کہانیاں"
+                ),
+                gameInfoByKey = mapOf(
+                    "JUMBLE" to Triple("الفاظ جوڑیں", "بکھرے حروف سے لفظ بنائیں", "ہجے (Spelling)"),
+                    "BALLOON" to Triple("غبارے پھوڑیں", "حروف کی آواز والے غبارے", "آوازیں (Phonics)"),
+                    "SENTENCE" to Triple("جملے بنائیں", "الفاظ ترتیب دے کر جملہ مکمل کریں", "جملے (Sentences)"),
+                    "RHYME" to Triple("ہم آواز الفاظ", "ایک جیسی آواز والے الفاظ ملائیں", "ہم قافیہ"),
+                    "MISSING_SOUND" to Triple("غائب حروف", "لفظ کا خالی حرف تلاش کریں", "حروف (Letters)"),
+                    "LISTEN_FIND" to Triple("سنیں اور پہچانیں", "آواز سن کر درست تصویر چنیں", "سننا (Listening)"),
+                    "OPPOSITES" to Triple("متضاد الفاظ", "الٹ معنی والے الفاظ ملائیں", "ذخیرۂ الفاظ"),
+                    "COUNT_COLOR" to Triple("گنتی اور اعداد", "تصویریں گنیں اور سوال حل کریں", "گنتی (Numbers)"),
+                    "SPEED" to Triple("تیز خوانی", "30 سیکنڈ میں الفاظ پڑھنے کا چیلنج", "روانی (Fluency)"),
+                    "VOCAB" to Triple("الفاظ کے معانی", "تصویروں سے نئے الفاظ سیکھیں", "تصویری الفاظ")
+                )
+            )
+
+            "en_hi" -> SeekhAppStrings(
+                isRtl = false,
+                tabLibrary = "लाइब्रेरी",
+                tabPrizes = "इनाम",
+                tabActivity = "गतिविधि",
+                readCta = "पढ़ें",
+                playCta = "खेलें",
+                seeAll = "सभी देखें",
+                levelPrefix = "लेवल",
+                alphabetBookTag = "मूल वर्णमाला • अ से ज्ञ",
+                storyOfTheDayTag = "आज की ख़ास किताब",
+                searchPlaceholder = "शीर्षक या लेवल से कहानियाँ खोजें...",
+                sectionAssignedHomework = "स्कूल का होमवर्क",
+                sectionRecommended = "सुझाई गई कहानियाँ",
+                sectionLevel1 = "लेवल 1 की कहानियाँ",
+                sectionLevel2 = "लेवल 2 की कहानियाँ",
+                sectionLevel3 = "लेवल 3 की कहानियाँ",
+                sectionLevel4 = "लेवल 4 की कहानियाँ",
+                sectionPlayGames = "मज़ेदार खेल खेलें",
+                sectionAnimalsNature = "जानवर और प्रकृति",
+                sectionSchoolKindness = "स्कूल और अच्छी आदतें",
+                sectionPhonics = "ध्वनियाँ और अक्षर (Phonics)",
+                sectionFamilyFriends = "परिवार और दोस्त",
+                sectionNumbersRhymes = "गिनती और कविताएँ",
+                sectionStorySeries = "कहानी सीरीज़",
+                sectionAdventureTravel = "यात्रा और रोमांच",
+                sectionScienceWeather = "विज्ञान और मौसम",
+                sectionBedtimeFolktales = "लोककथाएँ और कहानियाँ",
+                sectionCreateStory = "अपनी कहानी खुद बनाएँ",
+                sectionReadAgain = "फिर से पढ़ें",
+                moreLanguagesLabel = "अन्य भाषाएँ चुनें",
+                listenButton = "सुनें (Listen)",
+                listeningButton = "सुन रहे हैं...",
+                speakButton = "बोलें (Speak)",
+                speakingButton = "आपकी बारी...",
+                listenSubLabel = "कहानी सुनने के लिए",
+                speakSubLabel = "खुद बोलकर पढ़ने के लिए",
+                filterChipLabels = mapOf(
+                    "All" to "सभी",
+                    "Games" to "खेल",
+                    "New & Daily" to "नई कहानियाँ",
+                    "Level 1" to "लेवल 1",
+                    "Level 2" to "लेवल 2",
+                    "Level 3" to "लेवल 3",
+                    "Level 4" to "लेवल 4",
+                    "Animals & Nature" to "जानवर और प्रकृति",
+                    "Family & Friends" to "परिवार और दोस्त",
+                    "School & Kindness" to "स्कूल और आदतें",
+                    "Numbers & Rhymes" to "गिनती और कविता",
+                    "Phonics" to "अक्षर और ध्वनि",
+                    "Adventure & Travel" to "यात्रा और रोमांच",
+                    "Science & Weather" to "विज्ञान और मौसम",
+                    "Bedtime & Folktales" to "लोककथाएँ",
+                    "Series" to "सीरीज़",
+                    "Classroom" to "क्लासरूम",
+                    "My stories" to "मेरी कहानियाँ"
+                ),
+                gameInfoByKey = mapOf(
+                    "JUMBLE" to Triple("अक्षर जोड़ें", "बिखरे अक्षरों से सही शब्द बनाएँ", "स्पेलिंग"),
+                    "BALLOON" to Triple("गुब्बारे फोड़ें", "सही ध्वनि वाले गुब्बारे चुनें", "ध्वनि (Phonics)"),
+                    "SENTENCE" to Triple("वाक्य बनाएँ", "शब्दों को क्रम में रखकर वाक्य बनाएँ", "वाक्य"),
+                    "RHYME" to Triple("तुकबंदी शब्द", "समान ध्वनि वाले शब्द मिलाएँ", "तुकबंदी"),
+                    "MISSING_SOUND" to Triple("छूटे हुए अक्षर", "शब्द का खाली अक्षर पहचानें", "अक्षर"),
+                    "LISTEN_FIND" to Triple("सुनें और खोजें", "आवाज़ सुनकर सही चित्र चुनें", "सुनना"),
+                    "OPPOSITES" to Triple("विलोम शब्द", "उल्टे अर्थ वाले शब्द मिलाएँ", "शब्दावली"),
+                    "COUNT_COLOR" to Triple("गिनती और अंक", "चित्र गिनें और आसान गणित हल करें", "गिनती"),
+                    "SPEED" to Triple("तेज़ पठन", "30 सेकंड में शब्द पढ़ने की चुनौती", "प्रवाह"),
+                    "VOCAB" to Triple("शब्दों के अर्थ", "9 विषयों के चित्र और शब्द सीखें", "चित्र शब्द")
+                )
+            )
+
+            "en_ar" -> SeekhAppStrings(
+                isRtl = true,
+                tabLibrary = "المكتبة",
+                tabPrizes = "الجوائز",
+                tabActivity = "النشاط",
+                readCta = "اقرأ",
+                playCta = "العب",
+                seeAll = "عرض الكل",
+                levelPrefix = "المستوى",
+                alphabetBookTag = "الحروف الأبجدية الأساسية",
+                storyOfTheDayTag = "كتاب اليوم المميز",
+                searchPlaceholder = "ابحث عن القصص بالعنوان أو المستوى...",
+                sectionAssignedHomework = "الواجبات المدرسية",
+                sectionRecommended = "قصص موصى بها",
+                sectionLevel1 = "قصص المستوى 1",
+                sectionLevel2 = "قصص المستوى 2",
+                sectionLevel3 = "قصص المستوى 3",
+                sectionLevel4 = "قصص المستوى 4",
+                sectionPlayGames = "العب الألعاب التعليمية",
+                sectionAnimalsNature = "الحيوانات والطبيعة",
+                sectionSchoolKindness = "المدرسة واللطف",
+                sectionPhonics = "الأصوات والحروف",
+                sectionFamilyFriends = "العائلة والأصدقاء",
+                sectionNumbersRhymes = "الأرقام والأناشيد",
+                sectionStorySeries = "سلاسل القصص",
+                sectionAdventureTravel = "المغامرة والسفر",
+                sectionScienceWeather = "العلوم والطقس",
+                sectionBedtimeFolktales = "قصص قبل النوم",
+                sectionCreateStory = "اصنع قصتك بنفسك",
+                sectionReadAgain = "اقرأ مرة أخرى",
+                moreLanguagesLabel = "المزيد من اللغات",
+                listenButton = "استمع",
+                listeningButton = "جارٍ الاستماع...",
+                speakButton = "تحدث",
+                speakingButton = "دورك للقراءة...",
+                listenSubLabel = "لسماع القصة",
+                speakSubLabel = "للقراءة بصوتك",
+                filterChipLabels = mapOf(
+                    "All" to "الكل",
+                    "Games" to "الألعاب",
+                    "New & Daily" to "جديد ويومي",
+                    "Level 1" to "المستوى 1",
+                    "Level 2" to "المستوى 2",
+                    "Level 3" to "المستوى 3",
+                    "Level 4" to "المستوى 4",
+                    "Animals & Nature" to "الحيوانات والطبيعة",
+                    "Family & Friends" to "العائلة والأصدقاء",
+                    "School & Kindness" to "المدرسة واللطف",
+                    "Numbers & Rhymes" to "الأرقام والأناشيد",
+                    "Phonics" to "الصوتيات",
+                    "Adventure & Travel" to "المغامرة",
+                    "Science & Weather" to "العلوم والطقس",
+                    "Bedtime & Folktales" to "قصص النوم",
+                    "Series" to "السلاسل",
+                    "Classroom" to "الفصل",
+                    "My stories" to "قصصي"
+                ),
+                gameInfoByKey = mapOf(
+                    "JUMBLE" to Triple("ترتيب الحروف", "رتب الحروف المبعثرة لتكوين كلمة", "التهجئة"),
+                    "BALLOON" to Triple("فرقع البالونات", "اختر البالونات التي تحمل الصوت الصحيح", "الأصوات"),
+                    "SENTENCE" to Triple("بناء الجمل", "رتب الكلمات لتكوين جملة مفيدة", "الجمل"),
+                    "RHYME" to Triple("كلمات متقافية", "طابق الكلمات ذات الإيقاع المتشابه", "القافية"),
+                    "MISSING_SOUND" to Triple("الحرف المفقود", "اكتشف الحرف الناقص في الكلمة", "الحروف"),
+                    "LISTEN_FIND" to Triple("استمع وابحث", "استمع للصوت واختر الصورة الصحيحة", "الاستماع"),
+                    "OPPOSITES" to Triple("الكلمات المتضادة", "طابق كل كلمة مع عكسها", "المفردات"),
+                    "COUNT_COLOR" to Triple("العد والأرقام", "عد العناصر وحل مسائل القصص", "الأرقام"),
+                    "SPEED" to Triple("القراءة السريعة", "تحدي طلاقة القراءة في 30 ثانية", "الطلاقة"),
+                    "VOCAB" to Triple("معاني الكلمات", "تعلم المفردات المصورة في 9 مواضيع", "الصور")
+                )
+            )
+
+            "en_es" -> SeekhAppStrings(
+                isRtl = false,
+                tabLibrary = "Biblioteca",
+                tabPrizes = "Premios",
+                tabActivity = "Actividad",
+                readCta = "Leer",
+                playCta = "Jugar",
+                seeAll = "Ver todo",
+                levelPrefix = "Nivel",
+                alphabetBookTag = "El Abecedario Básico • A a Z",
+                storyOfTheDayTag = "Cuento destacado de hoy",
+                searchPlaceholder = "Buscar cuentos por título o nivel...",
+                sectionAssignedHomework = "Tareas asignadas",
+                sectionRecommended = "Cuentos recomendados",
+                sectionLevel1 = "Cuentos de Nivel 1",
+                sectionLevel2 = "Cuentos de Nivel 2",
+                sectionLevel3 = "Cuentos de Nivel 3",
+                sectionLevel4 = "Cuentos de Nivel 4",
+                sectionPlayGames = "Jugar juegos educativos",
+                sectionAnimalsNature = "Animales y Naturaleza",
+                sectionSchoolKindness = "Escuela y Amabilidad",
+                sectionPhonics = "Sonidos y Letras",
+                sectionFamilyFriends = "Familia y Amigos",
+                sectionNumbersRhymes = "Números y Rimas",
+                sectionStorySeries = "Series de Cuentos",
+                sectionAdventureTravel = "Aventura y Viajes",
+                sectionScienceWeather = "Ciencia y Clima",
+                sectionBedtimeFolktales = "Cuentos para Dormir",
+                sectionCreateStory = "Crea tu propio cuento",
+                sectionReadAgain = "Leer de nuevo",
+                moreLanguagesLabel = "Más idiomas",
+                listenButton = "Escuchar",
+                listeningButton = "Escuchando...",
+                speakButton = "Hablar",
+                speakingButton = "Tu turno...",
+                listenSubLabel = "Oír el cuento",
+                speakSubLabel = "Leer en voz alta",
+                filterChipLabels = mapOf(
+                    "All" to "Todos",
+                    "Games" to "Juegos",
+                    "New & Daily" to "Nuevos",
+                    "Level 1" to "Nivel 1",
+                    "Level 2" to "Nivel 2",
+                    "Level 3" to "Nivel 3",
+                    "Level 4" to "Nivel 4"
+                ),
+                gameInfoByKey = mapOf(
+                    "JUMBLE" to Triple("Palabras Revueltas", "Ordena las letras para formar palabras", "Ortografía"),
+                    "BALLOON" to Triple("Explota Globos", "Explota los globos con el sonido correcto", "Fonética"),
+                    "SENTENCE" to Triple("Arma Oraciones", "Ordena las palabras de la oración", "Oraciones"),
+                    "RHYME" to Triple("Palabras que Riman", "Une palabras con el mismo sonido final", "Rimas"),
+                    "MISSING_SOUND" to Triple("Letras Faltantes", "Completa la letra que falta en la palabra", "Letras"),
+                    "LISTEN_FIND" to Triple("Escucha y Busca", "Escucha la pista y elige el dibujo", "Escucha"),
+                    "OPPOSITES" to Triple("Palabras Opuestas", "Une palabras con significados opuestos", "Vocabulario"),
+                    "COUNT_COLOR" to Triple("Contar y Números", "Cuenta figuras y resuelve sumas", "Números"),
+                    "SPEED" to Triple("Lectura Rápida", "Reto de fluidez de lectura de 30s", "Fluidez"),
+                    "VOCAB" to Triple("Significados", "Aprende vocabulario ilustrado", "Imágenes")
+                )
+            )
+
+            "en_pt" -> SeekhAppStrings(
+                isRtl = false,
+                tabLibrary = "Biblioteca",
+                tabPrizes = "Prêmios",
+                tabActivity = "Atividade",
+                readCta = "Ler",
+                playCta = "Jogar",
+                seeAll = "Ver tudo",
+                levelPrefix = "Nível",
+                alphabetBookTag = "O Alfabeto Básico • A a Z",
+                storyOfTheDayTag = "História em destaque",
+                searchPlaceholder = "Pesquisar histórias por título ou nível...",
+                sectionAssignedHomework = "Tarefas da turma",
+                sectionRecommended = "Histórias recomendadas",
+                sectionLevel1 = "Histórias de Nível 1",
+                sectionLevel2 = "Histórias de Nível 2",
+                sectionLevel3 = "Histórias de Nível 3",
+                sectionLevel4 = "Histórias de Nível 4",
+                sectionPlayGames = "Jogar jogos educativos",
+                sectionAnimalsNature = "Animais e Natureza",
+                sectionSchoolKindness = "Escola e Gentileza",
+                sectionPhonics = "Sons e Letras",
+                sectionFamilyFriends = "Família e Amigos",
+                sectionNumbersRhymes = "Números e Rimas",
+                sectionStorySeries = "Séries de Histórias",
+                sectionAdventureTravel = "Aventura e Viagem",
+                sectionScienceWeather = "Ciência e Clima",
+                sectionBedtimeFolktales = "Histórias para Dormir",
+                sectionCreateStory = "Crie sua própria história",
+                sectionReadAgain = "Ler novamente",
+                moreLanguagesLabel = "Mais idiomas",
+                listenButton = "Ouvir",
+                listeningButton = "Ouvindo...",
+                speakButton = "Falar",
+                speakingButton = "Sua vez...",
+                listenSubLabel = "Ouvir a história",
+                speakSubLabel = "Ler em voz alta",
+                filterChipLabels = mapOf(
+                    "All" to "Todos",
+                    "Games" to "Jogos",
+                    "Level 1" to "Nível 1",
+                    "Level 2" to "Nível 2",
+                    "Level 3" to "Nível 3",
+                    "Level 4" to "Nível 4"
+                ),
+                gameInfoByKey = mapOf(
+                    "JUMBLE" to Triple("Letras Misturadas", "Ordene as letras para formar palavras", "Soletrar"),
+                    "BALLOON" to Triple("Estoure os Balões", "Estoure os balões com o som certo", "Fonética"),
+                    "SENTENCE" to Triple("Monte a Frase", "Ordene as palavras para criar frases", "Frases"),
+                    "RHYME" to Triple("Palavras que Rimam", "Combine palavras com o mesmo som final", "Rimas"),
+                    "MISSING_SOUND" to Triple("Letras Faltando", "Descubra a letra que falta na palavra", "Letras"),
+                    "LISTEN_FIND" to Triple("Ouça e Encontre", "Ouça a dica e escolha a imagem", "Audição"),
+                    "OPPOSITES" to Triple("Palavras Opostas", "Combine palavras de sentidos opostos", "Vocabulário"),
+                    "COUNT_COLOR" to Triple("Contar e Números", "Conte itens e resolva desafios", "Números"),
+                    "SPEED" to Triple("Leitura Rápida", "Desafio de fluência em 30 segundos", "Fluência"),
+                    "VOCAB" to Triple("Significados", "Aprenda vocabulário com imagens", "Figuras")
+                )
+            )
+
+            "en_bn" -> SeekhAppStrings(
+                isRtl = false,
+                tabLibrary = "লাইব্রেরি",
+                tabPrizes = "পুরস্কার",
+                tabActivity = "অগ্রগতি",
+                readCta = "পড়ুন",
+                playCta = "খেলুন",
+                seeAll = "সব দেখুন",
+                levelPrefix = "লেভেল",
+                alphabetBookTag = "বাংলা বর্ণমালা • অ থেকে চন্দ্রবিন্দু",
+                storyOfTheDayTag = "আজকের বিশেষ বই",
+                searchPlaceholder = "গল্পের নাম বা লেভেল দিয়ে খুঁজুন...",
+                sectionAssignedHomework = "স্কুলের হোমওয়ার্ক",
+                sectionRecommended = "নির্বাচিত গল্প",
+                sectionLevel1 = "লেভেল ১ গল্প",
+                sectionLevel2 = "লেভেল ২ গল্প",
+                sectionLevel3 = "লেভেল ৩ গল্প",
+                sectionLevel4 = "লেভেল ৪ গল্প",
+                sectionPlayGames = "মজার শিক্ষামূলক গেম",
+                sectionAnimalsNature = "প্রাণী ও প্রকৃতি",
+                sectionSchoolKindness = "স্কুল ও সদাচরণ",
+                sectionPhonics = "বর্ণ ও ধ্বনি",
+                sectionFamilyFriends = "পরিবার ও বন্ধু",
+                sectionNumbersRhymes = "সংখ্যা ও ছড়া",
+                sectionStorySeries = "গল্পের সিরিজ",
+                sectionAdventureTravel = "ভ্রমণ ও অভিযান",
+                sectionScienceWeather = "বিজ্ঞান ও আবহাওয়া",
+                sectionBedtimeFolktales = "রূপকথার গল্প",
+                sectionCreateStory = "নিজের গল্প তৈরি করুন",
+                sectionReadAgain = "আবার পড়ুন",
+                moreLanguagesLabel = "আরও ভাষা",
+                listenButton = "শুনুন",
+                listeningButton = "শোনা হচ্ছে...",
+                speakButton = "বলুন",
+                speakingButton = "আপনার পালা...",
+                listenSubLabel = "গল্প শোনার জন্য",
+                speakSubLabel = "নিজে পড়ার জন্য",
+                filterChipLabels = mapOf("All" to "সব", "Games" to "গেম", "Level 1" to "লেভেল ১", "Level 2" to "লেভেল ২", "Level 3" to "লেভেল ৩", "Level 4" to "লেভেল ৪"),
+                gameInfoByKey = mapOf(
+                    "JUMBLE" to Triple("শব্দ সাজাও", "এলোমেলো অক্ষর সাজিয়ে শব্দ তৈরি করো", "বানান"),
+                    "BALLOON" to Triple("বেলুন ফাটাও", "সঠিক ধ্বনির বেলুন বেছে নাও", "ধ্বনি"),
+                    "SENTENCE" to Triple("বাক্য তৈরি", "শব্দ সাজিয়ে সম্পূর্ণ বাক্য গঠন করো", "বাক্য"),
+                    "RHYME" to Triple("ছন্দের শব্দ", "মিল থাকা শব্দগুলো খুঁজে বের করো", "ছন্দ"),
+                    "MISSING_SOUND" to Triple("হারানো অক্ষর", "শব্দের খালি ঘরের অক্ষরটি বসাও", "অক্ষর"),
+                    "LISTEN_FIND" to Triple("শোনো ও খোঁজো", "শুনে সঠিক ছবিটি নির্বাচন করো", "শ্রবণ"),
+                    "OPPOSITES" to Triple("বিপরীত শব্দ", "বিপরীত অর্থের শব্দ মেলাও", "শব্দভাণ্ডার"),
+                    "COUNT_COLOR" to Triple("গণনা ও সংখ্যা", "ছবি গুনে সঠিক সংখ্যা বেছে নাও", "সংখ্যা"),
+                    "SPEED" to Triple("দ্রুত পঠন", "৩০ সেকেন্ডে দ্রুত পড়ার চ্যালেঞ্জ", "পঠন"),
+                    "VOCAB" to Triple("শব্দের অর্থ", "ছবি দেখে নতুন শব্দ শেখো", "ছবি")
+                )
+            )
+
+            "en_ta" -> SeekhAppStrings(
+                isRtl = false,
+                tabLibrary = "நூலகம்",
+                tabPrizes = "பரிசுகள்",
+                tabActivity = "செயல்பாடு",
+                readCta = "படிக்க",
+                playCta = "விளையாடு",
+                seeAll = "அனைத்தும்",
+                levelPrefix = "நிலை",
+                alphabetBookTag = "தமிழ் எழுத்துக்கள் • அ முதல் ன",
+                storyOfTheDayTag = "இன்றைய சிறப்பு புத்தகம்",
+                searchPlaceholder = "கதைகளைத் தேடுங்கள்...",
+                sectionAssignedHomework = "வகுப்பு வீட்டுப்பாடம்",
+                sectionRecommended = "பரிந்துரைக்கப்பட்ட கதைகள்",
+                sectionLevel1 = "நிலை 1 கதைகள்",
+                sectionLevel2 = "நிலை 2 கதைகள்",
+                sectionLevel3 = "நிலை 3 கதைகள்",
+                sectionLevel4 = "நிலை 4 கதைகள்",
+                sectionPlayGames = "கற்றல் விளையாட்டுகள்",
+                sectionAnimalsNature = "விலங்குகள் மற்றும் இயற்கை",
+                sectionSchoolKindness = "பள்ளி மற்றும் அன்பு",
+                sectionPhonics = "எழுத்து மற்றும் ஒலி",
+                sectionFamilyFriends = "குடும்பம் மற்றும் நண்பர்கள்",
+                sectionNumbersRhymes = "எண்கள் மற்றும் பாடல்கள்",
+                sectionStorySeries = "கதைத் தொடர்கள்",
+                sectionAdventureTravel = "பயணம் மற்றும் சாகசம்",
+                sectionScienceWeather = "அறிவியல் மற்றும் வானிலை",
+                sectionBedtimeFolktales = "இரவு நேரக் கதைகள்",
+                sectionCreateStory = "புதிய கதை உருவாக்குக",
+                sectionReadAgain = "மீண்டும் படிக்க",
+                moreLanguagesLabel = "மேலும் மொழிகள்",
+                listenButton = "கேட்க",
+                listeningButton = "கேட்கிறது...",
+                speakButton = "பேச",
+                speakingButton = "உங்கள் முறை...",
+                listenSubLabel = "கதையைக் கேட்க",
+                speakSubLabel = "நீங்கள் வாசிக்க",
+                filterChipLabels = mapOf("All" to "அனைத்தும்", "Games" to "விளையாட்டு", "Level 1" to "நிலை 1", "Level 2" to "நிலை 2", "Level 3" to "நிலை 3", "Level 4" to "நிலை 4"),
+                gameInfoByKey = mapOf(
+                    "JUMBLE" to Triple("எழுத்துப் புதிர்", "எழுத்துக்களை வரிசைப்படுத்தி சொல் உருவாக்கு", "எழுத்து"),
+                    "BALLOON" to Triple("பலூன் உடை", "சரியான ஒலி உள்ள பலூனைத் தொடு", "ஒலிகள்"),
+                    "SENTENCE" to Triple("வாக்கியம் அமை", "சொற்களை இணைத்து வாக்கியம் உருவாக்கு", "வாக்கியம்"),
+                    "RHYME" to Triple("ஓசைச் சொற்கள்", "ஒரே ஓசையுடைய சொற்களை இணை", "ஓசை"),
+                    "MISSING_SOUND" to Triple("விடுபட்ட எழுத்து", "சொல்லில் விடுபட்ட எழுத்தைக் கண்டுபிடி", "எழுத்துக்கள்"),
+                    "LISTEN_FIND" to Triple("கேட்டுக் கண்டுபிடி", "குரலைக் கேட்டு சரியான படத்தைத் தேர்ந்தெடு", "கேட்டல்"),
+                    "OPPOSITES" to Triple("எதிர்ச்சொற்கள்", "எதிர் பொருள் கொண்ட சொற்களை இணை", "சொற்கள்"),
+                    "COUNT_COLOR" to Triple("எண்களும் கணக்கும்", "படங்களை எண்ணி விடையைக் கண்டுபிடி", "எண்கள்"),
+                    "SPEED" to Triple("வேக வாசிப்பு", "30 விநாடி வாசிப்பு சவால்", "வாசிப்பு"),
+                    "VOCAB" to Triple("சொல் பொருள்", "படங்களுடன் புதிய சொற்களைக் கற்க", "படங்கள்")
+                )
+            )
+
+            "en_te" -> SeekhAppStrings(
+                isRtl = false,
+                tabLibrary = "లైబ్రరీ",
+                tabPrizes = "బహుమతులు",
+                tabActivity = "ప్రగతి",
+                readCta = "చదవండి",
+                playCta = "ఆడండి",
+                seeAll = "అన్నీ చూడండి",
+                levelPrefix = "లెవెల్",
+                alphabetBookTag = "తెలుగు వర్ణమాల • అ నుండి ఱ",
+                storyOfTheDayTag = "నేటి ప్రత్యేక పుస్తకం",
+                searchPlaceholder = "కథలను వెతకండి...",
+                sectionAssignedHomework = "తరగతి హోంవర్క్",
+                sectionRecommended = "సూచించిన కథలు",
+                sectionLevel1 = "లెవెల్ 1 కథలు",
+                sectionLevel2 = "లెవెల్ 2 కథలు",
+                sectionLevel3 = "లెవెల్ 3 కథలు",
+                sectionLevel4 = "లెవెల్ 4 కథలు",
+                sectionPlayGames = "విద్యా గేమ్‌లు ఆడండి",
+                sectionAnimalsNature = "జంతువులు & ప్రకృతి",
+                sectionSchoolKindness = "పాఠశాల & మంచితనం",
+                sectionPhonics = "అక్షరాలు & శబ్దాలు",
+                sectionFamilyFriends = "కుటుంబం & స్నేహితులు",
+                sectionNumbersRhymes = "సంఖ్యలు & పాటలు",
+                sectionStorySeries = "కథల సిరీస్",
+                sectionAdventureTravel = "సాహసం & ప్రయాణం",
+                sectionScienceWeather = "సైన్స్ & వాతావరణం",
+                sectionBedtimeFolktales = "జానపద కథలు",
+                sectionCreateStory = "మీ సొంత కథను రాయండి",
+                sectionReadAgain = "మళ్ళీ చదవండి",
+                moreLanguagesLabel = "మరిన్ని భాషలు",
+                listenButton = "వినండి",
+                listeningButton = "వింటున్నారు...",
+                speakButton = "చదవండి",
+                speakingButton = "మీ వంతు...",
+                listenSubLabel = "కథ వినడానికి",
+                speakSubLabel = "పైకి చదవడానికి",
+                filterChipLabels = mapOf("All" to "అన్నీ", "Games" to "ఆటలు", "Level 1" to "లెవెల్ 1", "Level 2" to "లెవెల్ 2", "Level 3" to "లెవెల్ 3", "Level 4" to "లెవెల్ 4"),
+                gameInfoByKey = mapOf(
+                    "JUMBLE" to Triple("అక్షరాల ఆట", "అక్షరాలను కలిపి సరైన పదం তৈরি చేయండి", "స్పెల్లింగ్"),
+                    "BALLOON" to Triple("బెలూన్లు పగలగొట్టు", "సరైన శబ్దం ఉన్న బెలూన్‌ను ఎంచుకోండి", "శబ్దాలు"),
+                    "SENTENCE" to Triple("వాక్య నిర్మాణం", "పదాలను వరుసలో పెట్టి వాక్యం చేయండి", "వాక్యాలు"),
+                    "RHYME" to Triple("ప్రాస పదాలు", "ఒకే శబ్దంతో ముగిసే పదాలను జతపరచండి", "ప్రాస"),
+                    "MISSING_SOUND" to Triple("తప్పిపోయిన అక్షరం", "పదంలో ఖాళీగా ఉన్న అక్షరాన్ని కనుగొనండి", "అక్షరాలు"),
+                    "LISTEN_FIND" to Triple("విని గుర్తించు", "విని సరైన చిత్రాన్ని ఎంచుకోండి", "వినడం"),
+                    "OPPOSITES" to Triple("వ్యతిరేక పదాలు", "వ్యతిరేక అర్థం గల పదాలను జతచేయండి", "పదాలు"),
+                    "COUNT_COLOR" to Triple("అంకెలు & లెక్కలు", "బొమ్మలను లెక్కించి సమాధానం చెప్పండి", "అంకెలు"),
+                    "SPEED" to Triple("వేగంగా చదవడం", "30 సెకన్ల పఠన సవాలు", "వేగం"),
+                    "VOCAB" to Triple("పదాల అర్థాలు", "చిత్రాల ద్వారా కొత్త పదాలు నేర్చుకోండి", "చిత్రాలు")
+                )
+            )
+
+            "en_mr" -> SeekhAppStrings(
+                isRtl = false,
+                tabLibrary = "लायब्ररी",
+                tabPrizes = "बक्षिसे",
+                tabActivity = "प्रगती",
+                readCta = "वाचा",
+                playCta = "खेळा",
+                seeAll = "सर्व पहा",
+                levelPrefix = "लेव्हल",
+                alphabetBookTag = "मराठी मुळाक्षरे • अ ते ज्ञ",
+                storyOfTheDayTag = "आजचे विशेष पुस्तक",
+                searchPlaceholder = "गोष्टी शोधा...",
+                sectionAssignedHomework = "शाळेचा गृहपाठ",
+                sectionRecommended = "शिफारस केलेल्या गोष्टी",
+                sectionLevel1 = "लेव्हल १ च्या गोष्टी",
+                sectionLevel2 = "लेव्हल २ च्या गोष्टी",
+                sectionLevel3 = "लेव्हल ३ च्या गोष्टी",
+                sectionLevel4 = "लेव्हल ४ च्या गोष्टी",
+                sectionPlayGames = "शैक्षणिक खेळ खेळा",
+                sectionAnimalsNature = "प्राणी आणि निसर्ग",
+                sectionSchoolKindness = "शाळा आणि चांगुलपणा",
+                sectionPhonics = "मुळाक्षरे आणि ध्वनी",
+                sectionFamilyFriends = "कुटुंब आणि मित्र",
+                sectionNumbersRhymes = "अंक आणि गाणी",
+                sectionStorySeries = "गोष्टींची मालिका",
+                sectionAdventureTravel = "प्रवास आणि साहस",
+                sectionScienceWeather = "विज्ञान आणि हवामान",
+                sectionBedtimeFolktales = "लोककथा आणि गोष्टी",
+                sectionCreateStory = "स्वतःची गोष्ट तयार करा",
+                sectionReadAgain = "पुन्हा वाचा",
+                moreLanguagesLabel = "इतर भाषा निवडा",
+                listenButton = "ऐका",
+                listeningButton = "ऐकत आहे...",
+                speakButton = "बोला",
+                speakingButton = "तुमची पाळी...",
+                listenSubLabel = "गोष्ट ऐकण्यासाठी",
+                speakSubLabel = "मोठ्याने वाचण्यासाठी",
+                filterChipLabels = mapOf("All" to "सर्व", "Games" to "खेळ", "Level 1" to "लेव्हल १", "Level 2" to "लेव्हल २", "Level 3" to "लेव्हल ३", "Level 4" to "लेव्हल ४"),
+                gameInfoByKey = mapOf(
+                    "JUMBLE" to Triple("अक्षरे जुळवा", "अक्षरे योग्य क्रमाने लावून शब्द बनवा", "स्पेलिंग"),
+                    "BALLOON" to Triple("फुगे फोडा", "योग्य ध्वनी असलेले फुगे फोडा", "ध्वनी"),
+                    "SENTENCE" to Triple("वाक्य तयार करा", "शब्दांची मांडणी करून वाक्य पूर्ण करा", "वाक्य"),
+                    "RHYME" to Triple("यमक जुळणारे शब्द", "सारख्या आवाजाचे शब्द जुळवा", "यमक"),
+                    "MISSING_SOUND" to Triple("हरवलेले अक्षर", "शब्दातील रिकामे अक्षर ओळखा", "अक्षरे"),
+                    "LISTEN_FIND" to Triple("ऐका आणि शोधा", "आवाज ऐकून योग्य चित्र निवडा", "श्रवण"),
+                    "OPPOSITES" to Triple("विरुद्धार्थी शब्द", "उलट अर्थाचे शब्द जुळवा", "शब्दसंग्रह"),
+                    "COUNT_COLOR" to Triple("मोजणी आणि अंक", "चित्रे मोजा आणि गणित सोडवा", "अंक"),
+                    "SPEED" to Triple("जलद वाचन", "३० सेकंदांत जलद वाचण्याचे आव्हान", "ओघ"),
+                    "VOCAB" to Triple("शब्दांचे अर्थ", "चित्रांवरून नवीन शब्द शिका", "चित्रे")
+                )
+            )
+
+            "en_gu" -> SeekhAppStrings(
+                isRtl = false,
+                tabLibrary = "લાઇબ્રેરી",
+                tabPrizes = "ઇનામો",
+                tabActivity = "પ્રગતિ",
+                readCta = "વાંચો",
+                playCta = "રમો",
+                seeAll = "બધું જુઓ",
+                levelPrefix = "લેવલ",
+                alphabetBookTag = "ગુજરાતી મૂળાક્ષરો • અ થી જ્ઞ",
+                storyOfTheDayTag = "આજનું ખાસ પુસ્તક",
+                searchPlaceholder = "વાર્તાઓ શોધો...",
+                sectionAssignedHomework = "શાળાનું હોમવર્ક",
+                sectionRecommended = "ભલામણ કરેલ વાર્તાઓ",
+                sectionLevel1 = "લેવલ ૧ ની વાર્તાઓ",
+                sectionLevel2 = "લેવલ ૨ ની વાર્તાઓ",
+                sectionLevel3 = "લેવલ ૩ ની વાર્તાઓ",
+                sectionLevel4 = "લેવલ ૪ ની વાર્તાઓ",
+                sectionPlayGames = "જ્ઞાનવર્ધક રમતો રમો",
+                sectionAnimalsNature = "પ્રાણીઓ અને પ્રકૃતિ",
+                sectionSchoolKindness = "શાળા અને સારી ટેવો",
+                sectionPhonics = "મૂળાક્ષરો અને અવાજ",
+                sectionFamilyFriends = "પરિવાર અને મિત્રો",
+                sectionNumbersRhymes = "અંકો અને જોડકણાં",
+                sectionStorySeries = "વાર્તા શ્રેણી",
+                sectionAdventureTravel = "પ્રવાસ અને સાહસ",
+                sectionScienceWeather = "વિજ્ઞાન અને હવામાન",
+                sectionBedtimeFolktales = "લોકવાર્તાઓ",
+                sectionCreateStory = "તમારી પોતાની વાર્તા બનાવો",
+                sectionReadAgain = "ફરીથી વાંચો",
+                moreLanguagesLabel = "વધુ ભાષાઓ",
+                listenButton = "સાંભળો",
+                listeningButton = "સાંભળી રહ્યા છીએ...",
+                speakButton = "બોલો",
+                speakingButton = "તમારો વારો...",
+                listenSubLabel = "વાર્તા સાંભળવા માટે",
+                speakSubLabel = "મોટેથી વાંચવા માટે",
+                filterChipLabels = mapOf("All" to "બધી", "Games" to "રમતો", "Level 1" to "લેવલ ૧", "Level 2" to "લેવલ ૨", "Level 3" to "લેવલ ૩", "Level 4" to "લેવલ ૪"),
+                gameInfoByKey = mapOf(
+                    "JUMBLE" to Triple("અક્ષરો ગોઠવો", "આડાઅવળા અક્ષરો ગોઠવી સાચો શબ્દ બનાવો", "સ્પેલિંગ"),
+                    "BALLOON" to Triple("ફુગ્ગા ફોડો", "સાચા અવાજવાળા ફુગ્ગા પસંદ કરો", "અવાજ"),
+                    "SENTENCE" to Triple("વાક્ય બનાવો", "શબ્દો ગોઠવીને સાચું વાક્ય બનાવો", "વાક્યો"),
+                    "RHYME" to Triple("પ્રાસવાળા શબ્દો", "સરખા અવાજવાળા શબ્દો જોડો", "પ્રાસ"),
+                    "MISSING_SOUND" to Triple("ખૂટતા અક્ષરો", "શબ્દમાં ખૂટતો અક્ષર શોધો", "અક્ષરો"),
+                    "LISTEN_FIND" to Triple("સાંભળો અને શોધો", "અવાજ સાંભળીને સાચું ચિત્ર પસંદ કરો", "સાંભળવું"),
+                    "OPPOSITES" to Triple("વિરોધી શબ્દો", "વિરોધી અર્થવાળા શબ્દો જોડો", "શબ્દભંડોળ"),
+                    "COUNT_COLOR" to Triple("ગણતરી અને અંકો", "ચિત્રો ગણો અને સરળ ગણિત ઉકેલો", "અંકો"),
+                    "SPEED" to Triple("ઝડપી વાંચન", "૩૦ સેકન્ડમાં ઝડપી વાંચનનો પડકાર", "પ્રવાહ"),
+                    "VOCAB" to Triple("શબ્દોના અર્થ", "ચિત્રો દ્વારા નવા શબ્દો શીખો", "ચિત્રો")
+                )
+            )
+
+            else -> SeekhAppStrings(
+                isRtl = false,
+                tabLibrary = "Library",
+                tabPrizes = "Prizes",
+                tabActivity = "Activity",
+                readCta = "Read",
+                playCta = "Play",
+                seeAll = "See all",
+                levelPrefix = "Level",
+                alphabetBookTag = "Basic Alphabets • A to Z",
+                storyOfTheDayTag = "Story of the day",
+                searchPlaceholder = "Search stories by title, level, or phonics...",
+                sectionAssignedHomework = "Assigned homework",
+                sectionRecommended = "Recommended stories",
+                sectionLevel1 = "Level 1 stories",
+                sectionLevel2 = "Level 2 stories",
+                sectionLevel3 = "Level 3 stories",
+                sectionLevel4 = "Level 4 stories",
+                sectionPlayGames = "Play games",
+                sectionAnimalsNature = "Animals & Nature",
+                sectionSchoolKindness = "School & Kindness",
+                sectionPhonics = "Phonics stories",
+                sectionFamilyFriends = "Family & Friends",
+                sectionNumbersRhymes = "Numbers & Rhymes",
+                sectionStorySeries = "Story Series",
+                sectionAdventureTravel = "Adventure & Travel",
+                sectionScienceWeather = "Science & Weather",
+                sectionBedtimeFolktales = "Bedtime & Folktales",
+                sectionCreateStory = "Create your own story",
+                sectionReadAgain = "Read again",
+                moreLanguagesLabel = "More languages",
+                listenButton = "Listen",
+                listeningButton = "Listening...",
+                speakButton = "Speak",
+                speakingButton = "Reading...",
+                listenSubLabel = "Hear the story",
+                speakSubLabel = "Read into mic",
+                filterChipLabels = emptyMap(),
+                gameInfoByKey = mapOf(
+                    "JUMBLE" to Triple("Jumbled Words", "Unscramble letters to spell words", "Spelling"),
+                    "BALLOON" to Triple("Pop The Balloons", "Pop rising phonics sound balloons", "Phonics"),
+                    "SENTENCE" to Triple("Sentence Builder", "Arrange words in order to build sentences", "Sentences"),
+                    "RHYME" to Triple("Rhyming Words", "Match words with the same ending sound", "Rhyming"),
+                    "MISSING_SOUND" to Triple("Missing Letters", "Choose the missing letters in story words", "Letters"),
+                    "LISTEN_FIND" to Triple("Listen & Find", "Listen to the voice clue and select the picture", "Listening"),
+                    "OPPOSITES" to Triple("Opposite Words", "Match words with opposite meanings", "Vocabulary"),
+                    "COUNT_COLOR" to Triple("Count & Numbers", "Count items and solve simple story math", "Numbers"),
+                    "SPEED" to Triple("Speed Reading", "30-second reading fluency challenge", "Fluency"),
+                    "VOCAB" to Triple("Word Meanings", "Learn picture vocabulary across 9 themes", "Pictures")
+                )
+            )
+        }
+    }
+
+    // Complete Language-Specific Basic Alphabets Book Pinned at the Very Top of the Home Screen for each of the 11 languages!
+    fun getAlphabetBookForLanguage(langCode: String): StoryBook {
+        val imgs = listOf(
+            "books/sw_13916/image_2.webp",
+            "books/sw_15195/image_4.webp",
+            "books/sw_37273/image_2.webp",
+            "books/sw_44485/image_2.webp",
+            "books/sw_15058/image_2.webp",
+            "books/sw_45764/image_6.webp",
+            "books/sw_13916/image_5.webp",
+            "books/sw_37273/image_5.webp",
+            "books/sw_44485/image_6.webp",
+            "books/sw_15195/image_14.webp",
+            "books/sw_13916/image_14.webp",
+            "books/sw_37273/image_14.webp",
+            "books/sw_44485/image_14.webp"
+        )
+        return when (langCode) {
+            "en" -> StoryBook(
+                id = "alphabet_book_en",
+                title = "English Alphabets (A to Z)",
+                nativeTitleUrdu = "Learn letters A to Z with phonics & example words",
+                nativeTitleHindi = "A to Z Phonics & Sight Words",
+                author = "Seekh Reading Curriculum",
+                illustrator = "StoryWeaver Illustrations",
+                publisher = "Foundational Literacy Pack",
+                level = 1,
+                coverAssetPath = "books/sw_13916/cover_image.webp",
+                isFeaturedHero = true,
+                bookType = "ALPHABET",
+                categoryTag = "Numbers & Rhymes",
+                phonicsSkillTag = "Alphabets: A to Z",
+                alphabetBadgeLetters = "A  B  C  D",
+                pages = listOf(
+                    StoryPage(1, imgs[0], "A is for Apple and Ant. B is for Ball and Butterfly.", "", "A a (Apple, Ant) • B b (Ball, Butterfly)", "", setOf("apple", "ball", "butterfly"), alphabetBadgeLetters = "A a   •   B b"),
+                    StoryPage(2, imgs[1], "C is for Cat and Cloud. D is for Drum and Duck.", "", "C c (Cat, Cloud) • D d (Drum, Duck)", "", setOf("clouds", "drummer"), alphabetBadgeLetters = "C c   •   D d"),
+                    StoryPage(3, imgs[2], "E is for Elephant and Egg. F is for Fish and Frog.", "", "E e (Elephant, Egg) • F f (Fish, Frog)", "", setOf("fish", "frog"),
+                        StoryQuizQuestion("Which letter does the word 'Apple' start with?", listOf("Letter A", "Letter D", "Letter F"), 0),
+                        alphabetBadgeLetters = "E e   •   F f"
+                    ),
+                    StoryPage(4, imgs[3], "G is for Garden and Gate. H is for House and Hat.", "", "G g (Garden, Gate) • H h (House, Hat)", "", setOf("garden", "gate"), alphabetBadgeLetters = "G g   •   H h"),
+                    StoryPage(5, imgs[4], "I is for Igloo and Ink. J is for Jump and Jam.", "", "I i (Igloo, Ink) • J j (Jump, Jam)", "", setOf("inside"), alphabetBadgeLetters = "I i   •   J j"),
+                    StoryPage(6, imgs[5], "K is for Kite and King. L is for Ladybird and Leaf.", "", "K k (Kite, King) • L l (Ladybird, Leaf)", "", setOf("ladybird", "leaves"),
+                        StoryQuizQuestion("Which letter does 'Ladybird' start with?", listOf("Letter L", "Letter K", "Letter G"), 0),
+                        alphabetBadgeLetters = "K k   •   L l"
+                    ),
+                    StoryPage(7, imgs[6], "M is for Moon and Mother. N is for Nest and Night.", "", "M m (Moon, Mother) • N n (Nest, Night)", "", setOf("moon", "mother"), alphabetBadgeLetters = "M m   •   N n"),
+                    StoryPage(8, imgs[7], "O is for Ocean and Orange. P is for Pond and Pencil.", "", "O o (Ocean, Orange) • P p (Pond, Pencil)", "", setOf("ocean"), alphabetBadgeLetters = "O o   •   P p"),
+                    StoryPage(9, imgs[8], "Q is for Queen and Quilt. R is for Rain and Rainbow.", "", "Q q (Queen, Quilt) • R r (Rain, Rainbow)", "", setOf("rain", "rainbow"), alphabetBadgeLetters = "Q q   •   R r"),
+                    StoryPage(10, imgs[9], "S is for Sun and Star. T is for Train and Tree.", "", "S s (Sun, Star) • T t (Train, Tree)", "", setOf("sun", "stars", "train", "tree"),
+                        StoryQuizQuestion("Which letter does 'Sun' and 'Star' begin with?", listOf("Letter S", "Letter R", "Letter T"), 0),
+                        alphabetBadgeLetters = "S s   •   T t"
+                    ),
+                    StoryPage(11, imgs[10], "U is for Umbrella. V is for Van and Violin.", "", "U u (Umbrella) • V v (Van, Violin)", "", setOf("umbrella"), alphabetBadgeLetters = "U u   •   V v"),
+                    StoryPage(12, imgs[11], "W is for Water and Wings. X is for Xylophone.", "", "W w (Water, Wings) • X x (Xylophone)", "", setOf("water", "wings"), alphabetBadgeLetters = "W w   •   X x"),
+                    StoryPage(13, imgs[12], "Y is for Yellow. Z is for Zebra and Zoo. Now you know all 26 letters from A to Z!", "", "Y y (Yellow) • Z z (Zebra, Zoo)", "", setOf("yellow"),
+                        StoryQuizQuestion("How many letters are in the English Alphabet from A to Z?", listOf("26 letters", "10 letters", "50 letters"), 0),
+                        alphabetBadgeLetters = "Y y   •   Z z"
+                    )
+                )
+            )
+
+            "en_ur" -> StoryBook(
+                id = "alphabet_book_en_ur",
+                title = "اردو حروفِ تہجی (ا، ب، پ، ت)",
+                nativeTitleUrdu = "ا سے ے تک مکمل اردو قاعدہ اور الفاظ",
+                nativeTitleHindi = "Urdu Alphabets (Alif, Be, Pe, Te)",
+                author = "اردو بنیادی قاعدہ",
+                illustrator = "StoryWeaver Illustrations",
+                publisher = "Foundational Literacy Pack",
+                level = 1,
+                coverAssetPath = "books/sw_13916/cover_image.webp",
+                isFeaturedHero = true,
+                bookType = "ALPHABET",
+                categoryTag = "Numbers & Rhymes",
+                phonicsSkillTag = "حروفِ تہجی: ا تا ے",
+                alphabetBadgeLetters = "ا  ب  پ  ت",
+                pages = listOf(
+                    StoryPage(1, imgs[0], "Alif (ا) is for Anar (Pomegranate). Alif Madd (آ) is for Aam (Mango).", "", "ا سے انار، آ سے آم — آؤ مل کر حروفِ تہجی پڑھیں!", "", setOf("apple"), alphabetBadgeLetters = "ا   آ"),
+                    StoryPage(2, imgs[1], "Be (ب) is for Billi (Cat) and Badal (Cloud). Pe (پ) is for Patang (Kite) and Pani (Water).", "", "ب سے بلی اور بادل • پ سے پتنگ اور پانی", "", setOf("clouds", "water"), alphabetBadgeLetters = "ب   پ"),
+                    StoryPage(3, imgs[2], "Te (ت) is for Titli (Butterfly). Tte (ٹ) is for Tamatar (Tomato). Se (ث) is for Samar (Fruit).", "", "ت سے تتلی • ٹ سے ٹماٹر • ث سے ثمر (پھل)", "", setOf("butterfly"),
+                        StoryQuizQuestion("تتلی (Titli) کس حرف سے شروع ہوتی ہے؟", listOf("ت (Te)", "ب (Be)", "ج (Jeem)"), 0),
+                        alphabetBadgeLetters = "ت   ٹ   ث"
+                    ),
+                    StoryPage(4, imgs[3], "Jeem (ج) is for Joota (Shoe). Che (چ) is for Chand (Moon). He (ح) is forulwa. Khe (خ) is for Khargosh.", "", "ج سے جوتا • چ سے چاند • ح سے حلوائی • خ سے خرگوش", "", setOf("shoe", "moon"), alphabetBadgeLetters = "ج   چ   ح   خ"),
+                    StoryPage(5, imgs[4], "Dal (د) is for Darakht (Tree). Ddal (ڈ) is for Dhol (Drum). Zal (ذ) is for Zakhira.", "", "د سے درخت اور دوست • ڈ سے ڈھول • ذ سے ذخیرہ", "", setOf("tree", "drummer", "friends"), alphabetBadgeLetters = "د   ڈ   ذ"),
+                    StoryPage(6, imgs[5], "Re (ر) is for Rail Gari (Train). Rre (ڑ) is for Pahar. Ze (ز) is for Zameen. Zhe (ژ) is for Zhala-bari.", "", "ر سے ریل گاڑی • ڑ سے پہاڑ • ز سے زمین • ژ سے ژالہ باری", "", setOf("train"),
+                        StoryQuizQuestion("ریل گاڑی (Rail Gari) کس حرف سے شروع ہوتی ہے؟", listOf("ر (Re)", "د (Dal)", "س (Seen)"), 0),
+                        alphabetBadgeLetters = "ر   ڑ   ز   ژ"
+                    ),
+                    StoryPage(7, imgs[6], "Seen (س) is for Suraj (Sun) and Seb (Apple). Sheen (ش) is for Sher (Lion) and Sham.", "", "س سے سورج اور سیب • ش سے شیر اور شمع", "", setOf("sun", "apple"), alphabetBadgeLetters = "س   ش"),
+                    StoryPage(8, imgs[7], "Suad (ص) is for Sabun (Soap). Zuad (ض) is for Zaeef. Toe (ط) is for Tota (Parrot). Zoe (ظ) is for Zaraf.", "", "ص سے صابن • ض سے ضعیف • ط سے طوطا • ظ سے ظروف", "", setOf("bright"), alphabetBadgeLetters = "ص   ض   ط   ظ"),
+                    StoryPage(9, imgs[8], "Ain (ع) is for Ainak (Glasses). Ghain (غ) is for Ghubara (Balloon).", "", "ع سے عینک • غ سے غبارہ", "", setOf("special"), alphabetBadgeLetters = "ع   غ"),
+                    StoryPage(10, imgs[9], "Fe (ف) is for Fawara (Fountain). Qaf (ق) is for Qalam (Pen).", "", "ف سے فوارہ • ق سے قلم اور قالین", "", setOf("books"), alphabetBadgeLetters = "ف   ق"),
+                    StoryPage(11, imgs[10], "Kaf (ک) is for Kitab (Book). Gaf (گ) is for Gend (Ball) and Gulab (Rose).", "", "ک سے کتاب • گ سے گیند اور گلاب", "", setOf("books", "ball", "flower"),
+                        StoryQuizQuestion("کتاب (Kitab) کس حرف سے شروع ہوتی ہے؟", listOf("ک (Kaf)", "ق (Qaf)", "ل (Lam)"), 0),
+                        alphabetBadgeLetters = "ک   گ"
+                    ),
+                    StoryPage(12, imgs[11], "Lam (ل) is for Ladybird. Meem (م) is for Machhli (Fish) and मोर. Noon (ن) is for Nadi (River).", "", "ل سے لیموں • م سے مچھلی • ن سے ندی", "", setOf("fish", "ladybird"), alphabetBadgeLetters = "ل   م   ن"),
+                    StoryPage(13, imgs[12], "Wao (و) is for Waqt. He (ہ) is for Hathi. Hamza (ء), Choti Ye (ی), Bari Ye (ے) — Yakka and Tare (Stars)!", "", "و سے ورق • ہ سے ہاتھی • ء • ی • ے سے تارے (مکمل حروفِ تہجی!)", "", setOf("stars"),
+                        StoryQuizQuestion("اردو حروفِ تہجی کا پہلا اور آخری حرف کون سا ہے؟", listOf("ا اور ے", "ب اور ن", "س اور م"), 0),
+                        alphabetBadgeLetters = "و   ہ   ء   ی   ے"
+                    )
+                )
+            )
+
+            "en_hi" -> StoryBook(
+                id = "alphabet_book_en_hi",
+                title = "हिंदी वर्णमाला (अ, आ, इ, क, ख)",
+                nativeTitleUrdu = "अ से ज्ञ तक स्वर और व्यंजन वर्णमाला",
+                nativeTitleHindi = "अ से ज्ञ तक स्वर और व्यंजन वर्णमाला",
+                author = "हिंदी अक्षर ज्ञान",
+                illustrator = "StoryWeaver Illustrations",
+                publisher = "Foundational Literacy Pack",
+                level = 1,
+                coverAssetPath = "books/sw_13916/cover_image.webp",
+                isFeaturedHero = true,
+                bookType = "ALPHABET",
+                categoryTag = "Numbers & Rhymes",
+                phonicsSkillTag = "वर्णमाला: अ से ज्ञ",
+                alphabetBadgeLetters = "अ  आ  इ  क",
+                pages = listOf(
+                    StoryPage(1, imgs[0], "A (अ) is for Anar (Pomegranate). Aa (आ) is for Aam (Mango). I (इ) is for Imli. Ee (ई) is for Eekh.", "", "अ से अनार • आ से आम • इ से इमली • ई से ईख", "अ से अनार • आ से आम • इ से इमली • ई से ईख", setOf("apple"), alphabetBadgeLetters = "अ   आ   इ   ई"),
+                    StoryPage(2, imgs[1], "U (उ) is for Ullu (Owl). Oo (ऊ) is for Oon (Wool). Ri (ऋ) is for Rishi.", "", "उ से उल्लू • ऊ से ऊन • ऋ से ऋषि", "उ से उल्लू • ऊ से ऊन • ऋ से ऋषि", setOf("bright"), alphabetBadgeLetters = "उ   ऊ   ऋ"),
+                    StoryPage(3, imgs[2], "E (ए) is for Ek (One). Ai (ऐ) is for Ainak (Glasses). O (ओ) is for Okhli. Au (औ) is for Aurat.", "", "ए से एक • ऐ से ऐनक • ओ से ओखली • औ से औरत • अं से अंगूर", "ए से एक • ऐ से ऐनक • ओ से ओखली • औ से औरत • अं से अंगूर", setOf("special"),
+                        StoryQuizQuestion("'आम' (Mango) किस स्वर से शुरू होता है?", listOf("आ", "इ", "उ"), 0),
+                        alphabetBadgeLetters = "ए   ऐ   ओ   औ   अं   अः"
+                    ),
+                    StoryPage(4, imgs[3], "Ka (क) is for Kamal (Lotus) and Kitab. Kha (ख) is for Khargosh. Ga (ग) is for Gamla. Gha (घ) is for Ghar (Home).", "", "क से कमल • ख से खरगोश • ग से गमला • घ से घर", "क से कमल • ख से खरगोश • ग से गमला • घ से घर", setOf("flower", "books"), alphabetBadgeLetters = "क   ख   ग   घ   ङ"),
+                    StoryPage(5, imgs[4], "Cha (च) is for Chand (Moon). Chha (छ) is for Chhatri (Umbrella). Ja (ज) is for Jahaz. Jha (झ) is for Jharna.", "", "च से चाँद • छ से छतरी • ज से जहाज़ • झ से झरना", "च से चाँद • छ से छतरी • ज से जहाज़ • झ से झरना", setOf("moon", "umbrella"), alphabetBadgeLetters = "च   छ   ज   झ   ञ"),
+                    StoryPage(6, imgs[5], "Ta (ट) is for Tamatar. Tha (ठ) is for Thathera. Da (ड) is for Damru. Dha (ढ) is for Dholak (Drum).", "", "ट से टमाटर • ठ से ठठेरा • ड से डमरू • ढ से ढोलक", "ट से टमाटर • ठ से ठठेरा • ड से डमरू • ढ से ढोलक", setOf("drummer"), alphabetBadgeLetters = "ट   ठ   ड   ढ   ण"),
+                    StoryPage(7, imgs[6], "Ta (त) is for Titli (Butterfly) and Tara (Star). Tha (थ) is for Thali. Da (द) is for Darwaza. Dha (ध) is for Dhanush. Na (न) is for Nadi.", "", "त से तितली • थ से थाली • द से दरवाज़ा • ध से धनुष • न से नदी", "त से तितली • थ से थाली • द से दरवाज़ा • ध से धनुष • न से नदी", setOf("butterfly", "stars"),
+                        StoryQuizQuestion("'तितली' (Butterfly) किस अक्षर से शुरू होती है?", listOf("त", "क", "प"), 0),
+                        alphabetBadgeLetters = "त   थ   द   ध   न"
+                    ),
+                    StoryPage(8, imgs[7], "Pa (प) is for Patang (Kite) and Pani. Pha (फ) is for Phool (Flower). Ba (ब) is for Badal. Bha (भ) is for Bhalu. Ma (म) is for Machhli (Fish).", "", "प से पतंग • फ से फूल • ब से बादल • भ से भालू • म से मछली", "प से पतंग • फ से फूल • ब से बादल • भ से भालू • म से मछली", setOf("flower", "clouds", "fish"), alphabetBadgeLetters = "प   फ   ब   भ   म"),
+                    StoryPage(9, imgs[8], "Ya (य) is for Yatra. Ra (र) is for Railgari (Train). La (ल) is for Ladki. Va (व) is for Vriksh (Tree).", "", "य से यात्रा • र से रेलगाड़ी • ल से लट्टू • व से वृक्ष (पेड़)", "य से यात्रा • र से रेलगाड़ी • ल से लट्टू • व से वृक्ष (पेड़)", setOf("train", "tree"), alphabetBadgeLetters = "य   र   ल   व"),
+                    StoryPage(10, imgs[9], "Sha (श) is for Sher. Sha (ष) is for Shatkon. Sa (स) is for Suraj (Sun). Ha (ह) is for Hathi (Elephant).", "", "श से शेर • ष से षट्कोण • स से सूरज • ह से हाथी", "श से शेर • ष से षट्कोण • स से सूरज • ह से हाथी", setOf("sun"), alphabetBadgeLetters = "श   ष   स   ह"),
+                    StoryPage(11, imgs[10], "Ksha (क्ष) is for Kshatriya. Tra (त्र) is for Trishul. Gya (ज्ञ) is for Gyani (Wise Scholar). Shra (श्र) is for Shram.", "", "क्ष से कक्षा • त्र से त्रिकोण • ज्ञ से ज्ञान • श्र से परिश्रम", "क्ष से कक्षा • त्र से त्रिकोण • ज्ञ से ज्ञान • श्र से परिश्रम", setOf("books", "school"),
+                        StoryQuizQuestion("'सूरज' (Sun) किस अक्षर से शुरू होता है?", listOf("स", "म", "च"), 0),
+                        alphabetBadgeLetters = "क्ष   त्र   ज्ञ   श्र"
+                    )
+                )
+            )
+
+            "en_ar" -> StoryBook(
+                id = "alphabet_book_en_ar",
+                title = "الحروف الأبجدية العربية (أ، ب، ت، ث)",
+                nativeTitleUrdu = "تعلّم الحروف العربية من الألف إلى الياء مع الكلمات",
+                nativeTitleHindi = "Arabic Alphabets (Alif, Ba, Ta, Tha)",
+                author = "منهج القراءة العربي",
+                illustrator = "StoryWeaver Illustrations",
+                publisher = "Foundational Literacy Pack",
+                level = 1,
+                coverAssetPath = "books/sw_13916/cover_image.webp",
+                isFeaturedHero = true,
+                bookType = "ALPHABET",
+                categoryTag = "Numbers & Rhymes",
+                phonicsSkillTag = "الحروف: أ إلى ي",
+                alphabetBadgeLetters = "أ  ب  ت  ث",
+                pages = listOf(
+                    StoryPage(1, imgs[0], "Alif (أ) is for Arnab (Rabbit). Ba (ب) is for Batta (Duck) and Bayt (House).", "", "أ - أرنب وأسد • ب - بطة وبيت", "", setOf("friends"), alphabetBadgeLetters = "أ   ب"),
+                    StoryPage(2, imgs[1], "Ta (ت) is for Tuffaha (Apple). Tha (ث) is for Tha'lab (Fox).", "", "ت - تفاحة وتاج • ث - ثعلب وثوب", "", setOf("apple"), alphabetBadgeLetters = "ت   ث"),
+                    StoryPage(3, imgs[2], "Jeem (ج) is for Jamal (Camel). Ha (ح) is for Hisan (Horse). Kha (خ) is for Kharoof (Sheep).", "", "ج - جمل وجبل • ح - حصان وحديقة • خ - خروف وخبز", "", setOf("garden"),
+                        StoryQuizQuestion("بأي حرف تبدأ كلمة (تفاحة)؟", listOf("حرف التاء (ت)", "حرف الباء (ب)", "حرف الجيم (ج)"), 0),
+                        alphabetBadgeLetters = "ج   ح   خ"
+                    ),
+                    StoryPage(4, imgs[3], "Dal (د) is for Darraja (Bicycle). Dhal (ذ) is for Dhura (Corn).", "", "د - دراجة ودب • ذ - ذرة وذهب", "", setOf("bicycle"), alphabetBadgeLetters = "د   ذ"),
+                    StoryPage(5, imgs[4], "Ra (ر) is for Rumman (Pomegranate). Zay (ز) is for Zahra (Flower).", "", "ر - رمان ورمل • ز - زهرة وزرافة", "", setOf("flower"), alphabetBadgeLetters = "ر   ز"),
+                    StoryPage(6, imgs[5], "Seen (س) is for Samaka (Fish) and Sama (Sky). Sheen (ش) is for Shams (Sun) and Shajara (Tree).", "", "س - سمكة وسماء • ش - شمس وشجرة", "", setOf("fish", "sky", "sun", "tree"), alphabetBadgeLetters = "س   ش"),
+                    StoryPage(7, imgs[6], "Sad (ص) is for Saqr (Falcon). Dad (ض) is for Difda' (Frog).", "", "ص - صقر وصباح • ض - ضفدع وضوء", "", setOf("frog", "morning"), alphabetBadgeLetters = "ص   ض"),
+                    StoryPage(8, imgs[7], "Ta (ط) is for Ta'ira (Airplane). Za (ظ) is for Zarf (Envelope).", "", "ط - طائرة وطائر • ظ - ظرف وظل", "", setOf("flying"), alphabetBadgeLetters = "ط   ظ"),
+                    StoryPage(9, imgs[8], "Ain (ع) is for Usfoor (Bird). Ghain (غ) is for Ghayma (Cloud).", "", "ع - عصفور وعسل • غ - غيمة وغابة", "", setOf("clouds"), alphabetBadgeLetters = "ع   غ"),
+                    StoryPage(10, imgs[9], "Fa (ف) is for Farasha (Butterfly). Qaf (ق) is for Qamar (Moon) and Qitar (Train).", "", "ف - فراشة وفيل • ق - قمر وقطار", "", setOf("butterfly", "moon", "train"), alphabetBadgeLetters = "ف   ق"),
+                    StoryPage(11, imgs[10], "Kaf (ك) is for Kitab (Book) and Kura (Ball). Lam (ل) is for Laymoon (Lemon).", "", "ك - كتاب وكرة • ل - ليمون ولعبة", "", setOf("books", "ball"), alphabetBadgeLetters = "ك   ل"),
+                    StoryPage(12, imgs[11], "Meem (م) is for Madrasa (School) and Matar (Rain). Noon (ن) is for Najma (Star). Ha (هـ), Waw (و), Ya (ي)!", "", "م - مدرسة ومطر • ن - نجمة ونهر • هـ - هلال • و - وردة • ي - يد", "", setOf("school", "rain", "stars"),
+                        StoryQuizQuestion("بأي حرف تبدأ كلمة (شمس)؟", listOf("حرف الشين (ش)", "حرف السين (س)", "حرف القاف (ق)"), 0),
+                        alphabetBadgeLetters = "م   ن   هـ   و   ي"
+                    )
+                )
+            )
+
+            "en_es" -> StoryBook(
+                id = "alphabet_book_en_es",
+                title = "El Abecedario Español (A a Z, Ñ)",
+                nativeTitleUrdu = "Aprende las letras del abecedario de la A a la Z con la Ñ",
+                nativeTitleHindi = "Spanish Alphabets (A, B, C ... Ñ ... Z)",
+                author = "Seekh Español",
+                illustrator = "StoryWeaver Illustrations",
+                publisher = "Foundational Literacy Pack",
+                level = 1,
+                coverAssetPath = "books/sw_13916/cover_image.webp",
+                isFeaturedHero = true,
+                bookType = "ALPHABET",
+                categoryTag = "Numbers & Rhymes",
+                phonicsSkillTag = "Abecedario: A - Z",
+                alphabetBadgeLetters = "A  B  C  Ñ",
+                pages = listOf(
+                    StoryPage(1, imgs[0], "A is for Árbol (Tree) and Abeja (Bee). B is for Barco (Boat) and Ballena (Whale).", "A de Árbol y Abeja • B de Barco y Ballena", "A de Árbol y Abeja • B de Barco y Ballena", "", setOf("tree"), alphabetBadgeLetters = "A a   •   B b"),
+                    StoryPage(2, imgs[1], "C is for Casa (House) and Cielo (Sky). D is for Delfín (Dolphin) and Día (Day).", "C de Casa y Cielo • D de Delfín y Día", "C de Casa y Cielo • D de Delfín y Día", "", setOf("sky"), alphabetBadgeLetters = "C c   •   D d"),
+                    StoryPage(3, imgs[2], "E is for Estrella (Star) and Elefante. F is for Flor (Flower) and Familia.", "E de Estrella y Elefante • F de Flor y Familia", "E de Estrella y Elefante • F de Flor y Familia", "", setOf("stars", "flower"), alphabetBadgeLetters = "E e   •   F f"),
+                    StoryPage(4, imgs[3], "G is for Gato (Cat) and Girasol. H is for Hoja (Leaf). I is for Isla (Island).", "G de Gato • H de Hoja • I de Isla", "G de Gato • H de Hoja • I de Isla", "", setOf("leaves"), alphabetBadgeLetters = "G g   •   H h   •   I i"),
+                    StoryPage(5, imgs[4], "J is for Jardín (Garden). K is for Koala. L is for Luna (Moon) and Libro (Book).", "J de Jardín • K de Koala • L de Luna y Libro", "J de Jardín • K de Koala • L de Luna y Libro", "", setOf("garden", "moon", "books"), alphabetBadgeLetters = "J j   •   K k   •   L l"),
+                    StoryPage(6, imgs[5], "M is for Mariposa (Butterfly). N is for Nube (Cloud). Ñ is for Ñandú and Niño (Child).", "M de Mariposa • N de Nube • Ñ de Ñandú y Niño", "M de Mariposa • N de Nube • Ñ de Ñandú y Niño", "", setOf("butterfly", "clouds"),
+                        StoryQuizQuestion("¿Cuál es la letra especial del abecedario español en la palabra 'Niño'?", listOf("La letra Ñ", "La letra X", "La letra W"), 0),
+                        alphabetBadgeLetters = "M m   •   N n   •   Ñ ñ"
+                    ),
+                    StoryPage(7, imgs[6], "O is for Océano and Oso (Bear). P is for Pelota (Ball) and Pájaro (Bird). Q is for Queso.", "O de Océano • P de Pelota • Q de Queso", "O de Océano • P de Pelota • Q de Queso", "", setOf("ocean", "ball"), alphabetBadgeLetters = "O o   •   P p   •   Q q"),
+                    StoryPage(8, imgs[7], "R is for Rana (Frog) and Río. S is for Sol (Sun) and Sonrisa (Smile). T is for Tren (Train).", "R de Rana • S de Sol • T de Tren", "R de Rana • S de Sol • T de Tren", "", setOf("frog", "sun", "smile", "train"), alphabetBadgeLetters = "R r   •   S s   •   T t"),
+                    StoryPage(9, imgs[8], "U is for Uvas. V is for Viento. W, X, Y, and Z is for Zorro and Zapato (Shoe)!", "U de Uvas • V de Viento • X de Xilófono • Y • Z de Zapato", "U de Uvas • V de Viento • X de Xilófono • Y • Z de Zapato", "", setOf("shoe"), alphabetBadgeLetters = "U u • V v • W w • X x • Y y • Z z")
+                )
+            )
+
+            "en_pt" -> StoryBook(
+                id = "alphabet_book_en_pt",
+                title = "O Alfabeto Português (A a Z)",
+                nativeTitleUrdu = "Aprenda as letras de A a Z com sons e palavras",
+                nativeTitleHindi = "Portuguese Alphabets (A to Z)",
+                author = "Seekh Português",
+                illustrator = "StoryWeaver Illustrations",
+                publisher = "Foundational Literacy Pack",
+                level = 1,
+                coverAssetPath = "books/sw_13916/cover_image.webp",
+                isFeaturedHero = true,
+                bookType = "ALPHABET",
+                categoryTag = "Numbers & Rhymes",
+                phonicsSkillTag = "Alfabeto: A - Z",
+                alphabetBadgeLetters = "A  B  C  D",
+                pages = listOf(
+                    StoryPage(1, imgs[0], "A is for Abelha (Bee) and Árvore (Tree). B is for Bola (Ball) and Borboleta (Butterfly).", "", "A de Abelha e Árvore • B de Bola e Borboleta", "", setOf("tree", "ball", "butterfly"), alphabetBadgeLetters = "A a   •   B b"),
+                    StoryPage(2, imgs[1], "C is for Casa and Chuva (Rain). D is for Dia. E is for Estrela (Star). F is for Flor (Flower).", "", "C de Chuva • D de Dia • E de Estrela • F de Flor", "", setOf("rain", "stars", "flower"), alphabetBadgeLetters = "C c   •   D d   •   E e   •   F f"),
+                    StoryPage(3, imgs[2], "G is for Gato. H is for Hora. I is for Ilha. J is for Jardim (Garden). L is for Livro (Book) and Lua (Moon).", "", "G de Gato • J de Jardim • L de Livro e Lua", "", setOf("garden", "books", "moon"), alphabetBadgeLetters = "G g • H h • I i • J j • K k • L l"),
+                    StoryPage(4, imgs[3], "M is for Mar. N is for Nuvem (Cloud). O is for Oceano. P is for Peixe (Fish). Q is for Quadro.", "", "M de Mar • N de Nuvem • O de Oceano • P de Peixe", "", setOf("clouds", "ocean", "fish"), alphabetBadgeLetters = "M m • N n • O o • P p • Q q"),
+                    StoryPage(5, imgs[4], "R is for Rio. S is for Sol (Sun) and Sapo (Frog). T is for Trem (Train). U, V, W, X, Y, Z is for Zebra!", "", "R de Rio • S de Sol e Sapo • T de Trem • Z de Zebra", "", setOf("sun", "frog", "train"), alphabetBadgeLetters = "R r • S s • T t • U u • V v • Z z")
+                )
+            )
+
+            "en_bn" -> StoryBook(
+                id = "alphabet_book_en_bn",
+                title = "বাংলা বর্ণমালা (অ, আ, ই, ক, খ)",
+                nativeTitleUrdu = "স্বরবর্ণ ও ব্যঞ্জনবর্ণ — অ থেকে চন্দ্রবিন্দু",
+                nativeTitleHindi = "Bengali Alphabets (Swaroborno & Byanjonborno)",
+                author = "বাংলা বর্ণ পরিচয়",
+                illustrator = "StoryWeaver Illustrations",
+                publisher = "Foundational Literacy Pack",
+                level = 1,
+                coverAssetPath = "books/sw_13916/cover_image.webp",
+                isFeaturedHero = true,
+                bookType = "ALPHABET",
+                categoryTag = "Numbers & Rhymes",
+                phonicsSkillTag = "বর্ণমালা: অ - ঁ",
+                alphabetBadgeLetters = "অ  আ  ক  খ",
+                pages = listOf(
+                    StoryPage(1, imgs[0], "Swaroborno: O (অ) for Ajogor, Aa (আ) for Aam (Mango), Hrosho-I (ই) for Elish (Fish), Dirgho-I (ঈ) for Eagle.", "", "অ - অজগর • আ - আম • ই - ইলিশ • ঈ - ঈগল", "", setOf("fish"), alphabetBadgeLetters = "অ   আ   ই   ঈ"),
+                    StoryPage(2, imgs[1], "Hrosho-U (উ) for Uth, Dirgho-U (ঊ) for Usha (Morning), Ri (ঋ) for Ritu, E (এ) for Ektaara, Oi (ঐ), O (ও), Ou (ঔ).", "", "উ - উট • ঊ - ঊষা • ঋ - ঋতু • এ - একতারা • ঐ • ও • ঔ", "", setOf("morning"), alphabetBadgeLetters = "উ   ঊ   ঋ   এ   ঐ   ও   ঔ"),
+                    StoryPage(3, imgs[2], "Byanjonborno: Ko (ক) for Kola & Kitab, Kho (খ) for Khargosh, Go (গ) for Gach (Tree), Gho (ঘ) for Ghor (House).", "", "ক - কমলা ও কিতাব • খ - খরগোশ • গ - গাছ • ঘ - ঘর • ঙ", "", setOf("tree", "books"), alphabetBadgeLetters = "ক   খ   গ   ঘ   ঙ"),
+                    StoryPage(4, imgs[3], "Cho (চ) for Chand (Moon), Chho (ছ) for Chhata (Umbrella), Borgiyo-Jo (জ) for Jahaj, Jho (ঝ) for Jhorna.", "", "চ - চাঁদ • ছ - ছাতা • জ - জাহাজ • ঝ - ঝরনা • ঞ", "", setOf("moon", "umbrella"), alphabetBadgeLetters = "চ   ছ   জ   ঝ   ঞ"),
+                    StoryPage(5, imgs[4], "To (ত) for Tara (Star), Do (দ) for Doyel, No (ন) for Nodi, Po (প) for Phool (Flower), Bo (ব) for Boi (Book), Mo (ম) for Machh (Fish)!", "", "ত - তারা • ন - নদী • প - প্রজাপতি ও ফুল • ব - বই • ম - মাছ • স - সূর্য", "", setOf("stars", "flower", "books", "fish", "sun"), alphabetBadgeLetters = "ত  থ  দ  ধ  ন  •  প  ফ  ব  ভ  ম  •  স  হ")
+                )
+            )
+
+            "en_ta" -> StoryBook(
+                id = "alphabet_book_en_ta",
+                title = "தமிழ் எழுத்துக்கள் (அ, ஆ, இ, க, ச)",
+                nativeTitleUrdu = "உயிர் எழுத்துக்கள் மற்றும் மெய் எழுத்துக்கள்",
+                nativeTitleHindi = "Tamil Alphabets (Uyir & Mei Ezhuthukkal)",
+                author = "தமிழ் அரிச்சுவடி",
+                illustrator = "StoryWeaver Illustrations",
+                publisher = "Foundational Literacy Pack",
+                level = 1,
+                coverAssetPath = "books/sw_13916/cover_image.webp",
+                isFeaturedHero = true,
+                bookType = "ALPHABET",
+                categoryTag = "Numbers & Rhymes",
+                phonicsSkillTag = "தமிழ்: அ - ன",
+                alphabetBadgeLetters = "அ  ஆ  இ  க",
+                pages = listOf(
+                    StoryPage(1, imgs[0], "Uyir Ezhuthukkal: A (அ) for Amma (Mother), Aa (ஆ) for Aadu, I (இ) for Ilai (Leaf), Ee (ஈ) for Eetti.", "", "அ - அம்மா • ஆ - ஆடு • இ - இலை • ஈ - ஈட்டி", "", setOf("mother", "leaves"), alphabetBadgeLetters = "அ   ஆ   இ   ஈ"),
+                    StoryPage(2, imgs[1], "U (உ) for Ulagam, Oo (ஊ) for Oonjal, E (எ) for Eli, Ae (ஏ) for Aeni, Ai (ஐ) for Ainthu.", "", "உ - உலகம் • ஊ - ஊஞ்சல் • எ - எலி • ஏ - ஏணி • ஐ - ஐந்து", "", setOf("bright"), alphabetBadgeLetters = "உ   ஊ   எ   ஏ   ஐ"),
+                    StoryPage(3, imgs[2], "O (ஒ) for Ondru (One), Oo (ஓ) for Odam (Boat), Au (ஔ) for Auvaiyar, Ayutha Ezhuthu (ஃ).", "", "ஒ - ஒன்று • ஓ - ஓடம் • ஔ - ஔவையார் • ஃ - எஃகு", "", setOf("special"), alphabetBadgeLetters = "ஒ   ஓ   ஔ   ஃ"),
+                    StoryPage(4, imgs[3], "Mei & Uyirmei: Ka (க) for Kadal (Ocean), Cha (ச) for Suryan (Sun), Ta (ட), Tha (த) for Thamarai (Flower).", "", "க - கடல் • ங • ச - சூரியன் • ஞ • ட • ண • த - தாமரை", "", setOf("ocean", "sun", "flower"), alphabetBadgeLetters = "க   ங   ச   ஞ   ட   ண   த   ந"),
+                    StoryPage(5, imgs[4], "Pa (ப) for Pattampoochi (Butterfly) & Panthu (Ball), Ma (ம) for Maram (Tree) & Mazhai (Rain), Va (வ) for Vaanam (Sky)!", "", "ப - பட்டாம்பூச்சி மற்றும் பந்து • ம - மரம் மற்றும் மழை • வ - வானம்", "", setOf("butterfly", "ball", "tree", "rain", "sky"), alphabetBadgeLetters = "ப  ம  ய  ர  ல  வ  ழ  ள  ற  ன")
+                )
+            )
+
+            "en_te" -> StoryBook(
+                id = "alphabet_book_en_te",
+                title = "తెలుగు వర్ణమాల (అ, ఆ, ఇ, క, గ)",
+                nativeTitleUrdu = "అచ్చులు మరియు హల్లులు — తెలుగు అక్షరాలు",
+                nativeTitleHindi = "Telugu Alphabets (Achulu & Hallulu)",
+                author = "తెలుగు అక్షరమాల",
+                illustrator = "StoryWeaver Illustrations",
+                publisher = "Foundational Literacy Pack",
+                level = 1,
+                coverAssetPath = "books/sw_13916/cover_image.webp",
+                isFeaturedHero = true,
+                bookType = "ALPHABET",
+                categoryTag = "Numbers & Rhymes",
+                phonicsSkillTag = "వర్ణమాల: అ - ఱ",
+                alphabetBadgeLetters = "అ  ఆ  ఇ  క",
+                pages = listOf(
+                    StoryPage(1, imgs[0], "Achulu: A (అ) for Amma (Mother), Aa (ఆ) for Aavu, I (ఇ) for Illu (House), Ee (ఈ) for Eega.", "", "అ - అమ్మ • ఆ - ఆవు • ఇ - ఇల్లు • ఈ - ఈగ", "", setOf("mother"), alphabetBadgeLetters = "అ   ఆ   ఇ   ఈ"),
+                    StoryPage(2, imgs[1], "U (ఉ) for Uduta, Oo (ఊ) for Ooyala, Ru (ఋ) for Rushi, E (ఎ) for Eluka, Ae (ఏ) for Aenugu (Elephant), Ai (ఐ).", "", "ఉ - ఉడుత • ఊ - ఊయల • ఋ - ఋషి • ఎ - ఎలుక • ఏ - ఏనుగు • ఐ - ఐదు", "", setOf("bright"), alphabetBadgeLetters = "ఉ   ఊ   ఋ   ఎ   ఏ   ఐ"),
+                    StoryPage(3, imgs[2], "O (ఒ) for Onte, Oo (ఓ) for Oda (Boat), Au (ఔ) for Aushadham, Am (అం), Aha (అః).", "", "ఒ - ఒంటె • ఓ - ఓడ • ఔ - ఔషధం • అం - అంకెలు • అః", "", setOf("special"), alphabetBadgeLetters = "ఒ   ఓ   ఔ   అం   అః"),
+                    StoryPage(4, imgs[3], "Hallulu: Ka (క) for Kamal (Lotus), Kha (ఖ), Ga (గ) for Gadiyaram, Cha (చ) for Chandamama (Moon), Ja (జ).", "", "క - కమలం • ఖ • గ - గడియారం • ఘ • చ - చందమామ • छ • జ", "", setOf("flower", "moon"), alphabetBadgeLetters = "క  ఖ  గ  ఘ  •  చ  ఛ  జ  ఝ"),
+                    StoryPage(5, imgs[4], "Ta (త) for Tara (Star), Pa (ప) foruvvu (Flower), Ba (బ) foranthi (Ball), Ma (మ) for Megham (Cloud), Sa (స) for Suryudu (Sun)!", "", "త - తార • প - పువ్వు • బ - బంతి • మ - మేఘం • స - సూర్యుడు", "", setOf("stars", "flower", "ball", "clouds", "sun"), alphabetBadgeLetters = "త  థ  ద  ధ  న  •  ప  ఫ  బ  భ  మ  •  స  హ")
+                )
+            )
+
+            "en_mr" -> StoryBook(
+                id = "alphabet_book_en_mr",
+                title = "मराठी मुळाक्षरे (अ, आ, इ, क, ख, ळ)",
+                nativeTitleUrdu = "अ ते ज्ञ संपूर्ण मराठी स्वर आणि व्यंजने",
+                nativeTitleHindi = "अ ते ज्ञ संपूर्ण मराठी मुळाक्षरे",
+                author = "मराठी अक्षरओळख",
+                illustrator = "StoryWeaver Illustrations",
+                publisher = "Foundational Literacy Pack",
+                level = 1,
+                coverAssetPath = "books/sw_13916/cover_image.webp",
+                isFeaturedHero = true,
+                bookType = "ALPHABET",
+                categoryTag = "Numbers & Rhymes",
+                phonicsSkillTag = "मुळाक्षरे: अ ते ज्ञ",
+                alphabetBadgeLetters = "अ  आ  क  ळ",
+                pages = listOf(
+                    StoryPage(1, imgs[0], "Swar: A (अ) for Ananas, Aa (आ) for Aai (Mother) and Aag-gadi (Train), I (इ) for Imarat, Ee (ई) for Idlimb.", "", "अ - अननस • आ - आई आणि आगगाडी • इ - इमारत • ई - इडलिंबू", "अ - अननस • आ - आई आणि आगगाडी • इ - इमारत • ई - इडलिंबू", setOf("mother", "train"), alphabetBadgeLetters = "अ   आ   इ   ई"),
+                    StoryPage(2, imgs[1], "U (उ) for Ukhal, Oo (ऊ) for Oos, Ru (ऋ) for Rushi, E (ए) for Ek, Ai (ऐ) for Airan, O (ओ), Au (औ).", "", "उ - उखळ • ऊ - ऊस • ऋ - ऋषी • ए - एक • ऐ - ऐरण • ओ - ओढा • औ - औषध", "उ - उखळ • ऊ - ऊस • ऋ - ऋषी • ए - एक • ऐ - ऐरण • ओ - ओढा • औ - औषध", setOf("bright"), alphabetBadgeLetters = "उ   ऊ   ऋ   ए   ऐ   ओ   औ"),
+                    StoryPage(3, imgs[2], "Vyanjane: Ka (क) for Kamal (Lotus), Kha (ख) for Kharu, Ga (ग) for Gavat (Grass), Gha (घ) for Ghar (Home).", "", "क - कमळ • ख - खारूताई • ग - गवत • घ - घर", "क - कमळ • ख - खारूताई • ग - गवत • घ - घर", setOf("flower"), alphabetBadgeLetters = "क   ख   ग   घ   ङ"),
+                    StoryPage(4, imgs[3], "Cha (च) for Chandoba (Moon), Chha (छ) for Chhatri (Umbrella), Ja (ज) for Jahaj, Jha (झ) for Jhad (Tree).", "", "च - चांदोबा • छ - छत्री • ज - जहाज • झ - झाड", "च - चांदोबा • छ - छत्री • ज - जहाज • झ - झाड", setOf("moon", "umbrella", "tree"), alphabetBadgeLetters = "च   छ   ज   झ   ञ"),
+                    StoryPage(5, imgs[4], "Pa (प) forulपाखरू (Butterfly) & Pustak (Book), Ma (म) for Masa (Fish), Sa (स) for Surya (Sun), and Marathi special La (ळ) for Bal!", "", "प - फुलपाखरू आणि पुस्तक • म - मासा • स - सूर्य • ह - हत्ती • ळ - बाळ • क्ष • ज्ञ", "प - फुलपाखरू आणि पुस्तक • म - मासा • स - सूर्य • ह - हत्ती • ळ - बाळ • क्ष • ज्ञ", setOf("butterfly", "books", "fish", "sun"), alphabetBadgeLetters = "प  फ  ब  भ  म  •  स  ह  ळ  क्ष  ज्ञ")
+                )
+            )
+
+            "en_gu" -> StoryBook(
+                id = "alphabet_book_en_gu",
+                title = "ગુજરાતી મૂળાક્ષરો (અ, આ, ઇ, ક, ખ)",
+                nativeTitleUrdu = "અ થી જ્ઞ સુધીના ગુજરાતી સ્વર અને વ્યંજન",
+                nativeTitleHindi = "Gujarati Alphabets (Swar & Vyanjan)",
+                author = "ગુજરાતી અક્ષરજ્ઞાન",
+                illustrator = "StoryWeaver Illustrations",
+                publisher = "Foundational Literacy Pack",
+                level = 1,
+                coverAssetPath = "books/sw_13916/cover_image.webp",
+                isFeaturedHero = true,
+                bookType = "ALPHABET",
+                categoryTag = "Numbers & Rhymes",
+                phonicsSkillTag = "મૂળાક્ષરો: અ થી જ્ઞ",
+                alphabetBadgeLetters = "અ  આ  ક  ખ",
+                pages = listOf(
+                    StoryPage(1, imgs[0], "Swar: A (અ) for Ananas, Aa (આ) for Aag-gadi (Train), I (ઇ) for Imarat, Ee (ઈ) for Eeshwar.", "", "અ - અનાનસ • આ - આગગાડી • ઇ - ઇમારત • ઈ - ઈશ્વર", "", setOf("train"), alphabetBadgeLetters = "અ   આ   ઇ   ઈ"),
+                    StoryPage(2, imgs[1], "U (ઉ) for Uth, Oo (ઊ) for Oon, Ru (ઋ) for Rushi, E (એ) for Ek, Ai (ઐ) for Airavat, O (ઓ), Au (ઔ).", "", "ઉ - ઊંટ • ઊ - ઊન • ઋ - ઋષિ • એ - એક • ઐ - ઐરાવત • ઓ - ઓશીકું • ઔ - ઔષધ", "", setOf("bright"), alphabetBadgeLetters = "ઉ   ઊ   ઋ   એ   ઐ   ઓ   ઔ"),
+                    StoryPage(3, imgs[2], "Vyanjan: Ka (ક) for Kamal (Lotus), Kha (ખ) for Khiskoli, Ga (ગ) for Ganpati, Gha (ઘ) for Ghar (Home).", "", "ક - કમળ • ખ - ખિસકોલી • ગ - ગણપતિ • ઘ - ઘર", "", setOf("flower"), alphabetBadgeLetters = "ક   ખ   ગ   ઘ"),
+                    StoryPage(4, imgs[3], "Cha (ચ) for Chakli (Sparrow), Chha (છ) for Chhatri (Umbrella), Ja (જ) for Jhad (Tree), Jha (ઝ) for Jharna.", "", "ચ - ચકલી • છ - છત્રી • જ - ઝાડ • ઝ - ઝરણું", "", setOf("umbrella", "tree"), alphabetBadgeLetters = "ચ   છ   જ   ઝ"),
+                    StoryPage(5, imgs[4], "Pa (પ) for Patangiyu (Butterfly), Ba (બ) foragicho (Garden), Ma (મ) for Machhli (Fish), Sa (સ) for Suraj (Sun), La (ળ), Ksha (ક્ષ), Gna (જ્ઞ)!", "", "પ - પતંગિયું • બ - બગીચો • મ - માછલી • સ - સૂરજ • ળ - નળ • ક્ષ • જ્ઞ", "", setOf("butterfly", "garden", "fish", "sun"), alphabetBadgeLetters = "પ  ફ  બ  ભ  મ  •  સ  હ  ળ  ક્ષ  જ્ઞ")
+                )
+            )
+
+            else -> getAlphabetBookForLanguage("en")
+        }
+    }
+
+    // Complete language-aware Book Title & Subtitle localization across all 11 languages
+    fun getBookPrimaryTitle(book: StoryBook, langCode: String): String {
+        if (book.bookType == "ALPHABET" || book.id.startsWith("alphabet_book_")) {
+            return book.title
+        }
+        return when (langCode) {
+            "en" -> book.title
+            "en_ur" -> book.nativeTitleUrdu.ifBlank { book.title }
+            "en_hi", "en_mr" -> book.nativeTitleHindi.ifBlank { book.title }
+            else -> book.title
+        }
+    }
+
+    fun getBookSecondaryTitle(book: StoryBook, langCode: String): String {
+        if (book.bookType == "ALPHABET" || book.id.startsWith("alphabet_book_")) {
+            return book.nativeTitleUrdu.ifBlank { book.nativeTitleHindi }
+        }
+        return when (langCode) {
+            "en" -> ""
+            "en_ur" -> if (book.nativeTitleUrdu.isNotBlank() && book.nativeTitleUrdu != book.title) book.title else ""
+            "en_hi", "en_mr" -> if (book.nativeTitleHindi.isNotBlank() && book.nativeTitleHindi != book.title) book.title else ""
+            else -> book.nativeTitleUrdu.ifBlank { "" }
+        }
+    }
 
     val speedVehicles = listOf(
         SpeedVehicleBadge("Rocket Reader", "🚀", 85, "Lightning-fast reading speed!", 0xFFE53935),

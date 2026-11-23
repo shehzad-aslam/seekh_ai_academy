@@ -95,8 +95,17 @@ fun LibraryTabScreen(
         }
     }
 
-    val heroBook = remember(books) {
-        books.firstOrNull { it.isFeaturedHero } ?: books.first()
+    val uiStrings = remember(selectedLanguage.code) {
+        SeekhCatalog.getAppStrings(selectedLanguage.code)
+    }
+
+    // Language-specific Basic Alphabets Book pinned at the VERY TOP of the Home screen!
+    val alphabetHeroBook = remember(selectedLanguage.code) {
+        SeekhCatalog.getAlphabetBookForLanguage(selectedLanguage.code)
+    }
+    val heroBook = alphabetHeroBook
+    val booksWithAlphabet = remember(books, alphabetHeroBook) {
+        listOf(alphabetHeroBook) + books.filterNot { it.id == alphabetHeroBook.id }
     }
     val nonHeroBooks = remember(books, heroBook) {
         books.filterNot { it.id == heroBook.id }
@@ -120,7 +129,7 @@ fun LibraryTabScreen(
         }
     }
     val dailyDropBooks = remember(books) {
-        books.filter { it.isDailyDrop && !it.isFeaturedHero }
+        books.filter { it.isDailyDrop }
     }
     val animalsNatureBooks = remember(books) {
         books.filter { it.categoryTag == "Animals & Nature" }
@@ -131,8 +140,8 @@ fun LibraryTabScreen(
     val schoolKindnessBooks = remember(books) {
         books.filter { it.categoryTag == "School & Kindness" }
     }
-    val numbersRhymesBooks = remember(books) {
-        books.filter { it.categoryTag == "Numbers & Rhymes" }
+    val numbersRhymesBooks = remember(booksWithAlphabet) {
+        booksWithAlphabet.filter { it.categoryTag == "Numbers & Rhymes" || it.bookType == "ALPHABET" }
     }
     val adventureTravelBooks = remember(books) {
         books.filter { it.categoryTag == "Adventure & Travel" }
@@ -143,8 +152,8 @@ fun LibraryTabScreen(
     val bedtimeFolktaleBooks = remember(books) {
         books.filter { it.categoryTag == "Bedtime & Folktales" }
     }
-    val phonicsBooks = remember(books) {
-        books.filter { it.bookType == "DECODABLE" || it.phonicsSkillTag.isNotBlank() }
+    val phonicsBooks = remember(booksWithAlphabet) {
+        booksWithAlphabet.filter { it.bookType == "ALPHABET" || it.bookType == "DECODABLE" || it.phonicsSkillTag.isNotBlank() }
     }
     val seriesBooks = remember(books) {
         books.filter { it.bookType == "SERIES" || it.seriesTag.isNotBlank() }
@@ -152,21 +161,21 @@ fun LibraryTabScreen(
     val myCustomBooks = remember(books) {
         books.filter { it.isAiGenerated || it.bookType == "CYOC" }
     }
-    val level1Books = remember(nonHeroBooks) { nonHeroBooks.filter { it.level == 1 && !it.isAiGenerated } }
+    val level1Books = remember(booksWithAlphabet) { booksWithAlphabet.filter { it.level == 1 && !it.isAiGenerated } }
     val level2Books = remember(nonHeroBooks) { nonHeroBooks.filter { it.level == 2 && !it.isAiGenerated } }
     val level3Books = remember(nonHeroBooks) { nonHeroBooks.filter { it.level == 3 && !it.isAiGenerated } }
     val level4Books = remember(nonHeroBooks) { nonHeroBooks.filter { it.level == 4 && !it.isAiGenerated } }
 
     // "Read again" shelf (readAgainBooks from flutter_ui_strings.txt & ref_live_01.png)
-    val readAgainBooks = remember(books, profile.completedBookIds, profile.bookPageProgress) {
-        books.filter { b ->
+    val readAgainBooks = remember(booksWithAlphabet, profile.completedBookIds, profile.bookPageProgress) {
+        booksWithAlphabet.filter { b ->
             profile.completedBookIds.contains(b.id) || (profile.bookPageProgress[b.id] ?: 0) > 0
         }
     }
 
     // Filtered books when user uses Search or selects a specific category filter chip
-    val filteredBooks = remember(books, searchQuery, selectedCategoryFilter, groupAssignedLabels) {
-        books.filter { b ->
+    val filteredBooks = remember(booksWithAlphabet, searchQuery, selectedCategoryFilter, groupAssignedLabels) {
+        booksWithAlphabet.filter { b ->
             val matchesQuery = searchQuery.isBlank() ||
                 b.title.contains(searchQuery, ignoreCase = true) ||
                 b.nativeTitleUrdu.contains(searchQuery, ignoreCase = true) ||
@@ -175,7 +184,7 @@ fun LibraryTabScreen(
                 b.categoryTag.contains(searchQuery, ignoreCase = true) ||
                 b.phonicsSkillTag.contains(searchQuery, ignoreCase = true)
             val matchesFilter = when (selectedCategoryFilter) {
-                "New & Daily" -> b.isDailyDrop
+                "New & Daily" -> b.isDailyDrop || b.bookType == "ALPHABET"
                 "Level 1" -> b.level == 1
                 "Level 2" -> b.level == 2
                 "Level 3" -> b.level == 3
@@ -183,11 +192,11 @@ fun LibraryTabScreen(
                 "Animals & Nature" -> b.categoryTag == "Animals & Nature"
                 "Family & Friends" -> b.categoryTag == "Family & Friends"
                 "School & Kindness" -> b.categoryTag == "School & Kindness"
-                "Numbers & Rhymes" -> b.categoryTag == "Numbers & Rhymes"
+                "Numbers & Rhymes" -> b.categoryTag == "Numbers & Rhymes" || b.bookType == "ALPHABET"
                 "Adventure & Travel" -> b.categoryTag == "Adventure & Travel"
                 "Science & Weather" -> b.categoryTag == "Science & Weather"
                 "Bedtime & Folktales" -> b.categoryTag == "Bedtime & Folktales"
-                "Phonics" -> b.bookType == "DECODABLE" || b.phonicsSkillTag.isNotBlank()
+                "Phonics" -> b.bookType == "ALPHABET" || b.bookType == "DECODABLE" || b.phonicsSkillTag.isNotBlank()
                 "Series" -> b.bookType == "SERIES" || b.seriesTag.isNotBlank()
                 "Classroom" -> groupAssignedLabels.containsKey(b.id) || b.bookSource == "CLASSROOM" || b.assignedByTeacher.isNotBlank()
                 "My stories" -> b.isAiGenerated || b.bookType == "CYOC"
@@ -249,7 +258,7 @@ fun LibraryTabScreen(
                             onValueChange = { searchQuery = it },
                             placeholder = {
                                 Text(
-                                    text = "Search stories by title, level, or phonics...",
+                                    text = uiStrings.searchPlaceholder,
                                     fontFamily = GoogleSansFamily,
                                     fontSize = 13.sp
                                 )
@@ -274,6 +283,21 @@ fun LibraryTabScreen(
                 }
             }
 
+            val gameCatalogMeta = remember {
+                listOf(
+                    "JUMBLE" to SeekhJumblePurple,
+                    "BALLOON" to Color(0xFF00838F),
+                    "SENTENCE" to Color(0xFF1E40AF),
+                    "RHYME" to Color(0xFFBE185D),
+                    "MISSING_SOUND" to Color(0xFF0F766E),
+                    "LISTEN_FIND" to Color(0xFF4338CA),
+                    "OPPOSITES" to Color(0xFFD97706),
+                    "COUNT_COLOR" to Color(0xFF047857),
+                    "SPEED" to Color(0xFFF57F17),
+                    "VOCAB" to SeekhVocabDarkGreen
+                )
+            }
+
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
@@ -291,6 +315,7 @@ fun LibraryTabScreen(
                     ) {
                         items(filterChips) { chip ->
                             val isSelected = selectedCategoryFilter == chip
+                            val displayChipLabel = uiStrings.filterChipLabels[chip] ?: chip
                             val chipScale by androidx.compose.animation.core.animateFloatAsState(
                                 targetValue = if (isSelected) 1.06f else 1f,
                                 animationSpec = androidx.compose.animation.core.spring(
@@ -313,7 +338,7 @@ fun LibraryTabScreen(
                                     )
                                     .bouncyClick(scaleDown = 0.92f) {
                                         selectedCategoryFilter = if (isSelected && chip != "All") "All" else chip
-                                        onSpeakText(chip)
+                                        onSpeakText(displayChipLabel)
                                     },
                                 shape = RoundedCornerShape(50),
                                 color = chipBg,
@@ -324,7 +349,7 @@ fun LibraryTabScreen(
                                 )
                             ) {
                                 Text(
-                                    text = chip,
+                                    text = displayChipLabel,
                                     fontFamily = GoogleSansFamily,
                                     fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Bold,
                                     fontSize = 12.sp,
@@ -339,7 +364,7 @@ fun LibraryTabScreen(
                     }
                 }
 
-                // If user selects "Games" filter chip, show the dedicated 10 Kids Learning Games Hub!
+                // If user selects "Games" filter chip, show the dedicated 10 Kids Learning Games Hub with Visual Gameplay Previews!
                 if (selectedCategoryFilter == "Games") {
                     item {
                         Spacer(modifier = Modifier.height(8.dp))
@@ -351,7 +376,7 @@ fun LibraryTabScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Play games",
+                                text = uiStrings.sectionPlayGames,
                                 fontFamily = GoogleSansFamily,
                                 fontWeight = FontWeight.ExtraBold,
                                 fontSize = 20.sp,
@@ -362,7 +387,7 @@ fun LibraryTabScreen(
                                 color = SeekhGreenSoft
                             ) {
                                 Text(
-                                    text = "Played: ${profile.gamesPlayedCount}",
+                                    text = "${uiStrings.playCta}: ${profile.gamesPlayedCount}",
                                     fontFamily = GoogleSansFamily,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 12.sp,
@@ -373,85 +398,105 @@ fun LibraryTabScreen(
                         }
                         Spacer(modifier = Modifier.height(10.dp))
 
-                        val arcadeGames = listOf(
-                            listOf("Jumbled Words", "Unscramble letters to spell words", "Spelling", "JUMBLE") to SeekhJumblePurple,
-                            listOf("Pop The Balloons", "Pop rising phonics sound balloons", "Phonics", "BALLOON") to Color(0xFF00838F),
-                            listOf("Sentence Builder", "Arrange words in order to build sentences", "Sentences", "SENTENCE") to Color(0xFF1E40AF),
-                            listOf("Rhyming Words", "Match words with the same ending sound", "Rhyming", "RHYME") to Color(0xFFBE185D),
-                            listOf("Missing Letters", "Choose the missing letters in story words", "Letters", "MISSING_SOUND") to Color(0xFF0F766E),
-                            listOf("Listen & Find", "Listen to the voice clue and select the picture", "Listening", "LISTEN_FIND") to Color(0xFF4338CA),
-                            listOf("Opposite Words", "Match words with opposite meanings", "Vocabulary", "OPPOSITES") to Color(0xFFD97706),
-                            listOf("Count & Numbers", "Count items and solve simple story math", "Numbers", "COUNT_COLOR") to Color(0xFF047857),
-                            listOf("Speed Reading", "30-second reading fluency challenge", "Fluency", "SPEED") to Color(0xFFF57F17),
-                            listOf("Word Meanings", "Learn picture vocabulary across 9 themes", "Pictures", "VOCAB") to SeekhVocabDarkGreen
-                        )
-
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 18.dp),
                             verticalArrangement = Arrangement.spacedBy(14.dp)
                         ) {
-                            arcadeGames.forEach { (info, bgCol) ->
+                            gameCatalogMeta.forEach { (gameKey, bgCol) ->
+                                val gInfo = uiStrings.gameInfoByKey[gameKey]
+                                    ?: Triple("Learning Game", "Interactive word challenge", "Game")
                                 Surface(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .bouncyClick { onOpenGame(info[3]) },
+                                        .softCardShadow(
+                                            elevation = 10.dp,
+                                            shape = RoundedCornerShape(24.dp),
+                                            spotColor = bgCol.copy(alpha = 0.45f)
+                                        )
+                                        .bouncyClick { onOpenGame(gameKey) },
                                     shape = RoundedCornerShape(24.dp),
                                     color = bgCol,
-                                    shadowElevation = 6.dp
+                                    shadowElevation = 0.dp,
+                                    border = BorderStroke(1.dp, Color.White.copy(alpha = 0.25f))
                                 ) {
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(18.dp),
+                                            .padding(16.dp),
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
                                         Column(modifier = Modifier.weight(1f)) {
-                                            Surface(
-                                                shape = RoundedCornerShape(50),
-                                                color = Color.White.copy(alpha = 0.22f)
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.spacedBy(8.dp)
                                             ) {
-                                                Text(
-                                                    text = info[2],
-                                                    fontFamily = GoogleSansFamily,
-                                                    fontWeight = FontWeight.Bold,
-                                                    fontSize = 11.sp,
-                                                    color = Color.White,
-                                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                                                )
+                                                Surface(
+                                                    shape = RoundedCornerShape(50),
+                                                    color = Color.White.copy(alpha = 0.22f)
+                                                ) {
+                                                    Text(
+                                                        text = gInfo.third,
+                                                        fontFamily = GoogleSansFamily,
+                                                        fontWeight = FontWeight.Bold,
+                                                        fontSize = 11.sp,
+                                                        color = Color.White,
+                                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                                                    )
+                                                }
                                             }
-                                            Spacer(modifier = Modifier.height(8.dp))
+                                            Spacer(modifier = Modifier.height(6.dp))
                                             Text(
-                                                text = info[0],
+                                                text = gInfo.first,
                                                 fontFamily = GoogleSansFamily,
                                                 fontWeight = FontWeight.ExtraBold,
-                                                fontSize = 20.sp,
+                                                fontSize = 19.sp,
                                                 color = Color.White
                                             )
                                             Spacer(modifier = Modifier.height(2.dp))
                                             Text(
-                                                text = info[1],
+                                                text = gInfo.second,
                                                 fontFamily = GoogleSansFamily,
-                                                fontSize = 13.sp,
-                                                color = Color.White.copy(alpha = 0.9f)
+                                                fontSize = 12.5.sp,
+                                                color = Color.White.copy(alpha = 0.92f)
                                             )
+                                            Spacer(modifier = Modifier.height(10.dp))
+                                            Surface(
+                                                shape = RoundedCornerShape(50),
+                                                color = Color.White
+                                            ) {
+                                                Row(
+                                                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                                ) {
+                                                    Text(
+                                                        text = uiStrings.playCta,
+                                                        fontFamily = GoogleSansFamily,
+                                                        fontWeight = FontWeight.ExtraBold,
+                                                        fontSize = 12.5.sp,
+                                                        color = bgCol
+                                                    )
+                                                    Icon(
+                                                        imageVector = Icons.Default.PlayArrow,
+                                                        contentDescription = uiStrings.playCta,
+                                                        tint = bgCol,
+                                                        modifier = Modifier.size(15.dp)
+                                                    )
+                                                }
+                                            }
                                         }
                                         Spacer(modifier = Modifier.width(12.dp))
-                                        Surface(
-                                            shape = RoundedCornerShape(50),
-                                            color = Color.White
-                                        ) {
-                                            Text(
-                                                text = "Play",
-                                                fontFamily = GoogleSansFamily,
-                                                fontWeight = FontWeight.ExtraBold,
-                                                fontSize = 13.sp,
-                                                color = bgCol,
-                                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                                            )
-                                        }
+                                        // Distinct Visual Gameplay Preview Artwork right on the card!
+                                        GameVisualPreviewArtwork(
+                                            gameKey = gameKey,
+                                            accentColor = bgCol,
+                                            modifier = Modifier
+                                                .width(136.dp)
+                                                .height(64.dp)
+                                        )
                                     }
                                 }
                             }
@@ -460,13 +505,14 @@ fun LibraryTabScreen(
                 } else if (searchQuery.isNotBlank() || selectedCategoryFilter != "All") {
                     item {
                         Spacer(modifier = Modifier.height(8.dp))
+                        val filterTitle = uiStrings.filterChipLabels[selectedCategoryFilter] ?: selectedCategoryFilter
                         LibrarySectionHeader(
                             title = if (searchQuery.isNotBlank()) {
-                                "Search results (${filteredBooks.size})"
+                                "${uiStrings.searchPlaceholder.take(14)} (${filteredBooks.size})"
                             } else {
-                                "$selectedCategoryFilter (${filteredBooks.size})"
+                                "$filterTitle (${filteredBooks.size})"
                             },
-                            onSpeak = { onSpeakText("$selectedCategoryFilter stories") }
+                            onSpeak = { onSpeakText(filterTitle) }
                         )
                         if (selectedCategoryFilter == "My stories") {
                             Spacer(modifier = Modifier.height(6.dp))
@@ -511,12 +557,13 @@ fun LibraryTabScreen(
                         }
                     }
                 } else {
-                    // 1. Top Recommended Story Hero Card ("Read Along story for today • Colors on the street")
+                    // 1. Pinned Top Card: Language-Specific Basic Alphabets Book (English A-Z, Urdu Alif-Be-Pe, Hindi Varnamala, Arabic, etc.)
                     item {
                         Spacer(modifier = Modifier.height(4.dp))
                         FeaturedStoryHeroCard(
                             book = heroBook,
                             isCompleted = profile.completedBookIds.contains(heroBook.id),
+                            selectedLanguageCode = selectedLanguage.code,
                             onClick = { onOpenBook(heroBook) }
                         )
                         Spacer(modifier = Modifier.height(18.dp))
@@ -526,8 +573,8 @@ fun LibraryTabScreen(
                     if (classroomBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Assigned homework",
-                                onSpeak = { onSpeakText("Assigned stories from your teacher or parent") }
+                                title = uiStrings.sectionAssignedHomework,
+                                onSpeak = { onSpeakText(uiStrings.sectionAssignedHomework) }
                             )
                             Spacer(modifier = Modifier.height(6.dp))
                             LazyRow(
@@ -552,9 +599,9 @@ fun LibraryTabScreen(
                     if (dailyDropBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Recommended stories",
-                                onSpeak = { onSpeakText("Recommended stories") },
-                                actionLabel = "See all",
+                                title = uiStrings.sectionRecommended,
+                                onSpeak = { onSpeakText(uiStrings.sectionRecommended) },
+                                actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "New & Daily" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -570,13 +617,13 @@ fun LibraryTabScreen(
                         }
                     }
 
-                    // 3. "Level 1 stories" Section (PROMPT_STORIES_OF_LEVEL_1)
+                    // 3. "Level 1 stories" Section (Includes the language's Basic Alphabets Book at slot #1!)
                     if (level1Books.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Level 1 stories",
-                                onSpeak = { onSpeakText("Level 1 stories") },
-                                actionLabel = "See all",
+                                title = uiStrings.sectionLevel1,
+                                onSpeak = { onSpeakText(uiStrings.sectionLevel1) },
+                                actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Level 1" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -592,12 +639,12 @@ fun LibraryTabScreen(
                         }
                     }
 
-                    // 4. "Play games" Section (10 Kids Learning Games — Clean, Emoji-Free Cards)
+                    // 4. "Play games" Section (10 Kids Learning Games with Visual Gameplay Previews!)
                     item {
                         LibrarySectionHeader(
-                            title = "Play games",
-                            onSpeak = { onSpeakText("Play games") },
-                            actionLabel = "See all",
+                            title = uiStrings.sectionPlayGames,
+                            onSpeak = { onSpeakText(uiStrings.sectionPlayGames) },
+                            actionLabel = uiStrings.seeAll,
                             onActionClick = { selectedCategoryFilter = "Games" }
                         )
                         Spacer(modifier = Modifier.height(8.dp))
@@ -607,94 +654,17 @@ fun LibraryTabScreen(
                             contentPadding = PaddingValues(horizontal = 18.dp),
                             horizontalArrangement = Arrangement.spacedBy(14.dp)
                         ) {
-                            item {
+                            items(gameCatalogMeta) { (gameKey, bgCol) ->
+                                val gInfo = uiStrings.gameInfoByKey[gameKey]
+                                    ?: Triple("Learning Game", "Play now", "Game")
                                 GameShelfCard(
-                                    title = "Jumbled Words",
-                                    subtitle = "Unscramble letters",
-                                    containerColor = SeekhJumblePurple,
-                                    badgeText = "Spelling",
-                                    onClick = { onOpenGame("JUMBLE") }
-                                )
-                            }
-                            item {
-                                GameShelfCard(
-                                    title = "Pop The Balloons",
-                                    subtitle = "Phonics & sounds",
-                                    containerColor = Color(0xFF00838F),
-                                    badgeText = "Phonics",
-                                    onClick = { onOpenGame("BALLOON") }
-                                )
-                            }
-                            item {
-                                GameShelfCard(
-                                    title = "Sentence Builder",
-                                    subtitle = "Build story sentences",
-                                    containerColor = Color(0xFF1E40AF),
-                                    badgeText = "Sentences",
-                                    onClick = { onOpenGame("SENTENCE") }
-                                )
-                            }
-                            item {
-                                GameShelfCard(
-                                    title = "Rhyming Words",
-                                    subtitle = "Match ending sounds",
-                                    containerColor = Color(0xFFBE185D),
-                                    badgeText = "Rhyming",
-                                    onClick = { onOpenGame("RHYME") }
-                                )
-                            }
-                            item {
-                                GameShelfCard(
-                                    title = "Missing Letters",
-                                    subtitle = "Complete the word",
-                                    containerColor = Color(0xFF0F766E),
-                                    badgeText = "Letters",
-                                    onClick = { onOpenGame("MISSING_SOUND") }
-                                )
-                            }
-                            item {
-                                GameShelfCard(
-                                    title = "Listen & Find",
-                                    subtitle = "Audio picture match",
-                                    containerColor = Color(0xFF4338CA),
-                                    badgeText = "Listening",
-                                    onClick = { onOpenGame("LISTEN_FIND") }
-                                )
-                            }
-                            item {
-                                GameShelfCard(
-                                    title = "Opposite Words",
-                                    subtitle = "Match opposite words",
-                                    containerColor = Color(0xFFD97706),
-                                    badgeText = "Vocabulary",
-                                    onClick = { onOpenGame("OPPOSITES") }
-                                )
-                            }
-                            item {
-                                GameShelfCard(
-                                    title = "Count & Numbers",
-                                    subtitle = "Counting & story math",
-                                    containerColor = Color(0xFF047857),
-                                    badgeText = "Numbers",
-                                    onClick = { onOpenGame("COUNT_COLOR") }
-                                )
-                            }
-                            item {
-                                GameShelfCard(
-                                    title = "Speed Reading",
-                                    subtitle = "30s reading challenge",
-                                    containerColor = Color(0xFFF57F17),
-                                    badgeText = "Fluency",
-                                    onClick = { onOpenGame("SPEED") }
-                                )
-                            }
-                            item {
-                                GameShelfCard(
-                                    title = "Word Meanings",
-                                    subtitle = "9 picture themes",
-                                    containerColor = SeekhVocabDarkGreen,
-                                    badgeText = "Pictures",
-                                    onClick = { onOpenGame("VOCAB") }
+                                    gameKey = gameKey,
+                                    title = gInfo.first,
+                                    subtitle = gInfo.second,
+                                    containerColor = bgCol,
+                                    badgeText = gInfo.third,
+                                    playLabel = uiStrings.playCta,
+                                    onClick = { onOpenGame(gameKey) }
                                 )
                             }
                         }
@@ -705,9 +675,9 @@ fun LibraryTabScreen(
                     if (animalsNatureBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Animals & Nature",
-                                onSpeak = { onSpeakText("Animals and nature stories") },
-                                actionLabel = "See all",
+                                title = uiStrings.sectionAnimalsNature,
+                                onSpeak = { onSpeakText(uiStrings.sectionAnimalsNature) },
+                                actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Animals & Nature" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -727,9 +697,9 @@ fun LibraryTabScreen(
                     if (schoolKindnessBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "School & Kindness",
-                                onSpeak = { onSpeakText("School and kindness stories") },
-                                actionLabel = "See all",
+                                title = uiStrings.sectionSchoolKindness,
+                                onSpeak = { onSpeakText(uiStrings.sectionSchoolKindness) },
+                                actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "School & Kindness" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -749,9 +719,9 @@ fun LibraryTabScreen(
                     if (phonicsBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Phonics stories",
-                                onSpeak = { onSpeakText("Phonics stories") },
-                                actionLabel = "See all",
+                                title = uiStrings.sectionPhonics,
+                                onSpeak = { onSpeakText(uiStrings.sectionPhonics) },
+                                actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Phonics" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -771,9 +741,9 @@ fun LibraryTabScreen(
                     if (level2Books.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Level 2 stories",
-                                onSpeak = { onSpeakText("Level 2 stories") },
-                                actionLabel = "See all",
+                                title = uiStrings.sectionLevel2,
+                                onSpeak = { onSpeakText(uiStrings.sectionLevel2) },
+                                actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Level 2" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -793,9 +763,9 @@ fun LibraryTabScreen(
                     if (familyFriendsBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Family & Friends",
-                                onSpeak = { onSpeakText("Family and friends stories") },
-                                actionLabel = "See all",
+                                title = uiStrings.sectionFamilyFriends,
+                                onSpeak = { onSpeakText(uiStrings.sectionFamilyFriends) },
+                                actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Family & Friends" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -815,9 +785,9 @@ fun LibraryTabScreen(
                     if (numbersRhymesBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Numbers & Rhymes",
-                                onSpeak = { onSpeakText("Numbers and rhymes stories") },
-                                actionLabel = "See all",
+                                title = uiStrings.sectionNumbersRhymes,
+                                onSpeak = { onSpeakText(uiStrings.sectionNumbersRhymes) },
+                                actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Numbers & Rhymes" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -837,9 +807,9 @@ fun LibraryTabScreen(
                     if (seriesBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Story Series",
-                                onSpeak = { onSpeakText("Story series") },
-                                actionLabel = "See all",
+                                title = uiStrings.sectionStorySeries,
+                                onSpeak = { onSpeakText(uiStrings.sectionStorySeries) },
+                                actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Series" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -859,9 +829,9 @@ fun LibraryTabScreen(
                     if (level3Books.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Level 3 stories",
-                                onSpeak = { onSpeakText("Level 3 stories") },
-                                actionLabel = "See all",
+                                title = uiStrings.sectionLevel3,
+                                onSpeak = { onSpeakText(uiStrings.sectionLevel3) },
+                                actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Level 3" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -881,9 +851,9 @@ fun LibraryTabScreen(
                     if (adventureTravelBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Adventure & Travel",
-                                onSpeak = { onSpeakText("Adventure and travel stories") },
-                                actionLabel = "See all",
+                                title = uiStrings.sectionAdventureTravel,
+                                onSpeak = { onSpeakText(uiStrings.sectionAdventureTravel) },
+                                actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Adventure & Travel" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -903,9 +873,9 @@ fun LibraryTabScreen(
                     if (scienceWeatherBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Science & Weather",
-                                onSpeak = { onSpeakText("Science and weather stories") },
-                                actionLabel = "See all",
+                                title = uiStrings.sectionScienceWeather,
+                                onSpeak = { onSpeakText(uiStrings.sectionScienceWeather) },
+                                actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Science & Weather" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -925,9 +895,9 @@ fun LibraryTabScreen(
                     if (level4Books.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Level 4 stories",
-                                onSpeak = { onSpeakText("Level 4 stories") },
-                                actionLabel = "See all",
+                                title = uiStrings.sectionLevel4,
+                                onSpeak = { onSpeakText(uiStrings.sectionLevel4) },
+                                actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Level 4" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -947,9 +917,9 @@ fun LibraryTabScreen(
                     if (bedtimeFolktaleBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Bedtime & Folktales",
-                                onSpeak = { onSpeakText("Bedtime and folktale stories") },
-                                actionLabel = "See all",
+                                title = uiStrings.sectionBedtimeFolktales,
+                                onSpeak = { onSpeakText(uiStrings.sectionBedtimeFolktales) },
+                                actionLabel = uiStrings.seeAll,
                                 onActionClick = { selectedCategoryFilter = "Bedtime & Folktales" }
                             )
                             LibraryBooksThreeColumnRows(
@@ -969,8 +939,8 @@ fun LibraryTabScreen(
                     if (accountState.isSignedIn) {
                         item {
                             LibrarySectionHeader(
-                                title = "Create your own story",
-                                onSpeak = { onSpeakText("Create your own story") }
+                                title = uiStrings.sectionCreateStory,
+                                onSpeak = { onSpeakText(uiStrings.sectionCreateStory) }
                             )
                             Spacer(modifier = Modifier.height(6.dp))
                             CreateYourOwnStoryBannerCard(
@@ -1020,14 +990,14 @@ fun LibraryTabScreen(
                                                     }
                                                     Column {
                                                         Text(
-                                                            text = myBook.title,
+                                                            text = SeekhCatalog.getBookPrimaryTitle(myBook, selectedLanguage.code),
                                                             fontFamily = GoogleSansFamily,
                                                             fontWeight = FontWeight.Bold,
                                                             fontSize = 15.sp,
                                                             color = SeekhTextPrimary
                                                         )
                                                         Text(
-                                                            text = "My created story • Level ${myBook.level}",
+                                                            text = "${uiStrings.levelPrefix} ${myBook.level}",
                                                             fontFamily = GoogleSansFamily,
                                                             fontSize = 12.sp,
                                                             color = SeekhGreen600
@@ -1052,12 +1022,12 @@ fun LibraryTabScreen(
                         }
                     }
 
-                    // 11. "Read again" Section (seekh: read_again — visible in ref_live_01.png!)
+                    // 11. "Read again" Section
                     if (readAgainBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Read again",
-                                onSpeak = { onSpeakText("Read again") }
+                                title = uiStrings.sectionReadAgain,
+                                onSpeak = { onSpeakText(uiStrings.sectionReadAgain) }
                             )
                             LibraryBooksThreeColumnRows(
                                 sectionBooks = readAgainBooks,
@@ -1072,7 +1042,7 @@ fun LibraryTabScreen(
                         }
                     }
 
-                    // 12. "Read stories in <Language>" / "More languages" Footer Card (read_stories_in_language, more_languages)
+                    // 12. "Read stories in <Language>" / "More languages" Footer Card
                     item {
                         Spacer(modifier = Modifier.height(6.dp))
                         val footerShape = RoundedCornerShape(22.dp)
@@ -1114,14 +1084,14 @@ fun LibraryTabScreen(
                                     )
                                     Column {
                                         Text(
-                                            text = "Read stories in ${selectedLanguage.title}",
+                                            text = selectedLanguage.title,
                                             fontFamily = GoogleSansFamily,
                                             fontWeight = FontWeight.Bold,
                                             fontSize = 15.sp,
                                             color = SeekhTextPrimary
                                         )
                                         Text(
-                                            text = "More languages",
+                                            text = uiStrings.moreLanguagesLabel,
                                             fontFamily = GoogleSansFamily,
                                             fontWeight = FontWeight.Medium,
                                             fontSize = 13.sp,
@@ -1131,7 +1101,7 @@ fun LibraryTabScreen(
                                 }
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                    contentDescription = "More languages",
+                                    contentDescription = uiStrings.moreLanguagesLabel,
                                     tint = SeekhGreen500
                                 )
                             }
@@ -1457,17 +1427,19 @@ private fun LibraryBooksThreeColumnRows(
 
 @Composable
 private fun GameShelfCard(
+    gameKey: String,
     title: String,
     subtitle: String,
     containerColor: Color,
     badgeText: String,
+    playLabel: String = "Play",
     onClick: () -> Unit
 ) {
     val cardShape = RoundedCornerShape(24.dp)
     Surface(
         modifier = Modifier
-            .width(184.dp)
-            .height(126.dp)
+            .width(214.dp)
+            .height(166.dp)
             .softCardShadow(
                 elevation = 12.dp,
                 shape = cardShape,
@@ -1493,73 +1465,84 @@ private fun GameShelfCard(
                     )
                 )
         ) {
-            Box(
-                modifier = Modifier
-                    .size(72.dp)
-                    .align(Alignment.TopEnd)
-                    .offset(x = 18.dp, y = (-18).dp)
-                    .clip(CircleShape)
-                    .background(Color.White.copy(alpha = 0.12f))
-            )
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(14.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Surface(
-                    shape = RoundedCornerShape(50),
-                    color = Color.White.copy(alpha = 0.22f)
-                ) {
-                    Text(
-                        text = badgeText,
-                        fontFamily = GoogleSansFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 10.5.sp,
-                        color = Color.White,
-                        maxLines = 1,
-                        modifier = Modifier.padding(horizontal = 9.dp, vertical = 3.dp)
-                    )
-                }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
+                    Surface(
+                        shape = RoundedCornerShape(50),
+                        color = Color.White.copy(alpha = 0.22f)
+                    ) {
                         Text(
-                            text = title,
+                            text = badgeText,
                             fontFamily = GoogleSansFamily,
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 15.5.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 10.5.sp,
                             color = Color.White,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Text(
-                            text = subtitle,
-                            fontFamily = GoogleSansFamily,
-                            fontSize = 11.5.sp,
-                            color = Color.White.copy(alpha = 0.90f),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            modifier = Modifier.padding(horizontal = 9.dp, vertical = 3.dp)
                         )
                     }
                     Surface(
-                        shape = CircleShape,
-                        color = Color.White.copy(alpha = 0.25f),
-                        modifier = Modifier.size(28.dp)
+                        shape = RoundedCornerShape(50),
+                        color = Color.White
                     ) {
-                        Box(contentAlignment = Alignment.Center) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(2.dp)
+                        ) {
+                            Text(
+                                text = playLabel,
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 10.5.sp,
+                                color = containerColor
+                            )
                             Icon(
                                 imageVector = Icons.Default.PlayArrow,
-                                contentDescription = "Play game",
-                                tint = Color.White,
-                                modifier = Modifier.size(16.dp)
+                                contentDescription = playLabel,
+                                tint = containerColor,
+                                modifier = Modifier.size(13.dp)
                             )
                         }
                     }
+                }
+
+                // Self-Explanatory Visual Gameplay Preview Artwork right inside the Game Shelf Card!
+                GameVisualPreviewArtwork(
+                    gameKey = gameKey,
+                    accentColor = containerColor,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(54.dp)
+                )
+
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = title,
+                        fontFamily = GoogleSansFamily,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 15.5.sp,
+                        color = Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = subtitle,
+                        fontFamily = GoogleSansFamily,
+                        fontSize = 11.5.sp,
+                        color = Color.White.copy(alpha = 0.90f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
             }
         }

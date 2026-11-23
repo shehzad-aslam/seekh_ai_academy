@@ -451,6 +451,13 @@ fun SeekhRootApp(
         navigateBack()
     }
 
+    val appLayoutDirection = if (SeekhCatalog.isRtlLanguage(selectedLangCode)) {
+        androidx.compose.ui.unit.LayoutDirection.Rtl
+    } else {
+        androidx.compose.ui.unit.LayoutDirection.Ltr
+    }
+
+    CompositionLocalProvider(androidx.compose.ui.platform.LocalLayoutDirection provides appLayoutDirection) {
     AnimatedContent(
         targetState = currentScreen,
         transitionSpec = {
@@ -982,6 +989,7 @@ fun SeekhRootApp(
                         Box(modifier = Modifier.align(Alignment.BottomCenter)) {
                             SeekhBottomNavigationBar(
                                 selectedTab = selectedMainTab,
+                                selectedLanguageCode = selectedLangCode,
                                 onTabSelected = { tab ->
                                     voiceEngine.playTapSound()
                                     selectedMainTab = tab
@@ -1304,5 +1312,6 @@ fun SeekhRootApp(
             },
             onDismiss = { showDeleteHistoryDialog = false }
         )
+    }
     }
 }
