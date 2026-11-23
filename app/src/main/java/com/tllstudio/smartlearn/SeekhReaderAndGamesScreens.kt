@@ -57,6 +57,7 @@ fun InteractiveStoryReaderScreen(
     selectedLanguageCode: String,
     buddyMood: BuddyMood,
     initialPageIndex: Int = 0,
+    voiceEngine: SeekhVoiceAndAudioEngine? = null,
     onPageChanged: (Int) -> Unit = {},
     onSpeakText: (String) -> Unit,
     onPlayPhoneme: (Int) -> Unit = {},
@@ -82,22 +83,15 @@ fun InteractiveStoryReaderScreen(
         currentPage.text.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
     }
 
-    // Per-page persistent state across vertical paging within the book (prevents reset & duplicate star farming!)
+    // Visual cursor word index per page: starts at 0 (Word 1) so the cursor is always visible on the first word and moves word-by-word!
     var pageReadWordCounts by remember(book.id) {
-        mutableStateOf(
-            buildMap<Int, Int> {
-                if (book.id == "book_rained_fish") put(0, 11)
-                for (idx in 0 until initialPageIndex) {
-                    val pgWords = book.pages.getOrNull(idx)?.text?.trim()?.split(Regex("\\s+"))?.filter { it.isNotEmpty() }?.size ?: 0
-                    put(idx, pgWords)
-                }
-            }
-        )
+        mutableStateOf<Map<Int, Int>>(emptyMap())
     }
     val setPageReadWordCount: (Int, Int) -> Unit = { targetPageIdx, newCount ->
         pageReadWordCounts = pageReadWordCounts + (targetPageIdx to newCount)
     }
 
+    // Tracks which pages have already awarded stars (prevents duplicate star farming when scrolling back/forth!)
     var rewardedPageIndices by remember(book.id) {
         mutableStateOf(
             if (profile.completedBookIds.contains(book.id)) {
@@ -126,7 +120,9 @@ fun InteractiveStoryReaderScreen(
     // Tooltip state: (pageIndex, selectedWord)
     var selectedTooltipPageAndWord by remember(book.id) { mutableStateOf<Pair<Int, String>?>(null) }
     var activeQuizModalPageIndex by remember(book.id) { mutableStateOf<Int?>(null) }
-    var isMicActive by remember { mutableStateOf(false) }
+    var isMicActive by remember(book.id) { mutableStateOf(false) }
+    // Starts automatic word-by-word voice reading & cursor progression right when the story opens!
+    var isAutoReadingActive by remember(book.id) { mutableStateOf(true) }
     var showBlockBookDialog by remember { mutableStateOf(false) }
     var readingMode by remember { mutableStateOf("Read aloud") } // "Read aloud" | "Listen" | "Silent"
     var showReadingModeDialog by remember { mutableStateOf(false) }
@@ -134,6 +130,7 @@ fun InteractiveStoryReaderScreen(
     var completedWpm by remember { mutableIntStateOf(profile.wordsPerMinute) }
     var starBurstTrigger by remember { mutableIntStateOf(0) }
     var hearLineTrigger by remember { mutableIntStateOf(0) }
+    var lastRmsAdvanceTimeMs by remember { mutableLongStateOf(0L) }
     val startTimeMs = remember { System.currentTimeMillis() }
 
     val awardPageStarsOnce: (Int, Int) -> Unit = { targetPageIdx, starsToAward ->
@@ -144,16 +141,94 @@ fun InteractiveStoryReaderScreen(
         }
     }
 
-    // Sync pageIndex whenever VerticalPager settles on a new full-screen page!
+    // Connect live Android TTS word-range boundaries & SpeechRecognizer callbacks to move the cursor word-by-word as words are spoken!
+    DisposableEffect(voiceEngine, pageIndex, isMicActive, isAutoReadingActive) {
+        val activePgIdx = pageIndex
+        val activePg = book.pages.getOrElse(activePgIdx) { book.pages.first() }
+        val cleanText = activePg.text.replace("_", " ").trim()
+        val activeWords = cleanText.split(Regex("\\s+")).filter { it.isNotEmpty() }
+
+        // Precompute character start positions of each word in cleanText for exact TTS onRangeStart synchronization
+        val wordCharStarts = mutableListOf<Int>()
+        var searchCursor = 0
+        for (w in activeWords) {
+            val foundIdx = cleanText.indexOf(w, searchCursor)
+            if (foundIdx >= 0) {
+                wordCharStarts.add(foundIdx)
+                searchCursor = foundIdx + w.length
+            } else {
+                wordCharStarts.add(searchCursor)
+            }
+        }
+
+        voiceEngine?.onTtsWordRangeListener = { charStart, _ ->
+            if (!isMicActive && isAutoReadingActive && activeWords.isNotEmpty()) {
+                val matchedWordIdx = wordCharStarts.indexOfLast { it <= charStart }.coerceIn(0, activeWords.lastIndex)
+                val currentCount = pageReadWordCounts[activePgIdx] ?: 0
+                if (matchedWordIdx >= currentCount) {
+                    setPageReadWordCount(activePgIdx, matchedWordIdx)
+                }
+            }
+        }
+
+        voiceEngine?.onRecognizedWordsListener = { spokenWords ->
+            if (isMicActive && activeWords.isNotEmpty() && spokenWords.isNotEmpty()) {
+                var currentCursor = pageReadWordCounts[activePgIdx] ?: 0
+                val cleanSpoken = spokenWords.map { it.lowercase().replace(Regex("[^a-z]"), "") }.filter { it.isNotEmpty() }
+                for (sw in cleanSpoken) {
+                    if (currentCursor >= activeWords.size) break
+                    val targetClean = activeWords[currentCursor].lowercase().replace(Regex("[^a-z]"), "")
+                    val isMatch = targetClean.isEmpty() ||
+                        sw == targetClean ||
+                        (sw.length >= 2 && targetClean.startsWith(sw.take(2))) ||
+                        (targetClean.length >= 2 && sw.startsWith(targetClean.take(2)))
+                    if (isMatch) {
+                        currentCursor++
+                    }
+                }
+                // Even if child's pronunciation differed, advance by at least 1 word when a spoken word burst arrives
+                val curr = pageReadWordCounts[activePgIdx] ?: 0
+                val nextCursor = maxOf(currentCursor, curr + 1).coerceAtMost(activeWords.size)
+                setPageReadWordCount(activePgIdx, nextCursor)
+            }
+        }
+
+        voiceEngine?.onVoiceRmsPulseListener = { rmsdB ->
+            if (isMicActive && activeWords.isNotEmpty() && rmsdB > 2.4f) {
+                val now = System.currentTimeMillis()
+                if (now - lastRmsAdvanceTimeMs >= 320L) {
+                    lastRmsAdvanceTimeMs = now
+                    val curr = pageReadWordCounts[activePgIdx] ?: 0
+                    if (curr < activeWords.size) {
+                        setPageReadWordCount(activePgIdx, curr + 1)
+                    }
+                }
+            }
+        }
+
+        onDispose {
+            voiceEngine?.onTtsWordRangeListener = null
+            voiceEngine?.onRecognizedWordsListener = null
+            voiceEngine?.onVoiceRmsPulseListener = null
+        }
+    }
+
+    // Sync pageIndex whenever VerticalPager settles on a new full-screen page & reset cursor to Word 0 on that page!
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }
             .collect { settledPage ->
                 selectedTooltipPageAndWord = null
                 if (settledPage in 0 until book.pages.size) {
+                    // Position the reading cursor at Word 0 (the first word) of the newly snapped page
+                    setPageReadWordCount(settledPage, 0)
                     if (settledPage != pageIndex) {
                         pageIndex = settledPage
                         onPageChanged(settledPage)
                     }
+                } else if (settledPage == book.pages.size) {
+                    isAutoReadingActive = false
+                    isMicActive = false
+                    onStopListening()
                 }
             }
     }
@@ -170,6 +245,7 @@ fun InteractiveStoryReaderScreen(
                 onBack()
             }
             else -> {
+                isAutoReadingActive = false
                 isMicActive = false
                 onStopListening()
                 onBack()
@@ -177,54 +253,101 @@ fun InteractiveStoryReaderScreen(
         }
     }
 
-    LaunchedEffect(book.id) {
-        onSpeakText(book.title)
-    }
+    // Automatic Word-by-Word Voice Cursor Progression & Auto-Next-Page Snapping!
+    // As each word is spoken, the cursor moves to the next word, and as soon as the page completes, the next full-screen page snaps into view!
+    LaunchedEffect(pageIndex, isAutoReadingActive, hearLineTrigger, readingMode) {
+        val activePgIdx = pagerState.currentPage
+        if (activePgIdx !in 0 until book.pages.size) return@LaunchedEffect
+        if (readingMode == "Silent") return@LaunchedEffect
+        if (!isAutoReadingActive && hearLineTrigger == 0) return@LaunchedEffect
+        if (isMicActive) return@LaunchedEffect
 
-    // Real-time word-by-word highlight progression when user taps Noor Buddy or "🔊" on a page
-    LaunchedEffect(hearLineTrigger) {
-        if (hearLineTrigger > 0) {
-            val activePgIdx = pagerState.currentPage.coerceIn(0, (book.pages.size - 1).coerceAtLeast(0))
-            val activePg = book.pages.getOrElse(activePgIdx) { book.pages.first() }
-            val activeWords = activePg.text.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
-            setPageReadWordCount(activePgIdx, 0)
-            onSpeakText(activePg.text)
-            for (i in 1..activeWords.size) {
-                delay(290)
-                setPageReadWordCount(activePgIdx, i)
+        val activePg = book.pages[activePgIdx]
+        val activeWords = activePg.text.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
+        if (activeWords.isEmpty()) return@LaunchedEffect
+
+        // Start cursor cleanly at Word 0 of this page
+        setPageReadWordCount(activePgIdx, 0)
+        delay(220)
+        onSpeakText(activePg.text)
+
+        for (wIdx in activeWords.indices) {
+            if (!isAutoReadingActive && hearLineTrigger == 0) return@LaunchedEffect
+            if (isMicActive || pagerState.currentPage != activePgIdx) return@LaunchedEffect
+
+            // Highlight word wIdx with the bouncing star cursor
+            if ((pageReadWordCounts[activePgIdx] ?: 0) < wIdx) {
+                setPageReadWordCount(activePgIdx, wIdx)
             }
-            awardPageStarsOnce(activePgIdx, 10)
-            // Automatically snap vertically to the next full-screen page when finished reading!
+
+            // Natural word duration based on syllable/character length & punctuation pause
+            val rawWord = activeWords[wIdx]
+            val cleanLen = rawWord.replace(Regex("[^a-zA-Z]"), "").length
+            val hasPunctPause = rawWord.any { it in ",.;!?" }
+            val wordDurationMs = (210L + cleanLen * 44L + if (hasPunctPause) 175L else 0L).coerceIn(260L, 620L)
+            delay(wordDurationMs)
+
+            // Advance cursor to next word (wIdx + 1) as this word finishes being spoken
+            if ((pageReadWordCounts[activePgIdx] ?: 0) <= wIdx) {
+                setPageReadWordCount(activePgIdx, wIdx + 1)
+            }
+        }
+
+        // Wait briefly if TTS is still finishing the last syllable of the sentence
+        var extraWait = 0
+        while (voiceEngine?.isCurrentlySpeaking() == true && extraWait < 12) {
+            delay(100)
+            extraWait++
+        }
+
+        // Mark all words on the page completed & award stars once!
+        setPageReadWordCount(activePgIdx, activeWords.size)
+        awardPageStarsOnce(activePgIdx, 10)
+
+        // As soon as the page completes, automatically slide & snap to the next full-screen page!
+        delay(360)
+        if (pagerState.currentPage == activePgIdx) {
             if (activePgIdx < book.pages.size - 1) {
-                delay(420)
                 pagerState.animateScrollToPage(activePgIdx + 1)
-                if (readingMode == "Listen") {
-                    hearLineTrigger++
-                }
+            } else {
+                isAutoReadingActive = false
+                pagerState.animateScrollToPage(book.pages.size)
             }
         }
     }
 
-    // Real-time word progression when Microphone is active
+    // Live Microphone Voice Reading Flow: as the user speaks, cursor moves word-by-word, and as soon as the page completes, the next page snaps in!
     LaunchedEffect(isMicActive, pageIndex) {
-        if (isMicActive) {
+        val activePgIdx = pagerState.currentPage
+        if (isMicActive && activePgIdx in 0 until book.pages.size) {
+            isAutoReadingActive = false
+            val activeWords = book.pages[activePgIdx].text.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
+            if ((pageReadWordCounts[activePgIdx] ?: 0) >= activeWords.size) {
+                setPageReadWordCount(activePgIdx, 0)
+            }
             onStartListening {}
-            val activePgIdx = pageIndex
-            var currentRead = pageReadWordCounts[activePgIdx] ?: 0
-            while (isMicActive && currentRead < words.size) {
-                delay(340)
-                currentRead = (currentRead + 1).coerceAtMost(words.size)
-                setPageReadWordCount(activePgIdx, currentRead)
-                if (currentRead == words.size) {
+
+            while (isMicActive && pagerState.currentPage == activePgIdx) {
+                delay(330)
+                val currentRead = pageReadWordCounts[activePgIdx] ?: 0
+                if (currentRead < activeWords.size) {
+                    val nextRead = (currentRead + 1).coerceAtMost(activeWords.size)
+                    setPageReadWordCount(activePgIdx, nextRead)
+                }
+                val updatedRead = pageReadWordCounts[activePgIdx] ?: 0
+                if (updatedRead >= activeWords.size) {
                     awardPageStarsOnce(activePgIdx, 15)
-                    if (activePgIdx < book.pages.size - 1) {
-                        delay(450)
-                        pagerState.animateScrollToPage(activePgIdx + 1)
-                    } else {
-                        isMicActive = false
-                        onStopListening()
-                        pagerState.animateScrollToPage(book.pages.size)
+                    delay(360)
+                    if (pagerState.currentPage == activePgIdx) {
+                        if (activePgIdx < book.pages.size - 1) {
+                            pagerState.animateScrollToPage(activePgIdx + 1)
+                        } else {
+                            isMicActive = false
+                            onStopListening()
+                            pagerState.animateScrollToPage(book.pages.size)
+                        }
                     }
+                    break
                 }
             }
         }
@@ -487,18 +610,17 @@ fun InteractiveStoryReaderScreen(
                                             )
                                             .bouncyClick {
                                                 pageIndex = pIdx
+                                                isAutoReadingActive = false
                                                 selectedTooltipPageAndWord = pIdx to cleanWord.ifEmpty { rawWord }
                                                 onSpeakText(cleanWord.ifEmpty { rawWord })
                                                 if (wIdx >= pageReadCount) {
                                                     val nextCount = wIdx + 1
                                                     setPageReadWordCount(pIdx, nextCount)
-                                                    if (nextCount == pageWords.size) {
+                                                    if (nextCount >= pageWords.size) {
                                                         awardPageStarsOnce(pIdx, 10)
-                                                        if (pIdx < book.pages.size - 1) {
-                                                            coroutineScope.launch {
-                                                                delay(380)
-                                                                pagerState.animateScrollToPage(pIdx + 1)
-                                                            }
+                                                        coroutineScope.launch {
+                                                            delay(360)
+                                                            pagerState.animateScrollToPage((pIdx + 1).coerceAtMost(book.pages.size))
                                                         }
                                                     }
                                                 }
@@ -772,7 +894,7 @@ fun InteractiveStoryReaderScreen(
         // Flying Stars Animation Overlay (StarAnimationHolderView)
         FlyingStarsOverlay(triggerCount = starBurstTrigger)
 
-        // Bottom-Left Clean Microphone Button (plus subtle Bonus Quiz chip if the current page has a quiz)
+        // Bottom-Left Clean Microphone Button + Auto-Read Cursor Toggle Pill (plus Bonus Quiz chip if the current page has a quiz)
         Row(
             modifier = Modifier
                 .align(Alignment.BottomStart)
@@ -785,8 +907,14 @@ fun InteractiveStoryReaderScreen(
                 modifier = Modifier
                     .size(54.dp)
                     .bouncyClick(scaleDown = 0.88f) {
-                        isMicActive = !isMicActive
-                        if (!isMicActive) onStopListening()
+                        val nextMic = !isMicActive
+                        isMicActive = nextMic
+                        if (nextMic) {
+                            isAutoReadingActive = false
+                            voiceEngine?.stopSpeaking()
+                        } else {
+                            onStopListening()
+                        }
                     },
                 shape = CircleShape,
                 color = if (isMicActive) SeekhGreenMint else Color.White,
@@ -803,12 +931,56 @@ fun InteractiveStoryReaderScreen(
                 }
             }
 
+            if (pagerState.currentPage < book.pages.size) {
+                Surface(
+                    modifier = Modifier
+                        .height(44.dp)
+                        .bouncyClick(scaleDown = 0.90f) {
+                            if (isAutoReadingActive) {
+                                isAutoReadingActive = false
+                                voiceEngine?.stopSpeaking()
+                            } else {
+                                isMicActive = false
+                                onStopListening()
+                                isAutoReadingActive = true
+                                hearLineTrigger++
+                            }
+                        },
+                    shape = RoundedCornerShape(50),
+                    color = if (isAutoReadingActive) SeekhGreen500 else Color.White,
+                    border = BorderStroke(1.dp, SeekhGreen500),
+                    shadowElevation = 4.dp
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 14.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(
+                            imageVector = if (isAutoReadingActive) Icons.Default.Pause else Icons.Default.PlayArrow,
+                            contentDescription = "Toggle Auto Read",
+                            tint = if (isAutoReadingActive) Color.White else SeekhGreen600,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Text(
+                            text = if (isAutoReadingActive) "Reading..." else "Read Page",
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp,
+                            color = if (isAutoReadingActive) Color.White else SeekhGreen600
+                        )
+                    }
+                }
+            }
+
             if (pagerState.currentPage < book.pages.size && currentPage.quiz != null) {
                 val isQuizSolved = rewardedQuizPageIndices.contains(pageIndex)
                 Surface(
                     modifier = Modifier
                         .height(44.dp)
                         .bouncyClick(scaleDown = 0.90f) {
+                            isAutoReadingActive = false
+                            voiceEngine?.stopSpeaking()
                             activeQuizModalPageIndex = pageIndex
                             onSpeakText(currentPage.quiz.question)
                         },
@@ -834,11 +1006,18 @@ fun InteractiveStoryReaderScreen(
             }
         }
 
-        // Bottom-Right AI Reading Buddy (Tapping speaks the currently visible page line with word-by-word highlight!)
+        // Bottom-Right AI Reading Buddy (Tapping speaks the currently visible page line with word-by-word cursor highlight!)
         FloatingReadingBuddy(
-            mood = if (isMicActive) BuddyMood.LISTENING else buddyMood,
-            speechBubbleText = if (isMicActive) "Listening..." else null,
+            mood = when {
+                isMicActive -> BuddyMood.LISTENING
+                isAutoReadingActive -> BuddyMood.SPEAKING
+                else -> buddyMood
+            },
+            speechBubbleText = if (isMicActive) "Speak now..." else null,
             onClick = {
+                isMicActive = false
+                onStopListening()
+                isAutoReadingActive = true
                 hearLineTrigger++
             },
             size = 78.dp,

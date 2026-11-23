@@ -982,6 +982,7 @@ fun SeekhRootApp(
                     selectedLanguageCode = selectedLangCode,
                     buddyMood = buddyMood,
                     initialPageIndex = initialPage,
+                    voiceEngine = voiceEngine,
                     onPageChanged = { newIdx ->
                         val prevMaxIdx = activeProfile.bookPageProgress[activeBook.id] ?: -1
                         if (newIdx > prevMaxIdx) {

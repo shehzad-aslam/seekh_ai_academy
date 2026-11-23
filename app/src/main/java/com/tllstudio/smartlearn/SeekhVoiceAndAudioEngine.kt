@@ -36,6 +36,10 @@ class SeekhVoiceAndAudioEngine(
     private var speechRecognizer: SpeechRecognizer? = null
     private var isListening = false
     var isSoundEnabled: Boolean = true
+    var onTtsWordRangeListener: ((Int, Int) -> Unit)? = null
+    var onTtsDoneListener: (() -> Unit)? = null
+    var onRecognizedWordsListener: ((List<String>) -> Unit)? = null
+    var onVoiceRmsPulseListener: ((Float) -> Unit)? = null
 
     init {
         initTts()
@@ -55,16 +59,25 @@ class SeekhVoiceAndAudioEngine(
                         }
 
                         override fun onRangeStart(utteranceId: String?, start: Int, end: Int, frame: Int) {
-                            mainHandler.post { onWordSpokenByTts(start, end) }
+                            mainHandler.post {
+                                onWordSpokenByTts(start, end)
+                                onTtsWordRangeListener?.invoke(start, end)
+                            }
                         }
 
                         override fun onDone(utteranceId: String?) {
-                            mainHandler.post { onMoodChanged(BuddyMood.IDLE) }
+                            mainHandler.post {
+                                onMoodChanged(BuddyMood.IDLE)
+                                onTtsDoneListener?.invoke()
+                            }
                         }
 
                         @Deprecated("Deprecated in Java")
                         override fun onError(utteranceId: String?) {
-                            mainHandler.post { onMoodChanged(BuddyMood.IDLE) }
+                            mainHandler.post {
+                                onMoodChanged(BuddyMood.IDLE)
+                                onTtsDoneListener?.invoke()
+                            }
                         }
                     })
                 }
@@ -72,6 +85,8 @@ class SeekhVoiceAndAudioEngine(
         } catch (_: Exception) {
         }
     }
+
+    fun isCurrentlySpeaking(): Boolean = try { tts?.isSpeaking == true } catch (_: Exception) { false }
 
     fun speak(
         text: String,
@@ -332,45 +347,60 @@ class SeekhVoiceAndAudioEngine(
                 if (speechRecognizer == null) {
                     speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
                 }
-                speechRecognizer?.setRecognitionListener(object : RecognitionListener {
-                    override fun onReadyForSpeech(params: Bundle?) {
-                        onMoodChanged(BuddyMood.LISTENING)
-                    }
-                    override fun onBeginningOfSpeech() {}
-                    override fun onRmsChanged(rmsdB: Float) {}
-                    override fun onBufferReceived(buffer: ByteArray?) {}
-                    override fun onEndOfSpeech() {}
-                    override fun onError(error: Int) {
-                        if (isListening) {
-                            playSuccessChime()
-                            onFallbackTick()
-                        }
-                    }
-                    override fun onResults(results: Bundle?) {
-                        val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                        if (!matches.isNullOrEmpty()) {
-                            playSuccessChime()
-                            val words = matches.first().lowercase().split(Regex("\\s+"))
-                            onSpeechRecognizedWords(words)
-                        } else if (isListening) {
-                            playSuccessChime()
-                            onFallbackTick()
-                        }
-                    }
-                    override fun onPartialResults(partialResults: Bundle?) {
-                        val matches = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                        if (!matches.isNullOrEmpty()) {
-                            val words = matches.first().lowercase().split(Regex("\\s+"))
-                            onSpeechRecognizedWords(words)
-                        }
-                    }
-                    override fun onEvent(eventType: Int, params: Bundle?) {}
-                })
                 val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
                     putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
                     putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US")
                     putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
                 }
+                speechRecognizer?.setRecognitionListener(object : RecognitionListener {
+                    override fun onReadyForSpeech(params: Bundle?) {
+                        onMoodChanged(BuddyMood.LISTENING)
+                    }
+                    override fun onBeginningOfSpeech() {}
+                    override fun onRmsChanged(rmsdB: Float) {
+                        if (isListening && rmsdB > 2.0f) {
+                            mainHandler.post { onVoiceRmsPulseListener?.invoke(rmsdB) }
+                        }
+                    }
+                    override fun onBufferReceived(buffer: ByteArray?) {}
+                    override fun onEndOfSpeech() {}
+                    override fun onError(error: Int) {
+                        if (isListening) {
+                            onFallbackTick()
+                            mainHandler.postDelayed({
+                                if (isListening) {
+                                    try { speechRecognizer?.startListening(intent) } catch (_: Exception) {}
+                                }
+                            }, 220L)
+                        }
+                    }
+                    override fun onResults(results: Bundle?) {
+                        val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                        if (!matches.isNullOrEmpty()) {
+                            val words = matches.first().lowercase().split(Regex("\\s+")).filter { it.isNotBlank() }
+                            onSpeechRecognizedWords(words)
+                            mainHandler.post { onRecognizedWordsListener?.invoke(words) }
+                        } else if (isListening) {
+                            onFallbackTick()
+                        }
+                        if (isListening) {
+                            mainHandler.postDelayed({
+                                if (isListening) {
+                                    try { speechRecognizer?.startListening(intent) } catch (_: Exception) {}
+                                }
+                            }, 160L)
+                        }
+                    }
+                    override fun onPartialResults(partialResults: Bundle?) {
+                        val matches = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                        if (!matches.isNullOrEmpty()) {
+                            val words = matches.first().lowercase().split(Regex("\\s+")).filter { it.isNotBlank() }
+                            onSpeechRecognizedWords(words)
+                            mainHandler.post { onRecognizedWordsListener?.invoke(words) }
+                        }
+                    }
+                    override fun onEvent(eventType: Int, params: Bundle?) {}
+                })
                 speechRecognizer?.startListening(intent)
             } else {
                 playSuccessChime()
