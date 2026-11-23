@@ -1214,7 +1214,7 @@ fun SeekhMainTopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 10.dp),
+            .padding(horizontal = 14.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -1877,8 +1877,8 @@ fun TopFoundationalTrioSection(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp),
-        horizontalArrangement = Arrangement.spacedBy(11.dp),
+            .padding(horizontal = 14.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // 1. Alphabets Top Card
@@ -1942,35 +1942,40 @@ private fun TopFoundationalSingleCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val cardShape = RoundedCornerShape(22.dp)
+    val cardShape = RoundedCornerShape(18.dp)
     Surface(
         modifier = modifier
             .softCardShadow(
-                elevation = 10.dp,
+                elevation = 7.dp,
                 shape = cardShape,
-                spotColor = accentColor.copy(alpha = 0.24f),
-                ambientColor = Color(0x161E1B4B)
+                spotColor = accentColor.copy(alpha = 0.22f),
+                ambientColor = Color(0x141E1B4B)
             )
             .bouncyClick(scaleDown = 0.96f, onClick = onClick),
         shape = cardShape,
         color = Color.White,
         shadowElevation = 0.dp,
-        border = BorderStroke(1.2.dp, Color(0xFFE8ECF7))
+        border = BorderStroke(1.dp, headerBorderColor.copy(alpha = 0.85f))
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 9.dp, end = 9.dp, top = 9.dp, bottom = 11.dp),
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Color.White, headerBgColor.copy(alpha = 0.45f))
+                    )
+                )
+                .padding(start = 6.dp, end = 6.dp, top = 6.dp, bottom = 7.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Clean Single-Layer Rounded Illustration Stage (No triple-nested boxes, no overlapping center pill!)
+            // Smooth Compact Rounded Illustration Stage
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(86.dp)
-                    .clip(RoundedCornerShape(15.dp))
+                    .height(74.dp)
+                    .clip(RoundedCornerShape(13.dp))
                     .background(headerBgColor)
-                    .border(1.dp, headerBorderColor, RoundedCornerShape(15.dp))
+                    .border(0.8.dp, headerBorderColor, RoundedCornerShape(13.dp))
             ) {
                 AssetWebpImage(
                     assetPath = previewAssetPath,
@@ -1981,83 +1986,88 @@ private fun TopFoundationalSingleCard(
 
                 // Sleek Minimal Corner Pill Tag tucked in Top-Start Corner
                 Surface(
-                    shape = RoundedCornerShape(8.dp),
+                    shape = RoundedCornerShape(7.dp),
                     color = Color.White.copy(alpha = 0.94f),
-                    border = BorderStroke(1.dp, headerBorderColor),
+                    border = BorderStroke(0.8.dp, headerBorderColor),
                     modifier = Modifier
                         .align(Alignment.TopStart)
-                        .padding(5.dp)
+                        .padding(4.dp)
                 ) {
                     Text(
                         text = badgeText,
                         fontFamily = GoogleSansFamily,
                         fontWeight = FontWeight.ExtraBold,
-                        fontSize = 9.5.sp,
+                        fontSize = 9.sp,
                         color = accentColor,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 1.5.dp)
+                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 1.dp)
                     )
                 }
 
                 if (isCompleted) {
                     Box(
                         modifier = Modifier
-                            .padding(5.dp)
-                            .size(18.dp)
+                            .padding(4.dp)
+                            .size(16.dp)
                             .align(Alignment.TopEnd)
                             .clip(CircleShape)
                             .background(SeekhGreenMint)
-                            .border(1.5.dp, Color.White, CircleShape),
+                            .border(1.2.dp, Color.White, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.Check,
                             contentDescription = "Completed",
                             tint = Color.White,
-                            modifier = Modifier.size(11.dp)
+                            modifier = Modifier.size(10.dp)
                         )
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(9.dp))
+            Spacer(modifier = Modifier.height(5.dp))
 
             Text(
                 text = title,
                 fontFamily = GoogleSansFamily,
                 fontWeight = FontWeight.ExtraBold,
-                fontSize = 13.sp,
+                fontSize = 12.5.sp,
                 color = SeekhTextPrimary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(2.dp))
-
             Text(
                 text = subtitle,
                 fontFamily = GoogleSansFamily,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 10.sp,
+                fontSize = 9.5.sp,
                 color = SeekhTextSecondary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(9.dp))
+            Spacer(modifier = Modifier.height(5.dp))
 
             Surface(
                 shape = RoundedCornerShape(50),
                 color = accentColor,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(30.dp)
+                    .height(26.dp)
             ) {
                 Row(
-                    modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(accentColor, accentColor.copy(alpha = 0.88f))
+                            )
+                        )
+                        .padding(horizontal = 6.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
@@ -2065,7 +2075,7 @@ private fun TopFoundationalSingleCard(
                         text = ctaLabel,
                         fontFamily = GoogleSansFamily,
                         fontWeight = FontWeight.ExtraBold,
-                        fontSize = 11.5.sp,
+                        fontSize = 11.sp,
                         color = Color.White,
                         maxLines = 1
                     )
@@ -2074,7 +2084,7 @@ private fun TopFoundationalSingleCard(
                         imageVector = Icons.Default.PlayArrow,
                         contentDescription = ctaLabel,
                         tint = Color.White,
-                        modifier = Modifier.size(13.dp)
+                        modifier = Modifier.size(12.dp)
                     )
                 }
             }
@@ -2095,7 +2105,7 @@ fun FoundationalPageFlashcard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val cardShape = RoundedCornerShape(20.dp)
+    val cardShape = RoundedCornerShape(16.dp)
     val cleanPrimaryName = remember(fullLabel) {
         fullLabel.substringAfter("•").trim().ifBlank { fullLabel }
     }
@@ -2106,32 +2116,37 @@ fun FoundationalPageFlashcard(
 
     Surface(
         modifier = modifier
-            .width(134.dp)
+            .width(114.dp)
             .softCardShadow(
-                elevation = 7.dp,
+                elevation = 6.dp,
                 shape = cardShape,
-                spotColor = accentColor.copy(alpha = 0.18f),
-                ambientColor = Color(0x121E1B4B)
+                spotColor = accentColor.copy(alpha = 0.16f),
+                ambientColor = Color(0x101E1B4B)
             )
             .bouncyClick(scaleDown = 0.96f, onClick = onClick),
         shape = cardShape,
         color = Color.White,
         shadowElevation = 0.dp,
-        border = BorderStroke(1.2.dp, Color(0xFFE8ECF7))
+        border = BorderStroke(1.dp, borderColor.copy(alpha = 0.85f))
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 9.dp, end = 9.dp, top = 9.dp, bottom = 11.dp),
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Color.White, softBgColor.copy(alpha = 0.45f))
+                    )
+                )
+                .padding(start = 6.dp, end = 6.dp, top = 6.dp, bottom = 7.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(86.dp)
-                    .clip(RoundedCornerShape(14.dp))
+                    .height(72.dp)
+                    .clip(RoundedCornerShape(11.dp))
                     .background(softBgColor)
-                    .border(1.dp, borderColor, RoundedCornerShape(14.dp))
+                    .border(0.8.dp, borderColor, RoundedCornerShape(11.dp))
             ) {
                 AssetWebpImage(
                     assetPath = imageAssetPath,
@@ -2141,45 +2156,43 @@ fun FoundationalPageFlashcard(
                 )
 
                 Surface(
-                    shape = RoundedCornerShape(8.dp),
+                    shape = RoundedCornerShape(6.dp),
                     color = Color.White.copy(alpha = 0.94f),
-                    border = BorderStroke(1.dp, borderColor),
+                    border = BorderStroke(0.8.dp, borderColor),
                     modifier = Modifier
                         .align(Alignment.TopStart)
-                        .padding(5.dp)
+                        .padding(4.dp)
                 ) {
                     Text(
                         text = "$indexNumber",
                         fontFamily = GoogleSansFamily,
                         fontWeight = FontWeight.ExtraBold,
-                        fontSize = 10.sp,
+                        fontSize = 9.5.sp,
                         color = accentColor,
                         maxLines = 1,
-                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 1.5.dp)
+                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 1.dp)
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(5.dp))
 
             Text(
                 text = cleanPrimaryName,
                 fontFamily = GoogleSansFamily,
                 fontWeight = FontWeight.ExtraBold,
-                fontSize = 13.sp,
+                fontSize = 12.sp,
                 color = SeekhTextPrimary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(2.dp))
-
             Text(
                 text = cleanSubTag,
                 fontFamily = GoogleSansFamily,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 10.5.sp,
+                fontSize = 9.5.sp,
                 color = accentColor,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
