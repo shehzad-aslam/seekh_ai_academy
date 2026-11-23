@@ -8,7 +8,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.Crossfade
+import androidx.compose.animation.*
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -105,7 +107,21 @@ fun SeekhRootApp(
     var profiles by remember { mutableStateOf(repository.loadProfiles()) }
     var activeProfileId by remember { mutableStateOf(repository.getActiveProfileId()) }
     val activeProfile = remember(profiles, activeProfileId) {
-        profiles.firstOrNull { it.id == activeProfileId } ?: profiles.first()
+        profiles.firstOrNull { it.id == activeProfileId }
+            ?: profiles.firstOrNull()
+            ?: LearnerProfile(
+                id = "temp_uncreated",
+                name = "Reader",
+                avatarIndex = 1,
+                stars = 0,
+                minutesReadToday = 0,
+                dailyGoalMinutes = 10,
+                streakDays = 0,
+                wordsPerMinute = 0,
+                completedBookIds = emptySet(),
+                weeklyMinutes = listOf(0, 0, 0, 0, 0, 0, 0),
+                bookPageProgress = emptyMap()
+            )
     }
 
     var selectedLangCode by remember { mutableStateOf(repository.getSelectedLanguageCode()) }
@@ -132,7 +148,11 @@ fun SeekhRootApp(
 
     var currentScreen by remember {
         mutableStateOf(
-            if (repository.isOnboardingCompleted()) AppScreen.MAIN_HOME else AppScreen.PRIVACY_SPLASH
+            when {
+                !repository.isOnboardingCompleted() -> AppScreen.PRIVACY_SPLASH
+                profiles.isEmpty() -> AppScreen.PROFILE_SWITCHER
+                else -> AppScreen.MAIN_HOME
+            }
         )
     }
     val screenHistory = remember { mutableStateListOf<AppScreen>() }
@@ -185,6 +205,72 @@ fun SeekhRootApp(
         }
     }
 
+    fun updateActiveProfile(transform: (LearnerProfile) -> LearnerProfile) {
+        if (profiles.isEmpty()) return
+        val updatedList = profiles.map { p ->
+            if (p.id == activeProfile.id) transform(p) else p
+        }
+        profiles = updatedList
+        repository.saveProfiles(updatedList)
+    }
+
+    fun recordReadingTimeAndProgress(
+        addedSeconds: Int,
+        addedStars: Int = 0,
+        incrementGames: Boolean = false
+    ) {
+        if (profiles.isEmpty()) return
+        val todayIdx = repository.getTodayDayOfWeekIndex()
+        val todayKey = repository.getTodayDateKey()
+        updateActiveProfile { p ->
+            val newSecs = p.readingSecondsToday + addedSeconds
+            val calcMinFromSecs = newSecs / 60
+            val newMinToday = maxOf(p.minutesReadToday, calcMinFromSecs)
+            val newWeek = p.weeklyMinutes.toMutableList().apply {
+                while (size < 7) add(0)
+                this[todayIdx] = newMinToday
+            }
+            val newStreak = when {
+                newMinToday >= p.dailyGoalMinutes && p.minutesReadToday < p.dailyGoalMinutes -> p.streakDays + 1
+                newMinToday > 0 && p.streakDays == 0 -> 1
+                else -> p.streakDays
+            }
+            p.copy(
+                stars = p.stars + addedStars,
+                readingSecondsToday = newSecs,
+                minutesReadToday = newMinToday,
+                weeklyMinutes = newWeek,
+                streakDays = newStreak,
+                gamesPlayedCount = p.gamesPlayedCount + (if (incrementGames) 1 else 0),
+                lastActiveDateKey = todayKey
+            )
+        }
+    }
+
+    fun awardStarsToActiveProfile(amount: Int, isFromGame: Boolean = false) {
+        voiceEngine.playSuccessChime()
+        recordReadingTimeAndProgress(
+            addedSeconds = if (isFromGame) 35 else 15,
+            addedStars = amount,
+            incrementGames = isFromGame
+        )
+    }
+
+    // Real-time active learning timer: while the user is inside Story Reader or any Game, accumulate real reading seconds!
+    LaunchedEffect(currentScreen, activeProfile.id) {
+        val isLearningScreen = currentScreen == AppScreen.STORY_READER ||
+            currentScreen == AppScreen.GAME_JUMBLE ||
+            currentScreen == AppScreen.GAME_BALLOON ||
+            currentScreen == AppScreen.GAME_SPEED ||
+            currentScreen == AppScreen.GAME_VOCAB
+        if (isLearningScreen && profiles.isNotEmpty()) {
+            while (true) {
+                delay(15000)
+                recordReadingTimeAndProgress(addedSeconds = 15)
+            }
+        }
+    }
+
     // Handle external intent commands for direct screen navigation
     LaunchedEffect(externalScreenCommand) {
         when (externalScreenCommand?.uppercase()) {
@@ -203,6 +289,14 @@ fun SeekhRootApp(
             "INTRO" -> {
                 screenHistory.clear()
                 currentScreen = AppScreen.BUDDY_INTRO
+                onConsumeExternalCommand()
+            }
+            "PROFILES_EMPTY" -> {
+                repository.clearUsageHistory()
+                profiles = emptyList()
+                activeProfileId = ""
+                screenHistory.clear()
+                currentScreen = AppScreen.PROFILE_SWITCHER
                 onConsumeExternalCommand()
             }
             "PROFILES" -> {
@@ -297,19 +391,6 @@ fun SeekhRootApp(
         }
     }
 
-    fun updateActiveProfile(transform: (LearnerProfile) -> LearnerProfile) {
-        val updatedList = profiles.map { p ->
-            if (p.id == activeProfile.id) transform(p) else p
-        }
-        profiles = updatedList
-        repository.saveProfiles(updatedList)
-    }
-
-    fun awardStarsToActiveProfile(amount: Int) {
-        voiceEngine.playSuccessChime()
-        updateActiveProfile { p -> p.copy(stars = p.stars + amount) }
-    }
-
     fun triggerCloudBookDownload(book: StoryBook) {
         if (downloadingBookIds.contains(book.id)) return
         downloadingBookIds = downloadingBookIds + book.id
@@ -353,7 +434,17 @@ fun SeekhRootApp(
         navigateBack()
     }
 
-    Crossfade(targetState = currentScreen, label = "root_screen") { screen ->
+    AnimatedContent(
+        targetState = currentScreen,
+        transitionSpec = {
+            (fadeIn(animationSpec = tween(320, easing = FastOutSlowInEasing)) +
+                scaleIn(initialScale = 0.96f, animationSpec = tween(320, easing = FastOutSlowInEasing)))
+                .togetherWith(
+                    fadeOut(animationSpec = tween(220, easing = FastOutSlowInEasing))
+                )
+        },
+        label = "root_screen_anim"
+    ) { screen ->
         when (screen) {
             AppScreen.PRIVACY_SPLASH -> {
                 PrivacyShieldSplashScreen(
@@ -433,31 +524,35 @@ fun SeekhRootApp(
                         repository.setActiveProfileId(chosen.id)
                         repository.setOnboardingCompleted(true)
                         voiceEngine.playSuccessChime()
-                        voiceEngine.speak("Welcome back, ${chosen.name}! Let's read a story.")
+                        voiceEngine.speak("Welcome back, ${chosen.name}! Let's continue your reading journey.")
                         screenHistory.clear()
                         currentScreen = AppScreen.MAIN_HOME
                     },
-                    onCreateProfile = { newName, avatarIdx ->
+                    onCreateProfile = { newName, avatarIdx, goalMins ->
                         val newProf = LearnerProfile(
                             id = "prof_${System.currentTimeMillis()}",
                             name = newName,
                             avatarIndex = avatarIdx,
-                            stars = 100,
+                            stars = 0,
                             minutesReadToday = 0,
-                            dailyGoalMinutes = 10,
-                            streakDays = 1,
-                            wordsPerMinute = 50,
+                            dailyGoalMinutes = goalMins,
+                            streakDays = 0,
+                            wordsPerMinute = 0,
                             completedBookIds = emptySet(),
                             weeklyMinutes = listOf(0, 0, 0, 0, 0, 0, 0),
-                            bookPageProgress = emptyMap()
+                            bookPageProgress = emptyMap(),
+                            gamesPlayedCount = 0,
+                            readingSecondsToday = 0,
+                            lastActiveDateKey = repository.getTodayDateKey()
                         )
                         val updated = profiles + newProf
                         profiles = updated
                         repository.saveProfiles(updated)
                         activeProfileId = newProf.id
                         repository.setActiveProfileId(newProf.id)
+                        repository.setOnboardingCompleted(true)
                         voiceEngine.playSuccessChime()
-                        voiceEngine.speak("Welcome, $newName! Here are one hundred golden stars to start your journey!")
+                        voiceEngine.speak("Welcome, $newName! Your profile is ready. Let's read your first story!")
                         screenHistory.clear()
                         currentScreen = AppScreen.MAIN_HOME
                     },
@@ -470,16 +565,30 @@ fun SeekhRootApp(
                         voiceEngine.playSuccessChime()
                         voiceEngine.speak("Profile updated to $newName!")
                     },
+                    onDeleteProfile = { targetProf ->
+                        val updated = profiles.filterNot { it.id == targetProf.id }
+                        profiles = updated
+                        repository.saveProfiles(updated)
+                        if (activeProfileId == targetProf.id) {
+                            val nextId = updated.firstOrNull()?.id ?: ""
+                            activeProfileId = nextId
+                            repository.setActiveProfileId(nextId)
+                        }
+                        voiceEngine.playTapSound()
+                        voiceEngine.speak("Deleted profile ${targetProf.name}.")
+                    },
                     onOpenParentsSection = {
                         selectedMainTab = MainTab.ACTIVITY
                         screenHistory.clear()
                         currentScreen = AppScreen.MAIN_HOME
                     },
                     onBuddyClick = {
-                        voiceEngine.speak("Select your explorer profile to open your reading library!")
+                        voiceEngine.speak("Create or select your profile to track your reading progress!")
                     },
                     onBack = {
-                        navigateBack()
+                        if (profiles.isNotEmpty()) {
+                            navigateBack()
+                        }
                     }
                 )
             }
@@ -763,12 +872,13 @@ fun SeekhRootApp(
                             newMap[activeBook.id] = newIdx
                             p.copy(bookPageProgress = newMap)
                         }
+                        recordReadingTimeAndProgress(addedSeconds = 20)
                     },
                     onSpeakText = { voiceEngine.speak(it) },
                     onPlayPhoneme = { idx -> voiceEngine.playPhonemeSound(idx) },
                     onStartListening = { onFallback -> voiceEngine.startVoiceListening(onFallback) },
                     onStopListening = { voiceEngine.stopVoiceListening() },
-                    onAwardStars = { awardStarsToActiveProfile(it) },
+                    onAwardStars = { awardStarsToActiveProfile(it, isFromGame = false) },
                     onBookCompleted = { completedBook, newWpm ->
                         voiceEngine.playClappingSound()
                         voiceEngine.speak("Congratulations ${activeProfile.name}! You finished ${completedBook.title} and earned fifty golden stars!")
@@ -776,15 +886,32 @@ fun SeekhRootApp(
                             repository.markAssignmentTurnedIn(completedBook.id)
                             turnedInAssignmentIds = repository.getTurnedInAssignmentIds()
                         }
+                        val todayIdx = repository.getTodayDayOfWeekIndex()
+                        val todayKey = repository.getTodayDateKey()
                         updateActiveProfile { p ->
                             val newMap = p.bookPageProgress.toMutableMap()
                             newMap.remove(completedBook.id)
+                            val newMinToday = p.minutesReadToday + 2
+                            val newWeek = p.weeklyMinutes.toMutableList().apply {
+                                while (size < 7) add(0)
+                                this[todayIdx] = newMinToday
+                            }
+                            val newStreak = when {
+                                newMinToday >= p.dailyGoalMinutes && p.minutesReadToday < p.dailyGoalMinutes -> p.streakDays + 1
+                                newMinToday > 0 && p.streakDays == 0 -> 1
+                                else -> p.streakDays
+                            }
+                            val updatedWpm = if (p.wordsPerMinute == 0) newWpm else ((p.wordsPerMinute + newWpm) / 2).coerceIn(30, 120)
                             p.copy(
                                 stars = p.stars + 50,
-                                minutesReadToday = p.minutesReadToday + 3,
-                                wordsPerMinute = ((p.wordsPerMinute + newWpm) / 2).coerceIn(48, 110),
+                                minutesReadToday = newMinToday,
+                                readingSecondsToday = p.readingSecondsToday + 120,
+                                wordsPerMinute = updatedWpm,
                                 completedBookIds = p.completedBookIds + completedBook.id,
-                                bookPageProgress = newMap
+                                weeklyMinutes = newWeek,
+                                streakDays = newStreak,
+                                bookPageProgress = newMap,
+                                lastActiveDateKey = todayKey
                             )
                         }
                     },
@@ -800,7 +927,6 @@ fun SeekhRootApp(
                             "VOCAB" -> AppScreen.GAME_VOCAB
                             else -> AppScreen.GAME_JUMBLE
                         }
-                        // Replace STORY_READER with the game so pressing Back from the post-book game returns cleanly to MAIN_HOME!
                         navigateTo(targetGame, replaceCurrent = true)
                     },
                     onBack = {
@@ -816,7 +942,7 @@ fun SeekhRootApp(
                     onSpeakText = { voiceEngine.speak(it) },
                     onPlayPhoneme = { idx -> voiceEngine.playPhonemeSound(idx) },
                     onPlayErrorTone = { voiceEngine.playErrorTone() },
-                    onAwardStars = { awardStarsToActiveProfile(it) },
+                    onAwardStars = { awardStarsToActiveProfile(it, isFromGame = true) },
                     onBack = {
                         navigateBack()
                     }
@@ -831,7 +957,7 @@ fun SeekhRootApp(
                     onPlayPhoneme = { idx -> voiceEngine.playPhonemeSound(idx) },
                     onPlayBalloonPop = { voiceEngine.playBalloonPopSound() },
                     onPlayErrorTone = { voiceEngine.playErrorTone() },
-                    onAwardStars = { awardStarsToActiveProfile(it) },
+                    onAwardStars = { awardStarsToActiveProfile(it, isFromGame = true) },
                     onBack = {
                         navigateBack()
                     }
@@ -843,7 +969,7 @@ fun SeekhRootApp(
                     profile = activeProfile,
                     buddyMood = buddyMood,
                     onSpeakText = { voiceEngine.speak(it) },
-                    onAwardStars = { awardStarsToActiveProfile(it) },
+                    onAwardStars = { awardStarsToActiveProfile(it, isFromGame = true) },
                     onBack = {
                         navigateBack()
                     }
@@ -856,7 +982,7 @@ fun SeekhRootApp(
                     selectedLanguageCode = selectedLangCode,
                     buddyMood = buddyMood,
                     onSpeakText = { voiceEngine.speak(it) },
-                    onAwardStars = { awardStarsToActiveProfile(it) },
+                    onAwardStars = { awardStarsToActiveProfile(it, isFromGame = true) },
                     onBack = {
                         navigateBack()
                     }
@@ -934,10 +1060,16 @@ fun SeekhRootApp(
             onConfirmDelete = {
                 repository.clearUsageHistory()
                 profiles = repository.loadProfiles()
+                activeProfileId = ""
                 customBooks = repository.loadCustomStories()
+                readingGroups = repository.loadReadingGroups()
+                turnedInAssignmentIds = repository.getTurnedInAssignmentIds()
+                openedGiftBoxIds = repository.getOpenedGiftBoxIds()
                 voiceEngine.playSuccessChime()
-                voiceEngine.speak("App usage history deleted.")
+                voiceEngine.speak("App usage history deleted. Create a new profile to begin!")
                 showDeleteHistoryDialog = false
+                screenHistory.clear()
+                currentScreen = AppScreen.PROFILE_SWITCHER
             },
             onDismiss = { showDeleteHistoryDialog = false }
         )

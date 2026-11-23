@@ -54,24 +54,27 @@ data class StoryBook(
 )
 
 data class SignedInAccountState(
-    val isSignedIn: Boolean = true,
-    val email: String = "family.reader@gmail.com",
-    val displayName: String = "Parent & Teacher Account",
-    val syncStatus: String = "Profiles & progress synced"
+    val isSignedIn: Boolean = false,
+    val email: String = "",
+    val displayName: String = "Local Device Account",
+    val syncStatus: String = "Saved on this device"
 )
 
 data class LearnerProfile(
     val id: String,
     val name: String,
-    val avatarIndex: Int, // 1..12 -> images/profile_face_1..12.svg
-    val stars: Int,
-    val minutesReadToday: Int,
-    val dailyGoalMinutes: Int,
-    val streakDays: Int,
-    val wordsPerMinute: Int,
-    val completedBookIds: Set<String>,
-    val weeklyMinutes: List<Int>, // Mon..Sun
-    val bookPageProgress: Map<String, Int> = emptyMap() // bookId -> lastPageIndex
+    val avatarIndex: Int, // 1..12 -> CustomLearnerVectorAvatar
+    val stars: Int = 0,
+    val minutesReadToday: Int = 0,
+    val dailyGoalMinutes: Int = 10,
+    val streakDays: Int = 0,
+    val wordsPerMinute: Int = 0,
+    val completedBookIds: Set<String> = emptySet(),
+    val weeklyMinutes: List<Int> = listOf(0, 0, 0, 0, 0, 0, 0), // Mon..Sun
+    val bookPageProgress: Map<String, Int> = emptyMap(), // bookId -> lastPageIndex
+    val gamesPlayedCount: Int = 0,
+    val readingSecondsToday: Int = 0,
+    val lastActiveDateKey: String = ""
 )
 
 data class PrizeBadge(
@@ -790,7 +793,7 @@ class SeekhRepository(context: Context) {
     }
 
     fun getPartnerCodes(): List<String> {
-        val raw = prefs.getString("partner_codes", "TLL-ACADEMY-2026") ?: "TLL-ACADEMY-2026"
+        val raw = prefs.getString("partner_codes_v3", "") ?: ""
         return raw.split(",").map { it.trim() }.filter { it.isNotEmpty() }
     }
 
@@ -799,49 +802,42 @@ class SeekhRepository(context: Context) {
         val upper = code.trim().uppercase()
         if (upper.isNotEmpty() && !current.contains(upper)) {
             current.add(upper)
-            prefs.edit().putString("partner_codes", current.joinToString(",")).apply()
+            prefs.edit().putString("partner_codes_v3", current.joinToString(",")).apply()
         }
     }
 
     fun removePartnerCode(code: String) {
         val current = getPartnerCodes().filterNot { it.equals(code, ignoreCase = true) }
-        prefs.edit().putString("partner_codes", current.joinToString(",")).apply()
+        prefs.edit().putString("partner_codes_v3", current.joinToString(",")).apply()
+    }
+
+    fun getTodayDateKey(): String {
+        val cal = java.util.Calendar.getInstance()
+        val y = cal.get(java.util.Calendar.YEAR)
+        val m = cal.get(java.util.Calendar.MONTH) + 1
+        val d = cal.get(java.util.Calendar.DAY_OF_MONTH)
+        return "%04d-%02d-%02d".format(y, m, d)
+    }
+
+    fun getTodayDayOfWeekIndex(): Int {
+        val cal = java.util.Calendar.getInstance()
+        return when (cal.get(java.util.Calendar.DAY_OF_WEEK)) {
+            java.util.Calendar.MONDAY -> 0
+            java.util.Calendar.TUESDAY -> 1
+            java.util.Calendar.WEDNESDAY -> 2
+            java.util.Calendar.THURSDAY -> 3
+            java.util.Calendar.FRIDAY -> 4
+            java.util.Calendar.SATURDAY -> 5
+            else -> 6 // SUNDAY
+        }
     }
 
     fun loadProfiles(): List<LearnerProfile> {
-        val raw = prefs.getString("profiles_json_v2", null)
+        val raw = prefs.getString("profiles_json_v3_real", null)
         if (raw.isNullOrBlank()) {
-            val defaults = listOf(
-                LearnerProfile(
-                    id = "prof_1",
-                    name = "Aarav",
-                    avatarIndex = 1,
-                    stars = 5212,
-                    minutesReadToday = 14,
-                    dailyGoalMinutes = 10,
-                    streakDays = 5,
-                    wordsPerMinute = 68,
-                    completedBookIds = setOf("sw_37273", "sw_15058", "sw_13916"),
-                    weeklyMinutes = listOf(12, 15, 10, 18, 14, 16, 14),
-                    bookPageProgress = mapOf("book_rained_fish" to 1, "sw_45764" to 3)
-                ),
-                LearnerProfile(
-                    id = "prof_2",
-                    name = "Zoya",
-                    avatarIndex = 3,
-                    stars = 2304,
-                    minutesReadToday = 8,
-                    dailyGoalMinutes = 10,
-                    streakDays = 3,
-                    wordsPerMinute = 54,
-                    completedBookIds = setOf("sw_15195", "sw_44485"),
-                    weeklyMinutes = listOf(8, 10, 12, 6, 11, 9, 8),
-                    bookPageProgress = mapOf("sw_13916" to 4)
-                )
-            )
-            saveProfiles(defaults)
-            return defaults
+            return emptyList()
         }
+        val todayKey = getTodayDateKey()
         return try {
             val arr = JSONArray(raw)
             val list = mutableListOf<LearnerProfile>()
@@ -862,19 +858,27 @@ class SeekhRepository(context: Context) {
                 progObj.keys().forEach { k ->
                     progMap[k] = progObj.optInt(k, 0)
                 }
+                val savedDateKey = o.optString("lastActiveDateKey", todayKey)
+                val isSameDay = savedDateKey == todayKey
+                val savedMinToday = if (isSameDay) o.optInt("minutesReadToday", 0) else 0
+                val savedSecToday = if (isSameDay) o.optInt("readingSecondsToday", 0) else 0
+
                 list.add(
                     LearnerProfile(
                         id = o.getString("id"),
                         name = o.getString("name"),
                         avatarIndex = o.optInt("avatarIndex", 1),
-                        stars = o.optInt("stars", 100),
-                        minutesReadToday = o.optInt("minutesReadToday", 5),
+                        stars = o.optInt("stars", 0),
+                        minutesReadToday = savedMinToday,
                         dailyGoalMinutes = o.optInt("dailyGoalMinutes", 10),
-                        streakDays = o.optInt("streakDays", 1),
-                        wordsPerMinute = o.optInt("wordsPerMinute", 52),
+                        streakDays = o.optInt("streakDays", 0),
+                        wordsPerMinute = o.optInt("wordsPerMinute", 0),
                         completedBookIds = completedSet,
-                        weeklyMinutes = if (weekList.size == 7) weekList else listOf(10, 12, 8, 15, 11, 14, 12),
-                        bookPageProgress = progMap
+                        weeklyMinutes = if (weekList.size == 7) weekList else listOf(0, 0, 0, 0, 0, 0, 0),
+                        bookPageProgress = progMap,
+                        gamesPlayedCount = o.optInt("gamesPlayedCount", 0),
+                        readingSecondsToday = savedSecToday,
+                        lastActiveDateKey = todayKey
                     )
                 )
             }
@@ -896,6 +900,9 @@ class SeekhRepository(context: Context) {
             o.put("dailyGoalMinutes", p.dailyGoalMinutes)
             o.put("streakDays", p.streakDays)
             o.put("wordsPerMinute", p.wordsPerMinute)
+            o.put("gamesPlayedCount", p.gamesPlayedCount)
+            o.put("readingSecondsToday", p.readingSecondsToday)
+            o.put("lastActiveDateKey", p.lastActiveDateKey.ifBlank { getTodayDateKey() })
             val cArr = JSONArray()
             p.completedBookIds.forEach { cArr.put(it) }
             o.put("completedBookIds", cArr)
@@ -907,17 +914,24 @@ class SeekhRepository(context: Context) {
             o.put("bookPageProgress", pObj)
             arr.put(o)
         }
-        prefs.edit().putString("profiles_json_v2", arr.toString()).apply()
+        prefs.edit().putString("profiles_json_v3_real", arr.toString()).apply()
     }
 
-    fun getActiveProfileId(): String = prefs.getString("active_profile_id", "prof_1") ?: "prof_1"
+    fun getActiveProfileId(): String = prefs.getString("active_profile_id_v3", "") ?: ""
 
     fun setActiveProfileId(id: String) {
-        prefs.edit().putString("active_profile_id", id).apply()
+        prefs.edit().putString("active_profile_id_v3", id).apply()
     }
 
     fun clearUsageHistory() {
-        prefs.edit().remove("profiles_json_v2").remove("custom_ai_stories_json").apply()
+        prefs.edit()
+            .remove("profiles_json_v3_real")
+            .remove("active_profile_id_v3")
+            .remove("custom_ai_stories_json")
+            .remove("reading_groups_json_v3_real")
+            .remove("turned_in_assignments_v3")
+            .remove("opened_gift_boxes_v3")
+            .apply()
     }
 
     fun loadCustomStories(): List<StoryBook> {
@@ -1004,66 +1018,53 @@ class SeekhRepository(context: Context) {
     }
 
     fun loadAccountState(): SignedInAccountState {
-        val isSigned = prefs.getBoolean("account_signed_in", true)
-        val email = prefs.getString("account_email", "family.reader@gmail.com") ?: "family.reader@gmail.com"
-        val name = prefs.getString("account_display_name", "Parent & Teacher Account") ?: "Parent & Teacher Account"
+        val isSigned = prefs.getBoolean("account_signed_in_v3", false)
+        val email = prefs.getString("account_email_v3", "") ?: ""
+        val name = prefs.getString("account_display_name_v3", "Local Device Account") ?: "Local Device Account"
         return SignedInAccountState(
-            isSignedIn = isSigned,
+            isSignedIn = isSigned && email.isNotBlank(),
             email = email,
             displayName = name,
-            syncStatus = if (isSigned) "Now your profile is saved with the above email account" else "Using without an account"
+            syncStatus = if (isSigned && email.isNotBlank()) {
+                "Now your profile is saved with $email"
+            } else {
+                "Saved locally on this device"
+            }
         )
     }
 
     fun saveAccountState(state: SignedInAccountState) {
         prefs.edit()
-            .putBoolean("account_signed_in", state.isSignedIn)
-            .putString("account_email", state.email)
-            .putString("account_display_name", state.displayName)
+            .putBoolean("account_signed_in_v3", state.isSignedIn)
+            .putString("account_email_v3", state.email)
+            .putString("account_display_name_v3", state.displayName)
             .apply()
     }
 
     fun getTurnedInAssignmentIds(): Set<String> {
-        val raw = prefs.getString("turned_in_assignments", "sw_13916") ?: "sw_13916"
+        val raw = prefs.getString("turned_in_assignments_v3", "") ?: ""
         return raw.split(",").filter { it.isNotBlank() }.toSet()
     }
 
     fun markAssignmentTurnedIn(bookId: String) {
         val current = getTurnedInAssignmentIds() + bookId
-        prefs.edit().putString("turned_in_assignments", current.joinToString(",")).apply()
+        prefs.edit().putString("turned_in_assignments_v3", current.joinToString(",")).apply()
     }
 
     fun getOpenedGiftBoxIds(): Set<String> {
-        val raw = prefs.getString("opened_gift_boxes", "") ?: ""
+        val raw = prefs.getString("opened_gift_boxes_v3", "") ?: ""
         return raw.split(",").filter { it.isNotBlank() }.toSet()
     }
 
     fun markGiftBoxOpened(boxId: String) {
         val current = getOpenedGiftBoxIds() + boxId
-        prefs.edit().putString("opened_gift_boxes", current.joinToString(",")).apply()
+        prefs.edit().putString("opened_gift_boxes_v3", current.joinToString(",")).apply()
     }
 
     fun loadReadingGroups(): List<ReadingGroup> {
-        val raw = prefs.getString("reading_groups_json_v2", null)
+        val raw = prefs.getString("reading_groups_json_v3_real", null)
         if (raw.isNullOrBlank()) {
-            val defaults = listOf(
-                ReadingGroup(
-                    id = "rg_1",
-                    name = "Grade 2 Star Readers",
-                    adminName = "Miss Miya (Teacher)",
-                    languageTitle = "اردو + English",
-                    inviteCode = "SEEKH-204",
-                    createdDate = "Nov 2026",
-                    members = listOf(
-                        GroupMemberStat("Aarav", 1, 99, 12, 8, 68, true, "Today"),
-                        GroupMemberStat("Zoya", 3, 64, 8, 5, 54, true, "Today"),
-                        GroupMemberStat("Rayan", 5, 82, 10, 6, 62, true, "Yesterday"),
-                        GroupMemberStat("Hania", 8, 45, 6, 4, 49, true, "2 days ago")
-                    )
-                )
-            )
-            saveReadingGroups(defaults)
-            return defaults
+            return emptyList()
         }
         return try {
             val arr = JSONArray(raw)
@@ -1078,10 +1079,10 @@ class SeekhRepository(context: Context) {
                         GroupMemberStat(
                             name = mo.getString("name"),
                             avatarIndex = mo.optInt("avatarIndex", 1),
-                            minutesThisWeek = mo.optInt("minutesThisWeek", 35),
-                            storiesRead = mo.optInt("storiesRead", 4),
-                            gamesPlayed = mo.optInt("gamesPlayed", 5),
-                            speedWpm = mo.optInt("speedWpm", 55),
+                            minutesThisWeek = mo.optInt("minutesThisWeek", 0),
+                            storiesRead = mo.optInt("storiesRead", 0),
+                            gamesPlayed = mo.optInt("gamesPlayed", 0),
+                            speedWpm = mo.optInt("speedWpm", 0),
                             isActiveThisWeek = mo.optBoolean("isActiveThisWeek", true),
                             lastActiveLabel = mo.optString("lastActiveLabel", "Today")
                         )
@@ -1131,6 +1132,6 @@ class SeekhRepository(context: Context) {
             o.put("members", mArr)
             arr.put(o)
         }
-        prefs.edit().putString("reading_groups_json_v2", arr.toString()).apply()
+        prefs.edit().putString("reading_groups_json_v3_real", arr.toString()).apply()
     }
 }

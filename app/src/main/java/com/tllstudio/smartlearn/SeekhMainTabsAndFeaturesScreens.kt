@@ -1126,13 +1126,23 @@ fun PrizesTabScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         rowBadges.forEach { badge ->
-                            val isUnlocked = when (badge.id) {
-                                "star_500", "star_3000", "streak_5", "star_5000" -> profile.stars >= 6000
-                                else -> true
+                            val isUnlocked = when (badge.category) {
+                                "STARS" -> profile.stars >= badge.requiredStars
+                                "STREAK" -> profile.streakDays >= badge.requiredStreak ||
+                                    (badge.requiredStreak == 1 && profile.minutesReadToday >= profile.dailyGoalMinutes)
+                                "BOOKS" -> profile.completedBookIds.size >= badge.requiredBooks
+                                else -> false
+                            }
+                            val progFrac = when (badge.category) {
+                                "STARS" -> (profile.stars.toFloat() / badge.requiredStars.coerceAtLeast(1).toFloat()).coerceIn(0f, 1f)
+                                "STREAK" -> (profile.streakDays.toFloat() / badge.requiredStreak.coerceAtLeast(1).toFloat()).coerceIn(0f, 1f)
+                                "BOOKS" -> (profile.completedBookIds.size.toFloat() / badge.requiredBooks.coerceAtLeast(1).toFloat()).coerceIn(0f, 1f)
+                                else -> 0f
                             }
                             PrizeMedallionItem(
                                 badge = badge,
                                 isUnlocked = isUnlocked,
+                                progressFraction = progFrac,
                                 onClick = {
                                     selectedBadge = badge
                                     onSpeakText("${badge.title}. ${badge.subtitle}")
@@ -1148,10 +1158,22 @@ fun PrizesTabScreen(
     }
 
     selectedBadge?.let { badge ->
+        val progText = when (badge.category) {
+            "STARS" -> "Your stars: ${profile.stars} / ${badge.requiredStars} ⭐"
+            "STREAK" -> "Your streak: ${profile.streakDays} / ${badge.requiredStreak} days 🔥"
+            "BOOKS" -> "Stories finished: ${profile.completedBookIds.size} / ${badge.requiredBooks} 📚"
+            else -> ""
+        }
+        val progFrac = when (badge.category) {
+            "STARS" -> (profile.stars.toFloat() / badge.requiredStars.coerceAtLeast(1).toFloat()).coerceIn(0f, 1f)
+            "STREAK" -> (profile.streakDays.toFloat() / badge.requiredStreak.coerceAtLeast(1).toFloat()).coerceIn(0f, 1f)
+            "BOOKS" -> (profile.completedBookIds.size.toFloat() / badge.requiredBooks.coerceAtLeast(1).toFloat()).coerceIn(0f, 1f)
+            else -> 0f
+        }
         AlertDialog(
             onDismissRequest = { selectedBadge = null },
             containerColor = Color.White,
-            shape = RoundedCornerShape(24.dp),
+            shape = RoundedCornerShape(26.dp),
             title = {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -1173,13 +1195,48 @@ fun PrizesTabScreen(
                 }
             },
             text = {
-                Text(
-                    text = "${badge.subtitle}\n\nEarn stars and badges by reading stories and playing word games!",
-                    fontFamily = GoogleSansFamily,
-                    fontSize = 15.sp,
-                    color = SeekhTextSecondary,
-                    textAlign = TextAlign.Center
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Text(
+                        text = badge.subtitle,
+                        fontFamily = GoogleSansFamily,
+                        fontSize = 14.sp,
+                        color = SeekhTextSecondary,
+                        textAlign = TextAlign.Center
+                    )
+                    if (progText.isNotEmpty()) {
+                        Surface(
+                            shape = RoundedCornerShape(14.dp),
+                            color = SeekhGreenSoft,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(12.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = progText,
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 13.sp,
+                                    color = SeekhGreen600
+                                )
+                                Spacer(modifier = Modifier.height(6.dp))
+                                LinearProgressIndicator(
+                                    progress = { progFrac.coerceIn(0.05f, 1f) },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(6.dp)
+                                        .clip(RoundedCornerShape(50)),
+                                    color = if (progFrac >= 1f) SeekhGreenMint else SeekhGreen500,
+                                    trackColor = SeekhGreen100
+                                )
+                            }
+                        }
+                    }
+                }
             },
             confirmButton = {
                 Button(
@@ -1198,13 +1255,19 @@ fun PrizesTabScreen(
 private fun PrizeMedallionItem(
     badge: PrizeBadge,
     isUnlocked: Boolean,
+    progressFraction: Float = 0f,
     onClick: () -> Unit
 ) {
+    val animatedProg by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = progressFraction.coerceIn(0f, 1f),
+        animationSpec = androidx.compose.animation.core.tween(500),
+        label = "prize_prog"
+    )
     Box(
         modifier = Modifier
             .width(106.dp)
             .height(122.dp)
-            .clickable { onClick() },
+            .bouncyClick(scaleDown = 0.93f, onClick = onClick),
         contentAlignment = Alignment.TopCenter
     ) {
         Box(
@@ -1225,15 +1288,22 @@ private fun PrizeMedallionItem(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(
-                            Brush.verticalGradient(listOf(Color(0xFFE2E8F0), Color(0xFFCBD5E1)))
+                            Brush.verticalGradient(listOf(Color(0xFFF1F5F9), Color(0xFFE2E8F0)))
                         ),
                     contentAlignment = Alignment.Center
                 ) {
+                    CircularProgressIndicator(
+                        progress = { animatedProg.coerceAtLeast(0.04f) },
+                        modifier = Modifier.size(92.dp),
+                        color = SeekhGreen500,
+                        trackColor = Color(0xFFCBD5E1),
+                        strokeWidth = 4.dp
+                    )
                     Icon(
                         imageVector = Icons.Default.Lock,
                         contentDescription = badge.title,
                         tint = Color(0xFF64748B),
-                        modifier = Modifier.size(34.dp)
+                        modifier = Modifier.size(30.dp)
                     )
                 }
             }
@@ -1371,26 +1441,61 @@ fun ActivityTabScreen(
                     }
                 }
 
-                // 1. "Daily goal" Card matching res/tL.xml (CircularProgressIndicator + "Today: %d min" + Mascot speech bubble + 7-day Mon-Sun checkmark strip)
+                // 1. "Daily goal" Card matching res/tL.xml (CircularProgressIndicator + "Today: %d min" + Real-time status + Interactive Goal Selector + 7-day Mon-Sun checkmark strip)
                 item {
+                    val goalMetToday = profile.minutesReadToday >= profile.dailyGoalMinutes
+                    val remainingMin = (profile.dailyGoalMinutes - profile.minutesReadToday).coerceAtLeast(0)
+                    val goalStatusMessage = when {
+                        selectedWeekTab != "This week" -> "You met your daily goal ${profile.weeklyMinutes.count { it >= profile.dailyGoalMinutes }} days this week"
+                        goalMetToday -> "Yay! You have completed today’s ${profile.dailyGoalMinutes} min goal!"
+                        profile.minutesReadToday > 0 -> "Keep going! Read $remainingMin more min to complete today’s goal."
+                        else -> "Read a story or play a word game to start today’s ${profile.dailyGoalMinutes} min goal!"
+                    }
+
                     Surface(
-                        shape = RoundedCornerShape(22.dp),
+                        shape = RoundedCornerShape(24.dp),
                         color = Color.White,
                         shadowElevation = 5.dp,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable {
-                                onSpeakText("Yay! You have completed today's goal. Your daily goal is ${profile.dailyGoalMinutes} minutes.")
+                            .bouncyClick(scaleDown = 0.98f) {
+                                onSpeakText(goalStatusMessage)
                             }
                     ) {
                         Column(modifier = Modifier.padding(18.dp)) {
-                            Text(
-                                text = "Daily goal",
-                                fontFamily = GoogleSansFamily,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp,
-                                color = SeekhTextPrimary
-                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "Daily goal",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.sp,
+                                    color = SeekhTextPrimary
+                                )
+                                // Quick Daily Goal Selector Pills (5m / 10m / 15m / 20m)
+                                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                    listOf(5, 10, 15, 20).forEach { goalOpt ->
+                                        val isCurrentGoal = profile.dailyGoalMinutes == goalOpt
+                                        Surface(
+                                            modifier = Modifier.bouncyClick { onUpdateDailyGoal(goalOpt) },
+                                            shape = RoundedCornerShape(50),
+                                            color = if (isCurrentGoal) SeekhGreen500 else SeekhSurfaceGray
+                                        ) {
+                                            Text(
+                                                text = "${goalOpt}m",
+                                                fontFamily = GoogleSansFamily,
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 11.sp,
+                                                color = if (isCurrentGoal) Color.White else SeekhTextSecondary,
+                                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
                             Spacer(modifier = Modifier.height(12.dp))
 
                             Row(
@@ -1409,10 +1514,10 @@ fun ActivityTabScreen(
                                     ) {
                                         CircularProgressIndicator(
                                             progress = {
-                                                (profile.minutesReadToday.toFloat() / profile.dailyGoalMinutes.toFloat()).coerceIn(0f, 1f)
+                                                (profile.minutesReadToday.toFloat() / profile.dailyGoalMinutes.coerceAtLeast(1).toFloat()).coerceIn(0.04f, 1f)
                                             },
                                             modifier = Modifier.fillMaxSize(),
-                                            color = SeekhGreenMint,
+                                            color = if (goalMetToday) SeekhGreenMint else SeekhGreen500,
                                             trackColor = SeekhGreen100,
                                             strokeWidth = 6.dp
                                         )
@@ -1427,10 +1532,10 @@ fun ActivityTabScreen(
                                             color = SeekhTextPrimary
                                         )
                                         Text(
-                                            text = "Your daily goal is ${profile.dailyGoalMinutes} min",
+                                            text = "Your daily goal is ${profile.dailyGoalMinutes} min • Streak: ${profile.streakDays}d",
                                             fontFamily = GoogleSansFamily,
                                             fontWeight = FontWeight.Medium,
-                                            fontSize = 13.sp,
+                                            fontSize = 12.sp,
                                             color = SeekhGreen500
                                         )
                                     }
@@ -1443,22 +1548,18 @@ fun ActivityTabScreen(
 
                             Spacer(modifier = Modifier.height(12.dp))
 
-                            // Speech bubble from res/tL.xml lines 79-105 ("Yay! you have completed today's goal")
+                            // Dynamic real-time goal status banner
                             Surface(
                                 shape = RoundedCornerShape(12.dp),
-                                color = SeekhGreenSoft,
+                                color = if (goalMetToday) SeekhGreenMint.copy(alpha = 0.14f) else SeekhGreenSoft,
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text(
-                                    text = if (selectedWeekTab == "This week") {
-                                        "Yay! you have completed today’s goal"
-                                    } else {
-                                        "You met your daily goal ${profile.weeklyMinutes.count { it >= profile.dailyGoalMinutes }} days last week"
-                                    },
+                                    text = goalStatusMessage,
                                     fontFamily = GoogleSansFamily,
                                     fontWeight = FontWeight.Medium,
                                     fontSize = 13.sp,
-                                    color = SeekhGreen900,
+                                    color = if (goalMetToday) SeekhVocabDarkGreen else SeekhGreen900,
                                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
                                 )
                             }
@@ -1475,6 +1576,7 @@ fun ActivityTabScreen(
                                 weekDayLabels.forEachIndexed { idx, dayName ->
                                     val mins = profile.weeklyMinutes.getOrElse(idx) { 0 }
                                     val goalReached = mins >= profile.dailyGoalMinutes
+                                    val hasRead = mins > 0
                                     Column(
                                         horizontalAlignment = Alignment.CenterHorizontally,
                                         verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -1483,10 +1585,20 @@ fun ActivityTabScreen(
                                             modifier = Modifier
                                                 .size(28.dp)
                                                 .clip(CircleShape)
-                                                .background(if (goalReached) SeekhGreenMint else SeekhSurfaceGray)
+                                                .background(
+                                                    when {
+                                                        goalReached -> SeekhGreenMint
+                                                        hasRead -> SeekhGreenSoft
+                                                        else -> SeekhSurfaceGray
+                                                    }
+                                                )
                                                 .border(
                                                     1.dp,
-                                                    if (goalReached) SeekhGreenMint else SeekhBorderGray,
+                                                    when {
+                                                        goalReached -> SeekhGreenMint
+                                                        hasRead -> SeekhGreen500
+                                                        else -> SeekhBorderGray
+                                                    },
                                                     CircleShape
                                                 ),
                                             contentAlignment = Alignment.Center
@@ -1498,14 +1610,22 @@ fun ActivityTabScreen(
                                                     tint = Color.White,
                                                     modifier = Modifier.size(16.dp)
                                                 )
+                                            } else if (hasRead) {
+                                                Text(
+                                                    text = "${mins}m",
+                                                    fontFamily = GoogleSansFamily,
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 9.sp,
+                                                    color = SeekhGreen600
+                                                )
                                             }
                                         }
                                         Text(
                                             text = dayName,
                                             fontFamily = GoogleSansFamily,
-                                            fontWeight = if (goalReached) FontWeight.Bold else FontWeight.Medium,
+                                            fontWeight = if (goalReached || hasRead) FontWeight.Bold else FontWeight.Medium,
                                             fontSize = 11.sp,
-                                            color = if (goalReached) SeekhTextPrimary else SeekhTextSecondary
+                                            color = if (goalReached || hasRead) SeekhTextPrimary else SeekhTextSecondary
                                         )
                                     }
                                 }
@@ -1514,21 +1634,13 @@ fun ActivityTabScreen(
                     }
                 }
 
-                // 2. "Weekly Activity" Card matching res/_m.xml ("Weekly Activity" + "Total %d min in English" + Speed Vehicle + 2 Stat Boxes: "%d min Time" & "%d wpm Average reading speed this week")
+                // 2. "Weekly Activity" Card matching res/_m.xml ("Weekly Activity" + Real Total min + Speed Vehicle + 2 Stat Boxes)
                 item {
-                    val totalMin = if (selectedWeekTab == "This week") {
-                        profile.weeklyMinutes.sum()
-                    } else {
-                        (profile.weeklyMinutes.sum() - 14).coerceAtLeast(35)
-                    }
-                    val displayWpm = if (selectedWeekTab == "This week") {
-                        profile.wordsPerMinute
-                    } else {
-                        (profile.wordsPerMinute - 4).coerceAtLeast(48)
-                    }
+                    val totalMin = profile.weeklyMinutes.sum()
+                    val displayWpm = profile.wordsPerMinute
 
                     Surface(
-                        shape = RoundedCornerShape(22.dp),
+                        shape = RoundedCornerShape(24.dp),
                         color = Color.White,
                         shadowElevation = 4.dp,
                         modifier = Modifier.fillMaxWidth()
@@ -1543,7 +1655,7 @@ fun ActivityTabScreen(
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Total $totalMin min in English",
+                                text = "Total $totalMin min read • ${profile.gamesPlayedCount} games played",
                                 fontFamily = GoogleSansFamily,
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 14.sp,

@@ -750,7 +750,27 @@ fun InteractiveBuddyIntroScreen(
     }
 }
 
-// 4. Redesigned Soft Bento Profile Switcher Screen ("Who is reading today?" + Signed-In Account Linking Banner & Edit Profile!)
+private val avatarCharacterNames = listOf(
+    "Leo Lion",
+    "Pandy Panda",
+    "Luna Kitty",
+    "Koko Koala",
+    "Foxy Explorer",
+    "Bobo Bunny",
+    "Ollie Owl",
+    "Barnaby Bear",
+    "Pip Penguin",
+    "Uni Star",
+    "Reddy Panda",
+    "Sunny Puppy"
+)
+
+fun getAvatarCharacterName(avatarIndex: Int): String {
+    val safe = ((avatarIndex - 1).mod(avatarCharacterNames.size) + avatarCharacterNames.size) % avatarCharacterNames.size
+    return avatarCharacterNames[safe]
+}
+
+// 4. Redesigned Soft Bento Profile Switcher & First-Profile Studio Screen (Zero Pre-Added Dummy Profiles + Real-Time Progress Rings!)
 @Composable
 fun ProfileSwitcherScreen(
     profiles: List<LearnerProfile>,
@@ -759,19 +779,29 @@ fun ProfileSwitcherScreen(
     accountState: SignedInAccountState = SignedInAccountState(),
     onUpdateAccountState: (SignedInAccountState) -> Unit = {},
     onSelectProfile: (LearnerProfile) -> Unit,
-    onCreateProfile: (String, Int) -> Unit,
+    onCreateProfile: (String, Int, Int) -> Unit,
     onEditProfile: (LearnerProfile, String, Int) -> Unit = { _, _, _ -> },
+    onDeleteProfile: (LearnerProfile) -> Unit = {},
     onOpenParentsSection: () -> Unit,
     onBuddyClick: () -> Unit,
     onBack: (() -> Unit)? = null
 ) {
     var showCreateProfileDialog by remember { mutableStateOf(false) }
     var editingProfile by remember { mutableStateOf<LearnerProfile?>(null) }
+    var deletingProfile by remember { mutableStateOf<LearnerProfile?>(null) }
     var showAccountMenuDialog by remember { mutableStateOf(false) }
 
-    BackHandler(enabled = onBack != null || showCreateProfileDialog || editingProfile != null || showAccountMenuDialog) {
+    // Inline First-Profile Studio State when profiles list is empty (zero dummy profiles!)
+    var firstProfileName by remember { mutableStateOf("") }
+    var firstProfileAvatar by remember { mutableIntStateOf(1) }
+    var firstProfileGoalMinutes by remember { mutableIntStateOf(10) }
+
+    BackHandler(
+        enabled = onBack != null || showCreateProfileDialog || editingProfile != null || deletingProfile != null || showAccountMenuDialog
+    ) {
         when {
             showAccountMenuDialog -> showAccountMenuDialog = false
+            deletingProfile != null -> deletingProfile = null
             editingProfile != null -> editingProfile = null
             showCreateProfileDialog -> showCreateProfileDialog = false
             else -> onBack?.invoke()
@@ -783,7 +813,7 @@ fun ProfileSwitcherScreen(
             .fillMaxSize()
             .background(SeekhSurfaceGray)
     ) {
-        CurvedGreenHeaderBackground(headerHeight = 215.dp, curveDepth = 34.dp)
+        CurvedGreenHeaderBackground(headerHeight = 220.dp, curveDepth = 36.dp)
 
         Column(
             modifier = Modifier
@@ -792,7 +822,7 @@ fun ProfileSwitcherScreen(
                 .navigationBarsPadding(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Top bar with optional Back button + Account menu chip
+            // Top bar with optional Back button + Cloud Account Sync chip
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -800,11 +830,11 @@ fun ProfileSwitcherScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                if (onBack != null) {
+                if (onBack != null && profiles.isNotEmpty()) {
                     Surface(
                         modifier = Modifier
                             .size(42.dp)
-                            .clickable { onBack() },
+                            .bouncyClick { onBack() },
                         shape = RoundedCornerShape(14.dp),
                         color = Color.White.copy(alpha = 0.20f),
                         border = BorderStroke(1.dp, Color.White.copy(alpha = 0.3f))
@@ -823,7 +853,7 @@ fun ProfileSwitcherScreen(
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "Who is reading today?",
+                        text = if (profiles.isEmpty()) "Create Your Profile" else "Who is reading today?",
                         fontFamily = GoogleSansFamily,
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 23.sp,
@@ -831,18 +861,22 @@ fun ProfileSwitcherScreen(
                         textAlign = TextAlign.Center
                     )
                     Text(
-                        text = "Tap on your profile to open library",
+                        text = if (profiles.isEmpty()) {
+                            "Personalize your avatar & daily reading goal"
+                        } else {
+                            "Tap your profile to continue your reading progress"
+                        },
                         fontFamily = GoogleSansFamily,
                         fontWeight = FontWeight.Normal,
                         fontSize = 13.sp,
-                        color = Color.White.copy(alpha = 0.88f)
+                        color = Color.White.copy(alpha = 0.90f)
                     )
                 }
 
                 Surface(
                     modifier = Modifier
                         .size(42.dp)
-                        .clickable { showAccountMenuDialog = true },
+                        .bouncyClick { showAccountMenuDialog = true },
                     shape = RoundedCornerShape(14.dp),
                     color = Color.White.copy(alpha = 0.20f),
                     border = BorderStroke(1.dp, Color.White.copy(alpha = 0.3f))
@@ -864,117 +898,400 @@ fun ProfileSwitcherScreen(
                     .fillMaxWidth()
                     .weight(1f),
                 contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 4.dp, bottom = 32.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                items(profiles) { profile ->
-                    val isCurrent = profile.id == activeProfileId
-                    val vehicle = SeekhCatalog.getVehicleForWpm(profile.wordsPerMinute)
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onSelectProfile(profile) },
-                        shape = RoundedCornerShape(22.dp),
-                        color = Color.White,
-                        shadowElevation = if (isCurrent) 8.dp else 3.dp,
-                        border = BorderStroke(
-                            width = if (isCurrent) 2.dp else 1.dp,
-                            color = if (isCurrent) SeekhGreen500 else SeekhBorderGray
-                        )
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 14.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                                modifier = Modifier.weight(1f)
+                if (profiles.isEmpty()) {
+                    // ZERO PRE-ADDED DUMMY PROFILES: Render Soft Interactive First-Reader Profile Studio Card!
+                    item {
+                        AnimatedEntranceBox {
+                            val avatarScale by animateFloatAsState(
+                                targetValue = 1f,
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                                    stiffness = Spring.StiffnessMedium
+                                ),
+                                label = "first_avatar_scale"
+                            )
+
+                            Surface(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(28.dp),
+                                color = Color.White,
+                                shadowElevation = 10.dp,
+                                border = BorderStroke(1.dp, SeekhGreen100)
                             ) {
-                                ProfileAvatarCircle(
-                                    avatarIndex = profile.avatarIndex,
-                                    size = 66.dp,
-                                    borderWidth = 2.5.dp,
-                                    borderColor = if (isCurrent) SeekhGreen500 else SeekhGreen100
-                                )
-                                Column {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 20.dp, vertical = 22.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    // Live Animated Character Avatar Preview
+                                    Box(
+                                        contentAlignment = Alignment.Center,
+                                        modifier = Modifier.scale(avatarScale)
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(102.dp)
+                                                .clip(CircleShape)
+                                                .background(
+                                                    Brush.radialGradient(
+                                                        listOf(SeekhGreenSoft, Color.Transparent)
+                                                    )
+                                                )
+                                        )
+                                        ProfileAvatarCircle(
+                                            avatarIndex = firstProfileAvatar,
+                                            size = 86.dp,
+                                            borderWidth = 3.dp,
+                                            borderColor = SeekhGreen500
+                                        )
+                                    }
+
+                                    Spacer(modifier = Modifier.height(8.dp))
+
+                                    Surface(
+                                        shape = RoundedCornerShape(50),
+                                        color = SeekhGreenSoft
                                     ) {
                                         Text(
-                                            text = profile.name,
+                                            text = "Companion: ${getAvatarCharacterName(firstProfileAvatar)}",
                                             fontFamily = GoogleSansFamily,
-                                            fontWeight = FontWeight.ExtraBold,
-                                            fontSize = 18.sp,
-                                            color = SeekhTextPrimary
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 12.sp,
+                                            color = SeekhGreen600,
+                                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
                                         )
-                                        if (isCurrent) {
+                                    }
+
+                                    Spacer(modifier = Modifier.height(14.dp))
+
+                                    OutlinedTextField(
+                                        value = firstProfileName,
+                                        onValueChange = { firstProfileName = it },
+                                        label = { Text("Enter reader's name", fontFamily = GoogleSansFamily) },
+                                        placeholder = { Text("e.g. Ali, Fatima, Rayan...", fontFamily = GoogleSansFamily) },
+                                        singleLine = true,
+                                        shape = RoundedCornerShape(16.dp),
+                                        modifier = Modifier.fillMaxWidth(),
+                                        colors = OutlinedTextFieldDefaults.colors(
+                                            focusedBorderColor = SeekhGreen500,
+                                            unfocusedBorderColor = SeekhBorderGray
+                                        )
+                                    )
+
+                                    Spacer(modifier = Modifier.height(14.dp))
+
+                                    Text(
+                                        text = "Choose your character avatar",
+                                        fontFamily = GoogleSansFamily,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 13.sp,
+                                        color = SeekhTextPrimary,
+                                        modifier = Modifier.align(Alignment.Start)
+                                    )
+
+                                    Spacer(modifier = Modifier.height(8.dp))
+
+                                    // 2 Rows of 6 Original Vector Avatars with Spring Bounce Selection
+                                    Column(
+                                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        listOf((1..6).toList(), (7..12).toList()).forEach { rowIndices ->
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                horizontalArrangement = Arrangement.SpaceBetween
+                                            ) {
+                                                rowIndices.forEach { idx ->
+                                                    val isChosen = idx == firstProfileAvatar
+                                                    val itemScale by animateFloatAsState(
+                                                        targetValue = if (isChosen) 1.12f else 1f,
+                                                        animationSpec = spring(
+                                                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                                                            stiffness = Spring.StiffnessMedium
+                                                        ),
+                                                        label = "av_sel_$idx"
+                                                    )
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .size(48.dp)
+                                                            .scale(itemScale)
+                                                            .clip(CircleShape)
+                                                            .border(
+                                                                width = if (isChosen) 2.5.dp else 1.dp,
+                                                                color = if (isChosen) SeekhGreen500 else SeekhBorderGray,
+                                                                shape = CircleShape
+                                                            )
+                                                            .bouncyClick { firstProfileAvatar = idx },
+                                                        contentAlignment = Alignment.Center
+                                                    ) {
+                                                        ProfileAvatarCircle(
+                                                            avatarIndex = idx,
+                                                            size = 44.dp,
+                                                            borderWidth = 0.dp
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    Spacer(modifier = Modifier.height(16.dp))
+
+                                    // Daily Reading Goal Selector (5 min, 10 min, 15 min, 20 min)
+                                    Text(
+                                        text = "Daily reading goal",
+                                        fontFamily = GoogleSansFamily,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 13.sp,
+                                        color = SeekhTextPrimary,
+                                        modifier = Modifier.align(Alignment.Start)
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        listOf(5, 10, 15, 20).forEach { mins ->
+                                            val isSelected = firstProfileGoalMinutes == mins
                                             Surface(
-                                                shape = RoundedCornerShape(50),
-                                                color = SeekhGreenSoft
+                                                modifier = Modifier
+                                                    .weight(1f)
+                                                    .bouncyClick { firstProfileGoalMinutes = mins },
+                                                shape = RoundedCornerShape(14.dp),
+                                                color = if (isSelected) SeekhGreen500 else SeekhSurfaceGray,
+                                                border = BorderStroke(
+                                                    1.dp,
+                                                    if (isSelected) SeekhGreen500 else SeekhBorderGray
+                                                )
                                             ) {
                                                 Text(
-                                                    text = "ACTIVE",
+                                                    text = "$mins min",
                                                     fontFamily = GoogleSansFamily,
                                                     fontWeight = FontWeight.Bold,
-                                                    fontSize = 9.sp,
-                                                    color = SeekhGreen500,
-                                                    modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp)
+                                                    fontSize = 13.sp,
+                                                    color = if (isSelected) Color.White else SeekhTextPrimary,
+                                                    textAlign = TextAlign.Center,
+                                                    modifier = Modifier.padding(vertical = 10.dp)
                                                 )
                                             }
                                         }
                                     }
-                                    Spacer(modifier = Modifier.height(2.dp))
-                                    Text(
-                                        text = "${profile.completedBookIds.size} stories • ${vehicle.emoji} ${profile.wordsPerMinute} WPM",
-                                        fontFamily = GoogleSansFamily,
-                                        fontWeight = FontWeight.Medium,
-                                        fontSize = 12.sp,
-                                        color = SeekhTextSecondary
-                                    )
-                                }
-                            }
 
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(6.dp)
-                            ) {
-                                // Soft Golden-Amber Star Pill
-                                Surface(
-                                    shape = RoundedCornerShape(50),
-                                    color = Color(0xFFFFF8E1),
-                                    border = BorderStroke(1.dp, SeekhYellow500)
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(5.dp)
+                                    Spacer(modifier = Modifier.height(20.dp))
+
+                                    Button(
+                                        onClick = {
+                                            val finalName = firstProfileName.trim()
+                                                .ifEmpty { getAvatarCharacterName(firstProfileAvatar).substringBefore(" ") }
+                                            onCreateProfile(finalName, firstProfileAvatar, firstProfileGoalMinutes)
+                                        },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(54.dp),
+                                        shape = RoundedCornerShape(50),
+                                        colors = ButtonDefaults.buttonColors(containerColor = SeekhGreen500)
                                     ) {
-                                        GoldenStarIcon(size = 16.dp)
                                         Text(
-                                            text = profile.stars.toString(),
+                                            text = "Create Profile & Start Reading",
                                             fontFamily = GoogleSansFamily,
-                                            fontWeight = FontWeight.ExtraBold,
+                                            fontWeight = FontWeight.Bold,
                                             fontSize = 16.sp,
-                                            color = SeekhTextPrimary
+                                            color = Color.White
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                            contentDescription = null,
+                                            tint = Color.White
                                         )
                                     }
                                 }
+                            }
+                        }
+                    }
+                } else {
+                    items(profiles.size) { index ->
+                        val profile = profiles[index]
+                        val isCurrent = profile.id == activeProfileId
+                        val vehicle = SeekhCatalog.getVehicleForWpm(profile.wordsPerMinute)
+                        val goalFraction = (profile.minutesReadToday.toFloat() / profile.dailyGoalMinutes.coerceAtLeast(1).toFloat()).coerceIn(0f, 1f)
+                        val animatedGoalFrac by animateFloatAsState(
+                            targetValue = goalFraction,
+                            animationSpec = tween(550, easing = FastOutSlowInEasing),
+                            label = "prof_goal_ring_$index"
+                        )
+                        val inProgressCount = profile.bookPageProgress.count { it.value > 0 }
 
-                                // "Edit profile" button (PROFILE_EDIT_SCREEN / showEditProfileView)
-                                IconButton(
-                                    onClick = { editingProfile = profile },
-                                    modifier = Modifier.size(34.dp)
+                        AnimatedEntranceBox(delayMs = index * 65) {
+                            Surface(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .bouncyClick(scaleDown = 0.97f) { onSelectProfile(profile) },
+                                shape = RoundedCornerShape(24.dp),
+                                color = Color.White,
+                                shadowElevation = if (isCurrent) 8.dp else 3.dp,
+                                border = BorderStroke(
+                                    width = if (isCurrent) 2.dp else 1.dp,
+                                    color = if (isCurrent) SeekhGreen500 else SeekhBorderGray
+                                )
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 14.dp)
                                 ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Edit,
-                                        contentDescription = "Edit profile",
-                                        tint = SeekhGreen600,
-                                        modifier = Modifier.size(18.dp)
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            // Avatar with Animated Circular Daily Goal Progress Ring!
+                                            Box(
+                                                modifier = Modifier.size(72.dp),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                CircularProgressIndicator(
+                                                    progress = { animatedGoalFrac.coerceAtLeast(0.06f) },
+                                                    modifier = Modifier.fillMaxSize(),
+                                                    color = if (goalFraction >= 1f) SeekhGreenMint else SeekhGreen500,
+                                                    trackColor = SeekhGreen100,
+                                                    strokeWidth = 3.5.dp
+                                                )
+                                                ProfileAvatarCircle(
+                                                    avatarIndex = profile.avatarIndex,
+                                                    size = 60.dp,
+                                                    borderWidth = 1.5.dp,
+                                                    borderColor = Color.White
+                                                )
+                                            }
+
+                                            Column {
+                                                Row(
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                                ) {
+                                                    Text(
+                                                        text = profile.name,
+                                                        fontFamily = GoogleSansFamily,
+                                                        fontWeight = FontWeight.ExtraBold,
+                                                        fontSize = 18.sp,
+                                                        color = SeekhTextPrimary
+                                                    )
+                                                    if (isCurrent) {
+                                                        Surface(
+                                                            shape = RoundedCornerShape(50),
+                                                            color = SeekhGreenSoft
+                                                        ) {
+                                                            Text(
+                                                                text = "ACTIVE",
+                                                                fontFamily = GoogleSansFamily,
+                                                                fontWeight = FontWeight.Bold,
+                                                                fontSize = 9.sp,
+                                                                color = SeekhGreen500,
+                                                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                                Spacer(modifier = Modifier.height(3.dp))
+                                                Text(
+                                                    text = buildString {
+                                                        append("${profile.completedBookIds.size} finished")
+                                                        if (inProgressCount > 0) append(" • $inProgressCount reading")
+                                                        if (profile.wordsPerMinute > 0) {
+                                                            append(" • ${vehicle.emoji} ${profile.wordsPerMinute} WPM")
+                                                        }
+                                                    },
+                                                    fontFamily = GoogleSansFamily,
+                                                    fontWeight = FontWeight.Medium,
+                                                    fontSize = 12.sp,
+                                                    color = SeekhTextSecondary
+                                                )
+                                                Spacer(modifier = Modifier.height(2.dp))
+                                                Text(
+                                                    text = "Today: ${profile.minutesReadToday}/${profile.dailyGoalMinutes} min • Streak: ${profile.streakDays}d",
+                                                    fontFamily = GoogleSansFamily,
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 11.sp,
+                                                    color = if (goalFraction >= 1f) SeekhGreenMint else SeekhGreen600
+                                                )
+                                            }
+                                        }
+
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                        ) {
+                                            // Soft Golden-Amber Star Pill
+                                            Surface(
+                                                shape = RoundedCornerShape(50),
+                                                color = Color(0xFFFFF8E1),
+                                                border = BorderStroke(1.dp, SeekhYellow500)
+                                            ) {
+                                                Row(
+                                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                                ) {
+                                                    GoldenStarIcon(size = 15.dp)
+                                                    Text(
+                                                        text = profile.stars.toString(),
+                                                        fontFamily = GoogleSansFamily,
+                                                        fontWeight = FontWeight.ExtraBold,
+                                                        fontSize = 15.sp,
+                                                        color = SeekhTextPrimary
+                                                    )
+                                                }
+                                            }
+
+                                            // Edit profile button
+                                            IconButton(
+                                                onClick = { editingProfile = profile },
+                                                modifier = Modifier.size(32.dp)
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Edit,
+                                                    contentDescription = "Edit profile",
+                                                    tint = SeekhGreen600,
+                                                    modifier = Modifier.size(18.dp)
+                                                )
+                                            }
+
+                                            // Delete profile button
+                                            IconButton(
+                                                onClick = { deletingProfile = profile },
+                                                modifier = Modifier.size(32.dp)
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.DeleteOutline,
+                                                    contentDescription = "Delete profile",
+                                                    tint = SeekhCoralRed,
+                                                    modifier = Modifier.size(18.dp)
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    Spacer(modifier = Modifier.height(10.dp))
+
+                                    // Smooth Animated Daily Goal Progress Bar inside Profile Card
+                                    LinearProgressIndicator(
+                                        progress = { animatedGoalFrac.coerceAtLeast(0.04f) },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(6.dp)
+                                            .clip(RoundedCornerShape(50)),
+                                        color = if (goalFraction >= 1f) SeekhGreenMint else SeekhGreen500,
+                                        trackColor = SeekhGreen100
                                     )
                                 }
                             }
@@ -982,13 +1299,115 @@ fun ProfileSwitcherScreen(
                     }
                 }
 
-                // Signed-In Account Link Message Card (from flutter_ui_strings.txt line 1632: "Above profiles are linked to <email>")
+                // Action Row: Add New Reader + Parent Hub (when at least 1 profile exists)
+                if (profiles.isNotEmpty()) {
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Surface(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .bouncyClick { showCreateProfileDialog = true },
+                                shape = RoundedCornerShape(20.dp),
+                                color = Color.White,
+                                shadowElevation = 3.dp,
+                                border = BorderStroke(1.dp, SeekhBorderGray)
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 14.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .clip(CircleShape)
+                                            .background(SeekhGreenSoft),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.PersonAdd,
+                                            contentDescription = "New Reader",
+                                            tint = SeekhGreen500,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+                                    Column {
+                                        Text(
+                                            text = "Add Reader",
+                                            fontFamily = GoogleSansFamily,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 14.sp,
+                                            color = SeekhTextPrimary
+                                        )
+                                        Text(
+                                            text = "Create new profile",
+                                            fontFamily = GoogleSansFamily,
+                                            fontSize = 11.sp,
+                                            color = SeekhTextSecondary
+                                        )
+                                    }
+                                }
+                            }
+
+                            Surface(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .bouncyClick { onOpenParentsSection() },
+                                shape = RoundedCornerShape(20.dp),
+                                color = Color.White,
+                                shadowElevation = 3.dp,
+                                border = BorderStroke(1.dp, SeekhBorderGray)
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 14.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .clip(CircleShape)
+                                            .background(SeekhBlueSoft),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.School,
+                                            contentDescription = "Parents & Teachers",
+                                            tint = SeekhBlue600,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+                                    Column {
+                                        Text(
+                                            text = "Parent Hub",
+                                            fontFamily = GoogleSansFamily,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 14.sp,
+                                            color = SeekhTextPrimary
+                                        )
+                                        Text(
+                                            text = "Progress & groups",
+                                            fontFamily = GoogleSansFamily,
+                                            fontSize = 11.sp,
+                                            color = SeekhTextSecondary
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Signed-In / Cloud Backup Card
                 item {
                     Surface(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { showAccountMenuDialog = true },
-                        shape = RoundedCornerShape(20.dp),
+                            .bouncyClick { showAccountMenuDialog = true },
+                        shape = RoundedCornerShape(22.dp),
                         color = Color.White,
                         shadowElevation = 3.dp,
                         border = BorderStroke(1.dp, if (accountState.isSignedIn) SeekhGreen100 else SeekhBorderGray)
@@ -1033,9 +1452,9 @@ fun ProfileSwitcherScreen(
                                     )
                                     Text(
                                         text = if (accountState.isSignedIn) {
-                                            "Now your profile is saved with the above email account"
+                                            "Your reading progress, stars & bookmarks are backed up"
                                         } else {
-                                            "Sign in to sync profiles, stars, and reading groups"
+                                            "Link an email account to back up profiles & join classrooms"
                                         },
                                         fontFamily = GoogleSansFamily,
                                         fontSize = 11.sp,
@@ -1056,115 +1475,13 @@ fun ProfileSwitcherScreen(
                     }
                 }
 
+                // Integrated Noor Companion Tip Card
                 item {
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    // Action Row: Add New Reader + Teacher & Parent Dashboard
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Surface(
-                            modifier = Modifier
-                                .weight(1f)
-                                .clickable { showCreateProfileDialog = true },
-                            shape = RoundedCornerShape(18.dp),
-                            color = Color.White,
-                            shadowElevation = 2.dp,
-                            border = BorderStroke(1.dp, SeekhBorderGray)
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 14.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(40.dp)
-                                        .clip(CircleShape)
-                                        .background(SeekhGreenSoft),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.PersonAdd,
-                                        contentDescription = "New Reader",
-                                        tint = SeekhGreen500,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
-                                Column {
-                                    Text(
-                                        text = "Add Reader",
-                                        fontFamily = GoogleSansFamily,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 14.sp,
-                                        color = SeekhTextPrimary
-                                    )
-                                    Text(
-                                        text = "New profile",
-                                        fontFamily = GoogleSansFamily,
-                                        fontSize = 11.sp,
-                                        color = SeekhTextSecondary
-                                    )
-                                }
-                            }
-                        }
-
-                        Surface(
-                            modifier = Modifier
-                                .weight(1f)
-                                .clickable { onOpenParentsSection() },
-                            shape = RoundedCornerShape(18.dp),
-                            color = Color.White,
-                            shadowElevation = 2.dp,
-                            border = BorderStroke(1.dp, SeekhBorderGray)
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 14.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(40.dp)
-                                        .clip(CircleShape)
-                                        .background(SeekhBlueSoft),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.School,
-                                        contentDescription = "Parents & Teachers",
-                                        tint = SeekhBlue600,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
-                                Column {
-                                    Text(
-                                        text = "Parent Hub",
-                                        fontFamily = GoogleSansFamily,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 14.sp,
-                                        color = SeekhTextPrimary
-                                    )
-                                    Text(
-                                        text = "Progress & groups",
-                                        fontFamily = GoogleSansFamily,
-                                        fontSize = 11.sp,
-                                        color = SeekhTextSecondary
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    // Non-Overlapping Integrated Noor Companion Tip Card
                     Surface(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { onBuddyClick() },
-                        shape = RoundedCornerShape(20.dp),
+                            .bouncyClick { onBuddyClick() },
+                        shape = RoundedCornerShape(22.dp),
                         color = SeekhGreenSoft,
                         border = BorderStroke(1.dp, SeekhGreen100)
                     ) {
@@ -1179,14 +1496,14 @@ fun ProfileSwitcherScreen(
                             )
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "Noor • AI Reading Companion",
+                                    text = "Noor • Real-Time Progress Tracker",
                                     fontFamily = GoogleSansFamily,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 13.sp,
                                     color = SeekhGreen600
                                 )
                                 Text(
-                                    text = "Each profile saves its own story bookmarks, stars, and daily reading streak!",
+                                    text = "Every page you read, word you master, and game you play is saved automatically to your profile!",
                                     fontFamily = GoogleSansFamily,
                                     fontSize = 12.sp,
                                     lineHeight = 16.sp,
@@ -1203,8 +1520,8 @@ fun ProfileSwitcherScreen(
     if (showCreateProfileDialog) {
         CreateProfileDialog(
             onDismiss = { showCreateProfileDialog = false },
-            onCreate = { name, avatarIdx ->
-                onCreateProfile(name, avatarIdx)
+            onCreate = { name, avatarIdx, goalMins ->
+                onCreateProfile(name, avatarIdx, goalMins)
                 showCreateProfileDialog = false
             }
         )
@@ -1221,6 +1538,48 @@ fun ProfileSwitcherScreen(
         )
     }
 
+    deletingProfile?.let { prof ->
+        AlertDialog(
+            onDismissRequest = { deletingProfile = null },
+            containerColor = Color.White,
+            shape = RoundedCornerShape(24.dp),
+            title = {
+                Text(
+                    text = "Delete profile \"${prof.name}\"?",
+                    fontFamily = GoogleSansFamily,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 19.sp,
+                    color = SeekhTextPrimary
+                )
+            },
+            text = {
+                Text(
+                    text = "This will permanently remove ${prof.name}'s profile, ${prof.stars} stars, and story bookmarks from this device.",
+                    fontFamily = GoogleSansFamily,
+                    fontSize = 14.sp,
+                    color = SeekhTextSecondary
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onDeleteProfile(prof)
+                        deletingProfile = null
+                    },
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.buttonColors(containerColor = SeekhCoralRed)
+                ) {
+                    Text("Delete Profile", fontFamily = GoogleSansFamily, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { deletingProfile = null }) {
+                    Text("Cancel", fontFamily = GoogleSansFamily)
+                }
+            }
+        )
+    }
+
     if (showAccountMenuDialog) {
         AccountMenuDialog(
             accountState = accountState,
@@ -1233,7 +1592,7 @@ fun ProfileSwitcherScreen(
     }
 }
 
-// Signed-In Account Menu & Account Selection Dialog (matching AccountView / CustomAccountSelectionFragment / "Use Read Along without an account")
+// Signed-In Account Menu & Account Selection Dialog (Zero hardcoded dummy email required; user can enter their own email or use without an account)
 @Composable
 fun AccountMenuDialog(
     accountState: SignedInAccountState,
@@ -1241,11 +1600,9 @@ fun AccountMenuDialog(
     onDismiss: () -> Unit
 ) {
     var emailInput by remember(accountState.email) { mutableStateOf(accountState.email) }
-    val presetAccounts = listOf(
-        "family.reader@gmail.com" to "Parent & Teacher Account",
-        "teacher.miya@school.edu" to "Miss Miya • Classroom Teacher",
-        "shehzad.academy@gmail.com" to "Shehzad Aslam • Academy Admin"
-    )
+    var displayNameInput by remember(accountState.displayName) {
+        mutableStateOf(if (accountState.isSignedIn) accountState.displayName else "")
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -1257,13 +1614,13 @@ fun AccountMenuDialog(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.AccountCircle,
+                    imageVector = if (accountState.isSignedIn) Icons.Default.CloudDone else Icons.Default.AccountCircle,
                     contentDescription = null,
                     tint = SeekhGreen500,
                     modifier = Modifier.size(28.dp)
                 )
                 Text(
-                    text = "Account menu",
+                    text = "Account & Cloud Sync",
                     fontFamily = GoogleSansFamily,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 20.sp,
@@ -1277,111 +1634,79 @@ fun AccountMenuDialog(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Text(
-                    text = "By signing in, your preferences and history is saved so that you can access profiles, classroom assignments, and reading groups on any device.",
+                    text = "Link your email account to sync learner profiles, classroom assignments, and reading groups across devices.",
                     fontFamily = GoogleSansFamily,
                     fontSize = 13.sp,
                     lineHeight = 18.sp,
                     color = SeekhTextSecondary
                 )
 
-                presetAccounts.forEach { (email, title) ->
-                    val isSelected = accountState.isSignedIn && accountState.email.equals(email, ignoreCase = true)
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                emailInput = email
-                                onUpdateAccountState(
-                                    SignedInAccountState(
-                                        isSignedIn = true,
-                                        email = email,
-                                        displayName = title,
-                                        syncStatus = "Now your profile is saved with the above email account"
-                                    )
-                                )
-                            },
-                        shape = RoundedCornerShape(16.dp),
-                        color = if (isSelected) SeekhGreenSoft else SeekhSurfaceGray,
-                        border = BorderStroke(if (isSelected) 1.5.dp else 1.dp, if (isSelected) SeekhGreen500 else SeekhBorderGray)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(12.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = title,
-                                    fontFamily = GoogleSansFamily,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 14.sp,
-                                    color = SeekhTextPrimary
-                                )
-                                Text(
-                                    text = email,
-                                    fontFamily = GoogleSansFamily,
-                                    fontSize = 12.sp,
-                                    color = SeekhTextSecondary
-                                )
-                            }
-                            if (isSelected) {
-                                Icon(
-                                    imageVector = Icons.Default.CheckCircle,
-                                    contentDescription = "Active account",
-                                    tint = SeekhGreen500
-                                )
-                            }
-                        }
-                    }
-                }
-
                 OutlinedTextField(
-                    value = emailInput,
-                    onValueChange = { emailInput = it },
-                    label = { Text("Or sign in with custom email", fontFamily = GoogleSansFamily) },
+                    value = displayNameInput,
+                    onValueChange = { displayNameInput = it },
+                    label = { Text("Parent / Teacher Name", fontFamily = GoogleSansFamily) },
+                    placeholder = { Text("e.g. Shehzad Aslam", fontFamily = GoogleSansFamily) },
                     singleLine = true,
                     shape = RoundedCornerShape(14.dp),
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                // "Use Read Along without an account" (from flutter_ui_strings.txt line 65!)
-                TextButton(
-                    onClick = {
-                        onUpdateAccountState(
-                            accountState.copy(
-                                isSignedIn = false,
-                                syncStatus = "Using without an account"
-                            )
-                        )
-                    },
+                OutlinedTextField(
+                    value = emailInput,
+                    onValueChange = { emailInput = it },
+                    label = { Text("Email address", fontFamily = GoogleSansFamily) },
+                    placeholder = { Text("your.email@gmail.com", fontFamily = GoogleSansFamily) },
+                    singleLine = true,
+                    shape = RoundedCornerShape(14.dp),
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Use without an account",
-                        fontFamily = GoogleSansFamily,
-                        fontWeight = FontWeight.Bold,
-                        color = SeekhCoralRed
-                    )
+                )
+
+                if (accountState.isSignedIn) {
+                    TextButton(
+                        onClick = {
+                            onUpdateAccountState(
+                                SignedInAccountState(
+                                    isSignedIn = false,
+                                    email = "",
+                                    displayName = "Local Device Account",
+                                    syncStatus = "Using without an account"
+                                )
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Sign out & Use without an account",
+                            fontFamily = GoogleSansFamily,
+                            fontWeight = FontWeight.Bold,
+                            color = SeekhCoralRed
+                        )
+                    }
                 }
             }
         },
         confirmButton = {
             Button(
                 onClick = {
-                    val cleanEmail = emailInput.trim().ifEmpty { "family.reader@gmail.com" }
-                    onUpdateAccountState(
-                        SignedInAccountState(
-                            isSignedIn = true,
-                            email = cleanEmail,
-                            displayName = "Signed-In Account",
-                            syncStatus = "Now your profile is saved with the above email account"
+                    val cleanEmail = emailInput.trim()
+                    if (cleanEmail.isNotEmpty()) {
+                        val cleanName = displayNameInput.trim().ifEmpty { "Parent & Teacher Account" }
+                        onUpdateAccountState(
+                            SignedInAccountState(
+                                isSignedIn = true,
+                                email = cleanEmail,
+                                displayName = cleanName,
+                                syncStatus = "Now your profile is saved with $cleanEmail"
+                            )
                         )
-                    )
+                    } else {
+                        onDismiss()
+                    }
                 },
                 shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.buttonColors(containerColor = SeekhGreen500)
             ) {
-                Text("Sign in & Sync", fontFamily = GoogleSansFamily, fontWeight = FontWeight.Bold)
+                Text("Save & Link Account", fontFamily = GoogleSansFamily, fontWeight = FontWeight.Bold)
             }
         },
         dismissButton = {
@@ -1395,15 +1720,16 @@ fun AccountMenuDialog(
 @Composable
 fun CreateProfileDialog(
     onDismiss: () -> Unit,
-    onCreate: (String, Int) -> Unit
+    onCreate: (String, Int, Int) -> Unit
 ) {
     var name by remember { mutableStateOf("") }
     var selectedAvatar by remember { mutableIntStateOf(2) }
+    var dailyGoalMins by remember { mutableIntStateOf(10) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = Color.White,
-        shape = RoundedCornerShape(26.dp),
+        shape = RoundedCornerShape(28.dp),
         title = {
             Text(
                 text = "Create New Reader Profile",
@@ -1418,30 +1744,39 @@ fun CreateProfileDialog(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "Pick a custom character avatar and enter the reader's name:",
-                    fontFamily = GoogleSansFamily,
-                    fontSize = 13.sp,
-                    color = SeekhTextSecondary
+                ProfileAvatarCircle(
+                    avatarIndex = selectedAvatar,
+                    size = 74.dp,
+                    borderWidth = 2.5.dp,
+                    borderColor = SeekhGreen500
                 )
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = getAvatarCharacterName(selectedAvatar),
+                    fontFamily = GoogleSansFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 13.sp,
+                    color = SeekhGreen600
+                )
+                Spacer(modifier = Modifier.height(10.dp))
 
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Reader name", fontFamily = GoogleSansFamily) },
+                    placeholder = { Text("Enter reader's name", fontFamily = GoogleSansFamily) },
                     singleLine = true,
                     shape = RoundedCornerShape(14.dp),
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(4),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(190.dp),
+                        .height(175.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
@@ -1449,20 +1784,48 @@ fun CreateProfileDialog(
                         val isChosen = idx == selectedAvatar
                         Box(
                             modifier = Modifier
-                                .size(56.dp)
+                                .size(54.dp)
                                 .clip(CircleShape)
                                 .border(
                                     width = if (isChosen) 3.dp else 1.dp,
                                     color = if (isChosen) SeekhGreen500 else SeekhBorderGray,
                                     shape = CircleShape
                                 )
-                                .clickable { selectedAvatar = idx },
+                                .bouncyClick { selectedAvatar = idx },
                             contentAlignment = Alignment.Center
                         ) {
                             ProfileAvatarCircle(
                                 avatarIndex = idx,
-                                size = 52.dp,
+                                size = 50.dp,
                                 borderWidth = 0.dp
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    listOf(5, 10, 15, 20).forEach { mins ->
+                        val active = dailyGoalMins == mins
+                        Surface(
+                            modifier = Modifier
+                                .weight(1f)
+                                .bouncyClick { dailyGoalMins = mins },
+                            shape = RoundedCornerShape(12.dp),
+                            color = if (active) SeekhGreen500 else SeekhSurfaceGray
+                        ) {
+                            Text(
+                                text = "${mins}m",
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp,
+                                color = if (active) Color.White else SeekhTextPrimary,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(vertical = 8.dp)
                             )
                         }
                     }
@@ -1472,8 +1835,8 @@ fun CreateProfileDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    val finalName = name.trim().ifEmpty { "Reader $selectedAvatar" }
-                    onCreate(finalName, selectedAvatar)
+                    val finalName = name.trim().ifEmpty { getAvatarCharacterName(selectedAvatar).substringBefore(" ") }
+                    onCreate(finalName, selectedAvatar, dailyGoalMins)
                 },
                 shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.buttonColors(containerColor = SeekhGreen500)

@@ -684,17 +684,34 @@ fun InteractiveStoryReaderScreen(
                             val isPracticeWord = currentPage.practiceWords.contains(cleanWord)
                             val isMasteredPractice = masteredPracticeWords.contains(cleanWord)
 
-                            val wordColor = when {
+                            val targetWordColor = when {
                                 isMasteredPractice -> SeekhGreenMint
                                 isRead -> SeekhBlueReading
                                 else -> SeekhTextPrimary
                             }
+                            val wordColor by androidx.compose.animation.animateColorAsState(
+                                targetValue = targetWordColor,
+                                animationSpec = tween(260),
+                                label = "word_color_$index"
+                            )
+                            val wordScale by animateFloatAsState(
+                                targetValue = if (isCurrentActiveWord) 1.07f else 1f,
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                                    stiffness = Spring.StiffnessMedium
+                                ),
+                                label = "word_scale_$index"
+                            )
 
                             Column(
                                 modifier = Modifier
                                     .padding(end = 9.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .clickable {
+                                    .scale(wordScale)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(
+                                        if (isCurrentActiveWord) SeekhGreenSoft.copy(alpha = 0.7f) else Color.Transparent
+                                    )
+                                    .bouncyClick {
                                         selectedTooltipWord = cleanWord.ifEmpty { rawWord }
                                         onSpeakText(cleanWord.ifEmpty { rawWord })
                                         if (index >= readWordCount) {
@@ -705,7 +722,7 @@ fun InteractiveStoryReaderScreen(
                                             }
                                         }
                                     }
-                                    .padding(horizontal = 2.dp, vertical = 2.dp),
+                                    .padding(horizontal = 4.dp, vertical = 2.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(

@@ -14,6 +14,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,6 +27,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
@@ -34,6 +36,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
@@ -132,6 +135,80 @@ fun SeekhAIAcademyTheme(content: @Composable () -> Unit) {
         typography = SeekhTypography,
         content = content
     )
+}
+
+// Senior Animator Tactile Press-Scale Micro-Interaction (Spring Bouncy Touch Feedback)
+fun Modifier.bouncyClick(
+    enabled: Boolean = true,
+    scaleDown: Float = 0.95f,
+    onClick: () -> Unit
+): Modifier = composed {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed && enabled) scaleDown else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMediumLow
+        ),
+        label = "bouncy_click_scale"
+    )
+    this
+        .graphicsLayer {
+            scaleX = scale
+            scaleY = scale
+        }
+        .clickable(
+            interactionSource = interactionSource,
+            indication = null,
+            enabled = enabled,
+            onClick = onClick
+        )
+}
+
+// Senior Animator Smooth Staggered Card Entrance Wrapper
+@Composable
+fun AnimatedEntranceBox(
+    delayMs: Int = 0,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    var visible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        if (delayMs > 0) kotlinx.coroutines.delay(delayMs.toLong())
+        visible = true
+    }
+    val alpha by animateFloatAsState(
+        targetValue = if (visible) 1f else 0f,
+        animationSpec = tween(380, easing = FastOutSlowInEasing),
+        label = "ent_alpha"
+    )
+    val offsetY by animateFloatAsState(
+        targetValue = if (visible) 0f else 24f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioLowBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "ent_y"
+    )
+    val scale by animateFloatAsState(
+        targetValue = if (visible) 1f else 0.96f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioLowBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "ent_scale"
+    )
+    Box(
+        modifier = modifier.graphicsLayer {
+            this.alpha = alpha
+            this.translationY = offsetY
+            this.scaleX = scale
+            this.scaleY = scale
+        }
+    ) {
+        content()
+    }
 }
 
 // High-speed LruCache for Story Book WebP and Vocab SVG Bitmaps
@@ -332,7 +409,7 @@ fun AssetSvgImage(
     }
 }
 
-// 100% Original Soft Aurora Wave Header Background (Replaces Google's flat green curved header)
+// 100% Original Soft Aurora Silk Wave Header Background (Multi-ribbon pastel gradient + drifting bokeh pearls)
 @Composable
 fun CurvedGreenHeaderBackground(
     headerHeight: Dp = 185.dp,
@@ -349,6 +426,15 @@ fun CurvedGreenHeaderBackground(
         ),
         label = "shimmer"
     )
+    val wavePhase by infiniteTransition.animateFloat(
+        initialValue = -1f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(3600, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "wave_phase"
+    )
 
     Canvas(
         modifier = Modifier
@@ -363,8 +449,8 @@ fun CurvedGreenHeaderBackground(
             lineTo(w, 0f)
             lineTo(w, h - cDepth)
             cubicTo(
-                w * 0.72f, h + cDepth * 0.55f,
-                w * 0.28f, h - cDepth * 0.65f,
+                w * 0.72f, h + cDepth * (0.55f + wavePhase * 0.12f),
+                w * 0.28f, h - cDepth * (0.65f - wavePhase * 0.12f),
                 0f, h - cDepth * 0.35f
             )
             close()
@@ -373,24 +459,46 @@ fun CurvedGreenHeaderBackground(
             path = path,
             brush = Brush.linearGradient(
                 colors = listOf(
-                    Color(0xFF4B37C8),
-                    Color(0xFF6C5CE7),
-                    Color(0xFF0EA5E9)
+                    Color(0xFF533FD8),
+                    Color(0xFF6E5EF0),
+                    Color(0xFF22B8F0)
                 ),
                 start = Offset(0f, 0f),
                 end = Offset(w, h)
             )
         )
+        // Secondary soft translucent silk wave ribbon
+        val ribbonPath = Path().apply {
+            moveTo(0f, h * 0.35f)
+            cubicTo(
+                w * 0.35f, h * (0.58f + wavePhase * 0.08f),
+                w * 0.65f, h * (0.22f - wavePhase * 0.08f),
+                w, h * 0.48f
+            )
+            lineTo(w, 0f)
+            lineTo(0f, 0f)
+            close()
+        }
+        drawPath(
+            path = ribbonPath,
+            color = Color.White.copy(alpha = 0.07f)
+        )
+
         // Soft floating glass bokeh orbs inside header
         drawCircle(
-            color = Color.White.copy(alpha = 0.09f),
+            color = Color.White.copy(alpha = 0.10f),
             radius = w * 0.24f,
-            center = Offset(w * (0.18f + shimmerShift * 0.06f), h * 0.28f)
+            center = Offset(w * (0.18f + shimmerShift * 0.07f), h * (0.28f + wavePhase * 0.03f))
         )
         drawCircle(
-            color = Color.White.copy(alpha = 0.08f),
+            color = Color.White.copy(alpha = 0.09f),
             radius = w * 0.18f,
-            center = Offset(w * (0.84f - shimmerShift * 0.05f), h * 0.36f)
+            center = Offset(w * (0.84f - shimmerShift * 0.06f), h * (0.36f - wavePhase * 0.03f))
+        )
+        drawCircle(
+            color = Color(0x26FFE066),
+            radius = w * 0.12f,
+            center = Offset(w * (0.52f + wavePhase * 0.04f), h * 0.20f)
         )
     }
 }
@@ -440,7 +548,7 @@ fun GoldenStarIcon(size: Dp = 24.dp, modifier: Modifier = Modifier) {
     }
 }
 
-// 100% Original Animated Custom Vector AI Tutor Mascot: "Noor the Wise Astro-Owl"
+// 100% Original Animated Custom Vector AI Tutor Mascot: "Noor the Wise Astro-Owl" (60 FPS Breathing, Head Sway, Wing Flap & Sonar Aura)
 @Composable
 fun NoorMascotVectorAvatar(
     mood: BuddyMood,
@@ -448,10 +556,10 @@ fun NoorMascotVectorAvatar(
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "noor_mascot")
     val wingFlap by infiniteTransition.animateFloat(
-        initialValue = -6f,
-        targetValue = 8f,
+        initialValue = -7f,
+        targetValue = 9f,
         animationSpec = infiniteRepeatable(
-            animation = tween(if (mood == BuddyMood.SPEAKING) 320 else 1100, easing = FastOutSlowInEasing),
+            animation = tween(if (mood == BuddyMood.SPEAKING) 280 else 1050, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "wing_flap"
@@ -460,17 +568,44 @@ fun NoorMascotVectorAvatar(
         initialValue = 0.15f,
         targetValue = if (mood == BuddyMood.SPEAKING) 1f else 0.2f,
         animationSpec = infiniteRepeatable(
-            animation = tween(200, easing = LinearEasing),
+            animation = tween(190, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "beak"
     )
+    val breathScale by infiniteTransition.animateFloat(
+        initialValue = 0.98f,
+        targetValue = 1.03f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1500, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "breath"
+    )
+    val headSwayDeg by infiniteTransition.animateFloat(
+        initialValue = -2.8f,
+        targetValue = 2.8f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2200, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "head_sway"
+    )
+    val sonarRingPulse by infiniteTransition.animateFloat(
+        initialValue = 1.05f,
+        targetValue = 1.38f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1100, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "sonar_ring"
+    )
 
-    // Smooth periodic eye blink every 3.2 seconds
+    // Smooth periodic eye blink every 3.1 seconds
     var isBlinking by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         while (true) {
-            kotlinx.coroutines.delay(3100)
+            kotlinx.coroutines.delay(3000)
             isBlinking = true
             kotlinx.coroutines.delay(140)
             isBlinking = false
@@ -482,167 +617,178 @@ fun NoorMascotVectorAvatar(
         val h = size.height
         val cx = w * 0.5f
         val cy = h * 0.54f
-        val bodyR = minOf(w, h) * 0.36f
+        val bodyR = minOf(w, h) * 0.36f * breathScale
 
         // Soft glowing aura ring behind Noor
         val auraColor = when (mood) {
-            BuddyMood.LISTENING -> Color(0x3810B981)
-            BuddyMood.SPEAKING -> Color(0x38FFB800)
-            BuddyMood.THINKING -> Color(0x380EA5E9)
+            BuddyMood.LISTENING -> Color(0x4010B981)
+            BuddyMood.SPEAKING -> Color(0x40FFB800)
+            BuddyMood.THINKING -> Color(0x400EA5E9)
             BuddyMood.IDLE -> Color(0x245E4AE3)
         }
         drawCircle(
             color = auraColor,
-            radius = bodyR * 1.28f,
+            radius = bodyR * 1.26f,
             center = Offset(cx, cy)
         )
-
-        // Left & Right Flapping Wings
-        val wingOffsetY = (wingFlap / 10f) * bodyR * 0.22f
-        drawOval(
-            color = Color(0xFF4B37C8),
-            topLeft = Offset(cx - bodyR * 1.18f, cy - bodyR * 0.35f + wingOffsetY),
-            size = Size(bodyR * 0.52f, bodyR * 0.85f)
-        )
-        drawOval(
-            color = Color(0xFF4B37C8),
-            topLeft = Offset(cx + bodyR * 0.66f, cy - bodyR * 0.35f + wingOffsetY),
-            size = Size(bodyR * 0.52f, bodyR * 0.85f)
-        )
-
-        // Cute Owl Ear Tufts
-        val leftEar = Path().apply {
-            moveTo(cx - bodyR * 0.72f, cy - bodyR * 0.55f)
-            lineTo(cx - bodyR * 0.92f, cy - bodyR * 1.05f)
-            lineTo(cx - bodyR * 0.32f, cy - bodyR * 0.82f)
-            close()
-        }
-        val rightEar = Path().apply {
-            moveTo(cx + bodyR * 0.72f, cy - bodyR * 0.55f)
-            lineTo(cx + bodyR * 0.92f, cy - bodyR * 1.05f)
-            lineTo(cx + bodyR * 0.32f, cy - bodyR * 0.82f)
-            close()
-        }
-        drawPath(leftEar, color = Color(0xFF4B37C8))
-        drawPath(rightEar, color = Color(0xFF4B37C8))
-
-        // Rounded Royal Indigo-Violet Owl Body
-        drawRoundRect(
-            brush = Brush.verticalGradient(
-                listOf(Color(0xFF7C66FF), Color(0xFF5E4AE3), Color(0xFF4330B8))
-            ),
-            topLeft = Offset(cx - bodyR * 0.92f, cy - bodyR * 0.88f),
-            size = Size(bodyR * 1.84f, bodyR * 1.78f),
-            cornerRadius = CornerRadius(bodyR * 0.88f, bodyR * 0.88f)
-        )
-
-        // Soft Cream Belly Patch with Feather Scallops
-        drawOval(
-            color = Color(0xFFF3F0FF),
-            topLeft = Offset(cx - bodyR * 0.58f, cy + bodyR * 0.08f),
-            size = Size(bodyR * 1.16f, bodyR * 0.74f)
-        )
-
-        // Cream Facial Disc (Two overlapping soft circles)
-        val eyeCenterY = cy - bodyR * 0.22f
-        val eyeOffsetX = bodyR * 0.38f
-        drawCircle(
-            color = Color(0xFFFFFDF9),
-            radius = bodyR * 0.42f,
-            center = Offset(cx - eyeOffsetX, eyeCenterY)
-        )
-        drawCircle(
-            color = Color(0xFFFFFDF9),
-            radius = bodyR * 0.42f,
-            center = Offset(cx + eyeOffsetX, eyeCenterY)
-        )
-
-        // Big Expressive Eyes (or curved happy blink lines)
-        if (isBlinking) {
-            drawArc(
-                color = Color(0xFF1E1B4B),
-                startAngle = 15f,
-                sweepAngle = 150f,
-                useCenter = false,
-                topLeft = Offset(cx - eyeOffsetX - bodyR * 0.20f, eyeCenterY - bodyR * 0.12f),
-                size = Size(bodyR * 0.40f, bodyR * 0.24f),
-                style = Stroke(width = bodyR * 0.08f, cap = StrokeCap.Round)
+        if (mood == BuddyMood.LISTENING || mood == BuddyMood.SPEAKING) {
+            val fadeAlpha = (1.42f - sonarRingPulse).coerceIn(0f, 0.45f)
+            drawCircle(
+                color = auraColor.copy(alpha = fadeAlpha),
+                radius = bodyR * sonarRingPulse,
+                center = Offset(cx, cy),
+                style = Stroke(width = bodyR * 0.08f)
             )
-            drawArc(
-                color = Color(0xFF1E1B4B),
-                startAngle = 15f,
-                sweepAngle = 150f,
-                useCenter = false,
-                topLeft = Offset(cx + eyeOffsetX - bodyR * 0.20f, eyeCenterY - bodyR * 0.12f),
-                size = Size(bodyR * 0.40f, bodyR * 0.24f),
-                style = Stroke(width = bodyR * 0.08f, cap = StrokeCap.Round)
+        }
+
+        rotate(degrees = headSwayDeg, pivot = Offset(cx, cy)) {
+            // Left & Right Flapping Wings
+            val wingOffsetY = (wingFlap / 10f) * bodyR * 0.24f
+            drawOval(
+                color = Color(0xFF4B37C8),
+                topLeft = Offset(cx - bodyR * 1.18f, cy - bodyR * 0.35f + wingOffsetY),
+                size = Size(bodyR * 0.52f, bodyR * 0.85f)
             )
-        } else {
-            // Left & Right Iris + Starry Pupils
-            listOf(cx - eyeOffsetX, cx + eyeOffsetX).forEach { ex ->
-                drawCircle(
-                    color = Color(0xFF1E1B4B),
-                    radius = bodyR * 0.22f,
-                    center = Offset(ex, eyeCenterY)
-                )
-                drawCircle(
-                    color = Color.White,
-                    radius = bodyR * 0.08f,
-                    center = Offset(ex - bodyR * 0.06f, eyeCenterY - bodyR * 0.06f)
-                )
-                drawCircle(
-                    color = Color.White.copy(alpha = 0.7f),
-                    radius = bodyR * 0.035f,
-                    center = Offset(ex + bodyR * 0.07f, eyeCenterY + bodyR * 0.07f)
-                )
+            drawOval(
+                color = Color(0xFF4B37C8),
+                topLeft = Offset(cx + bodyR * 0.66f, cy - bodyR * 0.35f + wingOffsetY),
+                size = Size(bodyR * 0.52f, bodyR * 0.85f)
+            )
+
+            // Cute Owl Ear Tufts
+            val leftEar = Path().apply {
+                moveTo(cx - bodyR * 0.72f, cy - bodyR * 0.55f)
+                lineTo(cx - bodyR * 0.92f, cy - bodyR * 1.05f)
+                lineTo(cx - bodyR * 0.32f, cy - bodyR * 0.82f)
+                close()
             }
+            val rightEar = Path().apply {
+                moveTo(cx + bodyR * 0.72f, cy - bodyR * 0.55f)
+                lineTo(cx + bodyR * 0.92f, cy - bodyR * 1.05f)
+                lineTo(cx + bodyR * 0.32f, cy - bodyR * 0.82f)
+                close()
+            }
+            drawPath(leftEar, color = Color(0xFF4B37C8))
+            drawPath(rightEar, color = Color(0xFF4B37C8))
+
+            // Rounded Royal Indigo-Violet Owl Body
+            drawRoundRect(
+                brush = Brush.verticalGradient(
+                    listOf(Color(0xFF7C66FF), Color(0xFF5E4AE3), Color(0xFF4330B8))
+                ),
+                topLeft = Offset(cx - bodyR * 0.92f, cy - bodyR * 0.88f),
+                size = Size(bodyR * 1.84f, bodyR * 1.78f),
+                cornerRadius = CornerRadius(bodyR * 0.88f, bodyR * 0.88f)
+            )
+
+            // Soft Cream Belly Patch with Feather Scallops
+            drawOval(
+                color = Color(0xFFF3F0FF),
+                topLeft = Offset(cx - bodyR * 0.58f, cy + bodyR * 0.08f),
+                size = Size(bodyR * 1.16f, bodyR * 0.74f)
+            )
+
+            // Cream Facial Disc (Two overlapping soft circles)
+            val eyeCenterY = cy - bodyR * 0.22f
+            val eyeOffsetX = bodyR * 0.38f
+            drawCircle(
+                color = Color(0xFFFFFDF9),
+                radius = bodyR * 0.42f,
+                center = Offset(cx - eyeOffsetX, eyeCenterY)
+            )
+            drawCircle(
+                color = Color(0xFFFFFDF9),
+                radius = bodyR * 0.42f,
+                center = Offset(cx + eyeOffsetX, eyeCenterY)
+            )
+
+            // Big Expressive Eyes (or curved happy blink lines)
+            if (isBlinking) {
+                drawArc(
+                    color = Color(0xFF1E1B4B),
+                    startAngle = 15f,
+                    sweepAngle = 150f,
+                    useCenter = false,
+                    topLeft = Offset(cx - eyeOffsetX - bodyR * 0.20f, eyeCenterY - bodyR * 0.12f),
+                    size = Size(bodyR * 0.40f, bodyR * 0.24f),
+                    style = Stroke(width = bodyR * 0.08f, cap = StrokeCap.Round)
+                )
+                drawArc(
+                    color = Color(0xFF1E1B4B),
+                    startAngle = 15f,
+                    sweepAngle = 150f,
+                    useCenter = false,
+                    topLeft = Offset(cx + eyeOffsetX - bodyR * 0.20f, eyeCenterY - bodyR * 0.12f),
+                    size = Size(bodyR * 0.40f, bodyR * 0.24f),
+                    style = Stroke(width = bodyR * 0.08f, cap = StrokeCap.Round)
+                )
+            } else {
+                // Left & Right Iris + Starry Pupils
+                listOf(cx - eyeOffsetX, cx + eyeOffsetX).forEach { ex ->
+                    drawCircle(
+                        color = Color(0xFF1E1B4B),
+                        radius = bodyR * 0.22f,
+                        center = Offset(ex, eyeCenterY)
+                    )
+                    drawCircle(
+                        color = Color.White,
+                        radius = bodyR * 0.08f,
+                        center = Offset(ex - bodyR * 0.06f, eyeCenterY - bodyR * 0.06f)
+                    )
+                    drawCircle(
+                        color = Color.White.copy(alpha = 0.7f),
+                        radius = bodyR * 0.035f,
+                        center = Offset(ex + bodyR * 0.07f, eyeCenterY + bodyR * 0.07f)
+                    )
+                }
+            }
+
+            // Rosy Peach Cheeks
+            drawCircle(
+                color = Color(0x66FF7A59),
+                radius = bodyR * 0.14f,
+                center = Offset(cx - bodyR * 0.56f, eyeCenterY + bodyR * 0.28f)
+            )
+            drawCircle(
+                color = Color(0x66FF7A59),
+                radius = bodyR * 0.14f,
+                center = Offset(cx + bodyR * 0.56f, eyeCenterY + bodyR * 0.28f)
+            )
+
+            // Animated Golden Beak
+            val beakDrop = bodyR * (0.14f + 0.12f * beakOpen)
+            val beakPath = Path().apply {
+                moveTo(cx - bodyR * 0.15f, eyeCenterY + bodyR * 0.10f)
+                lineTo(cx + bodyR * 0.15f, eyeCenterY + bodyR * 0.10f)
+                lineTo(cx, eyeCenterY + bodyR * 0.10f + beakDrop)
+                close()
+            }
+            drawPath(beakPath, color = Color(0xFFFFB800))
+
+            // Little Golden Star Crown / Scholar Crest above forehead
+            drawCircle(
+                color = Color(0xFFFFB800),
+                radius = bodyR * 0.14f,
+                center = Offset(cx, cy - bodyR * 0.92f)
+            )
+            drawCircle(
+                color = Color.White,
+                radius = bodyR * 0.05f,
+                center = Offset(cx - bodyR * 0.03f, cy - bodyR * 0.95f)
+            )
+
+            // Cute Little Golden Feet
+            drawOval(
+                color = Color(0xFFFFB800),
+                topLeft = Offset(cx - bodyR * 0.45f, cy + bodyR * 0.80f),
+                size = Size(bodyR * 0.30f, bodyR * 0.16f)
+            )
+            drawOval(
+                color = Color(0xFFFFB800),
+                topLeft = Offset(cx + bodyR * 0.15f, cy + bodyR * 0.80f),
+                size = Size(bodyR * 0.30f, bodyR * 0.16f)
+            )
         }
-
-        // Rosy Peach Cheeks
-        drawCircle(
-            color = Color(0x66FF7A59),
-            radius = bodyR * 0.14f,
-            center = Offset(cx - bodyR * 0.56f, eyeCenterY + bodyR * 0.28f)
-        )
-        drawCircle(
-            color = Color(0x66FF7A59),
-            radius = bodyR * 0.14f,
-            center = Offset(cx + bodyR * 0.56f, eyeCenterY + bodyR * 0.28f)
-        )
-
-        // Animated Golden Beak
-        val beakDrop = bodyR * (0.14f + 0.12f * beakOpen)
-        val beakPath = Path().apply {
-            moveTo(cx - bodyR * 0.15f, eyeCenterY + bodyR * 0.10f)
-            lineTo(cx + bodyR * 0.15f, eyeCenterY + bodyR * 0.10f)
-            lineTo(cx, eyeCenterY + bodyR * 0.10f + beakDrop)
-            close()
-        }
-        drawPath(beakPath, color = Color(0xFFFFB800))
-
-        // Little Golden Star Crown / Scholar Crest above forehead
-        drawCircle(
-            color = Color(0xFFFFB800),
-            radius = bodyR * 0.14f,
-            center = Offset(cx, cy - bodyR * 0.92f)
-        )
-        drawCircle(
-            color = Color.White,
-            radius = bodyR * 0.05f,
-            center = Offset(cx - bodyR * 0.03f, cy - bodyR * 0.95f)
-        )
-
-        // Cute Little Golden Feet
-        drawOval(
-            color = Color(0xFFFFB800),
-            topLeft = Offset(cx - bodyR * 0.45f, cy + bodyR * 0.80f),
-            size = Size(bodyR * 0.30f, bodyR * 0.16f)
-        )
-        drawOval(
-            color = Color(0xFFFFB800),
-            topLeft = Offset(cx + bodyR * 0.15f, cy + bodyR * 0.80f),
-            size = Size(bodyR * 0.30f, bodyR * 0.16f)
-        )
     }
 }
 
@@ -1129,7 +1275,7 @@ fun SeekhMainTopBar(
     }
 }
 
-// Redesigned Soft Bento Story Book Card (Soft Floating Level Pill instead of Google's yellow corner triangle!)
+// Redesigned Soft Bento Story Book Card (Soft Floating Level Pill + Bouncy Press Micro-Interaction + Smooth Animated Progress Bar!)
 @Composable
 fun StoryBookCard(
     book: StoryBook,
@@ -1141,14 +1287,15 @@ fun StoryBookCard(
     needsDownload: Boolean = false,
     isDownloading: Boolean = false
 ) {
+    val animatedProg by animateFloatAsState(
+        targetValue = progressFraction.coerceIn(0f, 1f),
+        animationSpec = tween(420, easing = FastOutSlowInEasing),
+        label = "book_prog"
+    )
+
     Surface(
-        modifier = modifier
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = onClick
-            ),
-        shape = RoundedCornerShape(20.dp),
+        modifier = modifier.bouncyClick(scaleDown = 0.95f, onClick = onClick),
+        shape = RoundedCornerShape(22.dp),
         color = Color.White,
         shadowElevation = 4.dp,
         border = BorderStroke(1.dp, if (isCompleted) SeekhGreenMint.copy(alpha = 0.45f) else SeekhBorderGray)
@@ -1247,7 +1394,7 @@ fun StoryBookCard(
             if (progressFraction > 0f && !isCompleted) {
                 Spacer(modifier = Modifier.height(6.dp))
                 LinearProgressIndicator(
-                    progress = { progressFraction.coerceIn(0.08f, 1f) },
+                    progress = { animatedProg.coerceIn(0.08f, 1f) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(5.dp)
@@ -1350,7 +1497,7 @@ fun FlyingStarsOverlay(
     }
 }
 
-// Featured Hero Story Card at the top of the Library (Clean cover + title + level badge, zero extra buttons)
+// Featured Hero Story Card at the top of the Library (Clean cover + title + level badge + Bouncy Touch Micro-Interaction)
 @Composable
 fun FeaturedStoryHeroCard(
     book: StoryBook,
@@ -1362,8 +1509,8 @@ fun FeaturedStoryHeroCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 18.dp)
-            .clickable { onClick() },
-        shape = RoundedCornerShape(24.dp),
+            .bouncyClick(scaleDown = 0.97f, onClick = onClick),
+        shape = RoundedCornerShape(26.dp),
         color = Color.White,
         shadowElevation = 7.dp,
         border = BorderStroke(1.dp, SeekhGreen100)
@@ -1611,21 +1758,29 @@ private fun BottomNavTabItem(
 ) {
     val bgColor by animateColorAsState(
         targetValue = if (isSelected) SeekhGreenSoft else Color.Transparent,
-        animationSpec = tween(220),
+        animationSpec = tween(260, easing = FastOutSlowInEasing),
         label = "tab_bg"
     )
     val contentColor by animateColorAsState(
         targetValue = if (isSelected) SeekhGreen500 else SeekhTabUnselected,
-        animationSpec = tween(220),
+        animationSpec = tween(260, easing = FastOutSlowInEasing),
         label = "tab_fg"
+    )
+    val iconScale by animateFloatAsState(
+        targetValue = if (isSelected) 1.12f else 1.0f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMedium
+        ),
+        label = "tab_icon_scale"
     )
 
     Row(
         modifier = modifier
             .padding(horizontal = 4.dp)
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(22.dp))
             .background(bgColor)
-            .clickable { onClick() }
+            .bouncyClick(scaleDown = 0.94f, onClick = onClick)
             .padding(horizontal = 12.dp, vertical = 10.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
@@ -1634,7 +1789,9 @@ private fun BottomNavTabItem(
             imageVector = icon,
             contentDescription = label,
             tint = contentColor,
-            modifier = Modifier.size(22.dp)
+            modifier = Modifier
+                .size(22.dp)
+                .scale(iconScale)
         )
         Spacer(modifier = Modifier.width(6.dp))
         Text(
