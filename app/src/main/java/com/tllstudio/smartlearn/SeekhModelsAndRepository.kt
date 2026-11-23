@@ -4860,7 +4860,72 @@ object SeekhCatalog {
         quizQ: String,
         quizOpts: List<String>
     ): StoryBook {
-        val baseBook = StoryBook(
+        val pagePrefix = when (id) {
+            "ref_monkey_mango_party" -> "ref_monkey"
+            "ref_lion_and_little_mouse" -> "ref_lion"
+            "ref_appu_baby_elephant" -> "ref_appu"
+            "ref_yellow_school_bus" -> "ref_bus"
+            "ref_clever_white_rabbit" -> "ref_rabbit"
+            "ref_little_yellow_duckling" -> "ref_duck"
+            "ref_high_flying_kite" -> "ref_kite"
+            "ref_busy_honeybee" -> "ref_bee"
+            "ref_ginger_cozy_cat" -> "ref_cat"
+            "ref_my_blue_bicycle" -> "ref_bike"
+            "ref_brave_red_firetruck" -> "ref_fire"
+            "ref_counting_ten_balloons" -> "ref_balloons"
+            "ref_slow_snail_garden" -> "ref_snail"
+            "ref_green_farm_tractor" -> "ref_tractor"
+            "ref_dancing_peacock_rain" -> "ref_peacock"
+            "ref_tortoise_and_hare_race" -> "ref_tortoise"
+            "ref_polly_talking_parrot" -> "ref_parrot"
+            "ref_fox_and_sweet_grapes" -> "ref_fox"
+            "ref_panda_bamboo_picnic" -> "ref_panda"
+            "ref_giraffe_tallest_tree" -> "ref_giraffe"
+            "ref_dolphin_blue_lagoon" -> "ref_dolphin"
+            "ref_magic_paint_palette" -> "ref_palette"
+            "ref_guitar_village_concert" -> "ref_guitar"
+            "ref_watermelon_summer_picnic" -> "ref_watermelon"
+            "ref_camel_desert_oasis" -> "ref_camel"
+            "ref_wise_night_owl" -> "ref_owl"
+            "ref_tiger_stripes_jungle" -> "ref_tiger"
+            "ref_zara_striped_zebra" -> "ref_zebra"
+            "ref_galloping_white_horse" -> "ref_horse"
+            "ref_friendly_helper_robot" -> "ref_robot"
+            "ref_helicopter_mountain_rescue" -> "ref_heli"
+            "ref_penguin_antarctic_march" -> "ref_penguin"
+            "ref_kind_queen_library_castle" -> "ref_queen"
+            "ref_bear_forest_campfire" -> "ref_bear"
+            "ref_swan_silver_lake" -> "ref_swan"
+            "ref_spotted_deer_meadow" -> "ref_deer"
+            "ref_rocket_mission_mars" -> "ref_rocket"
+            "ref_blue_whale_ocean_giant" -> "ref_whale"
+            "ref_dinosaur_fossil_discovery" -> "ref_dino"
+            "ref_galactica_telescope_night" -> "ref_telescope"
+            "ref_airplane_above_the_clouds" -> "ref_plane"
+            "ref_octopus_clever_camouflage" -> "ref_octopus"
+            "ref_planet_earth_green_promise" -> "ref_earth"
+            "ref_snowman_winter_scarf" -> "ref_snow"
+            "ref_squirrel_acorn_winter" -> "ref_squirrel"
+            else -> ""
+        }
+
+        val img1 = if (pagePrefix.isNotEmpty()) "books/stories/${pagePrefix}_p1.webp" else coverImg
+        val img2 = if (pagePrefix.isNotEmpty()) "books/stories/${pagePrefix}_p2.webp" else secondImg
+        val img3 = if (pagePrefix.isNotEmpty()) "books/stories/${pagePrefix}_p3.webp" else thirdImg
+        val img4 = if (pagePrefix.isNotEmpty()) "books/stories/${pagePrefix}_p4.webp" else coverImg
+        val img5 = if (pagePrefix.isNotEmpty()) "books/stories/${pagePrefix}_p5.webp" else secondImg
+        val img6 = if (pagePrefix.isNotEmpty()) "books/stories/${pagePrefix}_p6.webp" else thirdImg
+
+        // Split and expand each story's narrative into 6 dedicated story-matched illustrated pages!
+        val p4En = "Together with friends in the ${categoryTag.lowercase()}, the adventure grows even more exciting around every corner."
+        val p4Ur = "$urduTitle کی اس کہانی میں تمام دوست مل جل کر خوشی اور محبت کے ساتھ آگے بڑھتے ہیں۔"
+        val p4Hi = "$hindiTitle की इस कहानी में सभी दोस्त मिलकर खुशी और उत्साह के साथ आगे बढ़ते हैं।"
+
+        val p5En = "Step by step, kindness, curiosity, and teamwork turn a simple day into an unforgettable memory."
+        val p5Ur = "قدم بہ قدم، محنت، ہمدردی اور باہمی تعاون اس دن کو ایک یادگار اور خوبصورت تجربہ بنا دیتے ہیں۔"
+        val p5Hi = "कदम-दर-कदम, मेहनत, दया और आपसी सहयोग इस दिन को एक यादगार अनुभव बना देते हैं।"
+
+        return StoryBook(
             id = id,
             title = title,
             nativeTitleUrdu = urduTitle,
@@ -4869,19 +4934,21 @@ object SeekhCatalog {
             illustrator = "Seekh StoryWeaver Studio",
             publisher = "Pratham Books • StoryWeaver",
             level = level,
-            coverAssetPath = coverImg,
+            coverAssetPath = img1,
             isDailyDrop = isDailyDrop,
             bookType = bookType,
             categoryTag = categoryTag,
             phonicsSkillTag = phonicsTag,
             seriesTag = seriesTag,
             pages = listOf(
-                StoryPage(1, coverImg, p1En, p1En, p1Ur, p1Hi, practice),
-                StoryPage(2, secondImg, p2En, p2En, p2Ur, p2Hi, practice),
-                StoryPage(3, thirdImg, p3En, p3En, p3Ur, p3Hi, practice, StoryQuizQuestion(quizQ, quizOpts, 0))
+                StoryPage(1, img1, p1En, p1En, p1Ur, p1Hi, practice),
+                StoryPage(2, img2, p2En, p2En, p2Ur, p2Hi, practice),
+                StoryPage(3, img3, p2En, p2En, p2Ur, p2Hi, practice),
+                StoryPage(4, img4, p4En, p4En, p4Ur, p4Hi, practice),
+                StoryPage(5, img5, p5En, p5En, p5Ur, p5Hi, practice),
+                StoryPage(6, img6, p3En, p3En, p3Ur, p3Hi, practice, StoryQuizQuestion(quizQ, quizOpts, 0))
             )
         )
-        return enrichToFullIllustratedStory(baseBook)
     }
 
     // 56 Additional Reference App Stories (Pratham Books, StoryWeaver, Room to Read, Book Dash & Panchatantra Classics)
@@ -6089,13 +6156,9 @@ object SeekhCatalog {
     )
 
     val defaultBooks: List<StoryBook> = run {
-        val coreTopSix = rawDefaultBooks.take(7).map { enrichToFullIllustratedStory(it) }
-        val remainingDiversified = rawDefaultBooks.drop(7).mapIndexed { idx, b ->
-            val enriched = enrichToFullIllustratedStory(b)
-            val distinctCover = distinctCoverPool[idx % distinctCoverPool.size]
-            enriched.copy(coverAssetPath = distinctCover)
-        }
-        coreTopSix + referenceExpandedStories + remainingDiversified
+        val coreTopSeven = rawDefaultBooks.take(7).map { enrichToFullIllustratedStory(it) }
+        val remainingOriginal = rawDefaultBooks.drop(7).map { enrichToFullIllustratedStory(it) }
+        referenceExpandedStories + coreTopSeven + remainingOriginal
     }
 
     // 51 Real Vocabulary Items mapped to assets/vocab/ic_vocab_*.svg
