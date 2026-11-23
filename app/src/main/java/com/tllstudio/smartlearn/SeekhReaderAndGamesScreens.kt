@@ -557,10 +557,17 @@ fun InteractiveStoryReaderScreen(
                 )
             }
 
-            // FULL-SCREEN SNAPPING VERTICAL PAGER (No Card boxes around pages — each page fills the full screen and snaps cleanly on vertical swipe!)
+            // FULL-SCREEN SNAPPING VERTICAL PAGER (Effortless low-threshold vertical swipe with zero nested scroll conflict!)
             VerticalPager(
                 state = pagerState,
-                flingBehavior = PagerDefaults.flingBehavior(state = pagerState),
+                flingBehavior = PagerDefaults.flingBehavior(
+                    state = pagerState,
+                    snapPositionalThreshold = 0.14f,
+                    snapAnimationSpec = spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessMediumLow
+                    )
+                ),
                 beyondViewportPageCount = 1,
                 modifier = Modifier
                     .weight(1f)
@@ -575,9 +582,8 @@ fun InteractiveStoryReaderScreen(
                     val pageReadCount = pageReadWordCounts[pIdx] ?: 0
                     val pageMasteredWords = masteredPracticeWordsByPage[pIdx] ?: emptySet()
                     val isCurrentActivePage = pagerState.currentPage == pIdx
-                    val textScrollState = rememberScrollState()
 
-                    // FULL-SCREEN PAGE CANVAS (No Card border, no card background, pure full-screen illustration + complete unclipped interactive words!)
+                    // FULL-SCREEN PAGE CANVAS (No Card border, no nested verticalScroll stealing gestures, pure full-screen illustration + complete unclipped interactive words!)
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -585,11 +591,11 @@ fun InteractiveStoryReaderScreen(
                             .padding(start = 18.dp, end = 18.dp, top = 8.dp, bottom = 104.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // Top 37% of Full Screen: Clean Story Illustration
+                        // Top 36% of Full Screen: Clean Story Illustration
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .weight(0.37f)
+                                .weight(0.36f)
                                 .clip(RoundedCornerShape(20.dp))
                                 .background(SeekhSurfaceGray)
                                 .clickable {
@@ -608,14 +614,13 @@ fun InteractiveStoryReaderScreen(
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
 
-                        // Bottom 63% of Full Screen: 100% Complete Unclipped Interactive Story Text + Bilingual Subtitle!
+                        // Bottom 64% of Full Screen: 100% Complete Unclipped Interactive Story Text + Bilingual Subtitle!
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .weight(0.63f)
-                                .verticalScroll(textScrollState),
+                                .weight(0.64f),
                             verticalArrangement = Arrangement.Top
                         ) {
                             FlowRow(
