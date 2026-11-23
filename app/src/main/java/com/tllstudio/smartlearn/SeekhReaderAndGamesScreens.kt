@@ -1,7 +1,7 @@
 package com.tllstudio.smartlearn
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -340,11 +340,16 @@ fun InteractiveStoryReaderScreen(
                 }
             }
 
-            // Thin Page Progress Bar directly under top bar
+            // Thin Animated Page Progress Bar directly under top bar
             val totalSteps = (book.pages.size + 1).coerceAtLeast(1)
             val currentStep = if (isOnCoverPage) 1 else (pageIndex + 2)
+            val animatedStepProgress by animateFloatAsState(
+                targetValue = (currentStep.toFloat() / totalSteps.toFloat()).coerceIn(0.05f, 1f),
+                animationSpec = tween(360, easing = FastOutSlowInEasing),
+                label = "reader_step_progress"
+            )
             LinearProgressIndicator(
-                progress = { (currentStep.toFloat() / totalSteps.toFloat()).coerceIn(0.05f, 1f) },
+                progress = { animatedStepProgress },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(4.dp),
@@ -352,8 +357,38 @@ fun InteractiveStoryReaderScreen(
                 trackColor = SeekhBorderGray
             )
 
-            // Main Body: Either CoverPage, SelectionQuestionPage (Comprehension Quiz), or BookReadingPageView
-            if (isOnCoverPage) {
+            // Main Body with Smooth Directional Storybook Page-Turn Animation!
+            val readerPageState = Triple(isOnCoverPage, pageIndex, isShowingQuizPage)
+            androidx.compose.animation.AnimatedContent(
+                targetState = readerPageState,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                transitionSpec = {
+                    val initScore = if (initialState.first) -1 else (initialState.second * 2 + if (initialState.third) 1 else 0)
+                    val targetScore = if (targetState.first) -1 else (targetState.second * 2 + if (targetState.third) 1 else 0)
+                    val isForward = targetScore >= initScore
+                    (androidx.compose.animation.slideInHorizontally(
+                        animationSpec = tween(320, easing = FastOutSlowInEasing),
+                        initialOffsetX = { fullW -> if (isForward) fullW / 3 else -fullW / 3 }
+                    ) + androidx.compose.animation.fadeIn(
+                        animationSpec = tween(250)
+                    ) + androidx.compose.animation.scaleIn(
+                        initialScale = 0.96f,
+                        animationSpec = tween(300)
+                    )).togetherWith(
+                        androidx.compose.animation.slideOutHorizontally(
+                            animationSpec = tween(250, easing = FastOutSlowInEasing),
+                            targetOffsetX = { fullW -> if (isForward) -fullW / 4 else fullW / 4 }
+                        ) + androidx.compose.animation.fadeOut(
+                            animationSpec = tween(190)
+                        )
+                    )
+                },
+                label = "story_page_turn_anim"
+            ) { (onCover, _, showingQuiz) ->
+            Column(modifier = Modifier.fillMaxSize()) {
+            if (onCover) {
                 // PAGE 0: Reference CoverPage (Cover Image + Title + Author + Illustrator + Publisher + Start Reading Green Arrow)
                 Column(
                     modifier = Modifier
@@ -533,7 +568,7 @@ fun InteractiveStoryReaderScreen(
                         }
                     }
                 }
-            } else if (isShowingQuizPage && currentPage.quiz != null) {
+            } else if (showingQuiz && currentPage.quiz != null) {
                 // DEDICATED FULL-PAGE COMPREHENSION QUESTION SCREEN (SelectionQuestionPage / SeekhBookQuestionPage)
                 val quiz = currentPage.quiz
                 LaunchedEffect(pageIndex) {
@@ -1007,6 +1042,8 @@ fun InteractiveStoryReaderScreen(
                     }
                 )
             }
+            }
+            }
         }
 
         // Flying Stars Animation Overlay (StarAnimationHolderView)
@@ -1182,7 +1219,7 @@ private fun ReaderBottomCircularNavigationRow(
             Surface(
                 modifier = Modifier
                     .size(52.dp)
-                    .clickable { onPrevious() },
+                    .bouncyClick(scaleDown = 0.88f, onClick = onPrevious),
                 shape = CircleShape,
                 color = SeekhSurfaceGray,
                 border = BorderStroke(1.5.dp, SeekhBorderGray),
@@ -1205,7 +1242,7 @@ private fun ReaderBottomCircularNavigationRow(
         Surface(
             modifier = Modifier
                 .size(58.dp)
-                .clickable { onNext() },
+                .bouncyClick(scaleDown = 0.88f, onClick = onNext),
             shape = CircleShape,
             color = SeekhGreen500,
             shadowElevation = 6.dp

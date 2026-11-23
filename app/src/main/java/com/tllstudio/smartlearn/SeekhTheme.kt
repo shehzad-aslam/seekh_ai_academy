@@ -1700,6 +1700,25 @@ fun SeekhBottomNavigationBar(
     selectedTab: MainTab,
     onTabSelected: (MainTab) -> Unit
 ) {
+    val targetTabIndex = when (selectedTab) {
+        MainTab.LIBRARY -> 0f
+        MainTab.PRIZES -> 1f
+        MainTab.ACTIVITY -> 2f
+    }
+    // Physics-driven spring sliding position (glides smoothly from button to button with gentle bounce)
+    val animatedTabIndex by animateFloatAsState(
+        targetValue = targetTabIndex,
+        animationSpec = spring(
+            dampingRatio = 0.72f,
+            stiffness = Spring.StiffnessMediumLow
+        ),
+        label = "bottom_nav_sliding_index"
+    )
+    // Elastic liquid stretch while the indicator pill is traveling between buttons
+    val travelVelocity = kotlin.math.abs(targetTabIndex - animatedTabIndex).coerceIn(0f, 1.5f)
+    val pillScaleX = 1f + travelVelocity * 0.18f
+    val pillScaleY = 1f - travelVelocity * 0.06f
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -1710,39 +1729,93 @@ fun SeekhBottomNavigationBar(
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .shadow(14.dp, RoundedCornerShape(28.dp)),
-            shape = RoundedCornerShape(28.dp),
+                .shadow(16.dp, RoundedCornerShape(30.dp)),
+            shape = RoundedCornerShape(30.dp),
             color = Color.White,
             border = BorderStroke(1.dp, SeekhBorderGray)
         ) {
-            Row(
+            BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 10.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(horizontal = 8.dp, vertical = 6.dp)
             ) {
-                BottomNavTabItem(
-                    label = "Library",
-                    icon = Icons.AutoMirrored.Filled.MenuBook,
-                    isSelected = selectedTab == MainTab.LIBRARY,
-                    onClick = { onTabSelected(MainTab.LIBRARY) },
-                    modifier = Modifier.weight(1f)
-                )
-                BottomNavTabItem(
-                    label = "Prizes",
-                    icon = Icons.Default.EmojiEvents,
-                    isSelected = selectedTab == MainTab.PRIZES,
-                    onClick = { onTabSelected(MainTab.PRIZES) },
-                    modifier = Modifier.weight(1f)
-                )
-                BottomNavTabItem(
-                    label = "Activity",
-                    icon = Icons.Default.Insights,
-                    isSelected = selectedTab == MainTab.ACTIVITY,
-                    onClick = { onTabSelected(MainTab.ACTIVITY) },
-                    modifier = Modifier.weight(1f)
-                )
+                val slotWidth = maxWidth / 3f
+                val slidingOffsetX = slotWidth * animatedTabIndex
+
+                // Physically Gliding Liquid Pill Indicator Layer behind the 3 tab buttons!
+                Box(
+                    modifier = Modifier
+                        .offset(x = slidingOffsetX)
+                        .width(slotWidth)
+                        .height(48.dp)
+                        .padding(horizontal = 3.dp)
+                        .graphicsLayer {
+                            scaleX = pillScaleX
+                            scaleY = pillScaleY
+                        }
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(
+                            Brush.horizontalGradient(
+                                colors = listOf(
+                                    SeekhGreenSoft,
+                                    Color(0xFFE0F2FE).copy(alpha = 0.85f),
+                                    SeekhGreenSoft
+                                )
+                            )
+                        )
+                        .border(
+                            width = 1.5.dp,
+                            brush = Brush.horizontalGradient(
+                                listOf(
+                                    SeekhGreen500.copy(alpha = 0.42f),
+                                    SeekhBlue500.copy(alpha = 0.35f)
+                                )
+                            ),
+                            shape = RoundedCornerShape(24.dp)
+                        ),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    // Glowing active indicator bar inside the sliding pill
+                    Box(
+                        modifier = Modifier
+                            .padding(bottom = 3.dp)
+                            .width(22.dp)
+                            .height(3.dp)
+                            .clip(RoundedCornerShape(50))
+                            .background(SeekhGreen500)
+                    )
+                }
+
+                // Foreground Row of Interactive Tab Buttons
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    BottomNavTabItem(
+                        label = "Library",
+                        icon = Icons.AutoMirrored.Filled.MenuBook,
+                        isSelected = selectedTab == MainTab.LIBRARY,
+                        onClick = { onTabSelected(MainTab.LIBRARY) },
+                        modifier = Modifier.weight(1f)
+                    )
+                    BottomNavTabItem(
+                        label = "Prizes",
+                        icon = Icons.Default.EmojiEvents,
+                        isSelected = selectedTab == MainTab.PRIZES,
+                        onClick = { onTabSelected(MainTab.PRIZES) },
+                        modifier = Modifier.weight(1f)
+                    )
+                    BottomNavTabItem(
+                        label = "Activity",
+                        icon = Icons.Default.Insights,
+                        isSelected = selectedTab == MainTab.ACTIVITY,
+                        onClick = { onTabSelected(MainTab.ACTIVITY) },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
             }
         }
     }
@@ -1756,32 +1829,45 @@ private fun BottomNavTabItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val bgColor by animateColorAsState(
-        targetValue = if (isSelected) SeekhGreenSoft else Color.Transparent,
-        animationSpec = tween(260, easing = FastOutSlowInEasing),
-        label = "tab_bg"
-    )
     val contentColor by animateColorAsState(
         targetValue = if (isSelected) SeekhGreen500 else SeekhTabUnselected,
         animationSpec = tween(260, easing = FastOutSlowInEasing),
         label = "tab_fg"
     )
     val iconScale by animateFloatAsState(
-        targetValue = if (isSelected) 1.12f else 1.0f,
+        targetValue = if (isSelected) 1.18f else 0.98f,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessMedium
         ),
         label = "tab_icon_scale"
     )
+    val liftOffsetY by animateFloatAsState(
+        targetValue = if (isSelected) -2.2f else 0f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMediumLow
+        ),
+        label = "tab_lift_y"
+    )
+    val wiggleAngle = remember { Animatable(0f) }
+    LaunchedEffect(isSelected) {
+        if (isSelected) {
+            wiggleAngle.animateTo(-11f, tween(90))
+            wiggleAngle.animateTo(9f, tween(110))
+            wiggleAngle.animateTo(0f, spring(dampingRatio = Spring.DampingRatioMediumBouncy))
+        } else {
+            wiggleAngle.snapTo(0f)
+        }
+    }
 
     Row(
         modifier = modifier
-            .padding(horizontal = 4.dp)
-            .clip(RoundedCornerShape(22.dp))
-            .background(bgColor)
-            .bouncyClick(scaleDown = 0.94f, onClick = onClick)
-            .padding(horizontal = 12.dp, vertical = 10.dp),
+            .fillMaxHeight()
+            .clip(RoundedCornerShape(24.dp))
+            .bouncyClick(scaleDown = 0.91f, onClick = onClick)
+            .offset(y = liftOffsetY.dp)
+            .padding(horizontal = 8.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -1790,15 +1876,19 @@ private fun BottomNavTabItem(
             contentDescription = label,
             tint = contentColor,
             modifier = Modifier
-                .size(22.dp)
-                .scale(iconScale)
+                .size(21.dp)
+                .graphicsLayer {
+                    scaleX = iconScale
+                    scaleY = iconScale
+                    rotationZ = wiggleAngle.value
+                }
         )
         Spacer(modifier = Modifier.width(6.dp))
         Text(
             text = label,
             fontFamily = GoogleSansFamily,
-            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-            fontSize = 13.sp,
+            fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Medium,
+            fontSize = if (isSelected) 13.5.sp else 13.sp,
             color = contentColor,
             maxLines = 1
         )

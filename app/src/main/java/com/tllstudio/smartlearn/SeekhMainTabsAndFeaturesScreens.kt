@@ -61,7 +61,24 @@ fun LibraryTabScreen(
     var bookToDeleteConfirm by remember { mutableStateOf<StoryBook?>(null) }
 
     val filterChips = remember {
-        listOf("All", "Games", "Classroom", "Level 1", "Level 2", "Level 3", "Level 4", "Phonics", "Series", "My stories")
+        listOf(
+            "All",
+            "Games",
+            "New & Daily",
+            "Level 1",
+            "Level 2",
+            "Level 3",
+            "Level 4",
+            "Animals & Nature",
+            "Family & Friends",
+            "Phonics",
+            "Adventure & Travel",
+            "Science & Weather",
+            "Bedtime & Folktales",
+            "Series",
+            "Classroom",
+            "My stories"
+        )
     }
 
     // Sub-state BackHandler when searching or filtering
@@ -100,6 +117,24 @@ fun LibraryTabScreen(
             if (groupLabel != null) b.copy(assignedByTeacher = "Assigned by $groupLabel") else b
         }
     }
+    val dailyDropBooks = remember(books) {
+        books.filter { it.isDailyDrop && !it.isFeaturedHero }
+    }
+    val animalsNatureBooks = remember(books) {
+        books.filter { it.categoryTag == "Animals & Nature" }
+    }
+    val familyFriendsBooks = remember(books) {
+        books.filter { it.categoryTag == "Family & Friends" }
+    }
+    val adventureTravelBooks = remember(books) {
+        books.filter { it.categoryTag == "Adventure & Travel" }
+    }
+    val scienceWeatherBooks = remember(books) {
+        books.filter { it.categoryTag == "Science & Weather" }
+    }
+    val bedtimeFolktaleBooks = remember(books) {
+        books.filter { it.categoryTag == "Bedtime & Folktales" }
+    }
     val phonicsBooks = remember(books) {
         books.filter { it.bookType == "DECODABLE" || it.phonicsSkillTag.isNotBlank() }
     }
@@ -129,12 +164,19 @@ fun LibraryTabScreen(
                 b.nativeTitleUrdu.contains(searchQuery, ignoreCase = true) ||
                 b.nativeTitleHindi.contains(searchQuery, ignoreCase = true) ||
                 b.author.contains(searchQuery, ignoreCase = true) ||
+                b.categoryTag.contains(searchQuery, ignoreCase = true) ||
                 b.phonicsSkillTag.contains(searchQuery, ignoreCase = true)
             val matchesFilter = when (selectedCategoryFilter) {
+                "New & Daily" -> b.isDailyDrop
                 "Level 1" -> b.level == 1
                 "Level 2" -> b.level == 2
                 "Level 3" -> b.level == 3
                 "Level 4" -> b.level == 4
+                "Animals & Nature" -> b.categoryTag == "Animals & Nature"
+                "Family & Friends" -> b.categoryTag == "Family & Friends"
+                "Adventure & Travel" -> b.categoryTag == "Adventure & Travel"
+                "Science & Weather" -> b.categoryTag == "Science & Weather"
+                "Bedtime & Folktales" -> b.categoryTag == "Bedtime & Folktales"
                 "Phonics" -> b.bookType == "DECODABLE" || b.phonicsSkillTag.isNotBlank()
                 "Series" -> b.bookType == "SERIES" || b.seriesTag.isNotBlank()
                 "Classroom" -> groupAssignedLabels.containsKey(b.id) || b.bookSource == "CLASSROOM" || b.assignedByTeacher.isNotBlank()
@@ -239,22 +281,39 @@ fun LibraryTabScreen(
                     ) {
                         items(filterChips) { chip ->
                             val isSelected = selectedCategoryFilter == chip
+                            val chipScale by androidx.compose.animation.core.animateFloatAsState(
+                                targetValue = if (isSelected) 1.06f else 1f,
+                                animationSpec = androidx.compose.animation.core.spring(
+                                    dampingRatio = androidx.compose.animation.core.Spring.DampingRatioMediumBouncy,
+                                    stiffness = androidx.compose.animation.core.Spring.StiffnessMedium
+                                ),
+                                label = "chip_scale_$chip"
+                            )
+                            val chipBg by androidx.compose.animation.animateColorAsState(
+                                targetValue = if (isSelected) SeekhYellow500 else Color.White.copy(alpha = 0.94f),
+                                animationSpec = androidx.compose.animation.core.tween(220),
+                                label = "chip_bg_$chip"
+                            )
                             Surface(
-                                modifier = Modifier.clickable {
-                                    selectedCategoryFilter = if (isSelected && chip != "All") "All" else chip
-                                    onSpeakText(chip)
-                                },
+                                modifier = Modifier
+                                    .bouncyClick(scaleDown = 0.92f) {
+                                        selectedCategoryFilter = if (isSelected && chip != "All") "All" else chip
+                                        onSpeakText(chip)
+                                    },
                                 shape = RoundedCornerShape(50),
-                                color = if (isSelected) SeekhYellow500 else Color.White.copy(alpha = 0.92f),
-                                shadowElevation = 2.dp
+                                color = chipBg,
+                                shadowElevation = if (isSelected) 4.dp else 2.dp
                             ) {
                                 Text(
                                     text = chip,
                                     fontFamily = GoogleSansFamily,
-                                    fontWeight = FontWeight.Bold,
+                                    fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Bold,
                                     fontSize = 12.sp,
                                     color = SeekhTextPrimary,
-                                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp)
+                                    modifier = Modifier.padding(
+                                        horizontal = (14 * chipScale).dp,
+                                        vertical = 7.dp
+                                    )
                                 )
                             }
                         }
@@ -482,15 +541,39 @@ fun LibraryTabScreen(
                         }
                     }
 
+                    // 2b. "New & Daily Drops" Section (Fresh highlighted daily stories)
+                    if (dailyDropBooks.isNotEmpty()) {
+                        item {
+                            LibrarySectionHeader(
+                                title = "New & Daily stories (${dailyDropBooks.size})",
+                                onSpeak = { onSpeakText("New and daily recommended stories") },
+                                actionLabel = "See all →",
+                                onActionClick = { selectedCategoryFilter = "New & Daily" }
+                            )
+                            LibraryBooksThreeColumnRows(
+                                sectionBooks = dailyDropBooks.take(6),
+                                profile = profile,
+                                selectedLanguageCode = selectedLanguage.code,
+                                downloadedCloudBookIds = downloadedCloudBookIds,
+                                downloadingBookIds = downloadingBookIds,
+                                onDownloadCloudBook = onDownloadCloudBook,
+                                onOpenBook = onOpenBook
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+                    }
+
                     // 3. "Level 1 stories" Section (PROMPT_STORIES_OF_LEVEL_1)
                     if (level1Books.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Level 1 stories",
-                                onSpeak = { onSpeakText("Level 1 stories") }
+                                title = "Level 1 stories (${level1Books.size})",
+                                onSpeak = { onSpeakText("Level 1 stories") },
+                                actionLabel = "See all →",
+                                onActionClick = { selectedCategoryFilter = "Level 1" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = level1Books,
+                                sectionBooks = level1Books.take(6),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -504,34 +587,12 @@ fun LibraryTabScreen(
 
                     // 4. "Play games" Section (seekh: play_games — Jumbled Words, Pop The Balloons, Speed Reading, Word Meanings)
                     item {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(end = 18.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(modifier = Modifier.weight(1f)) {
-                                LibrarySectionHeader(
-                                    title = "Play games",
-                                    onSpeak = { onSpeakText("Play games") }
-                                )
-                            }
-                            Surface(
-                                shape = RoundedCornerShape(50),
-                                color = SeekhGreenSoft,
-                                modifier = Modifier.bouncyClick { selectedCategoryFilter = "Games" }
-                            ) {
-                                Text(
-                                    text = "All 4 Games →",
-                                    fontFamily = GoogleSansFamily,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 12.sp,
-                                    color = SeekhGreen600,
-                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
-                                )
-                            }
-                        }
+                        LibrarySectionHeader(
+                            title = "Play games",
+                            onSpeak = { onSpeakText("Play games") },
+                            actionLabel = "All 4 Games →",
+                            onActionClick = { selectedCategoryFilter = "Games" }
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
 
                         LazyRow(
@@ -583,15 +644,39 @@ fun LibraryTabScreen(
                         Spacer(modifier = Modifier.height(18.dp))
                     }
 
+                    // 4b. "Animals & Nature" Category Shelf
+                    if (animalsNatureBooks.isNotEmpty()) {
+                        item {
+                            LibrarySectionHeader(
+                                title = "Animals & Nature (${animalsNatureBooks.size})",
+                                onSpeak = { onSpeakText("Animals and nature stories") },
+                                actionLabel = "See all →",
+                                onActionClick = { selectedCategoryFilter = "Animals & Nature" }
+                            )
+                            LibraryBooksThreeColumnRows(
+                                sectionBooks = animalsNatureBooks.take(6),
+                                profile = profile,
+                                selectedLanguageCode = selectedLanguage.code,
+                                downloadedCloudBookIds = downloadedCloudBookIds,
+                                downloadingBookIds = downloadingBookIds,
+                                onDownloadCloudBook = onDownloadCloudBook,
+                                onOpenBook = onOpenBook
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+                    }
+
                     // 5. "Phonics & Decodable stories" Section (BOOK_TYPE_DECODABLE / phonicSkillGroupsInfo)
                     if (phonicsBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Phonics & Decodable stories",
-                                onSpeak = { onSpeakText("Phonics and decodable skill stories") }
+                                title = "Phonics & Decodable stories (${phonicsBooks.size})",
+                                onSpeak = { onSpeakText("Phonics and decodable skill stories") },
+                                actionLabel = "See all →",
+                                onActionClick = { selectedCategoryFilter = "Phonics" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = phonicsBooks,
+                                sectionBooks = phonicsBooks.take(6),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -607,11 +692,35 @@ fun LibraryTabScreen(
                     if (level2Books.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Level 2 stories",
-                                onSpeak = { onSpeakText("Level 2 stories") }
+                                title = "Level 2 stories (${level2Books.size})",
+                                onSpeak = { onSpeakText("Level 2 stories") },
+                                actionLabel = "See all →",
+                                onActionClick = { selectedCategoryFilter = "Level 2" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = level2Books,
+                                sectionBooks = level2Books.take(6),
+                                profile = profile,
+                                selectedLanguageCode = selectedLanguage.code,
+                                downloadedCloudBookIds = downloadedCloudBookIds,
+                                downloadingBookIds = downloadingBookIds,
+                                onDownloadCloudBook = onDownloadCloudBook,
+                                onOpenBook = onOpenBook
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+                    }
+
+                    // 6b. "Family & Friends" Category Shelf
+                    if (familyFriendsBooks.isNotEmpty()) {
+                        item {
+                            LibrarySectionHeader(
+                                title = "Family & Friends (${familyFriendsBooks.size})",
+                                onSpeak = { onSpeakText("Family and friends stories") },
+                                actionLabel = "See all →",
+                                onActionClick = { selectedCategoryFilter = "Family & Friends" }
+                            )
+                            LibraryBooksThreeColumnRows(
+                                sectionBooks = familyFriendsBooks.take(6),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -627,11 +736,13 @@ fun LibraryTabScreen(
                     if (seriesBooks.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Story Series",
-                                onSpeak = { onSpeakText("Multi-chapter story series") }
+                                title = "Story Series (${seriesBooks.size})",
+                                onSpeak = { onSpeakText("Multi-chapter story series") },
+                                actionLabel = "See all →",
+                                onActionClick = { selectedCategoryFilter = "Series" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = seriesBooks,
+                                sectionBooks = seriesBooks.take(6),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -647,11 +758,57 @@ fun LibraryTabScreen(
                     if (level3Books.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Level 3 stories",
-                                onSpeak = { onSpeakText("Level 3 stories") }
+                                title = "Level 3 stories (${level3Books.size})",
+                                onSpeak = { onSpeakText("Level 3 stories") },
+                                actionLabel = "See all →",
+                                onActionClick = { selectedCategoryFilter = "Level 3" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = level3Books,
+                                sectionBooks = level3Books.take(6),
+                                profile = profile,
+                                selectedLanguageCode = selectedLanguage.code,
+                                downloadedCloudBookIds = downloadedCloudBookIds,
+                                downloadingBookIds = downloadingBookIds,
+                                onDownloadCloudBook = onDownloadCloudBook,
+                                onOpenBook = onOpenBook
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+                    }
+
+                    // 8b. "Adventure & Travel" Category Shelf
+                    if (adventureTravelBooks.isNotEmpty()) {
+                        item {
+                            LibrarySectionHeader(
+                                title = "Adventure & Travel (${adventureTravelBooks.size})",
+                                onSpeak = { onSpeakText("Adventure and travel stories") },
+                                actionLabel = "See all →",
+                                onActionClick = { selectedCategoryFilter = "Adventure & Travel" }
+                            )
+                            LibraryBooksThreeColumnRows(
+                                sectionBooks = adventureTravelBooks.take(6),
+                                profile = profile,
+                                selectedLanguageCode = selectedLanguage.code,
+                                downloadedCloudBookIds = downloadedCloudBookIds,
+                                downloadingBookIds = downloadingBookIds,
+                                onDownloadCloudBook = onDownloadCloudBook,
+                                onOpenBook = onOpenBook
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+                    }
+
+                    // 8c. "Science & Weather" Category Shelf
+                    if (scienceWeatherBooks.isNotEmpty()) {
+                        item {
+                            LibrarySectionHeader(
+                                title = "Science & Weather (${scienceWeatherBooks.size})",
+                                onSpeak = { onSpeakText("Science, nature, and weather stories") },
+                                actionLabel = "See all →",
+                                onActionClick = { selectedCategoryFilter = "Science & Weather" }
+                            )
+                            LibraryBooksThreeColumnRows(
+                                sectionBooks = scienceWeatherBooks.take(6),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -667,11 +824,35 @@ fun LibraryTabScreen(
                     if (level4Books.isNotEmpty()) {
                         item {
                             LibrarySectionHeader(
-                                title = "Level 4 stories",
-                                onSpeak = { onSpeakText("Level 4 stories") }
+                                title = "Level 4 stories (${level4Books.size})",
+                                onSpeak = { onSpeakText("Level 4 stories") },
+                                actionLabel = "See all →",
+                                onActionClick = { selectedCategoryFilter = "Level 4" }
                             )
                             LibraryBooksThreeColumnRows(
-                                sectionBooks = level4Books,
+                                sectionBooks = level4Books.take(6),
+                                profile = profile,
+                                selectedLanguageCode = selectedLanguage.code,
+                                downloadedCloudBookIds = downloadedCloudBookIds,
+                                downloadingBookIds = downloadingBookIds,
+                                onDownloadCloudBook = onDownloadCloudBook,
+                                onOpenBook = onOpenBook
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+                    }
+
+                    // 9b. "Bedtime & Folktales" Category Shelf
+                    if (bedtimeFolktaleBooks.isNotEmpty()) {
+                        item {
+                            LibrarySectionHeader(
+                                title = "Bedtime & Folktales (${bedtimeFolktaleBooks.size})",
+                                onSpeak = { onSpeakText("Bedtime and folktale stories") },
+                                actionLabel = "See all →",
+                                onActionClick = { selectedCategoryFilter = "Bedtime & Folktales" }
+                            )
+                            LibraryBooksThreeColumnRows(
+                                sectionBooks = bedtimeFolktaleBooks.take(6),
                                 profile = profile,
                                 selectedLanguageCode = selectedLanguage.code,
                                 downloadedCloudBookIds = downloadedCloudBookIds,
@@ -1030,29 +1211,54 @@ private fun CreateYourOwnStoryBannerCard(
 @Composable
 private fun LibrarySectionHeader(
     title: String,
-    onSpeak: () -> Unit
+    onSpeak: () -> Unit,
+    actionLabel: String? = null,
+    onActionClick: (() -> Unit)? = null
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onSpeak() }
             .padding(horizontal = 18.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = title,
-            fontFamily = GoogleSansFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 19.sp,
-            color = SeekhTextPrimary
-        )
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.VolumeUp,
-            contentDescription = "Hear section title",
-            tint = SeekhGreen500,
-            modifier = Modifier.size(18.dp)
-        )
+        Row(
+            modifier = Modifier
+                .weight(1f)
+                .clickable { onSpeak() },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = title,
+                fontFamily = GoogleSansFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 19.sp,
+                color = SeekhTextPrimary
+            )
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.VolumeUp,
+                contentDescription = "Hear section title",
+                tint = SeekhGreen500,
+                modifier = Modifier.size(18.dp)
+            )
+        }
+        if (!actionLabel.isNullOrBlank() && onActionClick != null) {
+            Surface(
+                shape = RoundedCornerShape(50),
+                color = SeekhGreenSoft,
+                modifier = Modifier.bouncyClick(scaleDown = 0.92f, onClick = onActionClick)
+            ) {
+                Text(
+                    text = actionLabel,
+                    fontFamily = GoogleSansFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                    color = SeekhGreen600,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
+                )
+            }
+        }
     }
 }
 

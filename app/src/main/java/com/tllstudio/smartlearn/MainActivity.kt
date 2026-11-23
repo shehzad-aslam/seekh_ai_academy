@@ -662,7 +662,36 @@ fun SeekhRootApp(
                     }
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
-                        when (selectedMainTab) {
+                        androidx.compose.animation.AnimatedContent(
+                            targetState = selectedMainTab,
+                            transitionSpec = {
+                                val isMovingRight = targetState.ordinal > initialState.ordinal
+                                (androidx.compose.animation.slideInHorizontally(
+                                    animationSpec = androidx.compose.animation.core.tween(
+                                        durationMillis = 300,
+                                        easing = androidx.compose.animation.core.FastOutSlowInEasing
+                                    ),
+                                    initialOffsetX = { fullWidth -> if (isMovingRight) fullWidth / 4 else -fullWidth / 4 }
+                                ) + androidx.compose.animation.fadeIn(
+                                    animationSpec = androidx.compose.animation.core.tween(240)
+                                ) + androidx.compose.animation.scaleIn(
+                                    initialScale = 0.97f,
+                                    animationSpec = androidx.compose.animation.core.tween(280)
+                                )).togetherWith(
+                                    androidx.compose.animation.slideOutHorizontally(
+                                        animationSpec = androidx.compose.animation.core.tween(
+                                            durationMillis = 240,
+                                            easing = androidx.compose.animation.core.FastOutSlowInEasing
+                                        ),
+                                        targetOffsetX = { fullWidth -> if (isMovingRight) -fullWidth / 5 else fullWidth / 5 }
+                                    ) + androidx.compose.animation.fadeOut(
+                                        animationSpec = androidx.compose.animation.core.tween(180)
+                                    )
+                                )
+                            },
+                            label = "main_tab_directional_slide"
+                        ) { activeTab ->
+                        when (activeTab) {
                             MainTab.LIBRARY -> {
                                 LibraryTabScreen(
                                     books = allBooks,
@@ -909,6 +938,7 @@ fun SeekhRootApp(
                                     onSpeakText = { voiceEngine.speak(it) }
                                 )
                             }
+                        }
                         }
 
                         // Compact Non-Overlapping Floating AI Companion Orb ("Noor") above the Floating Bottom Pill Bar
