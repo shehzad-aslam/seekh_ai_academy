@@ -873,22 +873,7 @@ fun ProfileSwitcherScreen(
                     )
                 }
 
-                Surface(
-                    modifier = Modifier
-                        .size(42.dp)
-                        .bouncyClick { showAccountMenuDialog = true },
-                    shape = RoundedCornerShape(14.dp),
-                    color = Color.White.copy(alpha = 0.20f),
-                    border = BorderStroke(1.dp, Color.White.copy(alpha = 0.3f))
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = if (accountState.isSignedIn) Icons.Default.CloudDone else Icons.Default.AccountCircle,
-                            contentDescription = "Account menu",
-                            tint = Color.White
-                        )
-                    }
-                }
+                Spacer(modifier = Modifier.size(42.dp))
             }
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -1299,177 +1284,52 @@ fun ProfileSwitcherScreen(
                     }
                 }
 
-                // Action Row: Add New Reader + Parent Hub (when at least 1 profile exists)
+                // Action Row: Add New Reader (when at least 1 profile exists)
                 if (profiles.isNotEmpty()) {
                     item {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            Surface(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .bouncyClick { showCreateProfileDialog = true },
-                                shape = RoundedCornerShape(20.dp),
-                                color = Color.White,
-                                shadowElevation = 3.dp,
-                                border = BorderStroke(1.dp, SeekhBorderGray)
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 14.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(40.dp)
-                                            .clip(CircleShape)
-                                            .background(SeekhGreenSoft),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.PersonAdd,
-                                            contentDescription = "New Reader",
-                                            tint = SeekhGreen500,
-                                            modifier = Modifier.size(20.dp)
-                                        )
-                                    }
-                                    Column {
-                                        Text(
-                                            text = "Add Reader",
-                                            fontFamily = GoogleSansFamily,
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 14.sp,
-                                            color = SeekhTextPrimary
-                                        )
-                                        Text(
-                                            text = "Create new profile",
-                                            fontFamily = GoogleSansFamily,
-                                            fontSize = 11.sp,
-                                            color = SeekhTextSecondary
-                                        )
-                                    }
-                                }
-                            }
-
-                            Surface(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .bouncyClick { onOpenParentsSection() },
-                                shape = RoundedCornerShape(20.dp),
-                                color = Color.White,
-                                shadowElevation = 3.dp,
-                                border = BorderStroke(1.dp, SeekhBorderGray)
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 14.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(40.dp)
-                                            .clip(CircleShape)
-                                            .background(SeekhBlueSoft),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.School,
-                                            contentDescription = "Parents & Teachers",
-                                            tint = SeekhBlue600,
-                                            modifier = Modifier.size(20.dp)
-                                        )
-                                    }
-                                    Column {
-                                        Text(
-                                            text = "Parent Hub",
-                                            fontFamily = GoogleSansFamily,
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 14.sp,
-                                            color = SeekhTextPrimary
-                                        )
-                                        Text(
-                                            text = "Progress & groups",
-                                            fontFamily = GoogleSansFamily,
-                                            fontSize = 11.sp,
-                                            color = SeekhTextSecondary
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // Signed-In / Cloud Backup Card
-                item {
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .bouncyClick { showAccountMenuDialog = true },
-                        shape = RoundedCornerShape(22.dp),
-                        color = Color.White,
-                        shadowElevation = 3.dp,
-                        border = BorderStroke(1.dp, if (accountState.isSignedIn) SeekhGreen100 else SeekhBorderGray)
-                    ) {
-                        Row(
+                        Surface(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 14.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
+                                .bouncyClick { showCreateProfileDialog = true },
+                            shape = RoundedCornerShape(20.dp),
+                            color = Color.White,
+                            shadowElevation = 3.dp,
+                            border = BorderStroke(1.dp, SeekhBorderGray)
                         ) {
                             Row(
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
                                 Box(
                                     modifier = Modifier
-                                        .size(42.dp)
+                                        .size(40.dp)
                                         .clip(CircleShape)
-                                        .background(if (accountState.isSignedIn) SeekhGreenSoft else SeekhSurfaceGray),
+                                        .background(SeekhGreenSoft),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Icon(
-                                        imageVector = if (accountState.isSignedIn) Icons.Default.CloudDone else Icons.Default.CloudUpload,
-                                        contentDescription = "Account sync",
-                                        tint = if (accountState.isSignedIn) SeekhGreen500 else SeekhTextSecondary,
-                                        modifier = Modifier.size(22.dp)
+                                        imageVector = Icons.Default.PersonAdd,
+                                        contentDescription = "New Reader",
+                                        tint = SeekhGreen500,
+                                        modifier = Modifier.size(20.dp)
                                     )
                                 }
                                 Column {
                                     Text(
-                                        text = if (accountState.isSignedIn) {
-                                            "Above profiles are linked to ${accountState.email}"
-                                        } else {
-                                            "Save your profile and access it from any device"
-                                        },
+                                        text = "Add Reader",
                                         fontFamily = GoogleSansFamily,
                                         fontWeight = FontWeight.Bold,
-                                        fontSize = 13.sp,
+                                        fontSize = 14.sp,
                                         color = SeekhTextPrimary
                                     )
                                     Text(
-                                        text = if (accountState.isSignedIn) {
-                                            "Your reading progress, stars & bookmarks are backed up"
-                                        } else {
-                                            "Link an email account to back up profiles & join classrooms"
-                                        },
+                                        text = "Create new profile",
                                         fontFamily = GoogleSansFamily,
                                         fontSize = 11.sp,
                                         color = SeekhTextSecondary
                                     )
                                 }
-                            }
-                            TextButton(onClick = { showAccountMenuDialog = true }) {
-                                Text(
-                                    text = if (accountState.isSignedIn) "Account" else "Sign in",
-                                    fontFamily = GoogleSansFamily,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 13.sp,
-                                    color = SeekhGreen500
-                                )
                             }
                         }
                     }
