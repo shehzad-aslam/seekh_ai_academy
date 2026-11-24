@@ -974,9 +974,9 @@ object SeekhCatalog {
                     arrayOf("S", imgSun, "S is for Sun. The warm golden sun smiles brightly in the morning sky.", "S s • Sun", "sun"),
                     arrayOf("T", imgTree, "T is for Tree. A tall green shady tree grows in the sunny meadow.", "T t • Tree", "tree"),
                     arrayOf("U", imgUmbrella, "U is for Umbrella. Open the purple umbrella when the raindrops fall.", "U u • Umbrella", "umbrella"),
-                    arrayOf("V", imgVan, "V is for Van. The cheerful yellow school van drives smoothly down the road.", "V v • Van", "bright"),
-                    arrayOf("W", imgWatermelon, "W is for Whale. The friendly blue whale swims happily in the deep blue ocean.", "W w • Whale", "water"),
-                    arrayOf("X", imgXylophone, "X is for Xylophone & Music. Listen to the joyful music rhythm on the train.", "X x • Xylophone", "colors"),
+                    arrayOf("V", imgVan, "V is for Van. The cheerful yellow family van drives smoothly down the road.", "V v • Van", "bright"),
+                    arrayOf("W", imgWatermelon, "W is for Watermelon. A juicy red slice of watermelon with black seeds.", "W w • Watermelon", "red"),
+                    arrayOf("X", imgXylophone, "X is for Xylophone. Tap the seven rainbow bars of the xylophone to make music.", "X x • Xylophone", "colors"),
                     arrayOf("Y", imgYacht, "Y is for Yacht. The white sailboat yacht glides across the blue ocean water.", "Y y • Yacht", "water"),
                     arrayOf("Z", imgZebra, "Z is for Zebra. The friendly zebra has bold black and white stripes.", "Z z • Zebra", "friends")
                 )
