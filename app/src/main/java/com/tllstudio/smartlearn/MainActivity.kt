@@ -796,6 +796,7 @@ fun SeekhRootApp(
                                     allProfiles = profiles,
                                     allBooks = allBooks,
                                     readingGroups = readingGroups,
+                                    selectedLanguageCode = selectedLangCode,
                                     onMenuClick = { scope.launch { drawerState.open() } },
                                     onProfileClick = { navigateTo(AppScreen.PROFILE_SWITCHER) },
                                     onStarClick = {
@@ -1106,6 +1107,7 @@ fun SeekhRootApp(
                 JumbledWordsGameScreen(
                     profile = activeProfile,
                     buddyMood = buddyMood,
+                    selectedLanguageCode = selectedLangCode,
                     onSpeakText = { voiceEngine.speak(it) },
                     onPlayPhoneme = { idx -> voiceEngine.playPhonemeSound(idx) },
                     onPlayErrorTone = { voiceEngine.playErrorTone() },

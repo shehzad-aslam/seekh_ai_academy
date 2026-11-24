@@ -822,13 +822,9 @@ fun InteractiveStoryReaderScreen(
                                 }
                             }
 
-                            // Clean Bilingual Translation / Native Alphabet Line directly on full screen
-                            val bilingualSentence = when {
-                                book.bookType == "ALPHABET" -> page.urduTranslation.ifBlank { page.hindiTranslation.ifBlank { page.spanishTranslation } }
-                                selectedLanguageCode.contains("ur") -> page.urduTranslation
-                                selectedLanguageCode.contains("hi") || selectedLanguageCode.contains("mr") -> page.hindiTranslation
-                                selectedLanguageCode.contains("es") -> page.spanishTranslation
-                                else -> page.urduTranslation
+                            // Clean Bilingual Translation Line directly on full screen (100% localized for all 11 languages, zero cross-language leakage!)
+                            val bilingualSentence = remember(book.id, page.pageNumber, selectedLanguageCode) {
+                                SeekhCatalog.getPageTranslationForLanguage(book, page, selectedLanguageCode)
                             }
                             if (bilingualSentence.isNotBlank()) {
                                 Spacer(modifier = Modifier.height(6.dp))
@@ -836,9 +832,9 @@ fun InteractiveStoryReaderScreen(
                                     text = bilingualSentence,
                                     fontFamily = GoogleSansFamily,
                                     fontWeight = FontWeight.Medium,
-                                    fontSize = if (book.bookType == "ALPHABET") 17.5.sp else 15.5.sp,
+                                    fontSize = 15.5.sp,
                                     lineHeight = 24.sp,
-                                    color = if (book.bookType == "ALPHABET") SeekhGreen600 else SeekhTextSecondary,
+                                    color = SeekhTextSecondary,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
@@ -1045,7 +1041,7 @@ fun InteractiveStoryReaderScreen(
                         }
                     }
 
-                    // Complete English Explanation & Native Urdu/Hindi Meaning Box
+                    // Complete English Explanation & Native Language Meaning Box (100% localized for all 11 languages)
                     Surface(
                         shape = RoundedCornerShape(14.dp),
                         color = SeekhSurfaceGray,
@@ -1064,14 +1060,16 @@ fun InteractiveStoryReaderScreen(
                                 lineHeight = 18.sp,
                                 color = SeekhTextPrimary
                             )
-                            Text(
-                                text = "ترجمہ / अर्थ: ${wordDetails.nativeMeaning}",
-                                fontFamily = GoogleSansFamily,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 13.5.sp,
-                                lineHeight = 19.sp,
-                                color = SeekhGreen600
-                            )
+                            if (selectedLanguageCode != "en" && wordDetails.nativeMeaning.isNotBlank()) {
+                                Text(
+                                    text = "${SeekhCatalog.getMeaningLabelForLanguage(selectedLanguageCode)}: ${wordDetails.nativeMeaning}",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 13.5.sp,
+                                    lineHeight = 19.sp,
+                                    color = SeekhGreen600
+                                )
+                            }
                         }
                     }
 
@@ -2135,6 +2133,7 @@ private fun ThreeStepProgressIndicator(
 fun JumbledWordsGameScreen(
     profile: LearnerProfile,
     buddyMood: BuddyMood,
+    selectedLanguageCode: String = "en",
     onSpeakText: (String) -> Unit,
     onPlayPhoneme: (Int) -> Unit,
     onPlayErrorTone: () -> Unit = {},
@@ -2176,7 +2175,9 @@ fun JumbledWordsGameScreen(
     var showSetCompleteBanner by remember(isHardLevel) { mutableStateOf(false) }
     val challenge = filteredChallenges[challengeIdx % filteredChallenges.size]
     val targetWord = challenge.word.lowercase()
-    val urduMeaning = remember(targetWord) { SeekhCatalog.getWordTranslation(targetWord, "en_ur") }
+    val nativeWordMeaning = remember(targetWord, selectedLanguageCode) {
+        SeekhCatalog.getWordTranslation(targetWord, selectedLanguageCode)
+    }
 
     data class LetterTile(val id: Int, val char: Char)
 
@@ -2368,9 +2369,9 @@ fun JumbledWordsGameScreen(
                                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp)
                                 )
                             }
-                            if (urduMeaning.isNotBlank() && !urduMeaning.any { it in 'A'..'Z' || it in 'a'..'z' }) {
+                            if (selectedLanguageCode != "en" && nativeWordMeaning.isNotBlank()) {
                                 Text(
-                                    text = urduMeaning,
+                                    text = nativeWordMeaning,
                                     fontFamily = GoogleSansFamily,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 13.sp,
@@ -3986,13 +3987,11 @@ fun VocabularyBuilderGameScreen(
                                 fontSize = 26.sp,
                                 color = SeekhVocabDarkGreen
                             )
-                            val nativeMeaning = when {
-                                selectedLanguageCode.contains("ur") -> quizTarget.urduMeaning
-                                selectedLanguageCode.contains("hi") -> quizTarget.hindiMeaning
-                                else -> quizTarget.spanishMeaning
+                            val nativeMeaning = remember(quizTarget.word, selectedLanguageCode) {
+                                SeekhCatalog.getVocabMeaningForLanguage(quizTarget, selectedLanguageCode)
                             }
                             Text(
-                                text = "$nativeMeaning • ${quizTarget.exampleSentence}",
+                                text = if (nativeMeaning.isNotBlank()) "$nativeMeaning • ${quizTarget.exampleSentence}" else quizTarget.exampleSentence,
                                 fontFamily = GoogleSansFamily,
                                 fontSize = 13.sp,
                                 color = SeekhTextSecondary,
@@ -4278,7 +4277,7 @@ private val sentenceBuilderChallenges = listOf(
 fun SentenceBuilderGameScreen(
     profile: LearnerProfile,
     buddyMood: BuddyMood,
-    selectedLanguageCode: String = "en_ur",
+    selectedLanguageCode: String = "en",
     onSpeakText: (String) -> Unit,
     onPlayPhoneme: (Int) -> Unit = {},
     onAwardStars: (Int) -> Unit,
@@ -4419,7 +4418,13 @@ fun SentenceBuilderGameScreen(
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = if (selectedLanguageCode.contains("hi")) challenge.hindiTranslation else challenge.urduTranslation,
+                                    text = SeekhCatalog.getLocalizedSentenceClue(
+                                        roundIdx % sentenceBuilderChallenges.size,
+                                        selectedLanguageCode,
+                                        challenge.urduTranslation,
+                                        challenge.hindiTranslation,
+                                        fullSentence
+                                    ),
                                     fontFamily = GoogleSansFamily,
                                     fontWeight = FontWeight.ExtraBold,
                                     fontSize = 16.sp,
@@ -4691,7 +4696,7 @@ private val rhymeChallenges = listOf(
 fun RhymingWordsGameScreen(
     profile: LearnerProfile,
     buddyMood: BuddyMood,
-    selectedLanguageCode: String = "en_ur",
+    selectedLanguageCode: String = "en",
     onSpeakText: (String) -> Unit,
     onAwardStars: (Int) -> Unit,
     onBack: () -> Unit
@@ -4846,11 +4851,7 @@ fun RhymingWordsGameScreen(
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = if (selectedLanguageCode.contains("hi")) {
-                                "इस शब्द से मिलती-जुलती आवाज़ वाला शब्द चुनें"
-                            } else {
-                                "اس لفظ کے ہم قافیہ (ملتی جلتی آواز والا) لفظ کو چنیں"
-                            },
+                            text = SeekhCatalog.getLocalizedRhymePrompt(selectedLanguageCode),
                             fontFamily = GoogleSansFamily,
                             fontWeight = FontWeight.Bold,
                             fontSize = 13.5.sp,
@@ -4989,7 +4990,7 @@ private val missingPhonicsChallenges = listOf(
 fun MissingPhonicsSoundGameScreen(
     profile: LearnerProfile,
     buddyMood: BuddyMood,
-    selectedLanguageCode: String = "en_ur",
+    selectedLanguageCode: String = "en",
     onSpeakText: (String) -> Unit,
     onAwardStars: (Int) -> Unit,
     onBack: () -> Unit
@@ -5146,14 +5147,24 @@ fun MissingPhonicsSoundGameScreen(
                                 color = SeekhTextPrimary
                             )
                         }
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(
-                            text = if (selectedLanguageCode.contains("hi")) item.hindiMeaning else item.urduMeaning,
-                            fontFamily = GoogleSansFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp,
-                            color = SeekhGreen600
-                        )
+                        val localizedWordMeaning = remember(item.fullWord, selectedLanguageCode) {
+                            when (selectedLanguageCode) {
+                                "en" -> ""
+                                "en_ur" -> item.urduMeaning
+                                "en_hi" -> item.hindiMeaning
+                                else -> SeekhCatalog.getWordTranslation(item.fullWord, selectedLanguageCode)
+                            }
+                        }
+                        if (localizedWordMeaning.isNotBlank()) {
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = localizedWordMeaning,
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 15.sp,
+                                color = SeekhGreen600
+                            )
+                        }
                     }
                 }
 
@@ -5362,7 +5373,7 @@ private val listenPickChallenges = listOf(
 fun ListenAndPickGameScreen(
     profile: LearnerProfile,
     buddyMood: BuddyMood,
-    selectedLanguageCode: String = "en_ur",
+    selectedLanguageCode: String = "en",
     onSpeakText: (String) -> Unit,
     onAwardStars: (Int) -> Unit,
     onBack: () -> Unit
@@ -5372,8 +5383,25 @@ fun ListenAndPickGameScreen(
     var showRoundCompleteModal by remember { mutableStateOf(false) }
 
     val item = listenPickChallenges[roundIdx % listenPickChallenges.size]
-    val cards = remember(roundIdx) {
-        (listOf(Triple(item.word, item.imageAssetPath, if (selectedLanguageCode.contains("hi")) item.hindiLabel else item.urduLabel)) + item.distractors).shuffled()
+    val targetNativeLbl = remember(item.word, selectedLanguageCode) {
+        when (selectedLanguageCode) {
+            "en" -> ""
+            "en_ur" -> item.urduLabel
+            "en_hi" -> item.hindiLabel
+            else -> SeekhCatalog.getWordTranslation(item.word, selectedLanguageCode)
+        }
+    }
+    val cards = remember(roundIdx, selectedLanguageCode) {
+        val allRaw = listOf(Triple(item.word, item.imageAssetPath, targetNativeLbl)) +
+            item.distractors.map { (dWord, dImg, dUr) ->
+                val dLbl = when (selectedLanguageCode) {
+                    "en" -> ""
+                    "en_ur" -> dUr
+                    else -> SeekhCatalog.getWordTranslation(dWord, selectedLanguageCode)
+                }
+                Triple(dWord, dImg, dLbl)
+            }
+        allRaw.shuffled()
     }
     var tappedWords by remember(roundIdx) { mutableStateOf(emptySet<String>()) }
     var isSolved by remember(roundIdx) { mutableStateOf(false) }
@@ -5473,7 +5501,7 @@ fun ListenAndPickGameScreen(
                     ) {
                         Text(
                             text = if (isSolved) {
-                                "${item.word} • ${if (selectedLanguageCode.contains("hi")) item.hindiLabel else item.urduLabel}"
+                                if (targetNativeLbl.isNotBlank()) "${item.word} • $targetNativeLbl" else item.word
                             } else {
                                 "Listen to the voice clue and select the matching picture"
                             },
@@ -5601,7 +5629,7 @@ fun ListenAndPickGameScreen(
                                     Spacer(modifier = Modifier.height(6.dp))
                                     Text(
                                         text = if (tapped || isSolved) {
-                                            if (isCorrect) "$cardWord ($nativeLbl)" else cardWord
+                                            if (isCorrect && nativeLbl.isNotBlank()) "$cardWord ($nativeLbl)" else cardWord
                                         } else {
                                             "Select"
                                         },
@@ -5684,7 +5712,7 @@ private val oppositePairChallenges = listOf(
 fun OppositesQuestGameScreen(
     profile: LearnerProfile,
     buddyMood: BuddyMood,
-    selectedLanguageCode: String = "en_ur",
+    selectedLanguageCode: String = "en",
     onSpeakText: (String) -> Unit,
     onAwardStars: (Int) -> Unit,
     onBack: () -> Unit
@@ -5817,6 +5845,22 @@ fun OppositesQuestGameScreen(
                             fontSize = 13.sp,
                             color = SeekhTextSecondary
                         )
+                        val baseNativeMeaning = remember(item.baseWord, selectedLanguageCode) {
+                            when (selectedLanguageCode) {
+                                "en" -> ""
+                                "en_ur" -> item.baseUrdu
+                                "en_hi" -> item.baseHindi
+                                else -> SeekhCatalog.getWordTranslation(item.baseWord, selectedLanguageCode)
+                            }
+                        }
+                        val oppositeNativeMeaning = remember(item.oppositeWord, selectedLanguageCode) {
+                            when (selectedLanguageCode) {
+                                "en" -> ""
+                                "en_ur" -> item.oppositeUrdu
+                                "en_hi" -> item.oppositeHindi
+                                else -> SeekhCatalog.getWordTranslation(item.oppositeWord, selectedLanguageCode)
+                            }
+                        }
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -5828,13 +5872,15 @@ fun OppositesQuestGameScreen(
                                 fontSize = 32.sp,
                                 color = SeekhTextPrimary
                             )
-                            Text(
-                                text = "(${if (selectedLanguageCode.contains("hi")) item.baseHindi else item.baseUrdu})",
-                                fontFamily = GoogleSansFamily,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp,
-                                color = headerOrange
-                            )
+                            if (baseNativeMeaning.isNotBlank()) {
+                                Text(
+                                    text = "($baseNativeMeaning)",
+                                    fontFamily = GoogleSansFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.sp,
+                                    color = headerOrange
+                                )
+                            }
                         }
                         if (isSolved) {
                             Spacer(modifier = Modifier.height(8.dp))
@@ -5843,7 +5889,11 @@ fun OppositesQuestGameScreen(
                                 color = SeekhGreenSoft
                             ) {
                                 Text(
-                                    text = "${item.baseWord} / ${item.oppositeWord} (${if (selectedLanguageCode.contains("hi")) item.oppositeHindi else item.oppositeUrdu})",
+                                    text = if (oppositeNativeMeaning.isNotBlank()) {
+                                        "${item.baseWord} / ${item.oppositeWord} ($oppositeNativeMeaning)"
+                                    } else {
+                                        "${item.baseWord} / ${item.oppositeWord}"
+                                    },
                                     fontFamily = GoogleSansFamily,
                                     fontWeight = FontWeight.ExtraBold,
                                     fontSize = 14.sp,
@@ -6119,7 +6169,7 @@ private val countAndColorChallenges = listOf(
 fun CountAndColorsGameScreen(
     profile: LearnerProfile,
     buddyMood: BuddyMood,
-    selectedLanguageCode: String = "en_ur",
+    selectedLanguageCode: String = "en",
     onSpeakText: (String) -> Unit,
     onAwardStars: (Int) -> Unit,
     onBack: () -> Unit
@@ -6236,15 +6286,25 @@ fun CountAndColorsGameScreen(
                             color = SeekhTextPrimary,
                             textAlign = TextAlign.Center
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = if (selectedLanguageCode.contains("hi")) item.questionHi else item.questionUr,
-                            fontFamily = GoogleSansFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp,
-                            color = SeekhGreen600,
-                            textAlign = TextAlign.Center
-                        )
+                        val localizedQuestion = remember(roundIdx, selectedLanguageCode) {
+                            SeekhCatalog.getLocalizedCountQuestion(
+                                roundIdx % countAndColorChallenges.size,
+                                selectedLanguageCode,
+                                item.questionUr,
+                                item.questionHi
+                            )
+                        }
+                        if (localizedQuestion.isNotBlank()) {
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = localizedQuestion,
+                                fontFamily = GoogleSansFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                color = SeekhGreen600,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                         Spacer(modifier = Modifier.height(14.dp))
 
                         // Interactive Custom Vector Objects to Tap & Count!

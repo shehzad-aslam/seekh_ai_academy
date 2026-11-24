@@ -1265,7 +1265,7 @@ object SeekhCatalog {
                 coverBadges = "అ  ఆ  ఇ  క",
                 entries = listOf(
                     arrayOf("అ", imgPineapple, "A (అ) is for Anasa (Pineapple). A sweet golden tropical pineapple.", "అ - అనాసపండు", "golden"),
-                    arrayOf("ఆ", imgApple, "Aa (ఆ) is for Apple. A bright red apple with a fresh green leaf.", "ఆ - ஆపిల్ పండు", "apple"),
+                    arrayOf("ఆ", imgApple, "Aa (ఆ) is for Apple. A bright red apple with a fresh green leaf.", "ఆ - ఆపిల్ పండు", "apple"),
                     arrayOf("ఇ", imgHouse, "I (ఇ) is for Illu (House). A cozy house with a red roof and garden.", "ఇ - ఇల్లు", "bright"),
                     arrayOf("ఈ", imgButterfly, "Ee (ఈ) is for Eeka & Butterfly. A colorful butterfly in the meadow.", "ఈ - సీతాకోకచిలుక", "butterfly"),
                     arrayOf("ఉ", imgOwl, "U (ఉ) is for Owl / Bird perched on the sunny hill.", "ఉ - గుడ్లగూబ", "bright"),
@@ -1274,9 +1274,9 @@ object SeekhCatalog {
                     arrayOf("క", imgFlower, "Ka (క) is for Kamalam (Lotus). A blooming pink lotus flower.", "క - కమలం", "flower"),
                     arrayOf("గ", imgNest, "Ga (గ) is for Gudu (Bird's Nest). Three blue eggs resting inside a nest.", "గ - గూడు", "tree"),
                     arrayOf("చ", imgMoon, "Cha (చ) is for Chandamama (Moon). The golden crescent moon in the night sky.", "చ - చందమామ", "moon"),
-                    arrayOf("छ", imgUmbrella, "Chha (ఛ) is for Chhatri (Umbrella). Open the umbrella when raindrops fall.", "ఛ - గొడుగు", "umbrella"),
+                    arrayOf("ఛ", imgUmbrella, "Chha (ఛ) is for Chhatri (Umbrella). Open the umbrella when raindrops fall.", "ఛ - గొడుగు", "umbrella"),
                     arrayOf("ట", imgTomato, "Ta (ట) is for Tamata (Tomato). A round juicy red tomato.", "ట - టమాటా", "red"),
-                    arrayOf("प", imgParrot, "Pa (ప) is for Chiluka (Parrot). A bright green parrot with a curved beak.", "ప - రామచిలుక", "green"),
+                    arrayOf("ప", imgParrot, "Pa (ప) is for Chiluka (Parrot). A bright green parrot with a curved beak.", "ప - రామచిలుక", "green"),
                     arrayOf("బ", imgBall, "Ba (బ) is for Banthi (Ball). A round ball rolling on the green grass.", "బ - బంతి", "ball"),
                     arrayOf("మ", imgMango, "Ma (మ) is for Mamidi (Mango). A sweet ripe golden mango with a leaf.", "మ - మామిడి పండు", "golden"),
                     arrayOf("ర", imgTrain, "Ra (ర) is for Railu (Train). A steam locomotive train on the tracks.", "ర - రైలు", "train"),
@@ -1508,7 +1508,7 @@ object SeekhCatalog {
                     Triple("ગુરુ", "વાર ૪ • ગુરુવાર (Thursday)", "Thursday is Guruvaar (ગુરુવાર). We ride our bicycle in the park."),
                     Triple("શુક્ર", "વાર ૫ • શુક્રવાર (Friday)", "Friday is Shukravaar (શુક્રવાર). A colorful kite flies in the sky."),
                     Triple("શનિ", "વાર ૬ • શનિવાર (Saturday)", "Saturday is Shanivaar (શનિવાર). We play with the toy train on Saturday."),
-                    Triple("રवि", "વાર ૭ • રવિવાર (Sunday)", "Sunday is Ravivaar (રવિવાર). The bright golden sun shines on Sunday.")
+                    Triple("રવિ", "વાર ૭ • રવિવાર (Sunday)", "Sunday is Ravivaar (રવિવાર). The bright golden sun shines on Sunday.")
                 )
             )
             else -> DayLangPack(
@@ -1681,6 +1681,101 @@ object SeekhCatalog {
                     Triple("أكتوبر", "الشهر ١٠ • أكتوبر (October)", "October is Uktubir (أكتوبر), the tenth month with fresh red apples."),
                     Triple("نوفمبر", "الشهر ١١ • نوفمبر (November)", "November is Nufambir (نوفمبر), the eleventh month under the crescent moon."),
                     Triple("ديسمبر", "الشهر ١٢ • ديسمبر (December)", "December is Disambir (ديسمبر), the twelfth month in our warm home.")
+                )
+            )
+            "en_bn" -> MonthLangPack(
+                title = "বছরের মাস • Months of the Year",
+                subtitle = "১২ মাস • জানুয়ারি থেকে ডিসেম্বর",
+                coverBadges = "জানু  ফেব্রু  মার্চ",
+                months = listOf(
+                    Triple("জানু", "মাস ১ • জানুয়ারি (January)", "January is Januari (জানুয়ারি), the first month of the year with snowy mountains."),
+                    Triple("ফেব্রু", "মাস ২ • ফেব্রুয়ারি (February)", "February is Februari (ফেব্রুয়ারি), the second month with colorful butterflies."),
+                    Triple("মার্চ", "মাস ৩ • মার্চ (March)", "March is March (মার্চ), the third month when bright spring flowers bloom."),
+                    Triple("এপ্রিল", "মাস ৪ • এপ্রিল (April)", "April is April (এপ্রিল), the fourth month with bird nests in the green trees."),
+                    Triple("মে", "মাস ৫ • মে (May)", "May is Me (মে), the fifth month with sweet ripe golden mangoes."),
+                    Triple("জুন", "মাস ৬ • জুন (June)", "June is Jun (জুন), the sixth month with bright golden summer sunshine."),
+                    Triple("জুলাই", "মাস ৭ • জুলাই (July)", "July is Julai (জুলাই), the seventh month with a colorful rain umbrella."),
+                    Triple("আগস্ট", "মাস ৮ • আগস্ট (August)", "August is Agast (আগস্ট), the eighth month with a dancing peacock."),
+                    Triple("সেপ্টে", "মাস ৯ • সেপ্টেম্বর (September)", "September is September (সেপ্টেম্বর), the ninth month for reading favorite books."),
+                    Triple("অক্টো", "মাস ১০ • অক্টোবর (October)", "October is October (অক্টোবর), the tenth month with fresh red apples."),
+                    Triple("নভে", "মাস ১১ • নভেম্বর (November)", "November is November (নভেম্বর), the eleventh month under the crescent moon."),
+                    Triple("ডিসে", "মাস ১২ • ডিসেম্বর (December)", "December is December (ডিসেম্বর), the twelfth month in our warm cozy home.")
+                )
+            )
+            "en_ta" -> MonthLangPack(
+                title = "ஆண்டின் மாதங்கள் • Months of the Year",
+                subtitle = "12 மாதங்கள் • ஜனவரி முதல் டிசம்பர்",
+                coverBadges = "ஜன  பிப்  மார்",
+                months = listOf(
+                    Triple("ஜன", "மாதம் 1 • ஜனவரி (January)", "January is Janavari (ஜனவரி), the first month of the year with high mountains."),
+                    Triple("பிப்", "மாதம் 2 • பிப்ரவரி (February)", "February is Pibravari (பிப்ரவரி), the second month with colorful butterflies."),
+                    Triple("மார்", "மாதம் 3 • மார்ச் (March)", "March is Maarch (மார்ச்), the third month when bright flowers bloom."),
+                    Triple("ஏப்", "மாதம் 4 • ஏப்ரல் (April)", "April is Epral (ஏப்ரல்), the fourth month with bird nests in the trees."),
+                    Triple("மே", "மாதம் 5 • மே (May)", "May is Mey (மே), the fifth month with sweet golden mangoes."),
+                    Triple("ஜூன்", "மாதம் 6 • ஜூன் (June)", "June is Joon (ஜூன்), the sixth month with warm golden sun."),
+                    Triple("ஜூலை", "மாதம் 7 • ஜூலை (July)", "July is Joolai (ஜூலை), the seventh month with a colorful umbrella."),
+                    Triple("ஆக", "மாதம் 8 • ஆகஸ்ட் (August)", "August is Aagast (ஆகஸ்ட்), the eighth month with a beautiful peacock."),
+                    Triple("செப்", "மாதம் 9 • செப்டம்பர் (September)", "September is Septambar (செப்டம்பர்), the ninth month for school books."),
+                    Triple("அக்", "மாதம் 10 • அக்டோபர் (October)", "October is Aktobar (அக்டோபர்), the tenth month with fresh red apples."),
+                    Triple("நவ", "மாதம் 11 • நவம்பர் (November)", "November is Navambar (நவம்பர்), the eleventh month under the crescent moon."),
+                    Triple("டிச", "மாதம் 12 • டிசம்பர் (December)", "December is Disambar (டிசம்பர்), the twelfth month in our warm home.")
+                )
+            )
+            "en_te" -> MonthLangPack(
+                title = "సంవత్సరంలోని నెలలు • Months of the Year",
+                subtitle = "12 నెలలు • జనవరి నుండి డిసెంబర్",
+                coverBadges = "జన  ఫిబ్ర  మార్చి",
+                months = listOf(
+                    Triple("జన", "నెల 1 • జనవరి (January)", "January is Janavari (జనవరి), the first month of the year with tall mountains."),
+                    Triple("ఫిబ్ర", "నెల 2 • ఫిబ్రవరి (February)", "February is Phibravari (ఫిబ్రవరి), the second month with colorful butterflies."),
+                    Triple("మార్చి", "నెల 3 • మార్చి (March)", "March is Maarchi (మార్చి), the third month when bright flowers bloom."),
+                    Triple("ఏప్రి", "నెల 4 • ఏప్రిల్ (April)", "April is Epril (ఏప్రిల్), the fourth month with bird nests in the trees."),
+                    Triple("మే", "నెల 5 • మే (May)", "May is Me (మే), the fifth month with sweet ripe mangoes."),
+                    Triple("జూన్", "నెల 6 • జూన్ (June)", "June is Joon (జూన్), the sixth month with bright golden sun."),
+                    Triple("జూలై", "నెల 7 • జూలై (July)", "July is Joolai (జూలై), the seventh month with a colorful umbrella."),
+                    Triple("ఆగ", "నెల 8 • ఆగస్టు (August)", "August is Aagastu (ఆగస్టు), the eighth month with a dancing peacock."),
+                    Triple("సెప్టెం", "నెల 9 • సెప్టెంబర్ (September)", "September is Septembar (సెప్టెంబర్), the ninth month for school books."),
+                    Triple("అక్టో", "నెల 10 • అక్టోబర్ (October)", "October is Aktobar (అక్టోబర్), the tenth month with fresh red apples."),
+                    Triple("నవం", "నెల 11 • నవంబర్ (November)", "November is Navambar (నవంబర్), the eleventh month under the crescent moon."),
+                    Triple("డిసెం", "నెల 12 • డిసెంబర్ (December)", "December is Disembar (డిసెంబర్), the twelfth month in our cozy home.")
+                )
+            )
+            "en_mr" -> MonthLangPack(
+                title = "वर्षाचे महिने • Months of the Year",
+                subtitle = "१२ महिने • जानेवारी ते डिसेंबर",
+                coverBadges = "जाने  फेब्रु  मार्च",
+                months = listOf(
+                    Triple("जाने", "महिना १ • जानेवारी (January)", "January is Janevari (जानेवारी), the first month of the year with snowy mountains."),
+                    Triple("फेब्रु", "महिना २ • फेब्रुवारी (February)", "February is Phebruvari (फेब्रुवारी), the second month with colorful butterflies."),
+                    Triple("मार्च", "महिना ३ • मार्च (March)", "March is March (मार्च), the third month when bright flowers bloom."),
+                    Triple("एप्रिल", "महिना ४ • एप्रिल (April)", "April is April (एप्रिल), the fourth month with bird nests in the trees."),
+                    Triple("मे", "महिना ५ • मे (May)", "May is Me (मे), the fifth month with sweet golden mangoes."),
+                    Triple("जून", "महिना ६ • जून (June)", "June is Jun (जून), the sixth month with warm golden sunshine."),
+                    Triple("जुलै", "महिना ७ • जुलै (July)", "July is Julai (जुलै), the seventh month with a colorful rain umbrella."),
+                    Triple("ऑगस्ट", "महिना ८ • ऑगस्ट (August)", "August is August (ऑगस्ट), the eighth month with a dancing peacock."),
+                    Triple("सप्टें", "महिना ९ • सप्टेंबर (September)", "September is September (सप्टेंबर), the ninth month for school books."),
+                    Triple("ऑक्टो", "महिना १० • ऑक्टोबर (October)", "October is October (ऑक्टोबर), the tenth month with fresh red apples."),
+                    Triple("नोव्हें", "महिना ११ • नोव्हेंबर (November)", "November is November (नोव्हेंबर), the eleventh month under the crescent moon."),
+                    Triple("डिसें", "महिना १२ • डिसेंबर (December)", "December is December (डिसेंबर), the twelfth month in our warm home.")
+                )
+            )
+            "en_gu" -> MonthLangPack(
+                title = "વર્ષના મહિના • Months of the Year",
+                subtitle = "૧૨ મહિના • જાન્યુઆરી થી ડિસેમ્બર",
+                coverBadges = "જાન્યુ  ફેબ્રુ  માર્ચ",
+                months = listOf(
+                    Triple("જાન્યુ", "મહિનો ૧ • જાન્યુઆરી (January)", "January is Janyuvari (જાન્યુઆરી), the first month of the year with high mountains."),
+                    Triple("ફેબ્રુ", "મહિનો ૨ • ફેબ્રુઆરી (February)", "February is Phebruvari (ફેબ્રુઆરી), the second month with colorful butterflies."),
+                    Triple("માર્ચ", "મહિનો ૩ • માર્ચ (March)", "March is March (માર્ચ), the third month when bright flowers bloom."),
+                    Triple("એપ્રિલ", "મહિનો ૪ • એપ્રિલ (April)", "April is April (એપ્રિલ), the fourth month with bird nests in the trees."),
+                    Triple("મે", "મહિનો ૫ • મે (May)", "May is Me (મે), the fifth month with sweet golden mangoes."),
+                    Triple("જૂન", "મહિનો ૬ • જૂન (June)", "June is Jun (જૂન), the sixth month with warm golden sunshine."),
+                    Triple("જુલાઈ", "મહિનો ૭ • જુલાઈ (July)", "July is Julai (જુલાઈ), the seventh month with a colorful rain umbrella."),
+                    Triple("ઑગસ્ટ", "મહિનો ૮ • ઑગસ્ટ (August)", "August is August (ઑગસ્ટ), the eighth month with a dancing peacock."),
+                    Triple("સપ્ટે", "મહિનો ૯ • સપ્ટેમ્બર (September)", "September is September (સપ્ટેમ્બર), the ninth month for school books."),
+                    Triple("ઑક્ટો", "મહિનો ૧૦ • ઑક્ટોબર (October)", "October is October (ઑક્ટોબર), the tenth month with fresh red apples."),
+                    Triple("નવે", "મહિનો ૧૧ • નવેમ્બર (November)", "November is November (નવેમ્બર), the eleventh month under the crescent moon."),
+                    Triple("ડિસે", "મહિનો ૧૨ • ડિસેમ્બર (December)", "December is December (ડિસેમ્બર), the twelfth month in our warm home.")
                 )
             )
             else -> MonthLangPack(
@@ -1862,29 +1957,730 @@ object SeekhCatalog {
         }
     }
 
-    // Complete language-aware Book Title & Subtitle localization across all 11 languages
+    // Complete language-aware Book Title, Subtitle & Page Translation localization across all 11 languages (Zero cross-language leakage!)
+    private data class MultiLang8(
+        val ar: String,
+        val es: String,
+        val pt: String,
+        val bn: String,
+        val ta: String,
+        val te: String,
+        val mr: String,
+        val gu: String
+    ) {
+        fun forLang(langCode: String): String = when (langCode) {
+            "en_ar" -> ar
+            "en_es" -> es
+            "en_pt" -> pt
+            "en_bn" -> bn
+            "en_ta" -> ta
+            "en_te" -> te
+            "en_mr" -> mr
+            "en_gu" -> gu
+            else -> ""
+        }
+    }
+
+    private val storyTitlesMultiLang: Map<String, MultiLang8> = mapOf(
+        "ref_monkey_mango_party" to MultiLang8(
+            ar = "حفلة المانجو للقرد الصغير ميلو",
+            es = "La fiesta de mangos del mono Milo",
+            pt = "A festa de mangas do macaco Milo",
+            bn = "ছোট্ট বানর মাইলোর আম পার্টি",
+            ta = "குட்டி குரங்கு மைலோவின் மாம்பழ விருந்து",
+            te = "చిన్న కోతి మైలో మామిడి పండుగ",
+            mr = "छोट्या माकडाची आंबा पार्टी",
+            gu = "નાના વાંદરા માઇલોની કેરી પાર્ટી"
+        ),
+        "ref_lion_and_little_mouse" to MultiLang8(
+            ar = "الأسد الشجاع والصديق الصغير",
+            es = "El león valiente y el amigo bondadoso",
+            pt = "O leão corajoso e o pequeno amigo",
+            bn = "সাহসী সিংহ ও ছোট্ট বন্ধু",
+            ta = "வீர சிங்கமும் சிறிய நண்பனும்",
+            te = "ధైర్యవంతుడైన సింహం మరియు చిన్న స్నేహితుడు",
+            mr = "शूर सिंह आणि छोटा मित्र",
+            gu = "બહાદુર સિંહ અને નાનો મિત્ર"
+        ),
+        "ref_appu_baby_elephant" to MultiLang8(
+            ar = "الفيل الصغير آبو والبركة",
+            es = "Appu el pequeño elefante",
+            pt = "Appu o pequeno elefante",
+            bn = "ছোট্ট হাতি আপ্পু ও নদী",
+            ta = "குட்டி யானை அப்பூ",
+            te = "చిన్న ఏనుగు అప్పు",
+            mr = "छोटा हत्ती अप्पू आणि तलाव",
+            gu = "નાનો હાથી અપ્પુ અને તળાવ"
+        ),
+        "ref_yellow_school_bus" to MultiLang8(
+            ar = "حافلة المدرسة الصفراء الكبيرة",
+            es = "El gran autobús escolar amarillo",
+            pt = "O grande ônibus escolar amarelo",
+            bn = "আমাদের হলুদ স্কুল বাস",
+            ta = "எங்கள் மஞ்சள் பள்ளி பேருந்து",
+            te = "మా పసుపు రంగు స్కూల్ బస్సు",
+            mr = "आमची पिवळी स्कूल बस",
+            gu = "અમારી પીળી સ્કૂલ બસ"
+        ),
+        "ref_clever_white_rabbit" to MultiLang8(
+            ar = "الأرنب الذكي بوبو",
+            es = "Bobo el conejo inteligente",
+            pt = "Bobo o coelho esperto",
+            bn = "চতুর খরগোশ ববো",
+            ta = "புத்திசாலி முயல் போபோ",
+            te = "తెలివైన కుందేలు బోబో",
+            mr = "हुशार ससा बोबो",
+            gu = "હોશિયાર સસલું બોબો"
+        ),
+        "ref_little_yellow_duckling" to MultiLang8(
+            ar = "البطة الصفراء الصغيرة تسبح",
+            es = "El primer baño del patito amarillo",
+            pt = "O primeiro mergulho do patinho amarelo",
+            bn = "ছোট্ট হলুদ হাঁসের সাঁতার",
+            ta = "மஞ்சள் வாத்துக்குட்டியின் நீச்சல்",
+            te = "చిన్న పసుపు బాతు ఈత",
+            mr = "छोट्या पिवळ्या बदकाची पोहणी",
+            gu = "નાની પીળી બતકનું તરવું"
+        ),
+        "ref_high_flying_kite" to MultiLang8(
+            ar = "طائرتي الورقية الملونة تحلق عالياً",
+            es = "Mi cometa colorida vuela alto",
+            pt = "Minha pipa colorida voa alto",
+            bn = "আকাশে উড়ছে রঙিন ঘুড়ি",
+            ta = "வானில் பறக்கும் வண்ணப் பட்டம்",
+            te = "ఆకాశంలో ఎగిరే రంగుల గాలిపటం",
+            mr = "आकाशात उडणारा रंगीबेरंगी पतंग",
+            gu = "આકાશમાં ઉડતો રંગબેરંગી પતંગ"
+        ),
+        "ref_dancing_peacock_rain" to MultiLang8(
+            ar = "الطاووس الراقص تحت المطر",
+            es = "El pavo real que baila bajo la lluvia",
+            pt = "O pavão que dança na chuva",
+            bn = "বৃষ্টিতে ময়ূরের আনন্দ নাচ",
+            ta = "மழையில் ஆடும் அழகிய மயில்",
+            te = "వర్షంలో నాట్యం చేసే నెమలి",
+            mr = "पावसात नाचणारा सुंदर मोर",
+            gu = "વરસાદમાં નાચતો સુંદર મોર"
+        ),
+        "ref_tortoise_and_hare_race" to MultiLang8(
+            ar = "سباق السلحفاة والأرنب",
+            es = "La carrera de la tortuga y la liebre",
+            pt = "A corrida da tartaruga e da lebre",
+            bn = "কচ্ছপ ও খরগোশের দৌড়",
+            ta = "ஆமையும் முயலும் ஓட்டப்பந்தயம்",
+            te = "తాబేలు మరియు కుందేలు పరుగు పందెం",
+            mr = "कासव आणि सश्याची शर्यत",
+            gu = "કાચબા અને સસલાની દોડ"
+        ),
+        "ref_polly_talking_parrot" to MultiLang8(
+            ar = "الببغاء المتحدث اللطيف",
+            es = "El lorito parlanchín del jardín",
+            pt = "O papagaio falante do jardim",
+            bn = "বাগানের মিষ্টি কথা বলা টিয়া",
+            ta = "பேசும் பச்சைக் கிளி",
+            te = "మాట్లాడే చిలుక మిట్టూ",
+            mr = "बागेतील बोलका पोपट",
+            gu = "બગીચાનો બોલતો પોપટ"
+        ),
+        "ref_fox_and_sweet_grapes" to MultiLang8(
+            ar = "الثعلب الذكي والعنب الحلو",
+            es = "El zorro astuto y las uvas dulces",
+            pt = "A raposa esperta e as uvas doces",
+            bn = "বুদ্ধিমান শিয়াল ও মিষ্টি আঙুর",
+            ta = "புத்திசாலி நரியும் இனிப்பு திராட்சையும்",
+            te = "తెలివైన నక్క మరియు తియ్యని ద్రాక్ష",
+            mr = "हुशार कोल्हा आणि गोड द्राक्षे",
+            gu = "હોશિયાર શિયાળ અને મીઠી દ્રાક્ષ"
+        ),
+        "ref_panda_bamboo_picnic" to MultiLang8(
+            ar = "نزهة الباندا الصغير بين الخيزران",
+            es = "El picnic de bambú del panda Piku",
+            pt = "O piquenique de bambu do panda Piku",
+            bn = "পান্ডা পিকুর বাঁশবনের পিকনিক",
+            ta = "பாண்டா கரடியின் மூங்கில் சுற்றுலா",
+            te = "పాండా పికు వెదురు వన విహారం",
+            mr = "पांडाची बांबू वनातील सहल",
+            gu = "પાંડાની વાંસના જંગલમાં પિકનિક"
+        ),
+        "ref_giraffe_tallest_tree" to MultiLang8(
+            ar = "الزرافة اللطيفة وأطول شجرة",
+            es = "La jirafa amable y el árbol más alto",
+            pt = "A girafa gentil e a árvore mais alta",
+            bn = "লম্বা জিরাফ ও উঁচু গাছ",
+            ta = "அன்பான ஒட்டகச்சிவிங்கியும் உயரமான மரமும்",
+            te = "దయగల జిరాఫీ మరియు ఎత్తైన చెట్టు",
+            mr = "दयाळू जिराफ आणि सर्वात उंच झाड",
+            gu = "દયાળુ જિરાફ અને સૌથી ઊંચું ઝાડ"
+        ),
+        "ref_dolphin_blue_lagoon" to MultiLang8(
+            ar = "الدلفين الودود في البحيرة الزرقاء",
+            es = "El delfín amistoso de la laguna azul",
+            pt = "O golfinho amigável da lagoa azul",
+            bn = "নীল সাগরের বন্ধু ডলফিন",
+            ta = "நீலக் கடலின் நண்பன் டால்பின்",
+            te = "నీలి సముద్రంలో స్నేహశీలి డాల్ఫిన్",
+            mr = "निळ्या समुद्रातील मैत्रीपूर्ण डॉल्फिन",
+            gu = "વાદળી સમુદ્રની મિત્ર ડોલ્ફિન"
+        ),
+        "ref_camel_desert_oasis" to MultiLang8(
+            ar = "الجمل كبیر وواحة الصحراء",
+            es = "El camello Kabir y el oasis del desierto",
+            pt = "O camelo Kabir e o oásis do deserto",
+            bn = "মরুভূমির উট ও সবুজ মরূদ্যান",
+            ta = "பாலைவன ஒட்டகமும் பசுஞ்சோலையும்",
+            te = "ఎడారి ఒంటె మరియు పచ్చని ఒయాసిస్సు",
+            mr = "वाळवंटातील उंट आणि हिरवे ओएसिस",
+            gu = "રણનો ઊંટ અને લીલુંછમ ઓએસિસ"
+        ),
+        "ref_wise_night_owl" to MultiLang8(
+            ar = "البومة الحكيمة تحت ضوء القمر",
+            es = "El búho sabio bajo la luna",
+            pt = "A coruja sábia sob o luar",
+            bn = "চাঁদের আলোয় জ্ঞানী পেঁচা",
+            ta = "நிலவொளியில் அறிவாளி ஆந்தை",
+            te = "వెన్నెల రాత్రిలో తెలివైన గుడ్లగూబ",
+            mr = "चांदण्या रात्रीतील हुशार घुबड",
+            gu = "ચાંદની રાતમાં સમજદાર ઘુવડ"
+        ),
+        "ref_tiger_stripes_jungle" to MultiLang8(
+            ar = "نمر الغابة وخطوطه الذهبية",
+            es = "Las rayas doradas del tigre de la selva",
+            pt = "As listras douradas do tigre da floresta",
+            bn = "জঙ্গলের ডোরাকাটা বাঘ",
+            ta = "காட்டுப் புலியின் தங்க வரிகள்",
+            te = "అడవి పులి బంగారు చారలు",
+            mr = "जंगलातील पट्टेदार वाघ",
+            gu = "જંગલનો પટ્ટાવાળો વાઘ"
+        ),
+        "ref_galloping_white_horse" to MultiLang8(
+            ar = "الحصان الأبيض ومكتبة الجبل",
+            es = "El caballo blanco del valle verde",
+            pt = "O cavalo branco do vale verde",
+            bn = "সবুজ উপত্যকার সাদা ঘোড়া",
+            ta = "பசுமைப் பள்ளத்தாக்கின் வெள்ளைக் குதிரை",
+            te = "పచ్చని లోయలో తెల్లని గుర్రం",
+            mr = "हिरव्या दरीतील पांढरा घोडा",
+            gu = "લીલી ખીણનો સફેદ ઘોડો"
+        ),
+        "ref_friendly_helper_robot" to MultiLang8(
+            ar = "الروبوت المساعد الصغير في المدرسة",
+            es = "El pequeño robot ayudante",
+            pt = "O pequeno robô ajudante",
+            bn = "স্কুলের বন্ধু রোবট",
+            ta = "பள்ளியின் உதவும் ரோபோ நண்பன்",
+            te = "సహాయం చేసే స్నేహపూర్వక రోబోట్",
+            mr = "शाळेतील मदत करणारा रोबोट",
+            gu = "શાળાનો મદદગાર રોબોટ મિત્ર"
+        ),
+        "ref_kind_queen_library_castle" to MultiLang8(
+            ar = "الملكة الطيبة ومكتبة القلعة",
+            es = "La reina amable y la biblioteca del castillo",
+            pt = "A rainha bondosa e a biblioteca do castelo",
+            bn = "দয়ালু রানি ও প্রাসাদের লাইব্রেরি",
+            ta = "அன்பான ராணியும் அரண்மனை நூலகமும்",
+            te = "దయగల రాణి మరియు కోట గ్రంథాలయం",
+            mr = "दयाळू राणी आणि राजवाड्यातील वाचनालय",
+            gu = "દયાળુ રાણી અને મહેલની લાઇબ્રેરી"
+        ),
+        "ref_rocket_mission_mars" to MultiLang8(
+            ar = "رحلة الصاروخ الفضائي بين النجوم",
+            es = "El viaje del cohete hacia las estrellas",
+            pt = "A viagem do foguete até as estrelas",
+            bn = "তারার দেশে রকেট অভিযান",
+            ta = "நட்சத்திரங்களை நோக்கி ராக்கெட் பயணம்",
+            te = "నక్షత్రాల వైపు రాకెట్ ప్రయాణం",
+            mr = "ताऱ्यांच्या देशात रॉकेटची सफर",
+            gu = "તારાઓની દુનિયામાં રોકેટની સફર"
+        ),
+        "ref_blue_whale_ocean_giant" to MultiLang8(
+            ar = "أغنية الحوت الأزرق العملاق في المحيط",
+            es = "El canto de la gran ballena azul",
+            pt = "O canto da grande baleia-azul",
+            bn = "গভীর সমুদ্রের নীল তিমির গান",
+            ta = "ஆழ்கடல் நீலத் திமிங்கலத்தின் பாடல்",
+            te = "మహాసముద్రపు నీలి తిమింగలం పాట",
+            mr = "महासागरातील विशाल निळ्या देवमाशाचे गीत",
+            gu = "સમુદ્રની વિશાળ બ્લુ વ્હેલનું ગીત"
+        ),
+        "ref_galactica_telescope_night" to MultiLang8(
+            ar = "تلسكوب أمينة على السطح ومجرة النجوم",
+            es = "El telescopio de Amina bajo las estrellas",
+            pt = "O telescópio de Amina sob as estrelas",
+            bn = "আমিনার দূরবীন ও তারার আকাশ",
+            ta = "ஆமினாவின் தொலைநோக்கியும் விண்மீன்களும்",
+            te = "ఆమినా టెలిస్కోప్ మరియు నక్షత్రాల ఆకాశం",
+            mr = "आमिनाची दुर्बीण आणि ताऱ्यांचे आकाश",
+            gu = "આમિનાનું ટેલિસ્કોપ અને તારાઓનું આકાશ"
+        ),
+        "ref_airplane_above_the_clouds" to MultiLang8(
+            ar = "كيف تطير الطائرة عالياً فوق السحاب؟",
+            es = "Cómo vuelan los aviones sobre las nubes",
+            pt = "Como os aviões voam acima das nuvens",
+            bn = "মেঘের ওপরে বিমান কীভাবে ওড়ে?",
+            ta = "மேகங்களுக்கு மேலே விமானம் பறப்பது எப்படி?",
+            te = "మేఘాల పైన విమానం ఎలా ఎగురుతుంది?",
+            mr = "ढगांच्या वर विमान कसे उडते?",
+            gu = "વાદળોની ઉપર વિમાન કેવી રીતે ઉડે છે?"
+        ),
+        "hero_colors_street" to MultiLang8(
+            ar = "الألوان الجميلة في شارعنا",
+            es = "Colores brillantes en la calle",
+            pt = "Cores brilhantes na nossa rua",
+            bn = "আমাদের রাস্তার সুন্দর রঙ",
+            ta = "நம் தெருவின் அழகிய வண்ணங்கள்",
+            te = "మా వీధిలో అందమైన రంగులు",
+            mr = "आमच्या रस्त्यावरील सुंदर रंग",
+            gu = "અમારી શેરીના સુંદર રંગો"
+        ),
+        "book_rained_fish" to MultiLang8(
+            ar = "اليوم الذي أمطرت فيه السماء سمكاً",
+            es = "El día que llovieron peces",
+            pt = "O dia em que choveu peixe",
+            bn = "যেদিন মাছের বৃষ্টি হয়েছিল",
+            ta = "மீன் மழை பெய்த அதிசய நாள்",
+            te = "చేపల వర్షం కురిసిన రోజు",
+            mr = "ज्या दिवशी माशांचा पाऊस पडला",
+            gu = "જે દિવસે માછલીઓનો વરસાદ પડ્યો"
+        ),
+        "sw_37273" to MultiLang8(
+            ar = "ابتسامة الفراشة وحذاء اليرقة",
+            es = "La sonrisa de la mariposa",
+            pt = "O sorriso da borboleta",
+            bn = "প্রজাপতির হাসি ও শুঁয়োপোকার জুতো",
+            ta = "வண்ணத்துப்பூச்சியின் புன்னகை",
+            te = "సీతాకోకచిలుక చిరునవ్వు",
+            mr = "फुलपाखराचे हास्य आणि अळीचा बूट",
+            gu = "પતંગિયાનું સ્મિત અને ઈયળનો બૂટ"
+        ),
+        "sw_44485" to MultiLang8(
+            ar = "رحلة القطار الممتعة إلى الشاطئ",
+            es = "¿Quién viaja en el tren?",
+            pt = "Quem viaja no trem?",
+            bn = "ট্রেনের মজার ভ্রমণ",
+            ta = "கடற்கரைக்கு ஒரு மகிழ்ச்சியான ரயில் பயணம்",
+            te = "రైలులో సరదా ప్రయాణం",
+            mr = "आगगाडीचा मजेशीर प्रवास",
+            gu = "ટ્રેનની મજેદાર મુસાફરી"
+        ),
+        "sw_15195" to MultiLang8(
+            ar = "كرتي الحمراء ومعطف المطر",
+            es = "El impermeable rojo y mi pelota",
+            pt = "A capa de chuva vermelha e minha bola",
+            bn = "আমার লাল বল ও বর্ষাতি কোট",
+            ta = "என் சிவப்பு பந்தும் மழைக்கோட்டும்",
+            te = "నా ఎర్ర బంతి మరియు రెయిన్‌కోట్",
+            mr = "माझा लाल चेंडू आणि रेनकोट",
+            gu = "મારો લાલ દડો અને રેઇનકોટ"
+        ),
+        "sw_15058" to MultiLang8(
+            ar = "قصة ما قبل النوم وأحب القراءة",
+            es = "Me encanta leer cuentos",
+            pt = "Eu adoro ler histórias",
+            bn = "গল্পের বই পড়ার আনন্দ",
+            ta = "கதைப் புத்தகங்கள் படிக்கும் மகிழ்ச்சி",
+            te = "కథల పుస్తకాలు చదివే ఆనందం",
+            mr = "गोष्टींची पुस्तके वाचण्याचा आनंद",
+            gu = "વાર્તાની ચોપડીઓ વાંચવાનો આનંદ"
+        ),
+        "sw_13916" to MultiLang8(
+            ar = "الدعسوقة الصفراء لارا في الحديقة",
+            es = "Lara la mariquita amarilla",
+            pt = "Lara a joaninha amarela",
+            bn = "হলুদ লেডিবার্ড লারার গল্প",
+            ta = "மஞ்சள் வண்டு லாராவின் கதை",
+            te = "పసుపు రంగు లారా లేడీబర్డ్ కథ",
+            mr = "पिवळी लेडीबर्ड लाराची गोष्ट",
+            gu = "પીળી લેડીબર્ડ લારાની વાર્તા"
+        ),
+        "sw_45764" to MultiLang8(
+            ar = "مغامرة لولو في المكتبة والمطر",
+            es = "La aventura de Lulu en la biblioteca",
+            pt = "A aventura de Lulu na biblioteca",
+            bn = "লুলুর লাইব্রেরি ও বৃষ্টির অভিযান",
+            ta = "லுலுவின் நூலக சாகசம்",
+            te = "లులు గ్రంథాలయ సాహసం",
+            mr = "लुलूचे वाचनालयातील साहस",
+            gu = "લુલુનું લાઇબ્રેરી સાહસ"
+        )
+    )
+
+    fun getNativeStoryTitle(book: StoryBook, langCode: String): String {
+        if (langCode == "en") return ""
+        if (langCode == "en_ur") return book.nativeTitleUrdu
+        if (langCode == "en_hi") return book.nativeTitleHindi
+        storyTitlesMultiLang[book.id]?.forLang(langCode)?.takeIf { it.isNotBlank() }?.let { return it }
+        // Dynamic localized title for any other story or user-created story
+        return when (langCode) {
+            "en_ar" -> "قصة مصورة ممتعة • المستوى ${book.level}"
+            "en_es" -> "Cuento ilustrado • Nivel ${book.level}"
+            "en_pt" -> "História ilustrada • Nível ${book.level}"
+            "en_bn" -> "ছবি ও শিক্ষামূলক গল্প • লেভেল ${book.level}"
+            "en_ta" -> "படக்கதை • நிலை ${book.level}"
+            "en_te" -> "బొమ్మల కథ • లెవెల్ ${book.level}"
+            "en_mr" -> "चित्रमय गोष्ट • लेव्हल ${book.level}"
+            "en_gu" -> "ચિત્રવાર્તા • લેવલ ${book.level}"
+            else -> ""
+        }
+    }
+
     fun getBookPrimaryTitle(book: StoryBook, langCode: String): String {
         if (book.bookType == "ALPHABET" || book.bookType == "DAYS_OF_WEEK" || book.bookType == "MONTHS_OF_YEAR" || book.id.startsWith("alphabet_book_")) {
             return book.title
         }
-        return when (langCode) {
-            "en" -> book.title
-            "en_ur" -> book.nativeTitleUrdu.ifBlank { book.title }
-            "en_hi", "en_mr" -> book.nativeTitleHindi.ifBlank { book.title }
-            else -> book.title
-        }
+        if (langCode == "en") return book.title
+        return getNativeStoryTitle(book, langCode).ifBlank { book.title }
     }
 
     fun getBookSecondaryTitle(book: StoryBook, langCode: String): String {
         if (book.bookType == "ALPHABET" || book.bookType == "DAYS_OF_WEEK" || book.bookType == "MONTHS_OF_YEAR" || book.id.startsWith("alphabet_book_")) {
-            return book.nativeTitleUrdu.ifBlank { book.nativeTitleHindi }
+            return if (langCode == "en") book.nativeTitleHindi else book.nativeTitleUrdu.ifBlank { book.nativeTitleHindi }
+        }
+        if (langCode == "en") return ""
+        val nativeTitle = getNativeStoryTitle(book, langCode)
+        return if (nativeTitle.isNotBlank() && nativeTitle != book.title) book.title else ""
+    }
+
+    fun getMeaningLabelForLanguage(langCode: String): String {
+        return when (langCode) {
+            "en_ur" -> "ترجمہ"
+            "en_hi" -> "अर्थ"
+            "en_ar" -> "المعنى"
+            "en_es" -> "Significado"
+            "en_pt" -> "Significado"
+            "en_bn" -> "অর্থ"
+            "en_ta" -> "பொருள்"
+            "en_te" -> "అర్థం"
+            "en_mr" -> "अर्थ"
+            "en_gu" -> "અર્થ"
+            else -> "Meaning"
+        }
+    }
+
+    fun getPageTranslationForLanguage(book: StoryBook, page: StoryPage, langCode: String): String {
+        if (book.bookType == "ALPHABET" || book.bookType == "DAYS_OF_WEEK" || book.bookType == "MONTHS_OF_YEAR" || page.alphabetBadgeLetters.isNotBlank()) {
+            return ""
         }
         return when (langCode) {
             "en" -> ""
-            "en_ur" -> if (book.nativeTitleUrdu.isNotBlank() && book.nativeTitleUrdu != book.title) book.title else ""
-            "en_hi", "en_mr" -> if (book.nativeTitleHindi.isNotBlank() && book.nativeTitleHindi != book.title) book.title else ""
-            else -> book.nativeTitleUrdu.ifBlank { "" }
+            "en_ur" -> page.urduTranslation
+            "en_hi" -> page.hindiTranslation
+            "en_es" -> {
+                if (page.spanishTranslation.isNotBlank() && page.spanishTranslation != page.text) {
+                    page.spanishTranslation
+                } else {
+                    buildLocalizedPageSummary(book, page, "en_es")
+                }
+            }
+            "en_ar", "en_pt", "en_bn", "en_ta", "en_te", "en_mr", "en_gu" -> {
+                buildLocalizedPageSummary(book, page, langCode)
+            }
+            else -> ""
         }
+    }
+
+    private fun buildLocalizedPageSummary(book: StoryBook, page: StoryPage, langCode: String): String {
+        val nativeTitle = getNativeStoryTitle(book, langCode)
+        val keyMeanings = page.practiceWords
+            .map { getWordTranslation(it, langCode) }
+            .filter { it.isNotBlank() }
+            .distinct()
+            .take(3)
+            .joinToString(" • ")
+
+        return when (langCode) {
+            "en_ar" -> if (keyMeanings.isNotBlank()) {
+                "$nativeTitle (صفحة ${page.pageNumber}): $keyMeanings"
+            } else {
+                "$nativeTitle • صفحة ${page.pageNumber}"
+            }
+            "en_es" -> if (keyMeanings.isNotBlank()) {
+                "$nativeTitle (Página ${page.pageNumber}): $keyMeanings"
+            } else {
+                "$nativeTitle • Página ${page.pageNumber}"
+            }
+            "en_pt" -> if (keyMeanings.isNotBlank()) {
+                "$nativeTitle (Página ${page.pageNumber}): $keyMeanings"
+            } else {
+                "$nativeTitle • Página ${page.pageNumber}"
+            }
+            "en_bn" -> if (keyMeanings.isNotBlank()) {
+                "$nativeTitle (পৃষ্ঠা ${page.pageNumber}): $keyMeanings"
+            } else {
+                "$nativeTitle • পৃষ্ঠা ${page.pageNumber}"
+            }
+            "en_ta" -> if (keyMeanings.isNotBlank()) {
+                "$nativeTitle (பக்கம் ${page.pageNumber}): $keyMeanings"
+            } else {
+                "$nativeTitle • பக்கம் ${page.pageNumber}"
+            }
+            "en_te" -> if (keyMeanings.isNotBlank()) {
+                "$nativeTitle (పేజీ ${page.pageNumber}): $keyMeanings"
+            } else {
+                "$nativeTitle • పేజీ ${page.pageNumber}"
+            }
+            "en_mr" -> if (keyMeanings.isNotBlank()) {
+                "$nativeTitle (पान ${page.pageNumber}): $keyMeanings"
+            } else {
+                "$nativeTitle • पान ${page.pageNumber}"
+            }
+            "en_gu" -> if (keyMeanings.isNotBlank()) {
+                "$nativeTitle (પાનું ${page.pageNumber}): $keyMeanings"
+            } else {
+                "$nativeTitle • પાનું ${page.pageNumber}"
+            }
+            else -> ""
+        }
+    }
+
+    fun getLocalizedLevelSubtitle(level: Int, langCode: String): String {
+        return when (level) {
+            1 -> when (langCode) {
+                "en_ur" -> "ابتدائی لیول • آسان الفاظ اور چھوٹے جملے"
+                "en_hi" -> "शुरुआती लेवल • आसान शब्द और छोटे वाक्य"
+                "en_ar" -> "المستوى الأول • كلمات سهلة وجمل قصيرة"
+                "en_es" -> "Principiante • Palabras fáciles y frases cortas"
+                "en_pt" -> "Iniciante • Palavras fáceis e frases curtas"
+                "en_bn" -> "প্রাথমিক স্তর • সহজ শব্দ ও ছোট বাক্য"
+                "en_ta" -> "தொடக்க நிலை • எளிய சொற்கள் மற்றும் சிறிய வாக்கியங்கள்"
+                "en_te" -> "ప్రారంభ స్థాయి • సులభమైన పదాలు మరియు చిన్న వాక్యాలు"
+                "en_mr" -> "초ुरुवातीची पातळी • सोपे शब्द आणि छोटी वाक्ये".replace("초", "सु")
+                "en_gu" -> "શરૂઆતનું લેવલ • સરળ શબ્દો અને નાનાં વાક્યો"
+                else -> "Beginner • Easy words & short sentences"
+            }
+            2 -> when (langCode) {
+                "en_ur" -> "دوسرا لیول • روزمرہ کی دلچسپ کہانیاں"
+                "en_hi" -> "दूसरा लेवल • रोज़मर्रा की रोचक कहानियाँ"
+                "en_ar" -> "المستوى الثاني • قصص يومية ممتعة"
+                "en_es" -> "Elemental • Cuentos cotidianos y fonética"
+                "en_pt" -> "Elementar • Histórias do dia a dia e fonética"
+                "en_bn" -> "দ্বিতীয় স্তর • প্রতিদিনের মজার গল্প"
+                "en_ta" -> "இரண்டாம் நிலை • அன்றாட சுவையான கதைகள்"
+                "en_te" -> "రెండవ స్థాయి • రోజువారీ ఆసక్తికరమైన కథలు"
+                "en_mr" -> "दुसरी पातळी • दैनंदिन मनोरंजक गोष्टी"
+                "en_gu" -> "બીજું લેવલ • રોજિંદી રસપ્રદ વાર્તાઓ"
+                else -> "Elementary • Everyday stories & phonics"
+            }
+            3 -> when (langCode) {
+                "en_ur" -> "تیسرا لیول • سبق آموز کہانیاں اور مہمات"
+                "en_hi" -> "तीसरा लेवल • शिक्षाप्रद कहानियाँ और रोमांच"
+                "en_ar" -> "المستوى الثالث • حكايات هادفة ومغامرات"
+                "en_es" -> "Intermedio • Fábulas con moraleja y aventuras"
+                "en_pt" -> "Intermediário • Fábulas e aventuras"
+                "en_bn" -> "তৃতীয় স্তর • শিক্ষামূলক গল্প ও অভিযান"
+                "en_ta" -> "மூன்றாம் நிலை • நீதிக்கதைகள் மற்றும் சாகசங்கள்"
+                "en_te" -> "మూడవ స్థాయి • నీతి కథలు మరియు సాహసాలు"
+                "en_mr" -> "तिसरी पातळी • बोधकथा आणि साहसी गोष्टी"
+                "en_gu" -> "ત્રીજું લેવલ • બોધકથાઓ અને સાહસ"
+                else -> "Intermediate • Moral fables & adventures"
+            }
+            else -> when (langCode) {
+                "en_ur" -> "چوتھا لیول • سائنس، خلا اور تفصیلی کہانیاں"
+                "en_hi" -> "चौथा लेवल • विज्ञान, अंतरिक्ष और बड़ी कहानियाँ"
+                "en_ar" -> "المستوى الرابع • علوم وفضاء وقصص متقدمة"
+                "en_es" -> "Avanzado • Ciencia, espacio y capítulos"
+                "en_pt" -> "Avançado • Ciência, espaço e capítulos"
+                "en_bn" -> "চতুর্থ স্তর • বিজ্ঞান, মহাকাশ ও বড় গল্প"
+                "en_ta" -> "நான்காம் நிலை • அறிவியல், விண்வெளி மற்றும் பெரிய கதைகள்"
+                "en_te" -> "నాలుగవ స్థాయి • సైన్స్, అంతరిక్షం మరియు పెద్ద కథలు"
+                "en_mr" -> "चौथी पातळी • विज्ञान, अंतराळ आणि मोठ्या गोष्टी"
+                "en_gu" -> "ચોથું લેવલ • વિજ્ઞાન, અવકાશ અને મોટી વાર્તાઓ"
+                else -> "Advanced • Science, space & chapter stories"
+            }
+        }
+    }
+
+    fun getLocalizedRhymePrompt(langCode: String): String {
+        return when (langCode) {
+            "en_ur" -> "اس لفظ کے ہم قافیہ (ملتی جلتی آواز والا) لفظ کو چنیں"
+            "en_hi" -> "इस शब्द से मिलती-जुलती आवाज़ वाला शब्द चुनें"
+            "en_ar" -> "اختر الكلمة التي لها نفس القافية والصوت النهائي"
+            "en_es" -> "Elige la palabra que rima con este sonido"
+            "en_pt" -> "Escolha a palavra que rima com este som"
+            "en_bn" -> "এই শব্দের সাথে মিল থাকা ছন্দের শব্দটি বেছে নাও"
+            "en_ta" -> "இந்தச் சொல்லுடன் ஒத்த ஓசையுடைய சொல்லைத் தேர்ந்தெடு"
+            "en_te" -> "ఈ పదానికి ప్రాస కుదిరే పదాన్ని ఎంచుకోండి"
+            "en_mr" -> "या शब्दाशी यमक जुळणारा शब्द निवडा"
+            "en_gu" -> "આ શબ્દ સાથે પ્રાસ મળતો શબ્દ પસંદ કરો"
+            else -> "Choose the word that rhymes with the target word above"
+        }
+    }
+
+    fun getLocalizedSentenceClue(index: Int, langCode: String, urFallback: String, hiFallback: String, enSentence: String): String {
+        if (langCode == "en") return "Listen and arrange the words in order"
+        if (langCode == "en_ur") return urFallback
+        if (langCode == "en_hi") return hiFallback
+        val clues = listOf(
+            MultiLang8(
+                ar = "لارا لديها أجنحة صفراء لامعة.",
+                es = "Lara tiene alas amarillas brillantes.",
+                pt = "Lara tem asas amarelas brilhantes.",
+                bn = "লারার উজ্জ্বল হলুদ ডানা আছে।",
+                ta = "லாராவுக்கு பிரகாசமான மஞ்சள் சிறகுகள் உள்ளன.",
+                te = "లారాకు మెరిసే పసుపు రెక్కలు ఉన్నాయి.",
+                mr = "लाराला चमकदार पिवळे पंख आहेत.",
+                gu = "લારાને ચમકતી પીળી પાંખો છે."
+            ),
+            MultiLang8(
+                ar = "الضفدع الأخضر يقفز عالياً.",
+                es = "La rana verde salta muy alto.",
+                pt = "O sapo verde pula muito alto.",
+                bn = "সবুজ ব্যাঙটি উঁচুতে লাফ দেয়।",
+                ta = "பச்சைத் தவளை உயரமாகக் குதிக்கிறது.",
+                te = "ఆకుపచ్చ కప్ప పైకి దూకుతుంది.",
+                mr = "हिरवा बेडूक उंच उडी मारतो.",
+                gu = "લીલો દેડકો ઊંચો કૂદકો મારે છે."
+            ),
+            MultiLang8(
+                ar = "أنا أركل كرتي الحمراء الكبيرة.",
+                es = "Yo pateo mi gran pelota roja.",
+                pt = "Eu chuto minha grande bola vermelha.",
+                bn = "আমি আমার বড় লাল বলটিতে লাথি মারি।",
+                ta = "நான் என் பெரிய சிவப்பு பந்தை உதைக்கிறேன்.",
+                te = "నేను నా పెద్ద ఎర్ర బంతిని తన్నుతాను.",
+                mr = "मी माझ्या मोठ्या लाल चेंडूला किक मारतो.",
+                gu = "હું મારા મોટા લાલ દડાને લાત મારું છું."
+            ),
+            MultiLang8(
+                ar = "تركب نيكول القطار الفضي اللامع.",
+                es = "Nicole viaja en el tren plateado.",
+                pt = "Nicole viaja no trem prateado.",
+                bn = "নিকোল রুপালি ট্রেনে চড়ে ভ্রমণ করে।",
+                ta = "நிக்கோல் வெள்ளி ரயிலில் பயணம் செய்கிறாள்.",
+                te = "నికోల్ మెరిసే రైలులో ప్రయాణిస్తుంది.",
+                mr = "निकोल चमकदार रेल्वेतून प्रवास करते.",
+                gu = "નિકોલ ચમકતી ટ્રેનમાં મુસાફરી કરે છે."
+            ),
+            MultiLang8(
+                ar = "تقرأ لولو الكتب في المكتبة.",
+                es = "Lulu lee libros en la biblioteca.",
+                pt = "Lulu lê livros na biblioteca.",
+                bn = "লুলু লাইব্রেরিতে বই পড়ে।",
+                ta = "லுலு நூலகத்தில் புத்தகங்கள் படிக்கிறாள்.",
+                te = "లులు లైబ్రరీలో పుస్తకాలు చదువుతుంది.",
+                mr = "लुलू वाचनालयात पुस्तके वाचते.",
+                gu = "લુલુ લાઇબ્રેરીમાં પુસ્તકો વાંચે છે."
+            ),
+            MultiLang8(
+                ar = "أختي الصغيرة نائمة بعمق.",
+                es = "Mi hermanita está profundamente dormida.",
+                pt = "Minha irmãzinha está dormindo profundamente.",
+                bn = "আমার ছোট বোন গভীর ঘুমে ঘুমিয়ে আছে।",
+                ta = "என் தங்கை ஆழ்ந்த உறக்கத்தில் இருக்கிறாள்.",
+                te = "నా చెల్లెలు గాఢ నిద్రలో ఉంది.",
+                mr = "माझी धाकटी बहीण गाढ झोपली आहे.",
+                gu = "મારી નાની બહેન ગાઢ નિદ્રામાં સૂતી છે."
+            ),
+            MultiLang8(
+                ar = "يرتدي العنكبوت ثمانية أحذية صغيرة.",
+                es = "La araña usa ocho zapatos pequeños.",
+                pt = "A aranha usa oito sapatinhos.",
+                bn = "মাকড়সাটি আটটি ছোট জুতো পরে।",
+                ta = "சிலந்தி எட்டு சிறிய காலணிகளை அணிகிறது.",
+                te = "సాలెపురుగు ఎనిమిది చిన్న బూట్లు వేసుకుంటుంది.",
+                mr = "कोळी आठ छोटे बूट घालतो.",
+                gu = "કરોળિયો આઠ નાના બૂટ પહેરે છે."
+            ),
+            MultiLang8(
+                ar = "يعزف قارعو الطبول إيقاعاً سعيداً.",
+                es = "Los bateristas tocan un ritmo alegre.",
+                pt = "Os bateristas tocam um ritmo alegre.",
+                bn = "ঢোলবাদকরা আনন্দের সুর বাজায়।",
+                ta = "மேளக்காரர்கள் மகிழ்ச்சியான தாளம் வாசிக்கிறார்கள்.",
+                te = "డప్పు కళాకారులు సంతోషకరమైన తాళం వాయిస్తారు.",
+                mr = "ढोलवादक आनंदी ताल वाजवतात.",
+                gu = "ઢોલીઓ આનંદનો તાલ વગાડે છે."
+            ),
+            MultiLang8(
+                ar = "تسبح الأسماك الفضية في النهر.",
+                es = "Los peces plateados nadan en el río.",
+                pt = "Os peixes prateados nadam no rio.",
+                bn = "রুপালি মাছগুলো নদীতে সাঁতার কাটে।",
+                ta = "வெள்ளி மீன்கள் ஆற்றில் நீந்துகின்றன.",
+                te = "వెండి చేపలు నదిలో ఈదుతాయి.",
+                mr = "चमकदार मासे नदीत पोहतात.",
+                gu = "ચમકતી માછલીઓ નદીમાં તરે છે."
+            ),
+            MultiLang8(
+                ar = "تتلألأ النجوم في سماء الليل.",
+                es = "Las estrellas brillan en el cielo nocturno.",
+                pt = "As estrelas brilham no céu da noite.",
+                bn = "রাতের আকাশে তারারা মিটমিট করে জ্বলে।",
+                ta = "இரவு வானில் நட்சத்திரங்கள் மின்னுகின்றன.",
+                te = "రాత్రి ఆకాశంలో నక్షత్రాలు మెరుస్తాయి.",
+                mr = "रात्रीच्या आकाशात तारे चमकतात.",
+                gu = "રાતના આકાશમાં તારાઓ ચમકે છે."
+            )
+        )
+        return clues.getOrNull(index % clues.size)?.forLang(langCode)?.ifBlank { enSentence } ?: enSentence
+    }
+
+    fun getLocalizedCountQuestion(index: Int, langCode: String, urFallback: String, hiFallback: String): String {
+        if (langCode == "en") return ""
+        if (langCode == "en_ur") return urFallback
+        if (langCode == "en_hi") return hiFallback
+        val questions = listOf(
+            MultiLang8(
+                ar = "عدّ الدعسوقات الصفراء في حديقة لارا",
+                es = "Cuenta las mariquitas amarillas en el jardín",
+                pt = "Conte as joaninhas amarelas no jardim",
+                bn = "বাগানের হলুদ লেডিবার্ডগুলো গুনুন",
+                ta = "தோட்டத்தில் உள்ள மஞ்சள் வண்டுகளை எண்ணுங்கள்",
+                te = "తోటలో ఉన్న పసుపు లేడీబర్డ్స్‌ను లెక్కించండి",
+                mr = "बागेतील पिवळे लेडीबर्ड मोजा",
+                gu = "બગીચામાં રહેલી પીળી લેડીબર્ડ ગણો"
+            ),
+            MultiLang8(
+                ar = "كم كرة حمراء توجد على العشب؟",
+                es = "¿Cuántas pelotas rojas hay en el césped?",
+                pt = "Quantas bolas vermelhas estão no gramado?",
+                bn = "ঘাসের ওপর কয়টি লাল বল আছে?",
+                ta = "புல்வெளியில் எத்தனை சிவப்பு பந்துகள் உள்ளன?",
+                te = "గడ్డి మీద ఎన్ని ఎర్ర బంతులు ఉన్నాయి?",
+                mr = "गवतावर किती लाल चेंडू आहेत?",
+                gu = "ઘાસ પર કેટલા લાલ દડા છે?"
+            ),
+            MultiLang8(
+                ar = "اجمع ٤ أوراق خضراء و٤ أوراق أخرى",
+                es = "Suma 4 hojas verdes y 4 hojas verdes más",
+                pt = "Some 4 folhas verdes e mais 4 folhas verdes",
+                bn = "৪টি সবুজ পাতা ও আরও ৪টি পাতা মিলে মোট কয়টি?",
+                ta = "4 பச்சை இலைகள் மற்றும் 4 இலைகள் சேர்த்து மொத்தம் எத்தனை?",
+                te = "4 ఆకుపచ్చ ఆకులు మరియు మరో 4 ఆకులు కలిపి మొత్తం ఎన్ని?",
+                mr = "४ हिरवी पाने आणि अजून ४ पाने मिळून किती झाली?",
+                gu = "૪ લીલાં પાંદડાં અને બીજાં ૪ પાંદડાં મળીને કુલ કેટલાં?"
+            ),
+            MultiLang8(
+                ar = "عدّ قطرات المطر الزرقاء المتساقطة من السحابة",
+                es = "Cuenta las gotas de lluvia azules",
+                pt = "Conte as gotas de chuva azuis",
+                bn = "মেঘ থেকে পড়া নীল বৃষ্টির ফোঁটাগুলো গুনুন",
+                ta = "மேகத்திலிருந்து விழும் நீல மழைத்துளிகளை எண்ணுங்கள்",
+                te = "మేఘం నుండి పడుతున్న నీలి వాన చినుకులను లెక్కించండి",
+                mr = "ढगातून पडणारे निळे पावसाचे थेंब मोजा",
+                gu = "વાદળમાંથી પડતાં વાદળી વરસાદનાં ટીપાં ગણો"
+            ),
+            MultiLang8(
+                ar = "عدّ النجوم الذهبية اللامعة في سماء الليل",
+                es = "Cuenta las estrellas doradas en el cielo",
+                pt = "Conte as estrelas douradas no céu",
+                bn = "রাতের আকাশে উজ্জ্বল সোনালি তারাগুলো গুনুন",
+                ta = "இரவு வானில் மின்னும் தங்க நட்சத்திரங்களை எண்ணுங்கள்",
+                te = "రాత్రి ఆకాశంలో మెరిసే బంగారు నక్షత్రాలను లెక్కించండి",
+                mr = "रात्रीच्या आकाशातील सोनेरी तारे मोजा",
+                gu = "રાતના આકાશમાં ચમકતા સોનેરી તારા ગણો"
+            ),
+            MultiLang8(
+                ar = "استعارت لولو ٤ كتب ثم ٦ كتب أخرى. كم المجموع؟",
+                es = "Lulu tomó 4 libros y luego 6 más. ¿Cuántos son en total?",
+                pt = "Lulu pegou 4 livros e depois mais 6. Quantos no total?",
+                bn = "লুলু ৪টি বই ও পরে আরও ৬টি বই নিল। মোট কয়টি বই হলো?",
+                ta = "லுலு 4 புத்தகங்களும் பிறகு 6 புத்தகங்களும் எடுத்தாள். மொத்தம் எத்தனை?",
+                te = "లులు 4 పుస్తకాలు మరియు మరో 6 పుస్తకాలు తీసుకుంది. మొత్తం ఎన్ని?",
+                mr = "लुलूने ४ पुस्तके आणि नंतर ६ पुस्तके घेतली. एकूण किती पुस्तके झाली?",
+                gu = "લુલુએ ૪ પુસ્તકો અને પછી બીજાં ૬ પુસ્તકો લીધાં. કુલ કેટલાં પુસ્તકો થયાં?"
+            )
+        )
+        return questions.getOrNull(index % questions.size)?.forLang(langCode) ?: ""
     }
 
     val speedVehicles = listOf(
@@ -2206,12 +3002,297 @@ object SeekhCatalog {
         return getWordSyllablesList(rawWord).joinToString(" • ")
     }
 
+    private val multiLangWordsMap: Map<String, MultiLang8> = mapOf(
+        // 66 Vocabulary Builder Words
+        "ankle" to MultiLang8("الكاحل", "Tobillo", "Tornozelo", "গোড়ালি", "கணுக்கால்", "మడమ", "घोटा", "ઘૂંટણની નીચેનો ભાગ (ઘૂંટી)"),
+        "arms" to MultiLang8("الذراعان", "Brazos", "Braços", "বাহু", "கைகள்", "చేతులు", "हात", "હાથ / બાહુ"),
+        "elbow" to MultiLang8("المرفق", "Codo", "Cotovelo", "কনুই", "முழங்கை", "మోచేయి", "कोपर", "કોણી"),
+        "eyebrows" to MultiLang8("الحاجبان", "Cejas", "Sobrancelhas", "ভ্রু", "புருவங்கள்", "కనుబొమ్మలు", "भुवया", "ભ્રમર"),
+        "eyes" to MultiLang8("العينان", "Ojos", "Olhos", "চোখ", "கண்கள்", "కళ్ళు", "डोळे", "આંખો"),
+        "feet" to MultiLang8("القدمان", "Pies", "Pés", "পায়ের পাতা", "பாதங்கள்", "పాదాలు", "पाय", "પગ"),
+        "fingers" to MultiLang8("الأصابع", "Dedos", "Dedos", "আঙুল", "விரல்கள்", "వేళ్లు", "बोटे", "આંગળીઓ"),
+        "hands" to MultiLang8("اليدان", "Manos", "Mãos", "হাত", "கைகள்", "చేతులు", "हात", "હાથ"),
+        "knee" to MultiLang8("الركبة", "Rodilla", "Joelho", "হাঁটু", "முழங்கால்", "మోకాలు", "गुडघा", "ઘૂંટણ"),
+        "legs" to MultiLang8("الساقان", "Piernas", "Pernas", "পা", "கால்கள்", "కాళ్లు", "पाय", "પગ"),
+        "neck" to MultiLang8("الرقبة", "Cuello", "Pescoço", "গলা / ঘাড়", "கழுத்து", "మెడ", "मान", "ગળું / ગરદન"),
+        "palms" to MultiLang8("الكفّان", "Palmas", "Palmas", "হাতের তালু", "உள்ளங்கைகள்", "అరచేతులు", "तळहात", "હથેળીઓ"),
+        "shoulders" to MultiLang8("الكتفان", "Hombros", "Ombros", "কাঁধ", "தோள்கள்", "భుజాలు", "खांदे", "ખભા"),
+        "thumb" to MultiLang8("الإبهام", "Pulgar", "Polegar", "বুড়ো আঙুল", "கட்டைவிரல்", "బొటనవేలు", "अंगठा", "અંગૂઠો"),
+        "tongue" to MultiLang8("اللسان", "Lengua", "Língua", "জিভ", "நாக்கு", "నాలుక", "जीभ", "જીભ"),
+        "waist" to MultiLang8("الخصر", "Cintura", "Cintura", "কোমর", "இடுப்பு", "నడుము", "कंबर", "કમર"),
+        "blue" to MultiLang8("أزرق", "Azul", "Azul", "নীল", "நீலம்", "నీలం", "निळा", "વાદળી"),
+        "green" to MultiLang8("أخضر", "Verde", "Verde", "সবুজ", "பச்சை", "ఆకుపచ్చ", "हिरवा", "લીલો"),
+        "yellow" to MultiLang8("أصفر", "Amarillo", "Amarelo", "হলুদ", "மஞ்சள்", "పసుపు", "पिवळा", "પીળો"),
+        "red" to MultiLang8("أحمر", "Rojo", "Vermelho", "লাল", "சிவப்பு", "ఎరుపు", "लाल", "લાલ"),
+        "orange" to MultiLang8("برتقالي", "Naranja", "Laranja", "কমলা", "ஆரஞ்சு", "నారింజ", "केशरी", "નારંગી"),
+        "purple" to MultiLang8("بنفسجي", "Morado", "Roxo", "বেগুনি", "ஊதா", "ఊదా", "जांभळा", "જાંબલી"),
+        "pink" to MultiLang8("وردي", "Rosa", "Rosa", "গোলাপি", "இளஞ்சிவப்பு", "గులాబీ", "गुलाबी", "ગુલાબી"),
+        "brown" to MultiLang8("بني", "Marrón", "Marrom", "বাদামি", "பழுப்பு", "గోధుమ రంగు", "तपकिरी", "કથ્થાઈ"),
+        "black" to MultiLang8("أسود", "Negro", "Preto", "কালো", "கருப்பு", "నలుపు", "काळा", "કાળો"),
+        "grey" to MultiLang8("رمادي", "Gris", "Cinza", "ধূসর", "சாம்பல்", "బూడిద రంగు", "राखाडी", "ભૂખરો"),
+        "sunny" to MultiLang8("مشمس", "Soleado", "Ensolarado", "রৌদ্রোজ্জ্বল", "வெயில் நிறைந்த", "ఎండగా ఉన్న", "उन्हाचा दिवस", "તડકાવાળો દિવસ"),
+        "rain" to MultiLang8("مطر", "Lluvia", "Chuva", "বৃষ্টি", "மழை", "వర్షం", "पाऊस", "વરસાદ"),
+        "snowfall" to MultiLang8("تساقط الثلوج", "Nevada", "Nevasca", "তুষারপাত", "பனிப்பொழிவு", "మంచు కురవడం", "बर्फवृष्टी", "બરફવર્ષા"),
+        "spring" to MultiLang8("فصل الربيع", "Primavera", "Primavera", "বসন্তকাল", "வசந்த காலம்", "వసంత ఋతువు", "वसंत ऋतू", "વસંત ઋતુ"),
+        "summer" to MultiLang8("فصل الصيف", "Verano", "Verão", "গ্রীষ্মকাল", "கோடை காலம்", "వేసవి కాలం", "उन्हाळा", "ઉનાળો"),
+        "fall" to MultiLang8("فصل الخريف", "Otoño", "Outono", "শরৎকাল", "இலையுதிர் காலம்", "శరదృతువు", "शरद ऋतू", "પાનખર ઋતુ"),
+        "winter" to MultiLang8("فصل الشتاء", "Invierno", "Inverno", "শীতকাল", "குளிர்காலம்", "శీతాకాలం", "हिवाळा", "શિયાળો"),
+        "humid" to MultiLang8("رطب", "Húmedo", "Úmido", "আর্দ্র আবহাওয়া", "ஈரப்பதமான", "తేమగా ఉన్న", "दमट हवामान", "ભેજવાળું હવામાન"),
+        "circle" to MultiLang8("دائرة", "Círculo", "Círculo", "বৃত্ত", "வட்டம்", "వృత్తం", "वर्तुळ", "વર્તુળ"),
+        "triangle" to MultiLang8("مثلث", "Triángulo", "Triângulo", "ত্রিভুজ", "முக்கோணம்", "త్రిభుజం", "त्रिकोण", "ત્રિકોણ"),
+        "rectangle" to MultiLang8("مستطيل", "Rectángulo", "Retângulo", "আয়তক্ষেত্র", "செவ்வகம்", "దీర్ఘచతురస్రం", "आयत", "લંબચોરસ"),
+        "oval" to MultiLang8("بيضاوي", "Óvalo", "Oval", "ডিম্বাকৃতি", "நீள்வட்டம்", "అండాకారం", "लंबगोलाकार", "લંબગોળ"),
+        "pentagon" to MultiLang8("خماسي الأضلاع", "Pentágono", "Pentágono", "পঞ্চভুজ", "ஐங்கோணம்", "పంచభుజి", "पंचकोन", "પંચકોણ"),
+        "sphere" to MultiLang8("كرة مجسمة", "Esfera", "Esfera", "গোলক", "கோளம்", "గోళం", "गोलक", "ગોળો"),
+        "zero" to MultiLang8("صفر (0)", "Cero (0)", "Zero (0)", "শূন্য (০)", "பூஜ்ஜியம் (0)", "సున్నా (0)", "शून्य (०)", "શૂન્ય (૦)"),
+        "one" to MultiLang8("واحد (1)", "Uno (1)", "Um (1)", "এক (১)", "ஒன்று (1)", "ఒకటి (1)", "एक (१)", "એક (૧)"),
+        "two" to MultiLang8("اثنان (2)", "Dos (2)", "Dois (2)", "দুই (২)", "இரண்டு (2)", "రెండు (2)", "दोन (२)", "બે (૨)"),
+        "three" to MultiLang8("ثلاثة (3)", "Tres (3)", "Três (3)", "তিন (৩)", "மூன்று (3)", "మూడు (3)", "तीन (३)", "ત્રણ (૩)"),
+        "four" to MultiLang8("أربعة (4)", "Cuatro (4)", "Quatro (4)", "চার (৪)", "நான்கு (4)", "నాలుగు (4)", "चार (४)", "ચાર (૪)"),
+        "five" to MultiLang8("خمسة (5)", "Cinco (5)", "Cinco (5)", "পাঁচ (৫)", "ஐந்து (5)", "ఐదు (5)", "पाच (५)", "પાંચ (૫)"),
+        "six" to MultiLang8("ستة (6)", "Seis (6)", "Seis (6)", "ছয় (৬)", "ஆறு (6)", "ఆరు (6)", "सहा (६)", "છ (૬)"),
+        "seven" to MultiLang8("سبعة (7)", "Siete (7)", "Sete (7)", "সাত (৭)", "ஏழு (7)", "ఏడు (7)", "सात (७)", "સાત (૭)"),
+        "eight" to MultiLang8("ثمانية (8)", "Ocho (8)", "Oito (8)", "আট (৮)", "எட்டு (8)", "ఎనిమిది (8)", "आठ (८)", "આઠ (૮)"),
+        "nine" to MultiLang8("تسعة (9)", "Nueve (9)", "Nove (9)", "নয় (৯)", "ஒன்பது (9)", "తొమ్మిది (9)", "नऊ (९)", "નવ (૯)"),
+        "smile" to MultiLang8("ابتسامة", "Sonrisa", "Sorriso", "হাসি", "புன்னகை", "చిరునవ్వు", "हसू / स्मित", "સ્મિત"),
+        "happy" to MultiLang8("سعيد", "Feliz", "Feliz", "খুশি / আনন্দিত", "மகிழ்ச்சி", "సంతోషం", "आनंदी", "ખુશ"),
+        "surprise" to MultiLang8("مفاجأة", "Sorpresa", "Surpresa", "বিস্ময়", "ஆச்சரியம்", "ఆశ్చర్యం", "आश्चर्य", "આશ્ચર્ય"),
+        "cheer" to MultiLang8("هتاف وفرح", "Alegría", "Alegria", "আনন্দধ্বনি", "மகிழ்ச்சி ஆரவாரம்", "ఉత్సాహం", "आनंदोत्सव", "ઉત્સાહ"),
+        "clap" to MultiLang8("تصفيق", "Aplaudir", "Aplaudir", "হাততালি দেওয়া", "கைதட்டுதல்", "చప్పట్లు కొట్టడం", "टाळ्या वाजवणे", "તાળી પાડવી"),
+        "walk" to MultiLang8("يمشي", "Caminar", "Caminhar", "হাঁটা", "நடத்தல்", "నడవడం", "चालणे", "ચાલવું"),
+        "jump" to MultiLang8("يقفز", "Saltar", "Pular", "লাফ দেওয়া", "குதித்தல்", "దూకడం", "उडी मारणे", "કૂદવું"),
+        "wave" to MultiLang8("يلوّح بيده", "Saludar", "Acenar", "হাত নাড়া", "கை அசைத்தல்", "చెయ్యి ఊపడం", "हात हलवणे", "હાથ હલાવવો"),
+        "beach" to MultiLang8("شاطئ البحر", "Playa", "Praia", "সমুদ্র সৈকত", "கடற்கரை", "సముద్ర తీరం", "समुद्रकिनारा", "દરિયાકિનારો"),
+        "garden" to MultiLang8("حديقة الزهور", "Jardín", "Jardim", "ফুলের বাগান", "தோட்டம்", "తోట", "बाग", "બગીચો"),
+        "mountain" to MultiLang8("جبل", "Montaña", "Montanha", "পাহাড়", "மலை", "పర్వతం", "डोंगर / पर्वत", "પર્વત"),
+        "park" to MultiLang8("منتزه", "Parque", "Parque", "পার্ক", "பூங்கா", "పార్క్", "उद्यान / पार्क", "બગીચો / પાર્ક"),
+        "wheel" to MultiLang8("عجلة", "Rueda", "Roda", "চাকা", "சக்கரம்", "చక్రం", "चाक", "પૈડું"),
+        "train" to MultiLang8("قطار", "Tren", "Trem", "রেলগাড়ি", "ரயில்", "రైలు", "आगगाडी / रेल्वे", "ટ્રેન / રેલગાડી"),
+        "balloon" to MultiLang8("بالون", "Globo", "Balão", "বেলুন", "பலூன்", "బెలూన్", "फुगा", "ફુગ્ગો"),
+        "boat" to MultiLang8("قارب", "Barco", "Barco", "নৌকা", "படகு", "పడవ", "होडी", "હોડી"),
+
+        // Story & Game Words across all 10 games and stories
+        "blast" to MultiLang8("هبة ريح قوية", "Ráfaga de viento", "Rajada de vento", "দমকা হাওয়া", "பலத்த காற்று", "బలమైన గాలి", "वाऱ्याचा वेगवान झोत", "પવનનો તેજ ઝપાટો"),
+        "candles" to MultiLang8("شموع", "Velas", "Velas", "মোমবাতি", "மெழுகுவர்த்திகள்", "కొవ్వొత్తులు", "मेणबत्त्या", "મીણબત્તીઓ"),
+        "crashed" to MultiLang8("اصطدم بقوة", "Chocó", "Colidiu", "ধাক্কা খেল", "மோதியது", "ఢీకొట్టింది", "जोरात धडकले", "જોરથી અથડાયું"),
+        "clouds" to MultiLang8("سحب السماء", "Nubes", "Nuvens", "আকাশের মেঘ", "மேகங்கள்", "మేఘాలు", "आकाशातील ढग", "આકાશનાં વાદળો"),
+        "thunder" to MultiLang8("رعد", "Trueno", "Trovão", "মেঘের গর্জন", "இடி முழக்கம்", "ఉరుము", "मेघगर्जना", "વીજળીની ગર્જના"),
+        "ladybird" to MultiLang8("دعسوقة صغيرة", "Mariquita", "Joaninha", "লেডিবার্ড পোকা", "வண்ண வண்டு", "లేడీబర్డ్ పురుగు", "लेडीबर्ड किडा", "લેડીબર્ડ જીવડું"),
+        "special" to MultiLang8("مميز وخاص", "Especial", "Especial", "বিশেষ", "சிறப்பான", "ప్రత్యేకమైన", "विशेष", "ખાસ"),
+        "wings" to MultiLang8("أجنحة", "Alas", "Asas", "ডানা", "சிறகுகள்", "రెక్కలు", "पंख", "પાંખો"),
+        "butterfly" to MultiLang8("فراشة ملونة", "Mariposa", "Borboleta", "রঙিন প্রজাপতি", "வண்ணத்துப்பூச்சி", "సీతాకోకచిలుక", "फुलपाखरू", "પતંગિયું"),
+        "friends" to MultiLang8("أصدقاء", "Amigos", "Amigos", "বন্ধুরা", "நண்பர்கள்", "స్నేహితులు", "मित्र", "મિત્રો"),
+        "friend" to MultiLang8("صديق", "Amigo", "Amigo", "বন্ধু", "நண்பன்", "స్నేహితుడు", "मित्र", "મિત્ર"),
+        "school" to MultiLang8("مدرسة", "Escuela", "Escola", "স্কুল / বিদ্যালয়", "பள்ளி", "పాఠశాల", "शाळा", "શાળા"),
+        "painted" to MultiLang8("ملوّن ومرسوم", "Pintado", "Pintado", "রঙ করা", "வண்ணம் தீட்டப்பட்ட", "రంగు వేసిన", "रंगवलेले", "રંગેલું"),
+        "bright" to MultiLang8("مشرق ولامع", "Brillante", "Brilhante", "উজ্জ্বল", "பிரகாசமான", "ప్రకాశవంతమైన", "चमकदार", "તેજસ્વી / ચમકતું"),
+        "caterpillar" to MultiLang8("يرقة صغيرة", "Oruga", "Lagarta", "শুঁয়োপোকা", "கம்பளிப்பூச்சி", "గొంగళి పురుగు", "अळी", "ઈયળ"),
+        "shoe" to MultiLang8("حذاء", "Zapato", "Sapato", "জুতো", "காலணி", "బూటు", "बूट", "બૂટ / પગરખું"),
+        "spider" to MultiLang8("عنكبوت", "Araña", "Aranha", "মাকড়সা", "சிலந்தி", "సాలెపురుగు", "कोळी", "કરોળિયો"),
+        "frog" to MultiLang8("ضفدع", "Rana", "Sapo", "ব্যাঙ", "தவளை", "కప్ప", "बेडूक", "દેડકો"),
+        "grasshopper" to MultiLang8("جندب العشب", "Saltamontes", "Gafanhoto", "ঘাসফড়িং", "வெட்டுக்கிளி", "మిడత", "नाकतोडा", "તીડ"),
+        "crab" to MultiLang8("سلطعون البحر", "Cangrejo", "Caranguejo", "কাঁকড়া", "நண்டு", "పీత", "खेकडा", "કરચલો"),
+        "cocoon" to MultiLang8("شرنقة الحرير", "Capullo", "Casulo", "গুটি / কোকুন", "பட்டுக்கூடு", "పట్టుకాయ", "कोश", "કોશેટો"),
+        "chocolates" to MultiLang8("شوكولاتة حلوة", "Chocolates", "Chocolates", "মিষ্টি চকলেট", "சாக்லேட்டுகள்", "చాక్లెట్లు", "गोड चॉकलेट", "મીઠી ચોકલેટ"),
+        "drummers" to MultiLang8("قارعو الطبول", "Bateristas", "Bateristas", "ঢোলবাদক", "மேளக்காரர்கள்", "డప్పు కళాకారులు", "ढोलवादक", "ઢોલીઓ"),
+        "drummer" to MultiLang8("قارع الطبل", "Tamborilero", "Baterista", "ঢোলবাদক", "மேளக்காரர்", "డప్పు కళాకారుడు", "ढोलवादक", "ઢોલી"),
+        "sailor" to MultiLang8("بحّار", "Marinero", "Marinheiro", "নাবিক", "மாலுமி", "నావికుడు", "नाविक", "નાવિક"),
+        "cupboard" to MultiLang8("خزانة خشبية", "Armario", "Armário", "আলমারি", "அலமாரி", "అలమారా", "कपाट", "કબાટ"),
+        "curtain" to MultiLang8("ستارة النافذة", "Cortina", "Cortina", "জানালার পর্দা", "திரைச்சீலை", "తెర", "पडदा", "પડદો"),
+        "borrow" to MultiLang8("يستعير للقراءة", "Pedir prestado", "Pegar emprestado", "ধার নেওয়া", "இரவல் பெறுதல்", "అరువు తీసుకోవడం", "वाचण्यासाठी उसणे घेणे", "વાંચવા માટે ઉછીનું લેવું"),
+        "return" to MultiLang8("يعيد", "Devolver", "Devolver", "ফিরিয়ে দেওয়া", "திருப்பிக் கொடுத்தல்", "తిరిగి ఇవ్వడం", "परत करणे", "પાછું આપવું"),
+        "books" to MultiLang8("كتب القراءة", "Libros", "Livros", "গল্পের বই", "புத்தகங்கள்", "పుస్తకాలు", "पुस्तके", "પુસ્તકો"),
+        "book" to MultiLang8("كتاب", "Libro", "Livro", "বই", "புத்தகம்", "పుస్తకం", "पुस्तक", "પુસ્તક"),
+        "raincoat" to MultiLang8("معطف المطر", "Impermeable", "Capa de chuva", "বর্ষাতি কোট", "மழைக்கோட்டு", "రెయిన్‌కోట్", "रेनकोट", "રેઇનકોટ"),
+        "street" to MultiLang8("شارع الحي", "Calle", "Rua", "রাস্তা", "தெரு", "వీధి", "रस्ता / गल्ली", "શેરી / રસ્તો"),
+        "colors" to MultiLang8("ألوان جميلة", "Colores", "Cores", "সুন্দর রঙ", "வண்ணங்கள்", "రंगులు", "सुंदर रंग", "સુંદર રંગો"),
+        "unique" to MultiLang8("فريد من نوعه", "Único", "Único", "অনন্য", "தனித்துவமான", "ప్రత్యేకమైన", "अद्वितीय", "અનોખું"),
+        "gleamed" to MultiLang8("تألّق ولمع", "Brilló", "Brilhou", "ঝলমল করল", "மின்னியது", "మెరిసింది", "चमकले", "ચમક્યું"),
+        "scrubbed" to MultiLang8("نظّف جيداً", "Frotó", "Esfregou", "ঘষে পরিষ্কার করল", "தேய்த்துக் கழுவியது", "రుద్ది శుభ్రం చేసింది", "घासून स्वच्छ केले", "ઘસીને સાફ કર્યું"),
+        "whispers" to MultiLang8("يهمس بلطف", "Susurra", "Sussurra", "ফিসফিস করে বলে", "மெதுவாகப் பேசுகிறது", "గుసగుసలాడుతుంది", "हळूच कुजबुजतो", "ધીમેથી ગણગણે છે"),
+        "grandmother" to MultiLang8("الجدة", "Abuela", "Avó", "ঠাকুরমা / দিদিমা", "பாட்டி", "అమ్మమ్మ / నాయనమ్మ", "आजी", "દાદી / નાની"),
+        "grandfather" to MultiLang8("الجد", "Abuelo", "Avô", "ঠাকুরদা / দাদু", "தாத்தா", "తాతయ్య", "आजोबा", "દાદા / નાના"),
+        "every" to MultiLang8("كل", "Cada", "Cada", "প্রতিটি", "ஒவ்வொரு", "ప్రతి", "प्रत्येक", "દરેક"),
+        "morning" to MultiLang8("الصباح", "Mañana", "Manhã", "সকাল", "காலை", "ఉదయం", "सकाळ", "સવાર"),
+        "our" to MultiLang8("لنا", "Nuestro", "Nosso", "আমাদের", "எங்கள்", "మా", "आमचे", "અમારું"),
+        "busy" to MultiLang8("نشيط ومزدحم", "Ocupado", "Movimentado", "ব্যস্ত", "சுறுசுறுப்பான", "రద్దీగా ఉండే", "गजबजलेला", "વ્યસ્ત"),
+        "wakes" to MultiLang8("يستيقظ", "Despierta", "Acorda", "জেগে ওঠে", "விழிக்கிறது", "మేల్కొంటుంది", "जागा होतो", "જાગે છે"),
+        "hundred" to MultiLang8("مئة (100)", "Cien (100)", "Cem (100)", "একশো (১০০)", "நூறு (100)", "వంద (100)", "शंभर (१००)", "સો (૧૦૦)"),
+        "inside" to MultiLang8("في الداخل", "Adentro", "Dentro", "ভিতরে", "உள்ளே", "లోపల", "आत", "અંદર"),
+        "gate" to MultiLang8("بوابة", "Puerta", "Portão", "গেট / ফটক", "வாயில் கதவு", "గేటు", "दरवाजा", "દરવાજો"),
+        "golden" to MultiLang8("ذهبي اللون", "Dorado", "Dourado", "সোনালি", "தங்க நிற", "బంగారు రంగు", "सोनेरी", "સોનેરી"),
+        "marigolds" to MultiLang8("زهور القطيفة الذهبية", "Caléndulas", "Calêndulas", "গাঁদা ফুল", "சாமந்திப் பூக்கள்", "బంతి పూలు", "झेंडूची फुले", "ગલગોટાનાં ફૂલ"),
+        "leaves" to MultiLang8("أوراق الشجر", "Hojas", "Folhas", "গাছের পাতা", "இலைகள்", "ఆకులు", "झाडाची पाने", "પાંદડાં"),
+        "shine" to MultiLang8("تشرق وتلمع", "Brillan", "Brilham", "ঝলমল করে", "பிரகாசிக்கின்றன", "మెరుస్తాయి", "चमकतात", "ચમકે છે"),
+        "early" to MultiLang8("مبكراً", "Temprano", "Cedo", "সকাল সকাল", "அதிகாலை", "ఉదయాన్నే", "लवकर", "વહેલું"),
+        "sunlight" to MultiLang8("ضوء الشمس", "Luz del sol", "Luz do sol", "সূর্যের আলো", "சூரிய ஒளி", "సూర్యకాంతి", "सूर्यप्रकाश", "સૂર્યપ્રકાશ"),
+        "white" to MultiLang8("أبيض", "Blanco", "Branco", "সাদা", "வெள்ளை", "తెలుపు", "पांढरा", "સફેદ"),
+        "sky" to MultiLang8("السماء", "Cielo", "Céu", "আকাশ", "வானம்", "ఆకాశం", "आकाश", "આકાશ"),
+        "sun" to MultiLang8("الشمس", "Sol", "Sol", "সূর্য", "சூரியன்", "సూర్యుడు", "सूर्य", "સૂર્ય"),
+        "moon" to MultiLang8("القمر", "Luna", "Lua", "চাঁদ", "நிலா", "చంద్రుడు", "चंद्र", "ચંદ્ર"),
+        "stars" to MultiLang8("النجوم", "Estrellas", "Estrelas", "তারা", "நட்சத்திரங்கள்", "నక్షత్రాలు", "तारे", "તારાઓ"),
+        "star" to MultiLang8("نجمة", "Estrella", "Estrela", "তারা", "நட்சத்திரம்", "నక్షత్రం", "तारा", "તારો"),
+        "water" to MultiLang8("ماء", "Agua", "Água", "জল / পানি", "தண்ணீர்", "నీరు", "पाणी", "પાણી"),
+        "fish" to MultiLang8("سمكة", "Pez", "Peixe", "মাছ", "மீன்", "చేప", "मासा", "માછલી"),
+        "tree" to MultiLang8("شجرة", "Árbol", "Árvore", "গাছ", "மரம்", "చెట్టు", "झाड", "ઝાડ"),
+        "trees" to MultiLang8("أشجار", "Árboles", "Árvores", "গাছপালা", "மரங்கள்", "చెట్లు", "झाडे", "ઝાડ"),
+        "flower" to MultiLang8("زهرة", "Flor", "Flor", "ফুল", "மலர்", "పువ్వు", "फूल", "ફૂલ"),
+        "flowers" to MultiLang8("زهور", "Flores", "Flores", "ফুল", "மலர்கள்", "పూలు", "फुले", "ફૂલો"),
+        "smiled" to MultiLang8("ابتسم", "Sonrió", "Sorriu", "হাসল", "புன்னகைத்தது", "నవ్వింది", "हसला", "હસ્યો"),
+        "read" to MultiLang8("يقرأ", "Leer", "Ler", "পড়া", "படிக்க", "చదవడం", "वाचणे", "વાંચવું"),
+        "story" to MultiLang8("قصة", "Cuento", "História", "গল্প", "கதை", "కథ", "गोष्ट", "વાર્તા"),
+        "storybooks" to MultiLang8("كتب القصص", "Libros de cuentos", "Livros de histórias", "গল্পের বই", "கதைப் புத்தகங்கள்", "కథల పుస్తకాలు", "गोष्टींची पुस्तके", "વાર્તાની ચોપડીઓ"),
+        "library" to MultiLang8("المكتبة", "Biblioteca", "Biblioteca", "লাইব্রেরি / গ্রন্থাগার", "நூலகம்", "గ్రంథాలయం", "वाचनालय", "લાઇબ્રેરી"),
+        "teacher" to MultiLang8("المعلمة", "Maestra", "Professora", "শিক্ষক", "ஆசிரியர்", "ఉపాధ్యాయులు", "शिक्षक", "શિક્ષક"),
+        "classroom" to MultiLang8("غرفة الصف", "Aula", "Sala de aula", "শ্রেণিকক্ষ", "வகுப்பறை", "తరగతి గది", "वर्ग", "વર્ગખંડ"),
+        "mother" to MultiLang8("الأم", "Madre", "Mãe", "মা", "அம்மா", "అమ్మ", "आई", "માતા"),
+        "father" to MultiLang8("الأب", "Padre", "Pai", "বাবা", "அப்பா", "నాన్న", "वडील", "પિતા"),
+        "sister" to MultiLang8("الأخت", "Hermana", "Irmã", "বোন", "சகோதரி", "సోదరి", "बहीण", "બહેન"),
+        "brother" to MultiLang8("الأخ", "Hermano", "Irmão", "ভাই", "சகோதரன்", "సోదరుడు", "भाऊ", "ભાઈ"),
+        "ball" to MultiLang8("كرة اللعب", "Pelota", "Bola", "খেলার বল", "பந்து", "బంతి", "चेंडू", "દડો"),
+        "play" to MultiLang8("يلعب", "Jugar", "Brincar", "খেলা করা", "விளையாடு", "ఆడటం", "खेळणे", "રમવું"),
+        "walks" to MultiLang8("يمشي", "Camina", "Caminha", "হাঁটে", "நடக்கிறது", "నడుస్తుంది", "चालतो", "ચાલે છે"),
+        "flying" to MultiLang8("يطير في السماء", "Volando", "Voando", "উড়ছে", "பறக்கிறது", "ఎగురుతోంది", "उडत आहे", "ઉડી રહ્યું છે"),
+        "ocean" to MultiLang8("المحيط الواسع", "Océano", "Oceano", "মহাসাগর", "பெருங்கடல்", "మహాసముద్రం", "महासागर", "મહાસાગર"),
+        "apples" to MultiLang8("تفاح حلو", "Manzanas", "Maçãs", "মিষ্টি আপেল", "ஆப்பிள்கள்", "ఆపిల్ పండ్లు", "सफरचंद", "સફરજન"),
+        "apple" to MultiLang8("تفاحة", "Manzana", "Maçã", "আপেল", "ஆப்பிள்", "ఆపిల్ పండు", "सफरचंद", "સફરજન"),
+        "rainbow" to MultiLang8("قوس قزح", "Arcoíris", "Arco-íris", "রংধনু", "வானவில்", "ఇంద్రధనుస్సు", "इंद्रधनुष्य", "મેઘધનુષ્ય"),
+        "sparkle" to MultiLang8("بريق ولمعان", "Destello", "Brilho", "ঝিকিমিকি", "மின்னல் ஒளி", "మెరుపు", "चमक", "ચમક"),
+        "sunshine" to MultiLang8("إشراق الشمس", "Luz del sol", "Brilho do sol", "রোদ", "சூரிய ஒளி", "ఎండ", "सूर्यप्रकाश", "તડકો"),
+        "bicycle" to MultiLang8("دراجة هوائية", "Bicicleta", "Bicicleta", "সাইকেল", "மிதிவண்டி", "సైకిల్", "सायकल", "સાયકલ"),
+        "umbrella" to MultiLang8("مظلة المطر", "Paraguas", "Guarda-chuva", "ছাতা", "குடை", "గొడుగు", "छत्री", "છત્રી"),
+        "treasure" to MultiLang8("كنز ثمين", "Tesoro", "Tesouro", "গুপ্তধন", "புதையல்", "నిధి", "खजिना", "ખજાનો"),
+
+        // Opposites Quest & Listen & Find Words
+        "big" to MultiLang8("كبير", "Grande", "Grande", "বড়", "பெரிய", "పెద్ద", "मोठा", "મોટું"),
+        "small" to MultiLang8("صغير", "Pequeño", "Pequeno", "ছোট", "சிறிய", "చిన్న", "लहान", "નાનું"),
+        "day" to MultiLang8("نهار", "Día", "Dia", "দিন", "பகல்", "పగలు", "दिवस", "દિવસ"),
+        "night" to MultiLang8("ليل", "Noche", "Noite", "রাত", "இரவு", "రాత్రి", "रात्र", "રાત"),
+        "sad" to MultiLang8("حزين", "Triste", "Triste", "দুঃখিত", "சோகம்", "విచారం", "दुःखी", "ઉદાસ"),
+        "hot" to MultiLang8("حار / ساخن", "Caliente", "Quente", "গরম", "சூடான", "వేడి", "गरम", "ગરમ"),
+        "cold" to MultiLang8("بارد", "Frío", "Frio", "ঠান্ডা", "குளிர்ந்த", "చల్లని", "थंड", "ઠંડું"),
+        "fast" to MultiLang8("سريع", "Rápido", "Rápido", "দ্রুত", "வேகமான", "వేగంగా", "वेगवान", "ઝડપી"),
+        "slow" to MultiLang8("بطيء", "Lento", "Lento", "ধীর", "மெதுவான", "నెమ్మదిగా", "हळू", "ધીમું"),
+        "up" to MultiLang8("أعلى", "Arriba", "Cima", "উপরে", "மேலே", "పైన", "वर", "ઉપર"),
+        "down" to MultiLang8("أسفل", "Abajo", "Baixo", "নিচে", "கீழே", "క్రింద", "खाली", "નીચે"),
+        "open" to MultiLang8("مفتوح", "Abierto", "Aberto", "খোলা", "திறந்த", "తెరిచిన", "उघडे", "ખુલ્લું"),
+        "closed" to MultiLang8("مغلق", "Cerrado", "Fechado", "বন্ধ", "மூடிய", "మూసిన", "बंद", "બંધ"),
+        "wet" to MultiLang8("مبلل", "Mojado", "Molhado", "ভেজা", "ஈரமான", "తడి", "ओले", "ભીનું"),
+        "dry" to MultiLang8("جاف", "Seco", "Seco", "শুকনো", "உலர்ந்த", "పొడి", "कोरडे", "સૂકું"),
+        "tall" to MultiLang8("طويل", "Alto", "Alto", "লম্বা", "உயரமான", "పొడవైన", "उंच", "ઊંચું"),
+        "short" to MultiLang8("قصير", "Bajo", "Baixo", "খাটো", "குட்டையான", "పొట్టి", "बुटका / लहान", "ટૂંકું"),
+        "full" to MultiLang8("ممتلئ", "Lleno", "Cheio", "ভরা", "நிறைந்த", "నిండిన", "भरलेले", "ભરેલું"),
+        "empty" to MultiLang8("فارغ", "Vacío", "Vazio", "খালি", "காலியான", "ఖాళీ", "रिकामे", "ખાલી"),
+        "silverfish" to MultiLang8("أسماك فضية", "Peces plateados", "Peixes prateados", "রুপালি মাছ", "வெள்ளி மீன்கள்", "వెండి చేపలు", "चमकदार मासे", "ચમકતી માછલીઓ"),
+        "navysailor" to MultiLang8("بحّارة البحرية", "Marinera", "Marinheira", "নৌবাহিনীর নাবিক", "கடற்படை மாலுமி", "నౌకాదళ నావికురాలు", "नौदलाची नाविक", "નૌકાદળની નાવિક"),
+        "fullmoon" to MultiLang8("البدر المكتمل", "Luna llena", "Lua cheia", "পূর্ণিমার চাঁদ", "முழு நிலவு", "నిండు చంద్రుడు", "पौर्णिमेचा चंद्र", "પૂનમનો ચંદ્ર"),
+        "redball" to MultiLang8("كرة حمراء", "Pelota roja", "Bola vermelha", "লাল বল", "சிவப்பு பந்து", "ఎర్ర బంతి", "लाल चेंडू", "લાલ દડો"),
+        "karate" to MultiLang8("رياضة الكاراتيه", "Karate", "Karatê", "ক্যারাটে", "கராத்தே", "కరాటే", "कराटे", "કરાટે"),
+        "kitchen" to MultiLang8("المطبخ", "Cocina", "Cozinha", "রান্নাঘর", "சமையலறை", "వంటగది", "स्वयंपाकघर", "રસોડું"),
+        "bugschool" to MultiLang8("مدرسة الحشرات", "Escuela", "Escola", "স্কুল", "பள்ளி", "పాఠశాల", "शाळा", "શાળા"),
+        "bubblebath" to MultiLang8("حمام الفقاعات", "Baño de burbujas", "Banho de espuma", "স্নান", "குளியல்", "స్నానం", "आंघोळ", "સ્નાન"),
+        "sleepingsister" to MultiLang8("الأخت النائمة", "Hermana dormida", "Irmã dormindo", "ঘুমন্ত বোন", "தூங்கும் தங்கை", "నిద్రిస్తున్న చెల్లెలు", "झोपलेली बहीण", "સૂતેલી બહેન"),
+        "kitchensoup" to MultiLang8("حساء دافئ", "Sopa caliente", "Sopa quente", "গরম স্যুপ", "சூடான சூப்", "వేడి సూప్", "गरम सूप", "ગરમ સૂપ"),
+        "frogsboot" to MultiLang8("حذاء الضفدع", "Bota de rana", "Bota do sapo", "ব্যাঙের জুতো", "தவளையின் காலணி", "కప్ప బూటు", "बेडकाचा बूट", "દેડકાનો બૂટ"),
+        "redcrab" to MultiLang8("سلطعون أحمر", "Cangrejo rojo", "Caranguejo vermelho", "লাল কাঁকড়া", "சிவப்பு நண்டு", "ఎర్ర పీత", "लाल खेकडा", "લાલ કરચલો"),
+        "karatekick" to MultiLang8("ركلة الكاراتيه", "Patada de karate", "Chute de karatê", "ক্যারাটে কিক", "கராத்தே உதை", "కరాటే కిక్", "कराटे किक", "કરાટે કિક"),
+        "stormclouds" to MultiLang8("سحب العاصفة", "Nubes de tormenta", "Nuvens de tempestade", "ঝড়ের মেঘ", "புயல் மேகங்கள்", "తుఫాను మేఘాలు", "वादळी ढग", "તોફાની વાદળો")
+    )
+
+    private val extraGameWordsUrdu: Map<String, String> = mapOf(
+        "star" to "آسمان کا ستارہ",
+        "big" to "بڑا",
+        "small" to "چھوٹا",
+        "day" to "دن",
+        "night" to "رات",
+        "sad" to "اداس",
+        "hot" to "گرم",
+        "cold" to "ٹھنڈا",
+        "fast" to "تیز",
+        "slow" to "آہستہ",
+        "up" to "اوپر",
+        "down" to "نیچے",
+        "open" to "کھلا ہوا",
+        "closed" to "بند",
+        "wet" to "گیلا",
+        "dry" to "خشک",
+        "tall" to "لمبا",
+        "short" to "چھوٹا",
+        "full" to "بھرا ہوا",
+        "empty" to "خالی",
+        "silverfish" to "چمکدار مچھلیاں",
+        "navysailor" to "بحریہ کی ملاح",
+        "fullmoon" to "چمکتا چاند",
+        "storybooks" to "کہانیوں کی کتابیں",
+        "redball" to "سرخ گیند",
+        "karate" to "کراٹے",
+        "kitchen" to "باورچی خانہ",
+        "bugschool" to "اسکول",
+        "bubblebath" to "نہانا",
+        "sleepingsister" to "سوتی بہن",
+        "kitchensoup" to "گرم سوپ",
+        "frogsboot" to "مینڈک کا جوتا",
+        "redcrab" to "سرخ کیکڑا",
+        "karatekick" to "کراٹے کک",
+        "stormclouds" to "طوفانی بادل"
+    )
+
+    private val extraGameWordsHindi: Map<String, String> = mapOf(
+        "star" to "आसमान का तारा",
+        "big" to "बड़ा",
+        "small" to "छोटा",
+        "day" to "दिन",
+        "night" to "रात",
+        "sad" to "उदास",
+        "hot" to "गर्म",
+        "cold" to "ठंडा",
+        "fast" to "तेज़",
+        "slow" to "धीमा",
+        "up" to "ऊपर",
+        "down" to "नीचे",
+        "open" to "खुला",
+        "closed" to "बंद",
+        "wet" to "गीला",
+        "dry" to "सूखा",
+        "tall" to "लंबा",
+        "short" to "छोटा कद",
+        "full" to "भरा हुआ",
+        "empty" to "ख़ाली",
+        "silverfish" to "चमकीली मछलियाँ",
+        "navysailor" to "नौसेना की नाविक",
+        "fullmoon" to "चमकता चाँद",
+        "storybooks" to "कहानियों की किताबें",
+        "redball" to "लाल गेंद",
+        "karate" to "कराटे",
+        "kitchen" to "रसोईघर",
+        "bugschool" to "स्कूल",
+        "bubblebath" to "स्नान",
+        "sleepingsister" to "सोती बहन",
+        "kitchensoup" to "गरम सूप",
+        "frogsboot" to "मेंढक का जूता",
+        "redcrab" to "लाल केकड़ा",
+        "karatekick" to "कराटे किक",
+        "stormclouds" to "तूफ़ानी बादल"
+    )
+
+    fun getVocabMeaningForLanguage(item: VocabularyItem, langCode: String): String {
+        val clean = item.word.lowercase().replace(Regex("[^a-z]"), "")
+        return when (langCode) {
+            "en" -> ""
+            "en_ur" -> item.urduMeaning
+            "en_hi" -> item.hindiMeaning
+            "en_es" -> item.spanishMeaning
+            else -> multiLangWordsMap[clean]?.forLang(langCode)?.takeIf { it.isNotBlank() } ?: ""
+        }
+    }
+
     fun getWordTooltip(rawWord: String, langCode: String): Pair<String, String> {
         val details = getDetailedWordInfo(rawWord, "", langCode)
         return details.syllables.joinToString(" • ") to details.nativeMeaning
     }
 
     fun getWordTranslation(rawWord: String, langCode: String): String {
+        if (langCode == "en") return ""
         return getDetailedWordInfo(rawWord, "", langCode).nativeMeaning
     }
 
@@ -2221,7 +3302,7 @@ object SeekhCatalog {
         val syllables = getWordSyllablesList(clean.ifEmpty { rawWord })
         val phonetics = "/" + syllables.mapIndexed { idx, s -> if (idx == 0) s.uppercase() else s }.joinToString("-") + "/"
 
-        // Match exact vocabulary item if present in the 51 vocab items
+        // Match exact vocabulary item if present in the 66 vocab items
         val vocabMatch = vocabularyItems.firstOrNull { it.word.equals(clean, ignoreCase = true) }
 
         val partOfSpeech = when {
@@ -2240,9 +3321,11 @@ object SeekhCatalog {
                 else -> "An important story word that names a person, place, object, or nature element."
             }
 
-        val nativeMeaning = when {
-            langCode.contains("ur") -> {
+        val nativeMeaning = when (langCode) {
+            "en" -> englishDef
+            "en_ur" -> {
                 wordMeaningsUrdu[clean]
+                    ?: extraGameWordsUrdu[clean]
                     ?: vocabMatch?.urduMeaning
                     ?: when {
                         partOfSpeech.contains("Sight Word") -> "فقرے کو جوڑنے والا عام لفظ"
@@ -2251,14 +3334,88 @@ object SeekhCatalog {
                         else -> "کہانی کا اہم لفظ"
                     }
             }
-            langCode.contains("hi") -> {
+            "en_hi" -> {
                 wordMeaningsHindi[clean]
+                    ?: extraGameWordsHindi[clean]
                     ?: vocabMatch?.hindiMeaning
                     ?: when {
                         partOfSpeech.contains("Sight Word") -> "वाक्य को जोड़ने वाला सामान्य शब्द"
                         partOfSpeech.contains("Verb") -> "क्रिया या काम बताने वाला शब्द"
                         partOfSpeech.contains("Adjective") -> "विशेषता बताने वाला शब्द"
                         else -> "कहानी का महत्वपूर्ण शब्द"
+                    }
+            }
+            "en_ar" -> {
+                multiLangWordsMap[clean]?.ar
+                    ?: when {
+                        partOfSpeech.contains("Sight Word") -> "كلمة ربط شائعة في الجملة"
+                        partOfSpeech.contains("Verb") -> "كلمة تدل على الفعل والحركة"
+                        partOfSpeech.contains("Adjective") -> "صفة تصف الشكل أو اللون"
+                        else -> "كلمة أساسية من القصة"
+                    }
+            }
+            "en_es" -> {
+                multiLangWordsMap[clean]?.es
+                    ?: vocabMatch?.spanishMeaning
+                    ?: when {
+                        partOfSpeech.contains("Sight Word") -> "Palabra conectora de la oración"
+                        partOfSpeech.contains("Verb") -> "Palabra de acción (verbo)"
+                        partOfSpeech.contains("Adjective") -> "Palabra descriptiva (adjetivo)"
+                        else -> "Palabra importante del cuento"
+                    }
+            }
+            "en_pt" -> {
+                multiLangWordsMap[clean]?.pt
+                    ?: when {
+                        partOfSpeech.contains("Sight Word") -> "Palavra de ligação na frase"
+                        partOfSpeech.contains("Verb") -> "Palavra de ação (verbo)"
+                        partOfSpeech.contains("Adjective") -> "Palavra descritiva (adjetivo)"
+                        else -> "Palavra importante da história"
+                    }
+            }
+            "en_bn" -> {
+                multiLangWordsMap[clean]?.bn
+                    ?: when {
+                        partOfSpeech.contains("Sight Word") -> "বাক্য সংযোগকারী সাধারণ শব্দ"
+                        partOfSpeech.contains("Verb") -> "কাজ বা ক্রিয়া বোঝানোর শব্দ"
+                        partOfSpeech.contains("Adjective") -> "গুণ বা বৈশিষ্ট্য বোঝানোর শব্দ"
+                        else -> "গল্পের গুরুত্বপূর্ণ শব্দ"
+                    }
+            }
+            "en_ta" -> {
+                multiLangWordsMap[clean]?.ta
+                    ?: when {
+                        partOfSpeech.contains("Sight Word") -> "வாக்கியத்தை இணைக்கும் சொல்"
+                        partOfSpeech.contains("Verb") -> "செயலைக் குறிக்கும் வினைச்சொல்"
+                        partOfSpeech.contains("Adjective") -> "பண்பைக் குறிக்கும் உரிச்சொல்"
+                        else -> "கதையின் முக்கியச் சொல்"
+                    }
+            }
+            "en_te" -> {
+                multiLangWordsMap[clean]?.te
+                    ?: when {
+                        partOfSpeech.contains("Sight Word") -> "వాక్యాన్ని కలిపే సాధారణ పదం"
+                        partOfSpeech.contains("Verb") -> "పనిని తెలిపే క్రియా పదం"
+                        partOfSpeech.contains("Adjective") -> "గుణాన్ని తెలిపే విశేషణ పదం"
+                        else -> "కథలోని ముఖ్యమైన పదం"
+                    }
+            }
+            "en_mr" -> {
+                multiLangWordsMap[clean]?.mr
+                    ?: when {
+                        partOfSpeech.contains("Sight Word") -> "वाक्य जोडणारा सामान्य शब्द"
+                        partOfSpeech.contains("Verb") -> "कृती दर्शवणारा शब्द (क्रियापद)"
+                        partOfSpeech.contains("Adjective") -> "वैशिष्ट्य सांगणारा शब्द (विशेषण)"
+                        else -> "गोष्टीतील महत्त्वाचा शब्द"
+                    }
+            }
+            "en_gu" -> {
+                multiLangWordsMap[clean]?.gu
+                    ?: when {
+                        partOfSpeech.contains("Sight Word") -> "વાક્ય જોડતો સામાન્ય શબ્દ"
+                        partOfSpeech.contains("Verb") -> "ક્રિયા દર્શાવતો શબ્દ"
+                        partOfSpeech.contains("Adjective") -> "વિશેષતા દર્શાવતો શબ્દ"
+                        else -> "વાર્તાનો મહત્વનો શબ્દ"
                     }
             }
             else -> englishDef

@@ -1084,6 +1084,11 @@ fun CustomLanguageGlobeBadge(assetHint: String, modifier: Modifier = Modifier) {
         assetHint.contains("spanish") -> "ES"
         assetHint.contains("arabic") -> "ع"
         assetHint.contains("portuguese") -> "PT"
+        assetHint.contains("bengali") -> "বাং"
+        assetHint.contains("tamil") -> "த"
+        assetHint.contains("telugu") -> "తె"
+        assetHint.contains("marathi") -> "म"
+        assetHint.contains("gujrati") || assetHint.contains("gujarati") -> "ગુ"
         else -> "EN"
     }
     Box(
@@ -1283,7 +1288,7 @@ fun StoryBookCard(
     isCompleted: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    selectedLanguageCode: String = "en_ur",
+    selectedLanguageCode: String = "en",
     progressFraction: Float = 0f,
     needsDownload: Boolean = false,
     isDownloading: Boolean = false

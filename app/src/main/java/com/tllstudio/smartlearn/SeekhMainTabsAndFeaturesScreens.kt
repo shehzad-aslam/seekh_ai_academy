@@ -577,12 +577,7 @@ fun LibraryTabScreen(
                                 levelNumber = 1,
                                 levelBadgeLabel = "${uiStrings.levelPrefix} 1",
                                 title = uiStrings.sectionLevel1,
-                                subtitle = when (selectedLanguage.code) {
-                                    "en_ur" -> "ابتدائی لیول • آسان الفاظ اور چھوٹے جملے"
-                                    "en_hi", "en_mr" -> "शुरुआती लेवल • आसान शब्द और छोटे वाक्य"
-                                    "en_ar" -> "المستوى الأول • كلمات سهلة وجمل قصيرة"
-                                    else -> "Beginner • Easy words & short sentences"
-                                },
+                                subtitle = SeekhCatalog.getLocalizedLevelSubtitle(1, selectedLanguage.code),
                                 accentColor = Color(0xFF059669),
                                 softBgColor = Color(0xFFECFDF5),
                                 borderColor = Color(0xFFA7F3D0),
@@ -611,12 +606,7 @@ fun LibraryTabScreen(
                                 levelNumber = 2,
                                 levelBadgeLabel = "${uiStrings.levelPrefix} 2",
                                 title = uiStrings.sectionLevel2,
-                                subtitle = when (selectedLanguage.code) {
-                                    "en_ur" -> "دوسرا لیول • روزمرہ کی دلچسپ کہانیاں"
-                                    "en_hi", "en_mr" -> "दूसरा लेवल • रोज़मर्रा की रोचक कहानियाँ"
-                                    "en_ar" -> "المستوى الثاني • قصص يومية ممتعة"
-                                    else -> "Elementary • Everyday stories & phonics"
-                                },
+                                subtitle = SeekhCatalog.getLocalizedLevelSubtitle(2, selectedLanguage.code),
                                 accentColor = Color(0xFF0284C7),
                                 softBgColor = Color(0xFFEFF6FF),
                                 borderColor = Color(0xFFBAE6FD),
@@ -645,12 +635,7 @@ fun LibraryTabScreen(
                                 levelNumber = 3,
                                 levelBadgeLabel = "${uiStrings.levelPrefix} 3",
                                 title = uiStrings.sectionLevel3,
-                                subtitle = when (selectedLanguage.code) {
-                                    "en_ur" -> "تیسرا لیول • سبق آموز کہانیاں اور مہمات"
-                                    "en_hi", "en_mr" -> "तीसरा लेवल • शिक्षाप्रद कहानियाँ और रोमांच"
-                                    "en_ar" -> "المستوى الثالث • حكايات هادفة ومغامرات"
-                                    else -> "Intermediate • Moral fables & adventures"
-                                },
+                                subtitle = SeekhCatalog.getLocalizedLevelSubtitle(3, selectedLanguage.code),
                                 accentColor = Color(0xFF5E4AE3),
                                 softBgColor = Color(0xFFF5F3FF),
                                 borderColor = Color(0xFFDDD6FE),
@@ -679,12 +664,7 @@ fun LibraryTabScreen(
                                 levelNumber = 4,
                                 levelBadgeLabel = "${uiStrings.levelPrefix} 4",
                                 title = uiStrings.sectionLevel4,
-                                subtitle = when (selectedLanguage.code) {
-                                    "en_ur" -> "چوتھا لیول • سائنس، خلا اور تفصیلی کہانیاں"
-                                    "en_hi", "en_mr" -> "चौथा लेवल • विज्ञान, अंतरिक्ष और बड़ी कहानियाँ"
-                                    "en_ar" -> "المستوى الرابع • علوم وفضاء وقصص متقدمة"
-                                    else -> "Advanced • Science, space & chapter stories"
-                                },
+                                subtitle = SeekhCatalog.getLocalizedLevelSubtitle(4, selectedLanguage.code),
                                 accentColor = Color(0xFFD97706),
                                 softBgColor = Color(0xFFFFFBEB),
                                 borderColor = Color(0xFFFDE68A),
@@ -1797,6 +1777,7 @@ fun ActivityTabScreen(
     allProfiles: List<LearnerProfile> = listOf(profile),
     allBooks: List<StoryBook>,
     readingGroups: List<ReadingGroup>,
+    selectedLanguageCode: String = "en",
     onMenuClick: () -> Unit,
     onProfileClick: () -> Unit,
     onStarClick: () -> Unit,
@@ -2335,6 +2316,7 @@ fun ActivityTabScreen(
                                                 StoryBookCard(
                                                     book = b,
                                                     isCompleted = true,
+                                                    selectedLanguageCode = selectedLanguageCode,
                                                     onClick = { onOpenBook(b) },
                                                     modifier = Modifier.weight(1f)
                                                 )
