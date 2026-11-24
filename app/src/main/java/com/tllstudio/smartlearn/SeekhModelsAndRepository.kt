@@ -4868,13 +4868,6 @@ object SeekhCatalog {
             "ref_clever_white_rabbit" -> "ref_rabbit"
             "ref_little_yellow_duckling" -> "ref_duck"
             "ref_high_flying_kite" -> "ref_kite"
-            "ref_busy_honeybee" -> "ref_bee"
-            "ref_ginger_cozy_cat" -> "ref_cat"
-            "ref_my_blue_bicycle" -> "ref_bike"
-            "ref_brave_red_firetruck" -> "ref_fire"
-            "ref_counting_ten_balloons" -> "ref_balloons"
-            "ref_slow_snail_garden" -> "ref_snail"
-            "ref_green_farm_tractor" -> "ref_tractor"
             "ref_dancing_peacock_rain" -> "ref_peacock"
             "ref_tortoise_and_hare_race" -> "ref_tortoise"
             "ref_polly_talking_parrot" -> "ref_parrot"
@@ -4882,30 +4875,16 @@ object SeekhCatalog {
             "ref_panda_bamboo_picnic" -> "ref_panda"
             "ref_giraffe_tallest_tree" -> "ref_giraffe"
             "ref_dolphin_blue_lagoon" -> "ref_dolphin"
-            "ref_magic_paint_palette" -> "ref_palette"
-            "ref_guitar_village_concert" -> "ref_guitar"
-            "ref_watermelon_summer_picnic" -> "ref_watermelon"
             "ref_camel_desert_oasis" -> "ref_camel"
             "ref_wise_night_owl" -> "ref_owl"
             "ref_tiger_stripes_jungle" -> "ref_tiger"
-            "ref_zara_striped_zebra" -> "ref_zebra"
             "ref_galloping_white_horse" -> "ref_horse"
             "ref_friendly_helper_robot" -> "ref_robot"
-            "ref_helicopter_mountain_rescue" -> "ref_heli"
-            "ref_penguin_antarctic_march" -> "ref_penguin"
             "ref_kind_queen_library_castle" -> "ref_queen"
-            "ref_bear_forest_campfire" -> "ref_bear"
-            "ref_swan_silver_lake" -> "ref_swan"
-            "ref_spotted_deer_meadow" -> "ref_deer"
             "ref_rocket_mission_mars" -> "ref_rocket"
             "ref_blue_whale_ocean_giant" -> "ref_whale"
-            "ref_dinosaur_fossil_discovery" -> "ref_dino"
             "ref_galactica_telescope_night" -> "ref_telescope"
             "ref_airplane_above_the_clouds" -> "ref_plane"
-            "ref_octopus_clever_camouflage" -> "ref_octopus"
-            "ref_planet_earth_green_promise" -> "ref_earth"
-            "ref_snowman_winter_scarf" -> "ref_snow"
-            "ref_squirrel_acorn_winter" -> "ref_squirrel"
             else -> ""
         }
 
@@ -4913,17 +4892,130 @@ object SeekhCatalog {
         val img2 = if (pagePrefix.isNotEmpty()) "books/stories/${pagePrefix}_p2.webp" else secondImg
         val img3 = if (pagePrefix.isNotEmpty()) "books/stories/${pagePrefix}_p3.webp" else thirdImg
         val img4 = if (pagePrefix.isNotEmpty()) "books/stories/${pagePrefix}_p4.webp" else coverImg
-        val img5 = if (pagePrefix.isNotEmpty()) "books/stories/${pagePrefix}_p5.webp" else secondImg
-        val img6 = if (pagePrefix.isNotEmpty()) "books/stories/${pagePrefix}_p6.webp" else thirdImg
 
-        // Split and expand each story's narrative into 6 dedicated story-matched illustrated pages!
-        val p4En = "Together with friends in the ${categoryTag.lowercase()}, the adventure grows even more exciting around every corner."
-        val p4Ur = "$urduTitle کی اس کہانی میں تمام دوست مل جل کر خوشی اور محبت کے ساتھ آگے بڑھتے ہیں۔"
-        val p4Hi = "$hindiTitle की इस कहानी में सभी दोस्त मिलकर खुशी और उत्साह के साथ आगे बढ़ते हैं।"
-
-        val p5En = "Step by step, kindness, curiosity, and teamwork turn a simple day into an unforgettable memory."
-        val p5Ur = "قدم بہ قدم، محنت، ہمدردی اور باہمی تعاون اس دن کو ایک یادگار اور خوبصورت تجربہ بنا دیتے ہیں۔"
-        val p5Hi = "कदम-दर-कदम, मेहनत, दया और आपसी सहयोग इस दिन को एक यादगार अनुभव बना देते हैं।"
+        val (p3MidEn, p3MidUr, p3MidHi) = when (id) {
+            "ref_monkey_mango_party" -> Triple(
+                "Sitting on the soft orchard grass, Milo invites White Rabbit and Green Parrot to join his mango picnic.",
+                "باغ کی نرم گھاس پر بیٹھ کر مائلو سفید خرگوش اور ہرے طوطے کو اپنی آم پارٹی میں بلاتا ہے۔",
+                "बग़ीचे की नरम घास पर बैठकर माइलो सफ़ेद खरगोश और हरे तोते को अपनी आम पार्टी में बुलाता है।"
+            )
+            "ref_lion_and_little_mouse" -> Triple(
+                "One day Leo gets trapped under a thick rope net in the forest, and his tiny mouse friend rushes to chew the ropes!",
+                "ایک دن شیر جنگل میں رسی کے جال میں پھنس جاتا ہے اور اس کا ننھا چوہا دوست دوڑ کر رسیاں کاٹنے لگتا ہے!",
+                "एक दिन शेर जंगल में जाल में फँस जाता है और उसका नन्हा चूहा दोस्त दौड़कर रस्सियाँ काटने लगता है!"
+            )
+            "ref_appu_baby_elephant" -> Triple(
+                "Appu lifts his trunk and sprays a sparkling fountain of water droplets that shines like a rainbow in the sun!",
+                "اپو اپنی سونڈ اٹھا کر پانی کا فوارہ اچھالتا ہے جو دھوپ میں قوسِ قزح کی طرح چمکتا ہے!",
+                "अप्पू अपनी सूँड़ उठाकर पानी का फव्वारा उछालता है जो धूप में इंद्रधनुष की तरह चमकता है!"
+            )
+            "ref_yellow_school_bus" -> Triple(
+                "Inside the sunny bus, we sit by the windows holding our favorite illustrated storybooks as green trees roll by.",
+                "روشن بس کے اندر ہم کھڑکی کے پاس اپنی پسندیدہ تصویروں والی کتابیں تھامے بیٹھتے ہیں جبکہ باہر ہرے درخت گزرتے ہیں۔",
+                "बस के अंदर हम खिड़की के पास अपनी पसंदीदा चित्रों वाली किताबें लेकर बैठते हैं।"
+            )
+            "ref_clever_white_rabbit" -> Triple(
+                "Carrying his full woven basket of carrots and tomatoes, Bobo hops down the garden trail toward the blue pond.",
+                "گاجروں اور ٹماٹروں سے بھری ٹوکری اٹھا کر بوبو باغ کی پگڈنڈی سے نیلے تالاب کی طرف جاتا ہے۔",
+                "गाजर और टमाटर से भरी टोकरी लेकर बोबो बग़ीचे के रास्ते से नीले तालाब की ओर जाता है।"
+            )
+            "ref_little_yellow_duckling" -> Triple(
+                "Ducky paddles smoothly across the pond alongside colorful orange fish and blooming pink lotus flowers.",
+                "ننھی بطخ تالاب میں رنگین مچھلیوں اور کھلتے ہوئے گلابی کنول کے پھولوں کے ساتھ تیرتی ہے۔",
+                "नन्ही बत्तख तालाब में रंगीन मछलियों और गुलाबी कमल के फूलों के साथ तैरती है।"
+            )
+            "ref_high_flying_kite" -> Triple(
+                "High among the fluffy white clouds, my colorful diamond kite dances beside a green parrot and bright butterflies!",
+                "نرم سفید بادلوں کے درمیان میری رنگین پتنگ ہرے طوطے اور تتلیوں کے ساتھ لہراتی ہے!",
+                "सफ़ेद बादलों के बीच मेरी रंगीन पतंग हरे तोते और तितलियों के साथ लहराती है!"
+            )
+            "ref_dancing_peacock_rain" -> Triple(
+                "As gentle silver raindrops fall, Moru spreads his iridescent blue and green tail feathers in a joyful dance!",
+                "جیسے ہی بارش کی چاندی جیسی بوندیں گرتی ہیں، مورو اپنے نیلے اور ہرے پر پھیلا کر خوشی سے ناچتا ہے!",
+                "जैसे ही बारिश की बूँदें गिरती हैं, मोरू अपने सुंदर नीले और हरे पंख फैलाकर खुशी से नाचता है!"
+            )
+            "ref_tortoise_and_hare_race" -> Triple(
+                "While Rabbit curls up fast asleep in the shade of a bush, steady Toby Tortoise walks quietly past him on the trail!",
+                "جب خرگوش جھاڑی کے سائے میں گہری نیند سو جاتا ہے تو مستقل مزاج کچھوا خاموشی سے اس کے پاس سے آگے نکل جاتا ہے!",
+                "जब खरगोश झाड़ी की छाँव में सो जाता है, तो मेहनती कछुआ चुपचाप उसके पास से आगे निकल जाता है!"
+            )
+            "ref_polly_talking_parrot" -> Triple(
+                "The kind schoolchildren place sweet red apple slices and ruby pomegranate seeds on the stone garden wall for Mitthu.",
+                "مہربان بچے مٹھو طوطے کے لیے باغ کی پتھر والی دیوار پر میٹھے سیب اور انار کے دانے رکھتے ہیں۔",
+                "प्यारे बच्चे मिठ्ठू तोते के लिए बग़ीचे की दीवार पर मीठे सेब और अनार के दाने रखते हैं।"
+            )
+            "ref_fox_and_sweet_grapes" -> Triple(
+                "Clever Roxy stacks two wooden orchard crates neatly to reach a harvest basket of ripe purple grapes and oranges!",
+                "سمجھدار لومڑی لکڑی کے دو ڈبے ترتیب سے رکھ کر پکے ہوئے جامنی انگوروں اور مالٹوں کی ٹوکری تک پہنچ جاتی ہے!",
+                "चतुर लोमड़ी लकड़ी के दो बक्से रखकर पके हुए बैंगनी अंगूरों और संतरों की टोकरी तक पहुँच जाती है!"
+            )
+            "ref_panda_bamboo_picnic" -> Triple(
+                "With a joyful giggle, playful Piku Panda rolls and tumbles down the soft grassy hillside among fluttering butterflies!",
+                "خوشی سے ہنستے ہوئے پیکو پانڈا اڑتی ہوئی تتلیوں کے درمیان نرم گھاس والی پہاڑی پر قلابازیاں کھاتا ہے!",
+                "खुशी से खेलते हुए पीकू पांडा तितलियों के बीच नरम घास वाली पहाड़ी पर कलाबाज़ियाँ खाता है!"
+            )
+            "ref_giraffe_tallest_tree" -> Triple(
+                "Kind Gigi Giraffe stretches her long graceful neck to the top of the acacia tree and plucks sweet fruits for her friends.",
+                "مہربان زرافہ اپنی لمبی گردن اونچے درخت کی چوٹی تک بڑھا کر اپنے چھوٹے دوستوں کے لیے میٹھے پھل توڑتی ہے۔",
+                "दयालु जिराफ़ अपनी लंबी गर्दन ऊँचे पेड़ तक बढ़ाकर अपने छोटे दोस्तों के लिए मीठे फल तोड़ती है।"
+            )
+            "ref_dolphin_blue_lagoon" -> Triple(
+                "Dora Dolphin swims right ahead of the little white wooden sailboat to guide the young sailors safely past the rocky reef.",
+                "ڈورا ڈولفن سفید لکڑی کی کشتی کے آگے تیرتے ہوئے نوجوان ملاحوں کو چٹانوں سے بچا کر محفوظ راستہ دکھاتی ہے۔",
+                "डोरा डॉल्फ़िन सफ़ेद नाव के आगे तैरकर नाविकों को चट्टानों से बचाते हुए सुरक्षित रास्ता दिखाती है।"
+            )
+            "ref_camel_desert_oasis" -> Triple(
+                "As golden sunset paints the sky, Kabir Camel arrives at a green desert oasis with tall date palms and a cool spring pool.",
+                "جب شام کا سنہرا سورج چمکتا ہے تو کبیر اونٹ کھجور کے درختوں اور ٹھنڈے پانی کے چشمے والے نخلستان پر پہنچ جاتا ہے۔",
+                "शाम ढलते ही कबीर ऊँट खजूर के पेड़ों और ठंडे पानी के कुंड वाले हरे नखलिस्तान पर पहुँच जाता है।"
+            )
+            "ref_wise_night_owl" -> Triple(
+                "Spreading his soft silent wings, Ollie Owl glides across the starry night sky beneath the glowing silver crescent moon.",
+                "اپنے نرم پر پھیلا کر اولی الو چمکتے ہوئے چاند کے نیچے ستاروں بھرے آسمان میں خاموشی سے اڑتا ہے۔",
+                "अपने नरम पंख फैलाकर ओली उल्लू चमकते चाँद के नीचे तारों भरे आसमान में शांति से उड़ता है।"
+            )
+            "ref_tiger_stripes_jungle" -> Triple(
+                "On warm afternoons, Tara Tiger cools off and splashes in a clear blue jungle stream while a peacock and parrot watch.",
+                "گرم دوپہر کو تارا شیرنی جنگل کی صاف نیلی ندی میں نہا کر تازہ دم ہوتی ہے جبکہ مور اور طوطا درخت سے دیکھتے ہیں۔",
+                "गर्म दोपहर में तारा बाघिन जंगल की साफ़ नीली नदी में नहाती है जबकि मोर और तोता पेड़ से देखते हैं।"
+            )
+            "ref_galloping_white_horse" -> Triple(
+                "Carrying the woven baskets of library storybooks, Badal trots steadily up the winding pine-lined mountain trail.",
+                "لائبریری کی کتابوں کی ٹوکریاں اٹھائے سفید گھوڑا بادل صنوبر کے درختوں والی پہاڑی پگڈنڈی پر چڑھتا ہے۔",
+                "लाइब्रेरी की किताबों की टोकरियाँ लेकर सफ़ेद घोड़ा बादल पहाड़ी रास्ते पर आगे बढ़ता है।"
+            )
+            "ref_friendly_helper_robot" -> Triple(
+                "At the science fair, Robo-7 uses its helpful arms to sort paper and plastic bottles neatly into green recycling bins!",
+                "سائنس میلے میں روبوٹ اپنے بازوؤں سے کاغذ اور پلاسٹک کی بوتلوں کو صفائی کے ہرے ڈبوں میں الگ الگ رکھتا ہے!",
+                "विज्ञान मेले में रोबोट अपने हाथों से काग़ज़ और बोतलों को रीसाइक्लिंग के हरे डिब्बों में रखता है!"
+            )
+            "ref_kind_queen_library_castle" -> Triple(
+                "The grand castle gates swing wide open as smiling village children walk across the bridge to visit the royal public library!",
+                "محل کے بڑے دروازے کھل جاتے ہیں اور گاؤں کے مسکراتے ہوئے بچے شاہی عوامی لائبریری میں کتابیں پڑھنے آتے ہیں!",
+                "महल के बड़े दरवाज़े खुल जाते हैं और गाँव के मुस्कुराते बच्चे शाही लाइब्रेरी में किताबें पढ़ने आते हैं!"
+            )
+            "ref_rocket_mission_mars" -> Triple(
+                "Floating inside the spacecraft cabin, the young astronaut looks through the window at glowing blue-and-green planet Earth.",
+                "خلائی جہاز کے اندر تیرتے ہوئے نوجوان خلانورد کھڑکی سے ہماری چمکتی ہوئی نیلی اور ہری زمین کو دیکھتا ہے۔",
+                "अंतरिक्ष यान के अंदर से युवा अंतरिक्ष यात्री खिड़की से हमारी चमकती नीली और हरी पृथ्वी को देखता है।"
+            )
+            "ref_blue_whale_ocean_giant" -> Triple(
+                "Deep underwater, the gentle blue whale swims alongside a pod of playful silver dolphins and colorful coral reef fish.",
+                "پانی کی گہرائی میں بڑی نیلی وہیل چاندی جیسی ڈولفنز اور مرجان کی رنگین مچھلیوں کے ساتھ تیرتی ہے۔",
+                "पानी की गहराई में विशाल नीली व्हेल डॉल्फ़िन और रंग-बिरंगी मछलियों के साथ तैरती है।"
+            )
+            "ref_galactica_telescope_night" -> Triple(
+                "By the warm glow of a rooftop lantern, Amina sketches star constellations and Saturn's rings into her open astronomy notebook.",
+                "چھت پر لالٹین کی روشنی میں آمنہ اپنی کھلی ڈائری میں ستاروں کے جھرمٹ اور زحل کے دائروں کی تصاویر بناتی ہے۔",
+                "छत पर लालटेन की रोशनी में आमना अपनी डायरी में तारों और शनि ग्रह के वलयों के सुंदर चित्र बनाती है।"
+            )
+            "ref_airplane_above_the_clouds" -> Triple(
+                "Cruising high above fluffy white clouds and snow-capped mountain peaks, the airplane gleams in the golden sunlight.",
+                "نرم سفید بادلوں اور برف پوش پہاڑی چوٹیوں کے اوپر اڑتا ہوا ہوائی جہاز سنہری دھوپ میں چمکتا ہے۔",
+                "सफ़ेद बादलों और बर्फीले पहाड़ों के ऊपर उड़ता हुआ हवाई जहाज़ सुनहरी धूप में चमकता है।"
+            )
+            else -> Triple(p2En, p2Ur, p2Hi)
+        }
 
         return StoryBook(
             id = id,
@@ -4943,10 +5035,8 @@ object SeekhCatalog {
             pages = listOf(
                 StoryPage(1, img1, p1En, p1En, p1Ur, p1Hi, practice),
                 StoryPage(2, img2, p2En, p2En, p2Ur, p2Hi, practice),
-                StoryPage(3, img3, p2En, p2En, p2Ur, p2Hi, practice),
-                StoryPage(4, img4, p4En, p4En, p4Ur, p4Hi, practice),
-                StoryPage(5, img5, p5En, p5En, p5Ur, p5Hi, practice),
-                StoryPage(6, img6, p3En, p3En, p3Ur, p3Hi, practice, StoryQuizQuestion(quizQ, quizOpts, 0))
+                StoryPage(3, img3, p3MidEn, p3MidEn, p3MidUr, p3MidHi, practice),
+                StoryPage(4, img4, p3En, p3En, p3Ur, p3Hi, practice, StoryQuizQuestion(quizQ, quizOpts, 0))
             )
         )
     }
@@ -6156,9 +6246,12 @@ object SeekhCatalog {
     )
 
     val defaultBooks: List<StoryBook> = run {
+        val pureHandDrawnNewStories = referenceExpandedStories.filter {
+            it.coverAssetPath.startsWith("books/stories/ref_")
+        }
         val coreTopSeven = rawDefaultBooks.take(7).map { enrichToFullIllustratedStory(it) }
         val remainingOriginal = rawDefaultBooks.drop(7).map { enrichToFullIllustratedStory(it) }
-        referenceExpandedStories + coreTopSeven + remainingOriginal
+        pureHandDrawnNewStories + coreTopSeven + remainingOriginal
     }
 
     // 51 Real Vocabulary Items mapped to assets/vocab/ic_vocab_*.svg
