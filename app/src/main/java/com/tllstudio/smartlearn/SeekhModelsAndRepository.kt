@@ -199,8 +199,8 @@ data class SeekhAppStrings(
 
 object SeekhCatalog {
 
-    fun isRtlLanguage(langCode: String): Boolean {
-        return langCode == "en_ur" || langCode == "en_ar"
+    fun isRtlLanguage(@Suppress("UNUSED_PARAMETER") langCode: String): Boolean {
+        return false
     }
 
     fun getAppStrings(langCode: String): SeekhAppStrings {

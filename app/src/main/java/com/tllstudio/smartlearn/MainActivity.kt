@@ -451,11 +451,8 @@ fun SeekhRootApp(
         navigateBack()
     }
 
-    val appLayoutDirection = if (SeekhCatalog.isRtlLanguage(selectedLangCode)) {
-        androidx.compose.ui.unit.LayoutDirection.Rtl
-    } else {
-        androidx.compose.ui.unit.LayoutDirection.Ltr
-    }
+    // Keep LayoutDirection.Ltr across all languages so English sentences, word chips, spelling slots, and UI never flip backwards from the right side (Unicode BiDi handles Arabic/Urdu script natively)
+    val appLayoutDirection = androidx.compose.ui.unit.LayoutDirection.Ltr
 
     CompositionLocalProvider(androidx.compose.ui.platform.LocalLayoutDirection provides appLayoutDirection) {
     AnimatedContent(
